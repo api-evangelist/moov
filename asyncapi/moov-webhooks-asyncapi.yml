@@ -1,0 +1,891 @@
+asyncapi: 2.6.0
+info:
+  title: Moov Webhooks
+  description: >-
+    Moov delivers real-time event notifications to your application via webhooks
+    when state changes occur on your platform. When an event occurs, Moov sends
+    an HTTP POST request with a JSON payload to your configured endpoint URL.
+    Each delivery includes cryptographic headers for signature verification using
+    HMAC-SHA512. Webhooks can be configured for all event types or scoped to
+    specific events such as transfer status changes, account updates, and dispute
+    notifications. Configure webhook endpoints in the Moov Dashboard under
+    Developers > Webhooks.
+  version: '2026.01.00'
+  contact:
+    name: Moov Support
+    url: https://docs.moov.io/guides/webhooks/
+externalDocs:
+  description: Moov Webhook Documentation
+  url: https://docs.moov.io/guides/webhooks/
+servers:
+  yourEndpoint:
+    url: 'https://your-server.example.com/webhooks'
+    protocol: https
+    description: >-
+      Your HTTPS webhook endpoint. Moov requires HTTPS for all webhook URLs.
+      Configure this URL in the Moov Dashboard under Developers > Webhooks.
+    security:
+      - hmacSignature: []
+channels:
+  /webhook:
+    description: >-
+      Moov sends all webhook events as HTTP POST requests to your registered
+      endpoint URL. Each request contains a JSON payload with the event type,
+      data, and metadata, plus cryptographic headers for signature verification.
+    publish:
+      operationId: receiveMoovWebhookEvent
+      summary: Receive a Moov webhook event
+      description: >-
+        Handle incoming webhook events from Moov. Verify the HMAC-SHA512 signature
+        using the X-Signature header before processing the event payload. Concatenate
+        the X-Timestamp, X-Nonce, and X-Webhook-ID header values with pipe delimiters
+        and hash them with your signing secret to validate authenticity.
+      message:
+        oneOf:
+          - $ref: '#/components/messages/AccountCreated'
+          - $ref: '#/components/messages/AccountUpdated'
+          - $ref: '#/components/messages/AccountDeleted'
+          - $ref: '#/components/messages/RepresentativeCreated'
+          - $ref: '#/components/messages/RepresentativeUpdated'
+          - $ref: '#/components/messages/RepresentativeDisabled'
+          - $ref: '#/components/messages/CapabilityRequested'
+          - $ref: '#/components/messages/CapabilityUpdated'
+          - $ref: '#/components/messages/BankAccountCreated'
+          - $ref: '#/components/messages/BankAccountUpdated'
+          - $ref: '#/components/messages/BankAccountDeleted'
+          - $ref: '#/components/messages/PaymentMethodEnabled'
+          - $ref: '#/components/messages/PaymentMethodDisabled'
+          - $ref: '#/components/messages/TransferCreated'
+          - $ref: '#/components/messages/TransferUpdated'
+          - $ref: '#/components/messages/RefundCreated'
+          - $ref: '#/components/messages/RefundUpdated'
+          - $ref: '#/components/messages/SweepCreated'
+          - $ref: '#/components/messages/SweepUpdated'
+          - $ref: '#/components/messages/DisputeCreated'
+          - $ref: '#/components/messages/DisputeUpdated'
+          - $ref: '#/components/messages/BalanceUpdated'
+          - $ref: '#/components/messages/WalletTransactionUpdated'
+          - $ref: '#/components/messages/BillingStatementCreated'
+          - $ref: '#/components/messages/InvoiceCreated'
+          - $ref: '#/components/messages/InvoiceUpdated'
+components:
+  securitySchemes:
+    hmacSignature:
+      type: httpApiKey
+      name: X-Signature
+      in: header
+      description: >-
+        HMAC-SHA512 signature for verifying webhook authenticity. To validate:
+        1. Extract X-Timestamp, X-Nonce, and X-Webhook-ID headers.
+        2. Concatenate them as "timestamp|nonce|webhookID".
+        3. Compute HMAC-SHA512 using your signing secret from the Moov Dashboard.
+        4. Compare the result to the X-Signature header value.
+        Discard the event if signatures do not match.
+  messages:
+    AccountCreated:
+      name: account.created
+      title: Account Created
+      summary: A new Moov account was created.
+      description: >-
+        Fired when a new account is created on your platform. Use this event to
+        trigger onboarding flows, capability requests, or record-keeping in your
+        system.
+      headers:
+        $ref: '#/components/schemas/WebhookHeaders'
+      payload:
+        $ref: '#/components/schemas/AccountEventPayload'
+    AccountUpdated:
+      name: account.updated
+      title: Account Updated
+      summary: An existing Moov account was updated.
+      description: >-
+        Fired when account profile data, verification status, or metadata changes.
+        Use this to sync account state in your system and react to verification
+        status changes.
+      headers:
+        $ref: '#/components/schemas/WebhookHeaders'
+      payload:
+        $ref: '#/components/schemas/AccountEventPayload'
+    AccountDeleted:
+      name: account.deleted
+      title: Account Deleted
+      summary: A Moov account was deleted.
+      description: >-
+        Fired when an account is removed from the platform. Use this to clean up
+        associated data in your application.
+      headers:
+        $ref: '#/components/schemas/WebhookHeaders'
+      payload:
+        $ref: '#/components/schemas/AccountEventPayload'
+    RepresentativeCreated:
+      name: representative.created
+      title: Representative Created
+      summary: A business representative was added to an account.
+      description: >-
+        Fired when a new business representative is associated with a Moov
+        business account for KYB compliance.
+      headers:
+        $ref: '#/components/schemas/WebhookHeaders'
+      payload:
+        $ref: '#/components/schemas/RepresentativeEventPayload'
+    RepresentativeUpdated:
+      name: representative.updated
+      title: Representative Updated
+      summary: A business representative's information was updated.
+      description: >-
+        Fired when a representative's profile, responsibilities, or verification
+        status changes on a business account.
+      headers:
+        $ref: '#/components/schemas/WebhookHeaders'
+      payload:
+        $ref: '#/components/schemas/RepresentativeEventPayload'
+    RepresentativeDisabled:
+      name: representative.disabled
+      title: Representative Disabled
+      summary: A business representative was disabled on an account.
+      description: >-
+        Fired when a representative is removed or disabled from a Moov business
+        account.
+      headers:
+        $ref: '#/components/schemas/WebhookHeaders'
+      payload:
+        $ref: '#/components/schemas/RepresentativeEventPayload'
+    CapabilityRequested:
+      name: capability.requested
+      title: Capability Requested
+      summary: A capability was requested for a Moov account.
+      description: >-
+        Fired when a new capability is requested on an account, indicating that
+        Moov is evaluating eligibility and may require additional information.
+      headers:
+        $ref: '#/components/schemas/WebhookHeaders'
+      payload:
+        $ref: '#/components/schemas/CapabilityEventPayload'
+    CapabilityUpdated:
+      name: capability.updated
+      title: Capability Updated
+      summary: The status of a capability changed.
+      description: >-
+        Fired when a capability transitions between states (e.g., from pending to
+        enabled, or when new requirements are added). Use this to prompt users to
+        complete onboarding steps.
+      headers:
+        $ref: '#/components/schemas/WebhookHeaders'
+      payload:
+        $ref: '#/components/schemas/CapabilityEventPayload'
+    BankAccountCreated:
+      name: bankAccount.created
+      title: Bank Account Created
+      summary: A bank account was linked to a Moov account.
+      description: >-
+        Fired when a new bank account is connected to a Moov account as a funding
+        source. The bank account may still need verification before it can be
+        used for transfers.
+      headers:
+        $ref: '#/components/schemas/WebhookHeaders'
+      payload:
+        $ref: '#/components/schemas/BankAccountEventPayload'
+    BankAccountUpdated:
+      name: bankAccount.updated
+      title: Bank Account Updated
+      summary: A linked bank account was updated.
+      description: >-
+        Fired when the status or details of a linked bank account change, including
+        when verification completes or fails.
+      headers:
+        $ref: '#/components/schemas/WebhookHeaders'
+      payload:
+        $ref: '#/components/schemas/BankAccountEventPayload'
+    BankAccountDeleted:
+      name: bankAccount.deleted
+      title: Bank Account Deleted
+      summary: A bank account was removed from a Moov account.
+      description: >-
+        Fired when a bank account is unlinked and deleted from a Moov account.
+      headers:
+        $ref: '#/components/schemas/WebhookHeaders'
+      payload:
+        $ref: '#/components/schemas/BankAccountEventPayload'
+    PaymentMethodEnabled:
+      name: paymentMethod.enabled
+      title: Payment Method Enabled
+      summary: A payment method became available for use.
+      description: >-
+        Fired when a payment method (bank account, card, or wallet) is enabled
+        and available for use as a transfer source or destination on an account.
+      headers:
+        $ref: '#/components/schemas/WebhookHeaders'
+      payload:
+        $ref: '#/components/schemas/PaymentMethodEventPayload'
+    PaymentMethodDisabled:
+      name: paymentMethod.disabled
+      title: Payment Method Disabled
+      summary: A payment method was disabled.
+      description: >-
+        Fired when a payment method is disabled and can no longer be used for
+        new transfers on an account.
+      headers:
+        $ref: '#/components/schemas/WebhookHeaders'
+      payload:
+        $ref: '#/components/schemas/PaymentMethodEventPayload'
+    TransferCreated:
+      name: transfer.created
+      title: Transfer Created
+      summary: A new transfer was initiated.
+      description: >-
+        Fired when a new money movement transfer is created on the platform.
+        This is the initial event in the transfer lifecycle. Subscribe to
+        transfer.updated for ongoing status changes.
+      headers:
+        $ref: '#/components/schemas/WebhookHeaders'
+      payload:
+        $ref: '#/components/schemas/TransferEventPayload'
+    TransferUpdated:
+      name: transfer.updated
+      title: Transfer Updated
+      summary: A transfer's status or details changed.
+      description: >-
+        Fired as a transfer progresses through its lifecycle. Moov sends both
+        overall transfer status updates and granular, rail-specific status updates
+        to provide full visibility into each stage of the money movement process.
+      headers:
+        $ref: '#/components/schemas/WebhookHeaders'
+      payload:
+        $ref: '#/components/schemas/TransferEventPayload'
+    RefundCreated:
+      name: refund.created
+      title: Refund Created
+      summary: A refund was created for a card transfer.
+      description: >-
+        Fired when a refund is initiated against a completed card transfer. The
+        refund may be full or partial.
+      headers:
+        $ref: '#/components/schemas/WebhookHeaders'
+      payload:
+        $ref: '#/components/schemas/RefundEventPayload'
+    RefundUpdated:
+      name: refund.updated
+      title: Refund Updated
+      summary: A refund's status changed.
+      description: >-
+        Fired when a refund progresses through its lifecycle, including when
+        it completes or fails.
+      headers:
+        $ref: '#/components/schemas/WebhookHeaders'
+      payload:
+        $ref: '#/components/schemas/RefundEventPayload'
+    SweepCreated:
+      name: sweep.created
+      title: Sweep Created
+      summary: A new sweep execution was created.
+      description: >-
+        Fired when a scheduled sweep transfer is created based on an active
+        sweep configuration. The sweep will transfer available wallet funds
+        to the configured bank account.
+      headers:
+        $ref: '#/components/schemas/WebhookHeaders'
+      payload:
+        $ref: '#/components/schemas/SweepEventPayload'
+    SweepUpdated:
+      name: sweep.updated
+      title: Sweep Updated
+      summary: A sweep execution's status changed.
+      description: >-
+        Fired when the status of a sweep execution changes, such as when the
+        underlying transfer completes or fails.
+      headers:
+        $ref: '#/components/schemas/WebhookHeaders'
+      payload:
+        $ref: '#/components/schemas/SweepEventPayload'
+    DisputeCreated:
+      name: dispute.created
+      title: Dispute Created
+      summary: A card payment dispute was opened.
+      description: >-
+        Fired when a cardholder initiates a dispute (chargeback) against a card
+        payment on your platform. Review the dispute details and submit evidence
+        by the respondBy deadline to contest it.
+      headers:
+        $ref: '#/components/schemas/WebhookHeaders'
+      payload:
+        $ref: '#/components/schemas/DisputeEventPayload'
+    DisputeUpdated:
+      name: dispute.updated
+      title: Dispute Updated
+      summary: A dispute's status or phase changed.
+      description: >-
+        Fired when a dispute progresses through its lifecycle, including when
+        evidence is reviewed, when the dispute moves to arbitration, or when
+        it is resolved as won or lost.
+      headers:
+        $ref: '#/components/schemas/WebhookHeaders'
+      payload:
+        $ref: '#/components/schemas/DisputeEventPayload'
+    BalanceUpdated:
+      name: balance.updated
+      title: Balance Updated
+      summary: A Moov wallet balance was updated.
+      description: >-
+        Fired when the available balance of a Moov wallet changes due to a
+        transfer, refund, sweep, fee, or other wallet transaction.
+      headers:
+        $ref: '#/components/schemas/WebhookHeaders'
+      payload:
+        $ref: '#/components/schemas/BalanceEventPayload'
+    WalletTransactionUpdated:
+      name: walletTransaction.updated
+      title: Wallet Transaction Updated
+      summary: A wallet transaction's status changed.
+      description: >-
+        Fired when a wallet transaction status changes, providing granular
+        visibility into individual credits and debits within a wallet.
+      headers:
+        $ref: '#/components/schemas/WebhookHeaders'
+      payload:
+        $ref: '#/components/schemas/WalletTransactionEventPayload'
+    BillingStatementCreated:
+      name: billingStatement.created
+      title: Billing Statement Created
+      summary: A merchant billing statement became available.
+      description: >-
+        Fired when a new billing statement is generated and available for download
+        in the Moov Dashboard. Billing statements summarize fees and transactions
+        for the billing period.
+      headers:
+        $ref: '#/components/schemas/WebhookHeaders'
+      payload:
+        $ref: '#/components/schemas/BillingStatementEventPayload'
+    InvoiceCreated:
+      name: invoice.created
+      title: Invoice Created
+      summary: A new invoice was created.
+      description: >-
+        Fired when a new invoice is generated on the platform.
+      headers:
+        $ref: '#/components/schemas/WebhookHeaders'
+      payload:
+        $ref: '#/components/schemas/InvoiceEventPayload'
+    InvoiceUpdated:
+      name: invoice.updated
+      title: Invoice Updated
+      summary: An invoice was updated.
+      description: >-
+        Fired when an existing invoice is updated, such as when its status changes
+        or payment is applied.
+      headers:
+        $ref: '#/components/schemas/WebhookHeaders'
+      payload:
+        $ref: '#/components/schemas/InvoiceEventPayload'
+  schemas:
+    WebhookHeaders:
+      type: object
+      description: HTTP headers included with every Moov webhook delivery for security verification.
+      properties:
+        X-Timestamp:
+          type: string
+          description: ISO 8601 timestamp of when the webhook was sent. Used in signature verification.
+        X-Nonce:
+          type: string
+          description: One-time random value used in signature verification to prevent replay attacks.
+        X-Webhook-ID:
+          type: string
+          description: Unique identifier for this webhook delivery attempt.
+        X-Signature:
+          type: string
+          description: >-
+            HMAC-SHA512 hash of the concatenated string "timestamp|nonce|webhookID"
+            signed with the webhook signing secret from the Moov Dashboard.
+    WebhookEventBase:
+      type: object
+      description: Base structure shared by all Moov webhook event payloads.
+      required:
+        - eventID
+        - type
+        - createdOn
+      properties:
+        eventID:
+          type: string
+          format: uuid
+          description: Unique identifier for this event instance.
+        type:
+          type: string
+          description: Event type identifier describing what occurred (e.g., "transfer.created").
+        createdOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the event was generated.
+        data:
+          type: object
+          description: Event-specific payload data relevant to what occurred.
+    AccountEventPayload:
+      allOf:
+        - $ref: '#/components/schemas/WebhookEventBase'
+        - type: object
+          properties:
+            data:
+              type: object
+              description: Account event data.
+              properties:
+                accountID:
+                  type: string
+                  format: uuid
+                  description: Unique identifier of the affected account.
+                accountType:
+                  type: string
+                  description: Whether the account is for an individual or a business.
+                  enum: [individual, business]
+                displayName:
+                  type: string
+                  description: Human-readable display name for the account.
+                verificationStatus:
+                  type: string
+                  description: Current KYC/KYB verification status of the account.
+                  enum: [unverified, pending, resubmit, review, verified, failed]
+                createdOn:
+                  type: string
+                  format: date-time
+                  description: ISO 8601 timestamp when the account was created.
+                updatedOn:
+                  type: string
+                  format: date-time
+                  description: ISO 8601 timestamp when the account was last updated.
+    RepresentativeEventPayload:
+      allOf:
+        - $ref: '#/components/schemas/WebhookEventBase'
+        - type: object
+          properties:
+            data:
+              type: object
+              description: Representative event data.
+              properties:
+                accountID:
+                  type: string
+                  format: uuid
+                  description: The account this representative is associated with.
+                representativeID:
+                  type: string
+                  format: uuid
+                  description: Unique identifier for the representative.
+                createdOn:
+                  type: string
+                  format: date-time
+                  description: ISO 8601 timestamp when the representative was created.
+                updatedOn:
+                  type: string
+                  format: date-time
+                  description: ISO 8601 timestamp when the representative was last updated.
+                disabledOn:
+                  type: string
+                  format: date-time
+                  description: ISO 8601 timestamp when the representative was disabled, if applicable.
+    CapabilityEventPayload:
+      allOf:
+        - $ref: '#/components/schemas/WebhookEventBase'
+        - type: object
+          properties:
+            data:
+              type: object
+              description: Capability event data.
+              properties:
+                accountID:
+                  type: string
+                  format: uuid
+                  description: The account this capability is associated with.
+                capability:
+                  type: string
+                  description: Identifier of the capability type.
+                status:
+                  type: string
+                  description: New status of the capability after the event.
+                  enum: [enabled, disabled, pending, in-review]
+                requirements:
+                  type: array
+                  description: Outstanding requirements needed to activate the capability.
+                  items:
+                    type: object
+                    properties:
+                      requirement:
+                        type: string
+                        description: Identifier of the outstanding requirement.
+                      errorCode:
+                        type: string
+                        description: Error code providing detail about the requirement.
+                updatedOn:
+                  type: string
+                  format: date-time
+                  description: ISO 8601 timestamp when the capability was updated.
+    BankAccountEventPayload:
+      allOf:
+        - $ref: '#/components/schemas/WebhookEventBase'
+        - type: object
+          properties:
+            data:
+              type: object
+              description: Bank account event data.
+              properties:
+                accountID:
+                  type: string
+                  format: uuid
+                  description: The Moov account this bank account belongs to.
+                bankAccountID:
+                  type: string
+                  format: uuid
+                  description: Unique identifier for the bank account.
+                bankName:
+                  type: string
+                  description: Name of the financial institution.
+                bankAccountType:
+                  type: string
+                  description: Type of bank account.
+                  enum: [checking, savings, loan]
+                status:
+                  type: string
+                  description: Updated status of the bank account.
+                  enum: [new, unverified, pending, verified, errored]
+                verificationStatus:
+                  type: string
+                  description: Updated verification status of the bank account.
+                  enum: [unverified, pending, verificationFailed, verified, mxVerified]
+                updatedOn:
+                  type: string
+                  format: date-time
+                  description: ISO 8601 timestamp when the bank account was updated.
+    PaymentMethodEventPayload:
+      allOf:
+        - $ref: '#/components/schemas/WebhookEventBase'
+        - type: object
+          properties:
+            data:
+              type: object
+              description: Payment method event data.
+              properties:
+                accountID:
+                  type: string
+                  format: uuid
+                  description: The account this payment method belongs to.
+                paymentMethodID:
+                  type: string
+                  format: uuid
+                  description: Unique identifier for the payment method.
+                paymentMethodType:
+                  type: string
+                  description: Type of the payment method.
+                  enum: [moov-wallet, ach-debit-fund, ach-debit-collect, ach-credit-standard, ach-credit-same-day, rtp-credit, card-payment]
+                updatedOn:
+                  type: string
+                  format: date-time
+                  description: ISO 8601 timestamp when the payment method status changed.
+    TransferEventPayload:
+      allOf:
+        - $ref: '#/components/schemas/WebhookEventBase'
+        - type: object
+          properties:
+            data:
+              type: object
+              description: Transfer event data.
+              properties:
+                transferID:
+                  type: string
+                  format: uuid
+                  description: Unique identifier for the transfer.
+                accountID:
+                  type: string
+                  format: uuid
+                  description: The platform account associated with the transfer.
+                status:
+                  type: string
+                  description: Current lifecycle status of the transfer.
+                  enum: [created, pending, completed, failed, reversed]
+                amount:
+                  type: object
+                  description: Transfer amount.
+                  properties:
+                    currency:
+                      type: string
+                      description: ISO 4217 currency code.
+                    value:
+                      type: integer
+                      description: Amount in the smallest currency unit.
+                createdOn:
+                  type: string
+                  format: date-time
+                  description: ISO 8601 timestamp when the transfer was created.
+                updatedOn:
+                  type: string
+                  format: date-time
+                  description: ISO 8601 timestamp when the transfer was last updated.
+                completedOn:
+                  type: string
+                  format: date-time
+                  description: ISO 8601 timestamp when the transfer completed.
+    RefundEventPayload:
+      allOf:
+        - $ref: '#/components/schemas/WebhookEventBase'
+        - type: object
+          properties:
+            data:
+              type: object
+              description: Refund event data.
+              properties:
+                refundID:
+                  type: string
+                  format: uuid
+                  description: Unique identifier for the refund.
+                transferID:
+                  type: string
+                  format: uuid
+                  description: The transfer this refund is associated with.
+                accountID:
+                  type: string
+                  format: uuid
+                  description: The account associated with the refund.
+                status:
+                  type: string
+                  description: Current status of the refund.
+                  enum: [created, pending, completed, failed]
+                amount:
+                  type: object
+                  description: Refund amount.
+                  properties:
+                    currency:
+                      type: string
+                      description: ISO 4217 currency code.
+                    value:
+                      type: integer
+                      description: Amount in the smallest currency unit.
+                updatedOn:
+                  type: string
+                  format: date-time
+                  description: ISO 8601 timestamp when the refund was last updated.
+    SweepEventPayload:
+      allOf:
+        - $ref: '#/components/schemas/WebhookEventBase'
+        - type: object
+          properties:
+            data:
+              type: object
+              description: Sweep event data.
+              properties:
+                sweepID:
+                  type: string
+                  format: uuid
+                  description: Unique identifier for the sweep execution.
+                sweepConfigID:
+                  type: string
+                  format: uuid
+                  description: The sweep configuration that triggered this sweep.
+                accountID:
+                  type: string
+                  format: uuid
+                  description: The account associated with the sweep.
+                walletID:
+                  type: string
+                  format: uuid
+                  description: The wallet from which funds were swept.
+                transferID:
+                  type: string
+                  format: uuid
+                  description: The transfer created to execute the sweep.
+                status:
+                  type: string
+                  description: Execution status of the sweep.
+                  enum: [scheduled, pending, completed, failed]
+                amount:
+                  type: object
+                  description: Amount swept.
+                  properties:
+                    currency:
+                      type: string
+                      description: ISO 4217 currency code.
+                    value:
+                      type: integer
+                      description: Amount in the smallest currency unit.
+                createdOn:
+                  type: string
+                  format: date-time
+                  description: ISO 8601 timestamp when the sweep was created.
+    DisputeEventPayload:
+      allOf:
+        - $ref: '#/components/schemas/WebhookEventBase'
+        - type: object
+          properties:
+            data:
+              type: object
+              description: Dispute event data.
+              properties:
+                disputeID:
+                  type: string
+                  format: uuid
+                  description: Unique identifier for the dispute.
+                transferID:
+                  type: string
+                  format: uuid
+                  description: The transfer associated with this dispute.
+                accountID:
+                  type: string
+                  format: uuid
+                  description: The account associated with the dispute.
+                phase:
+                  type: string
+                  description: Current phase of the dispute lifecycle.
+                  enum: [new, pre-arbitration, arbitration, won, lost]
+                status:
+                  type: string
+                  description: Current status of the dispute.
+                  enum: [new, responded, under-review, waiting-for-customer, closed]
+                amount:
+                  type: object
+                  description: Disputed amount.
+                  properties:
+                    currency:
+                      type: string
+                      description: ISO 4217 currency code.
+                    value:
+                      type: integer
+                      description: Amount in the smallest currency unit.
+                respondBy:
+                  type: string
+                  format: date-time
+                  description: ISO 8601 deadline for submitting evidence.
+                updatedOn:
+                  type: string
+                  format: date-time
+                  description: ISO 8601 timestamp when the dispute was updated.
+    BalanceEventPayload:
+      allOf:
+        - $ref: '#/components/schemas/WebhookEventBase'
+        - type: object
+          properties:
+            data:
+              type: object
+              description: Balance updated event data.
+              properties:
+                accountID:
+                  type: string
+                  format: uuid
+                  description: The account whose wallet balance changed.
+                walletID:
+                  type: string
+                  format: uuid
+                  description: The wallet whose balance was updated.
+                availableBalance:
+                  type: object
+                  description: Updated available balance of the wallet.
+                  properties:
+                    currency:
+                      type: string
+                      description: ISO 4217 currency code.
+                    value:
+                      type: integer
+                      description: Balance amount in the smallest currency unit.
+                updatedOn:
+                  type: string
+                  format: date-time
+                  description: ISO 8601 timestamp when the balance was updated.
+    WalletTransactionEventPayload:
+      allOf:
+        - $ref: '#/components/schemas/WebhookEventBase'
+        - type: object
+          properties:
+            data:
+              type: object
+              description: Wallet transaction event data.
+              properties:
+                accountID:
+                  type: string
+                  format: uuid
+                  description: The account associated with the wallet transaction.
+                walletID:
+                  type: string
+                  format: uuid
+                  description: The wallet this transaction belongs to.
+                transactionID:
+                  type: string
+                  format: uuid
+                  description: Unique identifier for the wallet transaction.
+                transactionType:
+                  type: string
+                  description: Type of wallet transaction.
+                  enum: [ach-reversal, card-payment, ach-payment, rtp-payment, wallet-transfer, dispute, dispute-reversal, moov-fee, moov-fee-reversal, refund, refund-failure]
+                status:
+                  type: string
+                  description: Current status of the wallet transaction.
+                  enum: [pending, completed, failed]
+                amount:
+                  type: object
+                  description: Transaction amount.
+                  properties:
+                    currency:
+                      type: string
+                      description: ISO 4217 currency code.
+                    value:
+                      type: integer
+                      description: Amount in the smallest currency unit.
+                updatedOn:
+                  type: string
+                  format: date-time
+                  description: ISO 8601 timestamp when the wallet transaction was updated.
+    BillingStatementEventPayload:
+      allOf:
+        - $ref: '#/components/schemas/WebhookEventBase'
+        - type: object
+          properties:
+            data:
+              type: object
+              description: Billing statement event data.
+              properties:
+                accountID:
+                  type: string
+                  format: uuid
+                  description: The account this billing statement belongs to.
+                statementID:
+                  type: string
+                  format: uuid
+                  description: Unique identifier for the billing statement.
+                periodStart:
+                  type: string
+                  format: date
+                  description: ISO 8601 start date of the billing period.
+                periodEnd:
+                  type: string
+                  format: date
+                  description: ISO 8601 end date of the billing period.
+                createdOn:
+                  type: string
+                  format: date-time
+                  description: ISO 8601 timestamp when the statement was generated.
+    InvoiceEventPayload:
+      allOf:
+        - $ref: '#/components/schemas/WebhookEventBase'
+        - type: object
+          properties:
+            data:
+              type: object
+              description: Invoice event data.
+              properties:
+                invoiceID:
+                  type: string
+                  format: uuid
+                  description: Unique identifier for the invoice.
+                accountID:
+                  type: string
+                  format: uuid
+                  description: The account this invoice is associated with.
+                status:
+                  type: string
+                  description: Current status of the invoice.
+                  enum: [open, paid, void]
+                amount:
+                  type: object
+                  description: Invoice total amount.
+                  properties:
+                    currency:
+                      type: string
+                      description: ISO 4217 currency code.
+                    value:
+                      type: integer
+                      description: Amount in the smallest currency unit.
+                updatedOn:
+                  type: string
+                  format: date-time
+                  description: ISO 8601 timestamp when the invoice was last updated.

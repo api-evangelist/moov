@@ -1,0 +1,459 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://api.moov.io/schemas/moov/account.json",
+  "title": "Moov Account",
+  "description": "Schema for a Moov account representing a legal entity (individual or business) that can send, receive, and store funds on the Moov financial infrastructure platform. Accounts are the foundation for all money movement operations and must complete KYC or KYB verification before full capabilities are enabled.",
+  "type": "object",
+  "required": ["accountID", "accountType", "profile"],
+  "properties": {
+    "accountID": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier assigned to the account by Moov."
+    },
+    "accountType": {
+      "type": "string",
+      "description": "Whether the account represents an individual person or a business entity.",
+      "enum": ["individual", "business"]
+    },
+    "displayName": {
+      "type": "string",
+      "description": "Human-readable display name for the account, typically derived from the profile name."
+    },
+    "profile": {
+      "$ref": "#/$defs/AccountProfile",
+      "description": "Profile information for the account, containing either individual or business details."
+    },
+    "capabilities": {
+      "type": "array",
+      "description": "List of capabilities enabled on this account that control what financial operations are permitted.",
+      "items": {
+        "$ref": "#/$defs/Capability"
+      }
+    },
+    "verification": {
+      "$ref": "#/$defs/AccountVerification",
+      "description": "KYC or KYB identity verification status for the account."
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Custom key-value pairs for application-specific data attached to the account.",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "foreignID": {
+      "type": "string",
+      "description": "Optional external identifier from your system associated with this account."
+    },
+    "createdOn": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the account was created."
+    },
+    "updatedOn": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the account was last updated."
+    }
+  },
+  "$defs": {
+    "AccountProfile": {
+      "type": "object",
+      "description": "Profile data for a Moov account. Contains either individual or business details depending on the account type.",
+      "properties": {
+        "individual": {
+          "$ref": "#/$defs/IndividualProfile",
+          "description": "Profile for individual accounts. Required when accountType is 'individual'."
+        },
+        "business": {
+          "$ref": "#/$defs/BusinessProfile",
+          "description": "Profile for business accounts. Required when accountType is 'business'."
+        }
+      }
+    },
+    "IndividualProfile": {
+      "type": "object",
+      "description": "Personal profile data for an individual Moov account holder.",
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/Name",
+          "description": "Legal name of the individual."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Email address of the individual account holder."
+        },
+        "phone": {
+          "$ref": "#/$defs/Phone",
+          "description": "Phone number of the individual."
+        },
+        "address": {
+          "$ref": "#/$defs/Address",
+          "description": "Residential or mailing address of the individual."
+        },
+        "birthDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of birth in ISO 8601 format (YYYY-MM-DD). Required for KYC verification."
+        },
+        "governmentID": {
+          "$ref": "#/$defs/GovernmentID",
+          "description": "Government-issued identification number for KYC identity verification."
+        }
+      }
+    },
+    "BusinessProfile": {
+      "type": "object",
+      "description": "Business profile data for a Moov business account, required for KYB compliance.",
+      "properties": {
+        "legalBusinessName": {
+          "type": "string",
+          "description": "Registered legal name of the business as it appears on official documents."
+        },
+        "businessType": {
+          "type": "string",
+          "description": "Legal structure or entity type of the business.",
+          "enum": [
+            "soleProprietorship",
+            "unincorporatedAssociation",
+            "trust",
+            "publicCorporation",
+            "privateCorporation",
+            "llc",
+            "partnership",
+            "unincorporatedNonProfit",
+            "incorporatedNonProfit"
+          ]
+        },
+        "address": {
+          "$ref": "#/$defs/Address",
+          "description": "Principal place of business address."
+        },
+        "phone": {
+          "$ref": "#/$defs/Phone",
+          "description": "Primary business phone number."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Primary business email address for communications."
+        },
+        "website": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL of the business website."
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief description of the business and its products or services.",
+          "maxLength": 500
+        },
+        "taxID": {
+          "$ref": "#/$defs/TaxID",
+          "description": "Federal tax identification number for the business."
+        },
+        "industryCodes": {
+          "$ref": "#/$defs/IndustryCodes",
+          "description": "Standard industry classification codes for the business."
+        }
+      }
+    },
+    "Name": {
+      "type": "object",
+      "description": "Full legal name of an individual.",
+      "required": ["firstName", "lastName"],
+      "properties": {
+        "firstName": {
+          "type": "string",
+          "description": "Given name of the individual.",
+          "minLength": 1
+        },
+        "middleName": {
+          "type": "string",
+          "description": "Middle name or initial of the individual."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "Family name or surname of the individual.",
+          "minLength": 1
+        },
+        "suffix": {
+          "type": "string",
+          "description": "Name suffix (e.g., Jr., Sr., III, Esq.)."
+        }
+      }
+    },
+    "Phone": {
+      "type": "object",
+      "description": "Phone number with international country dialing code.",
+      "required": ["number"],
+      "properties": {
+        "number": {
+          "type": "string",
+          "description": "Phone number digits without formatting, spaces, or punctuation.",
+          "pattern": "^\\d{7,15}$"
+        },
+        "countryCode": {
+          "type": "string",
+          "description": "International country calling code without the leading plus sign (e.g., '1' for US/Canada).",
+          "pattern": "^\\d{1,4}$"
+        }
+      }
+    },
+    "Address": {
+      "type": "object",
+      "description": "Physical or mailing address for a Moov account holder.",
+      "required": ["addressLine1", "city", "stateOrProvince", "postalCode", "country"],
+      "properties": {
+        "addressLine1": {
+          "type": "string",
+          "description": "Primary street address including number and street name."
+        },
+        "addressLine2": {
+          "type": "string",
+          "description": "Secondary address line for suite, apartment, unit, or building number."
+        },
+        "city": {
+          "type": "string",
+          "description": "City or municipality name."
+        },
+        "stateOrProvince": {
+          "type": "string",
+          "description": "Two-letter state or province abbreviation code.",
+          "minLength": 2,
+          "maxLength": 2
+        },
+        "postalCode": {
+          "type": "string",
+          "description": "Postal code or ZIP code for the address.",
+          "pattern": "^[A-Z0-9 \\-]{3,10}$"
+        },
+        "country": {
+          "type": "string",
+          "description": "Two-letter ISO 3166-1 alpha-2 country code.",
+          "minLength": 2,
+          "maxLength": 2,
+          "pattern": "^[A-Z]{2}$"
+        }
+      }
+    },
+    "GovernmentID": {
+      "type": "object",
+      "description": "Government-issued identification for KYC identity verification of individuals.",
+      "properties": {
+        "ssn": {
+          "$ref": "#/$defs/SsnOrItin",
+          "description": "Social Security Number for US citizens and permanent residents."
+        },
+        "itin": {
+          "$ref": "#/$defs/SsnOrItin",
+          "description": "Individual Taxpayer Identification Number for non-SSN holders."
+        }
+      }
+    },
+    "SsnOrItin": {
+      "type": "object",
+      "description": "A US Social Security Number or Individual Taxpayer Identification Number.",
+      "properties": {
+        "full": {
+          "type": "string",
+          "description": "Full 9-digit identifier. Provided on write only; masked on subsequent reads for security.",
+          "pattern": "^\\d{9}$"
+        },
+        "lastFour": {
+          "type": "string",
+          "description": "Last four digits used for identification on read responses.",
+          "pattern": "^\\d{4}$"
+        }
+      }
+    },
+    "TaxID": {
+      "type": "object",
+      "description": "Federal tax identification number for a business entity.",
+      "properties": {
+        "ein": {
+          "type": "object",
+          "description": "Employer Identification Number issued by the IRS for US businesses.",
+          "properties": {
+            "number": {
+              "type": "string",
+              "description": "Full 9-digit EIN. Provided on write only; masked on subsequent reads.",
+              "pattern": "^\\d{9}$"
+            }
+          }
+        }
+      }
+    },
+    "IndustryCodes": {
+      "type": "object",
+      "description": "Standard industry classification codes that describe the business's primary activity.",
+      "properties": {
+        "naics": {
+          "type": "string",
+          "description": "North American Industry Classification System code (6 digits).",
+          "pattern": "^\\d{6}$"
+        },
+        "sic": {
+          "type": "string",
+          "description": "Standard Industrial Classification code (4 digits).",
+          "pattern": "^\\d{4}$"
+        },
+        "mcc": {
+          "type": "string",
+          "description": "Merchant Category Code used for card payment network classification (4 digits).",
+          "pattern": "^\\d{4}$"
+        }
+      }
+    },
+    "AccountVerification": {
+      "type": "object",
+      "description": "Identity verification status for a Moov account, reflecting the KYC or KYB review outcome.",
+      "properties": {
+        "verificationStatus": {
+          "type": "string",
+          "description": "Current KYC/KYB verification status of the account.",
+          "enum": ["unverified", "pending", "resubmit", "review", "verified", "failed"]
+        }
+      }
+    },
+    "Capability": {
+      "type": "object",
+      "description": "A capability that enables specific financial operations on a Moov account, such as sending or receiving funds.",
+      "required": ["capability", "status"],
+      "properties": {
+        "capability": {
+          "type": "string",
+          "description": "Identifier for the capability type (e.g., 'transfers.push', 'collect-funds', 'send-funds')."
+        },
+        "accountID": {
+          "type": "string",
+          "format": "uuid",
+          "description": "The account this capability is associated with."
+        },
+        "status": {
+          "type": "string",
+          "description": "Current activation status of the capability.",
+          "enum": ["enabled", "disabled", "pending", "in-review"]
+        },
+        "requirements": {
+          "type": "array",
+          "description": "Outstanding requirements that must be fulfilled to activate the capability.",
+          "items": {
+            "$ref": "#/$defs/CapabilityRequirement"
+          }
+        },
+        "disabledReason": {
+          "type": "string",
+          "description": "Human-readable explanation of why the capability is currently disabled."
+        },
+        "createdOn": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp when the capability was created."
+        },
+        "updatedOn": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp when the capability status was last updated."
+        }
+      }
+    },
+    "CapabilityRequirement": {
+      "type": "object",
+      "description": "A specific requirement that must be satisfied to enable a capability on the account.",
+      "properties": {
+        "requirement": {
+          "type": "string",
+          "description": "Machine-readable identifier for the type of requirement (e.g., 'account.individual.name')."
+        },
+        "errorCode": {
+          "type": "string",
+          "description": "Error code providing additional detail about why this requirement is unmet."
+        }
+      }
+    },
+    "Representative": {
+      "type": "object",
+      "description": "A business representative with significant ownership or control over a business account, required for FinCEN KYB compliance.",
+      "required": ["representativeID", "name"],
+      "properties": {
+        "representativeID": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Unique identifier for the business representative."
+        },
+        "name": {
+          "$ref": "#/$defs/Name",
+          "description": "Legal name of the representative."
+        },
+        "phone": {
+          "$ref": "#/$defs/Phone",
+          "description": "Representative's contact phone number."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Representative's email address."
+        },
+        "address": {
+          "$ref": "#/$defs/Address",
+          "description": "Representative's residential address."
+        },
+        "birthDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of birth in ISO 8601 format for identity verification."
+        },
+        "governmentID": {
+          "$ref": "#/$defs/GovernmentID",
+          "description": "Government-issued identification for the representative."
+        },
+        "responsibilities": {
+          "$ref": "#/$defs/RepresentativeResponsibilities",
+          "description": "Ownership stake and control role of this representative in the business."
+        },
+        "createdOn": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp when the representative was added to the account."
+        },
+        "updatedOn": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp when the representative was last updated."
+        },
+        "disabledOn": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp when the representative was disabled, if applicable."
+        }
+      }
+    },
+    "RepresentativeResponsibilities": {
+      "type": "object",
+      "description": "Ownership and control responsibilities defining the representative's role in the business.",
+      "properties": {
+        "isController": {
+          "type": "boolean",
+          "description": "Whether this representative has significant managerial control over the business."
+        },
+        "isOwner": {
+          "type": "boolean",
+          "description": "Whether this representative owns 25% or more of the business equity."
+        },
+        "ownershipPercentage": {
+          "type": "number",
+          "description": "Percentage of the business owned by this representative. Required when isOwner is true.",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "jobTitle": {
+          "type": "string",
+          "description": "Representative's official job title within the business (e.g., CEO, CFO, President)."
+        }
+      }
+    }
+  }
+}

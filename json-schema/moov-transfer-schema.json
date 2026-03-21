@@ -1,0 +1,291 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://api.moov.io/schemas/moov/transfer.json",
+  "title": "Moov Transfer",
+  "description": "Schema for a Moov money movement transfer between two accounts. Transfers move funds via ACH, RTP, or card rails and have a source payment method and a destination payment method. The transfer progresses through a lifecycle from created to completed or failed.",
+  "type": "object",
+  "required": ["transferID", "status", "source", "destination", "amount", "createdOn"],
+  "properties": {
+    "transferID": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for the transfer assigned by Moov."
+    },
+    "status": {
+      "type": "string",
+      "description": "Current lifecycle status of the transfer.",
+      "enum": ["created", "pending", "completed", "failed", "reversed"]
+    },
+    "source": {
+      "$ref": "#/$defs/TransferParticipant",
+      "description": "The payment method and account from which funds are debited."
+    },
+    "destination": {
+      "$ref": "#/$defs/TransferParticipant",
+      "description": "The payment method and account to which funds are credited."
+    },
+    "amount": {
+      "$ref": "#/$defs/Amount",
+      "description": "The total amount being transferred."
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable description of the transfer purpose.",
+      "maxLength": 100
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Custom key-value pairs for application-specific data attached to the transfer.",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "facilitatorFee": {
+      "$ref": "#/$defs/Amount",
+      "description": "Optional fee amount collected by the platform facilitator on this transfer."
+    },
+    "moovFee": {
+      "type": "integer",
+      "description": "Moov platform fee in cents charged for processing the transfer.",
+      "minimum": 0
+    },
+    "moovFeeDecimal": {
+      "type": "string",
+      "description": "Moov platform fee expressed as a decimal string for high-precision representation.",
+      "pattern": "^\\d+\\.\\d+$"
+    },
+    "createdOn": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the transfer was created."
+    },
+    "updatedOn": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the transfer was last updated."
+    },
+    "completedOn": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the transfer reached a terminal status."
+    }
+  },
+  "$defs": {
+    "Amount": {
+      "type": "object",
+      "description": "A monetary amount with ISO 4217 currency denomination.",
+      "required": ["currency", "value"],
+      "properties": {
+        "currency": {
+          "type": "string",
+          "description": "ISO 4217 three-letter currency code (e.g., USD).",
+          "minLength": 3,
+          "maxLength": 3,
+          "pattern": "^[A-Z]{3}$"
+        },
+        "value": {
+          "type": "integer",
+          "description": "Amount in the smallest currency unit (e.g., cents for USD). Must be a non-negative integer.",
+          "minimum": 0
+        }
+      }
+    },
+    "TransferParticipant": {
+      "type": "object",
+      "description": "One side of a transfer, representing the payment method and account involved.",
+      "required": ["paymentMethodID"],
+      "properties": {
+        "paymentMethodID": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Unique identifier of the payment method used for this side of the transfer."
+        },
+        "paymentMethodType": {
+          "type": "string",
+          "description": "The type of payment instrument used.",
+          "enum": [
+            "moov-wallet",
+            "ach-debit-fund",
+            "ach-debit-collect",
+            "ach-credit-standard",
+            "ach-credit-same-day",
+            "rtp-credit",
+            "card-payment"
+          ]
+        },
+        "account": {
+          "$ref": "#/$defs/AccountRef",
+          "description": "Reference to the Moov account on this side of the transfer."
+        },
+        "bankAccount": {
+          "$ref": "#/$defs/BankAccountRef",
+          "description": "Bank account details when the payment method type is an ACH rail."
+        },
+        "wallet": {
+          "$ref": "#/$defs/WalletRef",
+          "description": "Wallet details when the payment method type is moov-wallet."
+        },
+        "card": {
+          "$ref": "#/$defs/CardRef",
+          "description": "Card details when the payment method type is card-payment."
+        }
+      }
+    },
+    "AccountRef": {
+      "type": "object",
+      "description": "A lightweight reference to a Moov account.",
+      "properties": {
+        "accountID": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Unique identifier for the Moov account."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Email address of the account holder."
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Display name of the account."
+        }
+      }
+    },
+    "BankAccountRef": {
+      "type": "object",
+      "description": "Summary of a linked bank account involved in a transfer.",
+      "properties": {
+        "bankAccountID": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Unique identifier for the bank account."
+        },
+        "bankName": {
+          "type": "string",
+          "description": "Name of the financial institution."
+        },
+        "bankAccountType": {
+          "type": "string",
+          "description": "Type of bank account.",
+          "enum": ["checking", "savings", "loan"]
+        },
+        "lastFourAccountNumber": {
+          "type": "string",
+          "description": "Last four digits of the bank account number for identification.",
+          "pattern": "^\\d{4}$"
+        },
+        "routingNumber": {
+          "type": "string",
+          "description": "ABA routing transit number for the bank.",
+          "pattern": "^\\d{9}$"
+        }
+      }
+    },
+    "WalletRef": {
+      "type": "object",
+      "description": "Reference to a Moov digital wallet involved in a transfer.",
+      "properties": {
+        "walletID": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Unique identifier for the wallet."
+        }
+      }
+    },
+    "CardRef": {
+      "type": "object",
+      "description": "Summary of a linked card involved in a transfer.",
+      "properties": {
+        "cardID": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Unique identifier for the card."
+        },
+        "brand": {
+          "type": "string",
+          "description": "Card network brand.",
+          "enum": ["Visa", "Mastercard", "AmericanExpress", "Discover", "DinersClub", "JCB"]
+        },
+        "cardType": {
+          "type": "string",
+          "description": "Type of card instrument.",
+          "enum": ["debit", "credit", "prepaid", "unknown"]
+        },
+        "lastFourCardNumber": {
+          "type": "string",
+          "description": "Last four digits of the card number.",
+          "pattern": "^\\d{4}$"
+        },
+        "expiration": {
+          "type": "object",
+          "description": "Card expiration date.",
+          "properties": {
+            "month": {
+              "type": "string",
+              "description": "Two-digit expiration month.",
+              "pattern": "^(0[1-9]|1[0-2])$"
+            },
+            "year": {
+              "type": "string",
+              "description": "Two-digit expiration year.",
+              "pattern": "^\\d{2}$"
+            }
+          }
+        }
+      }
+    },
+    "Refund": {
+      "type": "object",
+      "description": "A refund issued against a completed card transfer, returning funds to the original payment method.",
+      "required": ["refundID", "status", "amount"],
+      "properties": {
+        "refundID": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Unique identifier for the refund."
+        },
+        "status": {
+          "type": "string",
+          "description": "Current processing status of the refund.",
+          "enum": ["created", "pending", "completed", "failed"]
+        },
+        "amount": {
+          "$ref": "#/$defs/Amount",
+          "description": "Amount being refunded. Must not exceed the original transfer amount."
+        },
+        "createdOn": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp when the refund was initiated."
+        },
+        "updatedOn": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp when the refund was last updated."
+        }
+      }
+    },
+    "TransferCancellation": {
+      "type": "object",
+      "description": "A cancellation request for a pending transfer that has not yet been submitted to the payment rail.",
+      "required": ["cancellationID", "status"],
+      "properties": {
+        "cancellationID": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Unique identifier for the cancellation request."
+        },
+        "status": {
+          "type": "string",
+          "description": "Status of the cancellation request.",
+          "enum": ["pending", "confirmed", "declined"]
+        },
+        "createdOn": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp when the cancellation was requested."
+        }
+      }
+    }
+  }
+}

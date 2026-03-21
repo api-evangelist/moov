@@ -1,0 +1,518 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "moov": "https://api.moov.io/schemas/moov/",
+    "schema": "https://schema.org/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "dcterms": "http://purl.org/dc/terms/",
+    "fibo-fnd-acc-cur": "https://spec.edmcouncil.org/fibo/ontology/FND/Accounting/CurrencyAmount/",
+
+    "Account": {
+      "@id": "moov:Account",
+      "@context": {
+        "accountID": {
+          "@id": "moov:accountID",
+          "@type": "xsd:string"
+        },
+        "accountType": {
+          "@id": "moov:accountType",
+          "@type": "xsd:string"
+        },
+        "displayName": {
+          "@id": "schema:name"
+        },
+        "profile": {
+          "@id": "moov:profile"
+        },
+        "capabilities": {
+          "@id": "moov:capabilities",
+          "@container": "@set"
+        },
+        "verification": {
+          "@id": "moov:verification"
+        },
+        "metadata": {
+          "@id": "moov:metadata"
+        },
+        "foreignID": {
+          "@id": "dcterms:identifier"
+        },
+        "createdOn": {
+          "@id": "dcterms:created",
+          "@type": "xsd:dateTime"
+        },
+        "updatedOn": {
+          "@id": "dcterms:modified",
+          "@type": "xsd:dateTime"
+        }
+      }
+    },
+
+    "IndividualProfile": {
+      "@id": "moov:IndividualProfile",
+      "@context": {
+        "name": {
+          "@id": "schema:name"
+        },
+        "email": {
+          "@id": "schema:email"
+        },
+        "phone": {
+          "@id": "schema:telephone"
+        },
+        "address": {
+          "@id": "schema:address"
+        },
+        "birthDate": {
+          "@id": "schema:birthDate",
+          "@type": "xsd:date"
+        },
+        "governmentID": {
+          "@id": "moov:governmentID"
+        }
+      }
+    },
+
+    "BusinessProfile": {
+      "@id": "moov:BusinessProfile",
+      "@context": {
+        "legalBusinessName": {
+          "@id": "schema:legalName"
+        },
+        "businessType": {
+          "@id": "moov:businessType"
+        },
+        "address": {
+          "@id": "schema:address"
+        },
+        "phone": {
+          "@id": "schema:telephone"
+        },
+        "email": {
+          "@id": "schema:email"
+        },
+        "website": {
+          "@id": "schema:url",
+          "@type": "@id"
+        },
+        "description": {
+          "@id": "schema:description"
+        },
+        "taxID": {
+          "@id": "moov:taxID"
+        },
+        "industryCodes": {
+          "@id": "moov:industryCodes"
+        }
+      }
+    },
+
+    "Address": {
+      "@id": "schema:PostalAddress",
+      "@context": {
+        "addressLine1": {
+          "@id": "schema:streetAddress"
+        },
+        "addressLine2": {
+          "@id": "moov:addressLine2"
+        },
+        "city": {
+          "@id": "schema:addressLocality"
+        },
+        "stateOrProvince": {
+          "@id": "schema:addressRegion"
+        },
+        "postalCode": {
+          "@id": "schema:postalCode"
+        },
+        "country": {
+          "@id": "schema:addressCountry"
+        }
+      }
+    },
+
+    "Transfer": {
+      "@id": "moov:Transfer",
+      "@context": {
+        "transferID": {
+          "@id": "moov:transferID",
+          "@type": "xsd:string"
+        },
+        "status": {
+          "@id": "moov:status"
+        },
+        "source": {
+          "@id": "moov:source"
+        },
+        "destination": {
+          "@id": "moov:destination"
+        },
+        "amount": {
+          "@id": "moov:amount"
+        },
+        "description": {
+          "@id": "schema:description"
+        },
+        "metadata": {
+          "@id": "moov:metadata"
+        },
+        "facilitatorFee": {
+          "@id": "moov:facilitatorFee"
+        },
+        "moovFee": {
+          "@id": "moov:moovFee",
+          "@type": "xsd:integer"
+        },
+        "createdOn": {
+          "@id": "dcterms:created",
+          "@type": "xsd:dateTime"
+        },
+        "updatedOn": {
+          "@id": "dcterms:modified",
+          "@type": "xsd:dateTime"
+        },
+        "completedOn": {
+          "@id": "moov:completedOn",
+          "@type": "xsd:dateTime"
+        }
+      }
+    },
+
+    "Amount": {
+      "@id": "moov:Amount",
+      "@context": {
+        "currency": {
+          "@id": "fibo-fnd-acc-cur:hasMonetaryAmount"
+        },
+        "value": {
+          "@id": "schema:value",
+          "@type": "xsd:integer"
+        }
+      }
+    },
+
+    "BankAccount": {
+      "@id": "moov:BankAccount",
+      "@context": {
+        "bankAccountID": {
+          "@id": "moov:bankAccountID",
+          "@type": "xsd:string"
+        },
+        "bankName": {
+          "@id": "schema:name"
+        },
+        "bankAccountType": {
+          "@id": "moov:bankAccountType"
+        },
+        "routingNumber": {
+          "@id": "moov:routingNumber"
+        },
+        "lastFourAccountNumber": {
+          "@id": "moov:lastFourAccountNumber"
+        },
+        "status": {
+          "@id": "moov:status"
+        },
+        "verificationStatus": {
+          "@id": "moov:verificationStatus"
+        },
+        "createdOn": {
+          "@id": "dcterms:created",
+          "@type": "xsd:dateTime"
+        },
+        "updatedOn": {
+          "@id": "dcterms:modified",
+          "@type": "xsd:dateTime"
+        }
+      }
+    },
+
+    "Card": {
+      "@id": "moov:Card",
+      "@context": {
+        "cardID": {
+          "@id": "moov:cardID",
+          "@type": "xsd:string"
+        },
+        "brand": {
+          "@id": "moov:brand"
+        },
+        "cardType": {
+          "@id": "moov:cardType"
+        },
+        "lastFourCardNumber": {
+          "@id": "moov:lastFourCardNumber"
+        },
+        "holderName": {
+          "@id": "schema:name"
+        },
+        "billingAddress": {
+          "@id": "schema:address"
+        },
+        "issuer": {
+          "@id": "moov:issuer"
+        },
+        "issuerCountry": {
+          "@id": "moov:issuerCountry"
+        },
+        "createdOn": {
+          "@id": "dcterms:created",
+          "@type": "xsd:dateTime"
+        },
+        "updatedOn": {
+          "@id": "dcterms:modified",
+          "@type": "xsd:dateTime"
+        }
+      }
+    },
+
+    "Wallet": {
+      "@id": "moov:Wallet",
+      "@context": {
+        "walletID": {
+          "@id": "moov:walletID",
+          "@type": "xsd:string"
+        },
+        "availableBalance": {
+          "@id": "moov:availableBalance"
+        },
+        "createdOn": {
+          "@id": "dcterms:created",
+          "@type": "xsd:dateTime"
+        },
+        "updatedOn": {
+          "@id": "dcterms:modified",
+          "@type": "xsd:dateTime"
+        }
+      }
+    },
+
+    "PaymentMethod": {
+      "@id": "moov:PaymentMethod",
+      "@context": {
+        "paymentMethodID": {
+          "@id": "moov:paymentMethodID",
+          "@type": "xsd:string"
+        },
+        "paymentMethodType": {
+          "@id": "moov:paymentMethodType"
+        },
+        "wallet": {
+          "@id": "moov:wallet"
+        },
+        "bankAccount": {
+          "@id": "moov:bankAccount"
+        },
+        "card": {
+          "@id": "moov:card"
+        }
+      }
+    },
+
+    "Capability": {
+      "@id": "moov:Capability",
+      "@context": {
+        "capability": {
+          "@id": "moov:capabilityType"
+        },
+        "accountID": {
+          "@id": "moov:accountID",
+          "@type": "xsd:string"
+        },
+        "status": {
+          "@id": "moov:status"
+        },
+        "requirements": {
+          "@id": "moov:requirements",
+          "@container": "@set"
+        },
+        "disabledReason": {
+          "@id": "moov:disabledReason"
+        },
+        "createdOn": {
+          "@id": "dcterms:created",
+          "@type": "xsd:dateTime"
+        },
+        "updatedOn": {
+          "@id": "dcterms:modified",
+          "@type": "xsd:dateTime"
+        }
+      }
+    },
+
+    "Representative": {
+      "@id": "moov:Representative",
+      "@context": {
+        "representativeID": {
+          "@id": "moov:representativeID",
+          "@type": "xsd:string"
+        },
+        "name": {
+          "@id": "schema:name"
+        },
+        "phone": {
+          "@id": "schema:telephone"
+        },
+        "email": {
+          "@id": "schema:email"
+        },
+        "address": {
+          "@id": "schema:address"
+        },
+        "birthDate": {
+          "@id": "schema:birthDate",
+          "@type": "xsd:date"
+        },
+        "responsibilities": {
+          "@id": "moov:responsibilities"
+        },
+        "createdOn": {
+          "@id": "dcterms:created",
+          "@type": "xsd:dateTime"
+        },
+        "updatedOn": {
+          "@id": "dcterms:modified",
+          "@type": "xsd:dateTime"
+        },
+        "disabledOn": {
+          "@id": "moov:disabledOn",
+          "@type": "xsd:dateTime"
+        }
+      }
+    },
+
+    "Dispute": {
+      "@id": "moov:Dispute",
+      "@context": {
+        "disputeID": {
+          "@id": "moov:disputeID",
+          "@type": "xsd:string"
+        },
+        "transferID": {
+          "@id": "moov:transferID",
+          "@type": "xsd:string"
+        },
+        "phase": {
+          "@id": "moov:phase"
+        },
+        "status": {
+          "@id": "moov:status"
+        },
+        "amount": {
+          "@id": "moov:amount"
+        },
+        "reason": {
+          "@id": "moov:reason"
+        },
+        "respondBy": {
+          "@id": "moov:respondBy",
+          "@type": "xsd:dateTime"
+        },
+        "createdOn": {
+          "@id": "dcterms:created",
+          "@type": "xsd:dateTime"
+        },
+        "updatedOn": {
+          "@id": "dcterms:modified",
+          "@type": "xsd:dateTime"
+        }
+      }
+    },
+
+    "SweepConfig": {
+      "@id": "moov:SweepConfig",
+      "@context": {
+        "sweepConfigID": {
+          "@id": "moov:sweepConfigID",
+          "@type": "xsd:string"
+        },
+        "walletID": {
+          "@id": "moov:walletID",
+          "@type": "xsd:string"
+        },
+        "paymentMethodID": {
+          "@id": "moov:paymentMethodID",
+          "@type": "xsd:string"
+        },
+        "status": {
+          "@id": "moov:status"
+        },
+        "statementDescriptor": {
+          "@id": "moov:statementDescriptor"
+        },
+        "minimumBalance": {
+          "@id": "moov:minimumBalance"
+        },
+        "createdOn": {
+          "@id": "dcterms:created",
+          "@type": "xsd:dateTime"
+        },
+        "updatedOn": {
+          "@id": "dcterms:modified",
+          "@type": "xsd:dateTime"
+        }
+      }
+    },
+
+    "PaymentLink": {
+      "@id": "moov:PaymentLink",
+      "@context": {
+        "paymentLinkCode": {
+          "@id": "moov:paymentLinkCode"
+        },
+        "accountID": {
+          "@id": "moov:accountID",
+          "@type": "xsd:string"
+        },
+        "status": {
+          "@id": "moov:status"
+        },
+        "amount": {
+          "@id": "moov:amount"
+        },
+        "currency": {
+          "@id": "moov:currency"
+        },
+        "description": {
+          "@id": "schema:description"
+        },
+        "url": {
+          "@id": "schema:url",
+          "@type": "@id"
+        },
+        "expiresOn": {
+          "@id": "moov:expiresOn",
+          "@type": "xsd:dateTime"
+        },
+        "createdOn": {
+          "@id": "dcterms:created",
+          "@type": "xsd:dateTime"
+        },
+        "updatedOn": {
+          "@id": "dcterms:modified",
+          "@type": "xsd:dateTime"
+        }
+      }
+    },
+
+    "WebhookEvent": {
+      "@id": "moov:WebhookEvent",
+      "@context": {
+        "eventID": {
+          "@id": "moov:eventID",
+          "@type": "xsd:string"
+        },
+        "type": {
+          "@id": "moov:eventType"
+        },
+        "data": {
+          "@id": "moov:eventData"
+        },
+        "createdOn": {
+          "@id": "dcterms:created",
+          "@type": "xsd:dateTime"
+        }
+      }
+    }
+  }
+}
