@@ -22,47 +22,23 @@ servers:
   - url: https://api.moov.io
     description: Production Server
 tags:
-  - name: Authentication
-    description: OAuth2 access token creation and revocation for API authentication.
   - name: Accounts
     description: >-
       Create and manage Moov accounts representing individual or business legal
       entities. Accounts are the foundation for all money movement operations.
-  - name: Capabilities
-    description: >-
-      Request and manage capabilities that enable specific financial operations
-      on an account, such as send-funds or collect-funds.
-  - name: Representatives
-    description: >-
-      Manage business representatives associated with a Moov account for KYB
-      compliance and ownership verification.
+  - name: Authentication
+    description: OAuth2 access token creation and revocation for API authentication.
   - name: Bank Accounts
     description: >-
       Link and manage bank accounts as funding sources for ACH and RTP transfers.
       Includes micro-deposit and instant verification flows.
+  - name: Capabilities
+    description: >-
+      Request and manage capabilities that enable specific financial operations
+      on an account, such as send-funds or collect-funds.
   - name: Cards
     description: >-
       Link and manage debit and credit cards as payment sources on Moov accounts.
-  - name: Wallets
-    description: >-
-      Create and manage Moov digital wallets that hold funds within the platform.
-      Supports wallet transactions and balance adjustments.
-  - name: Payment Methods
-    description: >-
-      Retrieve the available payment methods on an account, including bank accounts,
-      cards, and wallets, which can be used as transfer sources or destinations.
-  - name: Transfers
-    description: >-
-      Initiate and manage money movement between Moov accounts. Supports ACH,
-      RTP, and card rails with full lifecycle tracking.
-  - name: Refunds
-    description: >-
-      Create and retrieve refunds for completed card transfers, including full and
-      partial refund support.
-  - name: Sweeps
-    description: >-
-      Configure automatic daily transfers from a Moov wallet to an external bank
-      account on a set schedule using ACH or RTP rails.
   - name: Disputes
     description: >-
       Manage card payment disputes including evidence submission, acceptance, and
@@ -71,6 +47,30 @@ tags:
     description: >-
       Create and manage shareable payment links that allow customers to pay via
       card or bank account without custom code.
+  - name: Payment Methods
+    description: >-
+      Retrieve the available payment methods on an account, including bank accounts,
+      cards, and wallets, which can be used as transfer sources or destinations.
+  - name: Refunds
+    description: >-
+      Create and retrieve refunds for completed card transfers, including full and
+      partial refund support.
+  - name: Representatives
+    description: >-
+      Manage business representatives associated with a Moov account for KYB
+      compliance and ownership verification.
+  - name: Sweeps
+    description: >-
+      Configure automatic daily transfers from a Moov wallet to an external bank
+      account on a set schedule using ACH or RTP rails.
+  - name: Transfers
+    description: >-
+      Initiate and manage money movement between Moov accounts. Supports ACH,
+      RTP, and card rails with full lifecycle tracking.
+  - name: Wallets
+    description: >-
+      Create and manage Moov digital wallets that hold funds within the platform.
+      Supports wallet transactions and balance adjustments.
 security:
   - bearerAuth: []
 paths:
