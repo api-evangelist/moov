@@ -1,0 +1,13 @@
+{
+  "repo": "moov",
+  "feeds": [
+    {
+      "source": "https://moov.io/blog/",
+      "feed_url": "https://moov.io/blog/index.xml",
+      "saved": 10,
+      "title": "Blog on The future of payments, built for technical teams | Moov"
+    }
+  ],
+  "post_count": 10,
+  "fetched": "2026-05-03T23:32:17Z"
+}

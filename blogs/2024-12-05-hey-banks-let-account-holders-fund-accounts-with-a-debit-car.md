@@ -1,0 +1,10 @@
+---
+title: "Hey banks, let account holders fund accounts with a debit card"
+url: "https://moov.io/blog/product/let-account-holders-fund-accounts-with-debit-card/"
+date: "Thu, 05 Dec 2024 00:00:00 +0000"
+author: ""
+feed_url: "https://moov.io/blog/index.xml"
+---
+<div class="lead">
+ 
+ <p>When you open a new bank account, there&rsquo;s usually one dominant emotion driving that decision: frustration. You’re fed up with your current financial institution. Maybe your account was mishandled, or you didn’t like the fees, or perhaps your bank just wasn’t meeting your needs. So, you decide to open a new account somewhere else.</p>
