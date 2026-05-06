@@ -1,0 +1,1899 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Moov API
+  description: The Moov API is a RESTful financial infrastructure platform that enables developers to integrate money movement
+    capabilities into their applications. The API supports a full range of financial operations including account management,
+    payment method onboarding, transfers, sweeps, refunds, dispute resolution, card issuing, and payment links. It provides
+    capabilities for accepting payments, storing funds in digital wallets, sending money between accounts, and issuing cards
+    for spend management. Authentication uses OAuth2 access tokens with permission scopes, and the API returns JSON responses
+    usi
+  tags:
+  - Moov
+  - API
+  created: '2026-05-06'
+  modified: '2026-05-06'
+capability:
+  consumes:
+  - type: http
+    namespace: moov
+    baseUri: https://api.moov.io
+    description: Moov API HTTP API.
+    authentication:
+      type: bearer
+      token: '{{MOOV_TOKEN}}'
+    resources:
+    - name: oauth2-token
+      path: /oauth2/token
+      operations:
+      - name: createaccesstoken
+        method: POST
+        description: Create an access token
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: oauth2-revoke
+      path: /oauth2/revoke
+      operations:
+      - name: revokeaccesstoken
+        method: POST
+        description: Revoke an access token
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: tos-token
+      path: /tos-token
+      operations:
+      - name: generatetostoken
+        method: GET
+        description: Generate a terms of service token
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts
+      path: /accounts
+      operations:
+      - name: createaccount
+        method: POST
+        description: Create an account
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: listaccounts
+        method: GET
+        description: List accounts
+        inputParameters:
+        - name: name
+          in: query
+          type: string
+          description: Filter accounts by display name.
+        - name: email
+          in: query
+          type: string
+          description: Filter accounts by email address.
+        - name: type
+          in: query
+          type: string
+          description: Filter by account type (individual or business).
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountid
+      path: /accounts/{accountID}
+      operations:
+      - name: getaccount
+        method: GET
+        description: Retrieve an account
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: updateaccount
+        method: PATCH
+        description: Update an account
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: deleteaccount
+        method: DELETE
+        description: Delete an account
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountid-connections
+      path: /accounts/{accountID}/connections
+      operations:
+      - name: shareaccountconnection
+        method: POST
+        description: Share an account connection
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountid-connected-accounts
+      path: /accounts/{accountID}/connected-accounts
+      operations:
+      - name: listconnectedaccounts
+        method: GET
+        description: List connected accounts
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountid-capabilities
+      path: /accounts/{accountID}/capabilities
+      operations:
+      - name: requestcapabilities
+        method: POST
+        description: Request capabilities
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: listcapabilities
+        method: GET
+        description: List capabilities
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountid-capabilities-capabilityid
+      path: /accounts/{accountID}/capabilities/{capabilityID}
+      operations:
+      - name: getcapability
+        method: GET
+        description: Retrieve a capability
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: disablecapability
+        method: DELETE
+        description: Disable a capability
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountid-representatives
+      path: /accounts/{accountID}/representatives
+      operations:
+      - name: addrepresentative
+        method: POST
+        description: Add a representative
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: listrepresentatives
+        method: GET
+        description: List representatives
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountid-representatives-representativ
+      path: /accounts/{accountID}/representatives/{representativeID}
+      operations:
+      - name: getrepresentative
+        method: GET
+        description: Retrieve a representative
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: updaterepresentative
+        method: PATCH
+        description: Update a representative
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: removerepresentative
+        method: DELETE
+        description: Remove a representative
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountid-bank-accounts
+      path: /accounts/{accountID}/bank-accounts
+      operations:
+      - name: linkbankaccount
+        method: POST
+        description: Link a bank account
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: listbankaccounts
+        method: GET
+        description: List bank accounts
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountid-bank-accounts-bankaccountid
+      path: /accounts/{accountID}/bank-accounts/{bankAccountID}
+      operations:
+      - name: getbankaccount
+        method: GET
+        description: Retrieve a bank account
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: deletebankaccount
+        method: DELETE
+        description: Delete a bank account
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountid-bank-accounts-bankaccountid-v
+      path: /accounts/{accountID}/bank-accounts/{bankAccountID}/verify
+      operations:
+      - name: initiatebankaccountverification
+        method: POST
+        description: Initiate bank account verification
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: completebankaccountverification
+        method: PUT
+        description: Complete bank account verification
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: getbankaccountverificationstatus
+        method: GET
+        description: Get verification status
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountid-bank-accounts-bankaccountid-m
+      path: /accounts/{accountID}/bank-accounts/{bankAccountID}/micro-deposits
+      operations:
+      - name: initiatemicrodeposits
+        method: POST
+        description: Initiate micro-deposits
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: completemicrodeposits
+        method: PUT
+        description: Complete micro-deposit verification
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountid-cards
+      path: /accounts/{accountID}/cards
+      operations:
+      - name: linkcard
+        method: POST
+        description: Link a card
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: listcards
+        method: GET
+        description: List cards
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountid-cards-cardid
+      path: /accounts/{accountID}/cards/{cardID}
+      operations:
+      - name: getcard
+        method: GET
+        description: Retrieve a card
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: updatecard
+        method: PATCH
+        description: Update a card
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: disablecard
+        method: DELETE
+        description: Disable a card
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountid-wallets
+      path: /accounts/{accountID}/wallets
+      operations:
+      - name: createwallet
+        method: POST
+        description: Create a wallet
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: listwallets
+        method: GET
+        description: List wallets
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountid-wallets-walletid
+      path: /accounts/{accountID}/wallets/{walletID}
+      operations:
+      - name: getwallet
+        method: GET
+        description: Retrieve a wallet
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: updatewallet
+        method: PATCH
+        description: Update a wallet
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountid-wallets-walletid-transactions
+      path: /accounts/{accountID}/wallets/{walletID}/transactions
+      operations:
+      - name: listwallettransactions
+        method: GET
+        description: List wallet transactions
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountid-wallets-walletid-transactions
+      path: /accounts/{accountID}/wallets/{walletID}/transactions/{transactionID}
+      operations:
+      - name: getwallettransaction
+        method: GET
+        description: Retrieve a wallet transaction
+        inputParameters:
+        - name: transactionID
+          in: path
+          type: string
+          required: true
+          description: Unique identifier for the wallet transaction.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountid-payment-methods
+      path: /accounts/{accountID}/payment-methods
+      operations:
+      - name: listpaymentmethods
+        method: GET
+        description: List payment methods
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountid-payment-methods-paymentmethod
+      path: /accounts/{accountID}/payment-methods/{paymentMethodID}
+      operations:
+      - name: getpaymentmethod
+        method: GET
+        description: Retrieve a payment method
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountid-transfers
+      path: /accounts/{accountID}/transfers
+      operations:
+      - name: createtransfer
+        method: POST
+        description: Create a transfer
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: listtransfers
+        method: GET
+        description: List transfers
+        inputParameters:
+        - name: status
+          in: query
+          type: string
+          description: Filter transfers by their current status.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountid-transfers-transferid
+      path: /accounts/{accountID}/transfers/{transferID}
+      operations:
+      - name: gettransfer
+        method: GET
+        description: Retrieve a transfer
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: updatetransfermetadata
+        method: PATCH
+        description: Update transfer metadata
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountid-transfer-options
+      path: /accounts/{accountID}/transfer-options
+      operations:
+      - name: gettransferoptions
+        method: POST
+        description: Retrieve transfer options
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountid-transfers-transferid-cancella
+      path: /accounts/{accountID}/transfers/{transferID}/cancellations
+      operations:
+      - name: canceltransfer
+        method: POST
+        description: Cancel a transfer
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountid-transfers-transferid-refunds
+      path: /accounts/{accountID}/transfers/{transferID}/refunds
+      operations:
+      - name: createrefund
+        method: POST
+        description: Create a refund
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: listrefunds
+        method: GET
+        description: List refunds
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountid-transfers-transferid-refunds-
+      path: /accounts/{accountID}/transfers/{transferID}/refunds/{refundID}
+      operations:
+      - name: getrefund
+        method: GET
+        description: Retrieve a refund
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountid-sweep-configs
+      path: /accounts/{accountID}/sweep-configs
+      operations:
+      - name: createsweepconfig
+        method: POST
+        description: Create a sweep config
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: listsweepconfigs
+        method: GET
+        description: List sweep configs
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountid-sweep-configs-sweepconfigid
+      path: /accounts/{accountID}/sweep-configs/{sweepConfigID}
+      operations:
+      - name: getsweepconfig
+        method: GET
+        description: Get a sweep config
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: updatesweepconfig
+        method: PATCH
+        description: Update a sweep config
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountid-wallets-walletid-sweeps
+      path: /accounts/{accountID}/wallets/{walletID}/sweeps
+      operations:
+      - name: listsweeps
+        method: GET
+        description: List sweeps
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountid-wallets-walletid-sweeps-sweep
+      path: /accounts/{accountID}/wallets/{walletID}/sweeps/{sweepID}
+      operations:
+      - name: getsweep
+        method: GET
+        description: Get a sweep
+        inputParameters:
+        - name: sweepID
+          in: path
+          type: string
+          required: true
+          description: Unique identifier for the sweep execution.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountid-disputes
+      path: /accounts/{accountID}/disputes
+      operations:
+      - name: listdisputes
+        method: GET
+        description: List disputes
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountid-disputes-disputeid
+      path: /accounts/{accountID}/disputes/{disputeID}
+      operations:
+      - name: getdispute
+        method: GET
+        description: Retrieve a dispute
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountid-disputes-disputeid-accept
+      path: /accounts/{accountID}/disputes/{disputeID}/accept
+      operations:
+      - name: acceptdispute
+        method: POST
+        description: Accept a dispute
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountid-disputes-disputeid-evidence-f
+      path: /accounts/{accountID}/disputes/{disputeID}/evidence-file
+      operations:
+      - name: uploaddisputeevidencefile
+        method: POST
+        description: Upload evidence file
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+  exposes:
+  - type: rest
+    port: 8080
+    namespace: moov-rest
+    description: REST adapter for Moov API.
+    resources:
+    - path: /oauth2/token
+      name: createaccesstoken
+      operations:
+      - method: POST
+        name: createaccesstoken
+        description: Create an access token
+        call: moov.createaccesstoken
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /oauth2/revoke
+      name: revokeaccesstoken
+      operations:
+      - method: POST
+        name: revokeaccesstoken
+        description: Revoke an access token
+        call: moov.revokeaccesstoken
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /tos-token
+      name: generatetostoken
+      operations:
+      - method: GET
+        name: generatetostoken
+        description: Generate a terms of service token
+        call: moov.generatetostoken
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts
+      name: createaccount
+      operations:
+      - method: POST
+        name: createaccount
+        description: Create an account
+        call: moov.createaccount
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts
+      name: listaccounts
+      operations:
+      - method: GET
+        name: listaccounts
+        description: List accounts
+        call: moov.listaccounts
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}
+      name: getaccount
+      operations:
+      - method: GET
+        name: getaccount
+        description: Retrieve an account
+        call: moov.getaccount
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}
+      name: updateaccount
+      operations:
+      - method: PATCH
+        name: updateaccount
+        description: Update an account
+        call: moov.updateaccount
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}
+      name: deleteaccount
+      operations:
+      - method: DELETE
+        name: deleteaccount
+        description: Delete an account
+        call: moov.deleteaccount
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/connections
+      name: shareaccountconnection
+      operations:
+      - method: POST
+        name: shareaccountconnection
+        description: Share an account connection
+        call: moov.shareaccountconnection
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/connected-accounts
+      name: listconnectedaccounts
+      operations:
+      - method: GET
+        name: listconnectedaccounts
+        description: List connected accounts
+        call: moov.listconnectedaccounts
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/capabilities
+      name: requestcapabilities
+      operations:
+      - method: POST
+        name: requestcapabilities
+        description: Request capabilities
+        call: moov.requestcapabilities
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/capabilities
+      name: listcapabilities
+      operations:
+      - method: GET
+        name: listcapabilities
+        description: List capabilities
+        call: moov.listcapabilities
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/capabilities/{capabilityID}
+      name: getcapability
+      operations:
+      - method: GET
+        name: getcapability
+        description: Retrieve a capability
+        call: moov.getcapability
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/capabilities/{capabilityID}
+      name: disablecapability
+      operations:
+      - method: DELETE
+        name: disablecapability
+        description: Disable a capability
+        call: moov.disablecapability
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/representatives
+      name: addrepresentative
+      operations:
+      - method: POST
+        name: addrepresentative
+        description: Add a representative
+        call: moov.addrepresentative
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/representatives
+      name: listrepresentatives
+      operations:
+      - method: GET
+        name: listrepresentatives
+        description: List representatives
+        call: moov.listrepresentatives
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/representatives/{representativeID}
+      name: getrepresentative
+      operations:
+      - method: GET
+        name: getrepresentative
+        description: Retrieve a representative
+        call: moov.getrepresentative
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/representatives/{representativeID}
+      name: updaterepresentative
+      operations:
+      - method: PATCH
+        name: updaterepresentative
+        description: Update a representative
+        call: moov.updaterepresentative
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/representatives/{representativeID}
+      name: removerepresentative
+      operations:
+      - method: DELETE
+        name: removerepresentative
+        description: Remove a representative
+        call: moov.removerepresentative
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/bank-accounts
+      name: linkbankaccount
+      operations:
+      - method: POST
+        name: linkbankaccount
+        description: Link a bank account
+        call: moov.linkbankaccount
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/bank-accounts
+      name: listbankaccounts
+      operations:
+      - method: GET
+        name: listbankaccounts
+        description: List bank accounts
+        call: moov.listbankaccounts
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/bank-accounts/{bankAccountID}
+      name: getbankaccount
+      operations:
+      - method: GET
+        name: getbankaccount
+        description: Retrieve a bank account
+        call: moov.getbankaccount
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/bank-accounts/{bankAccountID}
+      name: deletebankaccount
+      operations:
+      - method: DELETE
+        name: deletebankaccount
+        description: Delete a bank account
+        call: moov.deletebankaccount
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/bank-accounts/{bankAccountID}/verify
+      name: initiatebankaccountverification
+      operations:
+      - method: POST
+        name: initiatebankaccountverification
+        description: Initiate bank account verification
+        call: moov.initiatebankaccountverification
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/bank-accounts/{bankAccountID}/verify
+      name: completebankaccountverification
+      operations:
+      - method: PUT
+        name: completebankaccountverification
+        description: Complete bank account verification
+        call: moov.completebankaccountverification
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/bank-accounts/{bankAccountID}/verify
+      name: getbankaccountverificationstatus
+      operations:
+      - method: GET
+        name: getbankaccountverificationstatus
+        description: Get verification status
+        call: moov.getbankaccountverificationstatus
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/bank-accounts/{bankAccountID}/micro-deposits
+      name: initiatemicrodeposits
+      operations:
+      - method: POST
+        name: initiatemicrodeposits
+        description: Initiate micro-deposits
+        call: moov.initiatemicrodeposits
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/bank-accounts/{bankAccountID}/micro-deposits
+      name: completemicrodeposits
+      operations:
+      - method: PUT
+        name: completemicrodeposits
+        description: Complete micro-deposit verification
+        call: moov.completemicrodeposits
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/cards
+      name: linkcard
+      operations:
+      - method: POST
+        name: linkcard
+        description: Link a card
+        call: moov.linkcard
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/cards
+      name: listcards
+      operations:
+      - method: GET
+        name: listcards
+        description: List cards
+        call: moov.listcards
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/cards/{cardID}
+      name: getcard
+      operations:
+      - method: GET
+        name: getcard
+        description: Retrieve a card
+        call: moov.getcard
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/cards/{cardID}
+      name: updatecard
+      operations:
+      - method: PATCH
+        name: updatecard
+        description: Update a card
+        call: moov.updatecard
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/cards/{cardID}
+      name: disablecard
+      operations:
+      - method: DELETE
+        name: disablecard
+        description: Disable a card
+        call: moov.disablecard
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/wallets
+      name: createwallet
+      operations:
+      - method: POST
+        name: createwallet
+        description: Create a wallet
+        call: moov.createwallet
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/wallets
+      name: listwallets
+      operations:
+      - method: GET
+        name: listwallets
+        description: List wallets
+        call: moov.listwallets
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/wallets/{walletID}
+      name: getwallet
+      operations:
+      - method: GET
+        name: getwallet
+        description: Retrieve a wallet
+        call: moov.getwallet
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/wallets/{walletID}
+      name: updatewallet
+      operations:
+      - method: PATCH
+        name: updatewallet
+        description: Update a wallet
+        call: moov.updatewallet
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/wallets/{walletID}/transactions
+      name: listwallettransactions
+      operations:
+      - method: GET
+        name: listwallettransactions
+        description: List wallet transactions
+        call: moov.listwallettransactions
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/wallets/{walletID}/transactions/{transactionID}
+      name: getwallettransaction
+      operations:
+      - method: GET
+        name: getwallettransaction
+        description: Retrieve a wallet transaction
+        call: moov.getwallettransaction
+        with:
+          transactionID: rest.transactionID
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/payment-methods
+      name: listpaymentmethods
+      operations:
+      - method: GET
+        name: listpaymentmethods
+        description: List payment methods
+        call: moov.listpaymentmethods
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/payment-methods/{paymentMethodID}
+      name: getpaymentmethod
+      operations:
+      - method: GET
+        name: getpaymentmethod
+        description: Retrieve a payment method
+        call: moov.getpaymentmethod
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/transfers
+      name: createtransfer
+      operations:
+      - method: POST
+        name: createtransfer
+        description: Create a transfer
+        call: moov.createtransfer
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/transfers
+      name: listtransfers
+      operations:
+      - method: GET
+        name: listtransfers
+        description: List transfers
+        call: moov.listtransfers
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/transfers/{transferID}
+      name: gettransfer
+      operations:
+      - method: GET
+        name: gettransfer
+        description: Retrieve a transfer
+        call: moov.gettransfer
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/transfers/{transferID}
+      name: updatetransfermetadata
+      operations:
+      - method: PATCH
+        name: updatetransfermetadata
+        description: Update transfer metadata
+        call: moov.updatetransfermetadata
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/transfer-options
+      name: gettransferoptions
+      operations:
+      - method: POST
+        name: gettransferoptions
+        description: Retrieve transfer options
+        call: moov.gettransferoptions
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/transfers/{transferID}/cancellations
+      name: canceltransfer
+      operations:
+      - method: POST
+        name: canceltransfer
+        description: Cancel a transfer
+        call: moov.canceltransfer
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/transfers/{transferID}/refunds
+      name: createrefund
+      operations:
+      - method: POST
+        name: createrefund
+        description: Create a refund
+        call: moov.createrefund
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/transfers/{transferID}/refunds
+      name: listrefunds
+      operations:
+      - method: GET
+        name: listrefunds
+        description: List refunds
+        call: moov.listrefunds
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/transfers/{transferID}/refunds/{refundID}
+      name: getrefund
+      operations:
+      - method: GET
+        name: getrefund
+        description: Retrieve a refund
+        call: moov.getrefund
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/sweep-configs
+      name: createsweepconfig
+      operations:
+      - method: POST
+        name: createsweepconfig
+        description: Create a sweep config
+        call: moov.createsweepconfig
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/sweep-configs
+      name: listsweepconfigs
+      operations:
+      - method: GET
+        name: listsweepconfigs
+        description: List sweep configs
+        call: moov.listsweepconfigs
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/sweep-configs/{sweepConfigID}
+      name: getsweepconfig
+      operations:
+      - method: GET
+        name: getsweepconfig
+        description: Get a sweep config
+        call: moov.getsweepconfig
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/sweep-configs/{sweepConfigID}
+      name: updatesweepconfig
+      operations:
+      - method: PATCH
+        name: updatesweepconfig
+        description: Update a sweep config
+        call: moov.updatesweepconfig
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/wallets/{walletID}/sweeps
+      name: listsweeps
+      operations:
+      - method: GET
+        name: listsweeps
+        description: List sweeps
+        call: moov.listsweeps
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/wallets/{walletID}/sweeps/{sweepID}
+      name: getsweep
+      operations:
+      - method: GET
+        name: getsweep
+        description: Get a sweep
+        call: moov.getsweep
+        with:
+          sweepID: rest.sweepID
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/disputes
+      name: listdisputes
+      operations:
+      - method: GET
+        name: listdisputes
+        description: List disputes
+        call: moov.listdisputes
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/disputes/{disputeID}
+      name: getdispute
+      operations:
+      - method: GET
+        name: getdispute
+        description: Retrieve a dispute
+        call: moov.getdispute
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/disputes/{disputeID}/accept
+      name: acceptdispute
+      operations:
+      - method: POST
+        name: acceptdispute
+        description: Accept a dispute
+        call: moov.acceptdispute
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /accounts/{accountID}/disputes/{disputeID}/evidence-file
+      name: uploaddisputeevidencefile
+      operations:
+      - method: POST
+        name: uploaddisputeevidencefile
+        description: Upload evidence file
+        call: moov.uploaddisputeevidencefile
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    port: 9090
+    namespace: moov-mcp
+    transport: http
+    description: MCP adapter for Moov API for AI agent use.
+    tools:
+    - name: createaccesstoken
+      description: Create an access token
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: moov.createaccesstoken
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: revokeaccesstoken
+      description: Revoke an access token
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: moov.revokeaccesstoken
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: generatetostoken
+      description: Generate a terms of service token
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov.generatetostoken
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: createaccount
+      description: Create an account
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: moov.createaccount
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: listaccounts
+      description: List accounts
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov.listaccounts
+      with:
+        name: tools.name
+        email: tools.email
+        type: tools.type
+      inputParameters:
+      - name: name
+        type: string
+        description: Filter accounts by display name.
+      - name: email
+        type: string
+        description: Filter accounts by email address.
+      - name: type
+        type: string
+        description: Filter by account type (individual or business).
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: getaccount
+      description: Retrieve an account
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov.getaccount
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: updateaccount
+      description: Update an account
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: moov.updateaccount
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: deleteaccount
+      description: Delete an account
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: moov.deleteaccount
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: shareaccountconnection
+      description: Share an account connection
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: moov.shareaccountconnection
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: listconnectedaccounts
+      description: List connected accounts
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov.listconnectedaccounts
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: requestcapabilities
+      description: Request capabilities
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: moov.requestcapabilities
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: listcapabilities
+      description: List capabilities
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov.listcapabilities
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: getcapability
+      description: Retrieve a capability
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov.getcapability
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: disablecapability
+      description: Disable a capability
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: moov.disablecapability
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: addrepresentative
+      description: Add a representative
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: moov.addrepresentative
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: listrepresentatives
+      description: List representatives
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov.listrepresentatives
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: getrepresentative
+      description: Retrieve a representative
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov.getrepresentative
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: updaterepresentative
+      description: Update a representative
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: moov.updaterepresentative
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: removerepresentative
+      description: Remove a representative
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: moov.removerepresentative
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: linkbankaccount
+      description: Link a bank account
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: moov.linkbankaccount
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: listbankaccounts
+      description: List bank accounts
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov.listbankaccounts
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: getbankaccount
+      description: Retrieve a bank account
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov.getbankaccount
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: deletebankaccount
+      description: Delete a bank account
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: moov.deletebankaccount
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: initiatebankaccountverification
+      description: Initiate bank account verification
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: moov.initiatebankaccountverification
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: completebankaccountverification
+      description: Complete bank account verification
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: moov.completebankaccountverification
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: getbankaccountverificationstatus
+      description: Get verification status
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov.getbankaccountverificationstatus
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: initiatemicrodeposits
+      description: Initiate micro-deposits
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: moov.initiatemicrodeposits
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: completemicrodeposits
+      description: Complete micro-deposit verification
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: moov.completemicrodeposits
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: linkcard
+      description: Link a card
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: moov.linkcard
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: listcards
+      description: List cards
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov.listcards
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: getcard
+      description: Retrieve a card
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov.getcard
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: updatecard
+      description: Update a card
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: moov.updatecard
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: disablecard
+      description: Disable a card
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: moov.disablecard
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: createwallet
+      description: Create a wallet
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: moov.createwallet
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: listwallets
+      description: List wallets
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov.listwallets
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: getwallet
+      description: Retrieve a wallet
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov.getwallet
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: updatewallet
+      description: Update a wallet
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: moov.updatewallet
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: listwallettransactions
+      description: List wallet transactions
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov.listwallettransactions
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: getwallettransaction
+      description: Retrieve a wallet transaction
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov.getwallettransaction
+      with:
+        transactionID: tools.transactionID
+      inputParameters:
+      - name: transactionID
+        type: string
+        description: Unique identifier for the wallet transaction.
+        required: true
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: listpaymentmethods
+      description: List payment methods
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov.listpaymentmethods
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: getpaymentmethod
+      description: Retrieve a payment method
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov.getpaymentmethod
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: createtransfer
+      description: Create a transfer
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: moov.createtransfer
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: listtransfers
+      description: List transfers
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov.listtransfers
+      with:
+        status: tools.status
+      inputParameters:
+      - name: status
+        type: string
+        description: Filter transfers by their current status.
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: gettransfer
+      description: Retrieve a transfer
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov.gettransfer
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: updatetransfermetadata
+      description: Update transfer metadata
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: moov.updatetransfermetadata
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: gettransferoptions
+      description: Retrieve transfer options
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: moov.gettransferoptions
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: canceltransfer
+      description: Cancel a transfer
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: moov.canceltransfer
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: createrefund
+      description: Create a refund
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: moov.createrefund
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: listrefunds
+      description: List refunds
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov.listrefunds
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: getrefund
+      description: Retrieve a refund
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov.getrefund
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: createsweepconfig
+      description: Create a sweep config
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: moov.createsweepconfig
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: listsweepconfigs
+      description: List sweep configs
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov.listsweepconfigs
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: getsweepconfig
+      description: Get a sweep config
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov.getsweepconfig
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: updatesweepconfig
+      description: Update a sweep config
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: moov.updatesweepconfig
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: listsweeps
+      description: List sweeps
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov.listsweeps
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: getsweep
+      description: Get a sweep
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov.getsweep
+      with:
+        sweepID: tools.sweepID
+      inputParameters:
+      - name: sweepID
+        type: string
+        description: Unique identifier for the sweep execution.
+        required: true
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: listdisputes
+      description: List disputes
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov.listdisputes
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: getdispute
+      description: Retrieve a dispute
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov.getdispute
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: acceptdispute
+      description: Accept a dispute
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: moov.acceptdispute
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: uploaddisputeevidencefile
+      description: Upload evidence file
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: moov.uploaddisputeevidencefile
+      outputParameters:
+      - type: object
+        mapping: $.
+binds:
+- namespace: env
+  keys:
+    MOOV_TOKEN: MOOV_TOKEN
