@@ -5,7 +5,7 @@ description: Moov is a financial infrastructure platform that enables developers
   capabilities directly into their applications. Their developer platform provides a RESTful API, client-side
   JavaScript SDK, pre-built UI components, and official backend SDKs across multiple languages for building
   compliant, full-featured financial products.
-type: Contract
+kind: contract
 position: Consuming
 access: 3rd-Party
 image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
