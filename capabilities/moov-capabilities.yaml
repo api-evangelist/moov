@@ -1,0 +1,162 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Moov API — Capabilities
+  description: 'Moov API — Capabilities. 4 operations. Lead operation: Request capabilities. Self-contained Naftiko capability
+    covering one Moov business surface.'
+  tags:
+  - Moov
+  - Capabilities
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    MOOV_API_KEY: MOOV_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: moov-capabilities
+    baseUri: https://api.moov.io
+    description: Moov API — Capabilities business capability. Self-contained, no shared references.
+    resources:
+    - name: accounts-accountID-capabilities
+      path: /accounts/{accountID}/capabilities
+      operations:
+      - name: requestcapabilities
+        method: POST
+        description: Request capabilities
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+      - name: listcapabilities
+        method: GET
+        description: List capabilities
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountID-capabilities-capabilityID
+      path: /accounts/{accountID}/capabilities/{capabilityID}
+      operations:
+      - name: getcapability
+        method: GET
+        description: Retrieve a capability
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: disablecapability
+        method: DELETE
+        description: Disable a capability
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    authentication:
+      type: bearer
+      token: '{{env.MOOV_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: moov-capabilities-rest
+    port: 8080
+    description: REST adapter for Moov API — Capabilities. One Spectral-compliant resource per consumed operation, prefixed
+      with /v1.
+    resources:
+    - path: /v1/accounts/{accountid}/capabilities
+      name: accounts-accountid-capabilities
+      description: REST surface for accounts-accountID-capabilities.
+      operations:
+      - method: POST
+        name: requestcapabilities
+        description: Request capabilities
+        call: moov-capabilities.requestcapabilities
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: listcapabilities
+        description: List capabilities
+        call: moov-capabilities.listcapabilities
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/accounts/{accountid}/capabilities/{capabilityid}
+      name: accounts-accountid-capabilities-capabilityid
+      description: REST surface for accounts-accountID-capabilities-capabilityID.
+      operations:
+      - method: GET
+        name: getcapability
+        description: Retrieve a capability
+        call: moov-capabilities.getcapability
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: DELETE
+        name: disablecapability
+        description: Disable a capability
+        call: moov-capabilities.disablecapability
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: moov-capabilities-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Moov API — Capabilities. One tool per consumed operation, routed inline through this capability's
+      consumes block.
+    tools:
+    - name: request-capabilities
+      description: Request capabilities
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: moov-capabilities.requestcapabilities
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: list-capabilities
+      description: List capabilities
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov-capabilities.listcapabilities
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: retrieve-capability
+      description: Retrieve a capability
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov-capabilities.getcapability
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: disable-capability
+      description: Disable a capability
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: moov-capabilities.disablecapability
+      outputParameters:
+      - type: object
+        mapping: $.

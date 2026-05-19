@@ -1,0 +1,321 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Moov API — Bank Accounts
+  description: 'Moov API — Bank Accounts. 9 operations. Lead operation: Link a bank account. Self-contained Naftiko capability
+    covering one Moov business surface.'
+  tags:
+  - Moov
+  - Bank Accounts
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    MOOV_API_KEY: MOOV_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: moov-bank-accounts
+    baseUri: https://api.moov.io
+    description: Moov API — Bank Accounts business capability. Self-contained, no shared references.
+    resources:
+    - name: accounts-accountID-bank-accounts
+      path: /accounts/{accountID}/bank-accounts
+      operations:
+      - name: linkbankaccount
+        method: POST
+        description: Link a bank account
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+      - name: listbankaccounts
+        method: GET
+        description: List bank accounts
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountID-bank-accounts-bankAccountID
+      path: /accounts/{accountID}/bank-accounts/{bankAccountID}
+      operations:
+      - name: getbankaccount
+        method: GET
+        description: Retrieve a bank account
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: deletebankaccount
+        method: DELETE
+        description: Delete a bank account
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountID-bank-accounts-bankAccountID-micro-deposits
+      path: /accounts/{accountID}/bank-accounts/{bankAccountID}/micro-deposits
+      operations:
+      - name: initiatemicrodeposits
+        method: POST
+        description: Initiate micro-deposits
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: completemicrodeposits
+        method: PUT
+        description: Complete micro-deposit verification
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: accounts-accountID-bank-accounts-bankAccountID-verify
+      path: /accounts/{accountID}/bank-accounts/{bankAccountID}/verify
+      operations:
+      - name: initiatebankaccountverification
+        method: POST
+        description: Initiate bank account verification
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: completebankaccountverification
+        method: PUT
+        description: Complete bank account verification
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+      - name: getbankaccountverificationstatus
+        method: GET
+        description: Get verification status
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    authentication:
+      type: bearer
+      token: '{{env.MOOV_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: moov-bank-accounts-rest
+    port: 8080
+    description: REST adapter for Moov API — Bank Accounts. One Spectral-compliant resource per consumed operation, prefixed
+      with /v1.
+    resources:
+    - path: /v1/accounts/{accountid}/bank-accounts
+      name: accounts-accountid-bank-accounts
+      description: REST surface for accounts-accountID-bank-accounts.
+      operations:
+      - method: POST
+        name: linkbankaccount
+        description: Link a bank account
+        call: moov-bank-accounts.linkbankaccount
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: listbankaccounts
+        description: List bank accounts
+        call: moov-bank-accounts.listbankaccounts
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/accounts/{accountid}/bank-accounts/{bankaccountid}
+      name: accounts-accountid-bank-accounts-bankaccountid
+      description: REST surface for accounts-accountID-bank-accounts-bankAccountID.
+      operations:
+      - method: GET
+        name: getbankaccount
+        description: Retrieve a bank account
+        call: moov-bank-accounts.getbankaccount
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: DELETE
+        name: deletebankaccount
+        description: Delete a bank account
+        call: moov-bank-accounts.deletebankaccount
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/accounts/{accountid}/bank-accounts/{bankaccountid}/micro-deposits
+      name: accounts-accountid-bank-accounts-bankaccountid-micro-deposits
+      description: REST surface for accounts-accountID-bank-accounts-bankAccountID-micro-deposits.
+      operations:
+      - method: POST
+        name: initiatemicrodeposits
+        description: Initiate micro-deposits
+        call: moov-bank-accounts.initiatemicrodeposits
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PUT
+        name: completemicrodeposits
+        description: Complete micro-deposit verification
+        call: moov-bank-accounts.completemicrodeposits
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/accounts/{accountid}/bank-accounts/{bankaccountid}/verify
+      name: accounts-accountid-bank-accounts-bankaccountid-verify
+      description: REST surface for accounts-accountID-bank-accounts-bankAccountID-verify.
+      operations:
+      - method: POST
+        name: initiatebankaccountverification
+        description: Initiate bank account verification
+        call: moov-bank-accounts.initiatebankaccountverification
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PUT
+        name: completebankaccountverification
+        description: Complete bank account verification
+        call: moov-bank-accounts.completebankaccountverification
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getbankaccountverificationstatus
+        description: Get verification status
+        call: moov-bank-accounts.getbankaccountverificationstatus
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: moov-bank-accounts-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Moov API — Bank Accounts. One tool per consumed operation, routed inline through this capability's
+      consumes block.
+    tools:
+    - name: link-bank-account
+      description: Link a bank account
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: moov-bank-accounts.linkbankaccount
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: list-bank-accounts
+      description: List bank accounts
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov-bank-accounts.listbankaccounts
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: retrieve-bank-account
+      description: Retrieve a bank account
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov-bank-accounts.getbankaccount
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: delete-bank-account
+      description: Delete a bank account
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: moov-bank-accounts.deletebankaccount
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: initiate-micro-deposits
+      description: Initiate micro-deposits
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: moov-bank-accounts.initiatemicrodeposits
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: complete-micro-deposit-verification
+      description: Complete micro-deposit verification
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: moov-bank-accounts.completemicrodeposits
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: initiate-bank-account-verification
+      description: Initiate bank account verification
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: moov-bank-accounts.initiatebankaccountverification
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: complete-bank-account-verification
+      description: Complete bank account verification
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: moov-bank-accounts.completebankaccountverification
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: get-verification-status
+      description: Get verification status
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov-bank-accounts.getbankaccountverificationstatus
+      outputParameters:
+      - type: object
+        mapping: $.

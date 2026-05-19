@@ -1,0 +1,246 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Moov API — Sweeps
+  description: 'Moov API — Sweeps. 6 operations. Lead operation: Create a sweep config. Self-contained Naftiko capability
+    covering one Moov business surface.'
+  tags:
+  - Moov
+  - Sweeps
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    MOOV_API_KEY: MOOV_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: moov-sweeps
+    baseUri: https://api.moov.io
+    description: Moov API — Sweeps business capability. Self-contained, no shared references.
+    resources:
+    - name: accounts-accountID-sweep-configs
+      path: /accounts/{accountID}/sweep-configs
+      operations:
+      - name: createsweepconfig
+        method: POST
+        description: Create a sweep config
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+      - name: listsweepconfigs
+        method: GET
+        description: List sweep configs
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountID-sweep-configs-sweepConfigID
+      path: /accounts/{accountID}/sweep-configs/{sweepConfigID}
+      operations:
+      - name: getsweepconfig
+        method: GET
+        description: Get a sweep config
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: updatesweepconfig
+        method: PATCH
+        description: Update a sweep config
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: accounts-accountID-wallets-walletID-sweeps
+      path: /accounts/{accountID}/wallets/{walletID}/sweeps
+      operations:
+      - name: listsweeps
+        method: GET
+        description: List sweeps
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountID-wallets-walletID-sweeps-sweepID
+      path: /accounts/{accountID}/wallets/{walletID}/sweeps/{sweepID}
+      operations:
+      - name: getsweep
+        method: GET
+        description: Get a sweep
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: sweepID
+          in: path
+          type: string
+          description: Unique identifier for the sweep execution.
+          required: true
+    authentication:
+      type: bearer
+      token: '{{env.MOOV_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: moov-sweeps-rest
+    port: 8080
+    description: REST adapter for Moov API — Sweeps. One Spectral-compliant resource per consumed operation, prefixed with
+      /v1.
+    resources:
+    - path: /v1/accounts/{accountid}/sweep-configs
+      name: accounts-accountid-sweep-configs
+      description: REST surface for accounts-accountID-sweep-configs.
+      operations:
+      - method: POST
+        name: createsweepconfig
+        description: Create a sweep config
+        call: moov-sweeps.createsweepconfig
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: listsweepconfigs
+        description: List sweep configs
+        call: moov-sweeps.listsweepconfigs
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/accounts/{accountid}/sweep-configs/{sweepconfigid}
+      name: accounts-accountid-sweep-configs-sweepconfigid
+      description: REST surface for accounts-accountID-sweep-configs-sweepConfigID.
+      operations:
+      - method: GET
+        name: getsweepconfig
+        description: Get a sweep config
+        call: moov-sweeps.getsweepconfig
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updatesweepconfig
+        description: Update a sweep config
+        call: moov-sweeps.updatesweepconfig
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/accounts/{accountid}/wallets/{walletid}/sweeps
+      name: accounts-accountid-wallets-walletid-sweeps
+      description: REST surface for accounts-accountID-wallets-walletID-sweeps.
+      operations:
+      - method: GET
+        name: listsweeps
+        description: List sweeps
+        call: moov-sweeps.listsweeps
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/accounts/{accountid}/wallets/{walletid}/sweeps/{sweepid}
+      name: accounts-accountid-wallets-walletid-sweeps-sweepid
+      description: REST surface for accounts-accountID-wallets-walletID-sweeps-sweepID.
+      operations:
+      - method: GET
+        name: getsweep
+        description: Get a sweep
+        call: moov-sweeps.getsweep
+        with:
+          sweepID: rest.sweepID
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: moov-sweeps-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Moov API — Sweeps. One tool per consumed operation, routed inline through this capability's
+      consumes block.
+    tools:
+    - name: create-sweep-config
+      description: Create a sweep config
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: moov-sweeps.createsweepconfig
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: list-sweep-configs
+      description: List sweep configs
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov-sweeps.listsweepconfigs
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: get-sweep-config
+      description: Get a sweep config
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov-sweeps.getsweepconfig
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-sweep-config
+      description: Update a sweep config
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: moov-sweeps.updatesweepconfig
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: list-sweeps
+      description: List sweeps
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov-sweeps.listsweeps
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: get-sweep
+      description: Get a sweep
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov-sweeps.getsweep
+      with:
+        sweepID: tools.sweepID
+      outputParameters:
+      - type: object
+        mapping: $.

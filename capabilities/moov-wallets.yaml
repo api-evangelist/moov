@@ -1,0 +1,236 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Moov API — Wallets
+  description: 'Moov API — Wallets. 6 operations. Lead operation: Create a wallet. Self-contained Naftiko capability covering
+    one Moov business surface.'
+  tags:
+  - Moov
+  - Wallets
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    MOOV_API_KEY: MOOV_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: moov-wallets
+    baseUri: https://api.moov.io
+    description: Moov API — Wallets business capability. Self-contained, no shared references.
+    resources:
+    - name: accounts-accountID-wallets
+      path: /accounts/{accountID}/wallets
+      operations:
+      - name: createwallet
+        method: POST
+        description: Create a wallet
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: listwallets
+        method: GET
+        description: List wallets
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountID-wallets-walletID
+      path: /accounts/{accountID}/wallets/{walletID}
+      operations:
+      - name: getwallet
+        method: GET
+        description: Retrieve a wallet
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: updatewallet
+        method: PATCH
+        description: Update a wallet
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: accounts-accountID-wallets-walletID-transactions
+      path: /accounts/{accountID}/wallets/{walletID}/transactions
+      operations:
+      - name: listwallettransactions
+        method: GET
+        description: List wallet transactions
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-accountID-wallets-walletID-transactions-transactionID
+      path: /accounts/{accountID}/wallets/{walletID}/transactions/{transactionID}
+      operations:
+      - name: getwallettransaction
+        method: GET
+        description: Retrieve a wallet transaction
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: transactionID
+          in: path
+          type: string
+          description: Unique identifier for the wallet transaction.
+          required: true
+    authentication:
+      type: bearer
+      token: '{{env.MOOV_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: moov-wallets-rest
+    port: 8080
+    description: REST adapter for Moov API — Wallets. One Spectral-compliant resource per consumed operation, prefixed with
+      /v1.
+    resources:
+    - path: /v1/accounts/{accountid}/wallets
+      name: accounts-accountid-wallets
+      description: REST surface for accounts-accountID-wallets.
+      operations:
+      - method: POST
+        name: createwallet
+        description: Create a wallet
+        call: moov-wallets.createwallet
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: listwallets
+        description: List wallets
+        call: moov-wallets.listwallets
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/accounts/{accountid}/wallets/{walletid}
+      name: accounts-accountid-wallets-walletid
+      description: REST surface for accounts-accountID-wallets-walletID.
+      operations:
+      - method: GET
+        name: getwallet
+        description: Retrieve a wallet
+        call: moov-wallets.getwallet
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updatewallet
+        description: Update a wallet
+        call: moov-wallets.updatewallet
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/accounts/{accountid}/wallets/{walletid}/transactions
+      name: accounts-accountid-wallets-walletid-transactions
+      description: REST surface for accounts-accountID-wallets-walletID-transactions.
+      operations:
+      - method: GET
+        name: listwallettransactions
+        description: List wallet transactions
+        call: moov-wallets.listwallettransactions
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/accounts/{accountid}/wallets/{walletid}/transactions/{transactionid}
+      name: accounts-accountid-wallets-walletid-transactions-transactionid
+      description: REST surface for accounts-accountID-wallets-walletID-transactions-transactionID.
+      operations:
+      - method: GET
+        name: getwallettransaction
+        description: Retrieve a wallet transaction
+        call: moov-wallets.getwallettransaction
+        with:
+          transactionID: rest.transactionID
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: moov-wallets-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Moov API — Wallets. One tool per consumed operation, routed inline through this capability's
+      consumes block.
+    tools:
+    - name: create-wallet
+      description: Create a wallet
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: moov-wallets.createwallet
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: list-wallets
+      description: List wallets
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov-wallets.listwallets
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: retrieve-wallet
+      description: Retrieve a wallet
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov-wallets.getwallet
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-wallet
+      description: Update a wallet
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: moov-wallets.updatewallet
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: list-wallet-transactions
+      description: List wallet transactions
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov-wallets.listwallettransactions
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: retrieve-wallet-transaction
+      description: Retrieve a wallet transaction
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov-wallets.getwallettransaction
+      with:
+        transactionID: tools.transactionID
+      outputParameters:
+      - type: object
+        mapping: $.

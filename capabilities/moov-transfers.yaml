@@ -1,0 +1,255 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Moov API — Transfers
+  description: 'Moov API — Transfers. 6 operations. Lead operation: Retrieve transfer options. Self-contained Naftiko capability
+    covering one Moov business surface.'
+  tags:
+  - Moov
+  - Transfers
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    MOOV_API_KEY: MOOV_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: moov-transfers
+    baseUri: https://api.moov.io
+    description: Moov API — Transfers business capability. Self-contained, no shared references.
+    resources:
+    - name: accounts-accountID-transfer-options
+      path: /accounts/{accountID}/transfer-options
+      operations:
+      - name: gettransferoptions
+        method: POST
+        description: Retrieve transfer options
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: accounts-accountID-transfers
+      path: /accounts/{accountID}/transfers
+      operations:
+      - name: createtransfer
+        method: POST
+        description: Create a transfer
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+      - name: listtransfers
+        method: GET
+        description: List transfers
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: status
+          in: query
+          type: string
+          description: Filter transfers by their current status.
+    - name: accounts-accountID-transfers-transferID
+      path: /accounts/{accountID}/transfers/{transferID}
+      operations:
+      - name: gettransfer
+        method: GET
+        description: Retrieve a transfer
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: updatetransfermetadata
+        method: PATCH
+        description: Update transfer metadata
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: accounts-accountID-transfers-transferID-cancellations
+      path: /accounts/{accountID}/transfers/{transferID}/cancellations
+      operations:
+      - name: canceltransfer
+        method: POST
+        description: Cancel a transfer
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    authentication:
+      type: bearer
+      token: '{{env.MOOV_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: moov-transfers-rest
+    port: 8080
+    description: REST adapter for Moov API — Transfers. One Spectral-compliant resource per consumed operation, prefixed with
+      /v1.
+    resources:
+    - path: /v1/accounts/{accountid}/transfer-options
+      name: accounts-accountid-transfer-options
+      description: REST surface for accounts-accountID-transfer-options.
+      operations:
+      - method: POST
+        name: gettransferoptions
+        description: Retrieve transfer options
+        call: moov-transfers.gettransferoptions
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/accounts/{accountid}/transfers
+      name: accounts-accountid-transfers
+      description: REST surface for accounts-accountID-transfers.
+      operations:
+      - method: POST
+        name: createtransfer
+        description: Create a transfer
+        call: moov-transfers.createtransfer
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: listtransfers
+        description: List transfers
+        call: moov-transfers.listtransfers
+        with:
+          status: rest.status
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/accounts/{accountid}/transfers/{transferid}
+      name: accounts-accountid-transfers-transferid
+      description: REST surface for accounts-accountID-transfers-transferID.
+      operations:
+      - method: GET
+        name: gettransfer
+        description: Retrieve a transfer
+        call: moov-transfers.gettransfer
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updatetransfermetadata
+        description: Update transfer metadata
+        call: moov-transfers.updatetransfermetadata
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/accounts/{accountid}/transfers/{transferid}/cancellations
+      name: accounts-accountid-transfers-transferid-cancellations
+      description: REST surface for accounts-accountID-transfers-transferID-cancellations.
+      operations:
+      - method: POST
+        name: canceltransfer
+        description: Cancel a transfer
+        call: moov-transfers.canceltransfer
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: moov-transfers-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Moov API — Transfers. One tool per consumed operation, routed inline through this capability's
+      consumes block.
+    tools:
+    - name: retrieve-transfer-options
+      description: Retrieve transfer options
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: false
+      call: moov-transfers.gettransferoptions
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-transfer
+      description: Create a transfer
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: moov-transfers.createtransfer
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: list-transfers
+      description: List transfers
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov-transfers.listtransfers
+      with:
+        status: tools.status
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: retrieve-transfer
+      description: Retrieve a transfer
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: moov-transfers.gettransfer
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-transfer-metadata
+      description: Update transfer metadata
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: moov-transfers.updatetransfermetadata
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cancel-transfer
+      description: Cancel a transfer
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: moov-transfers.canceltransfer
+      outputParameters:
+      - type: object
+        mapping: $.
