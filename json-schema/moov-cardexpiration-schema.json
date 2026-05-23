@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/CardExpiration",
+  "title": "CardExpiration",
+  "type": "object",
+  "description": "Card expiration date.",
+  "properties": {
+    "month": {
+      "type": "string",
+      "description": "Two-digit expiration month.",
+      "pattern": "^(0[1-9]|1[0-2])$"
+    },
+    "year": {
+      "type": "string",
+      "description": "Two-digit expiration year.",
+      "pattern": "^\\d{2}$"
+    }
+  }
+}

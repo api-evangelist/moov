@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/WalletTransaction",
+  "title": "WalletTransaction",
+  "type": "object",
+  "description": "A single credit or debit entry in the history of a Moov wallet.",
+  "properties": {
+    "walletID": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Identifier of the wallet this transaction belongs to."
+    },
+    "transactionID": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for the wallet transaction."
+    },
+    "transactionType": {
+      "type": "string",
+      "description": "Type of wallet transaction.",
+      "enum": [
+        "ach-reversal",
+        "card-payment",
+        "ach-payment",
+        "rtp-payment",
+        "wallet-transfer",
+        "dispute",
+        "dispute-reversal",
+        "moov-fee",
+        "moov-fee-reversal",
+        "refund",
+        "refund-failure"
+      ]
+    },
+    "sourceType": {
+      "type": "string",
+      "description": "The source that triggered this wallet transaction."
+    },
+    "sourceID": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Identifier of the source object (e.g., transfer ID)."
+    },
+    "status": {
+      "type": "string",
+      "description": "Transaction status.",
+      "enum": [
+        "pending",
+        "completed",
+        "failed"
+      ]
+    },
+    "memo": {
+      "type": "string",
+      "description": "Human-readable description of the transaction."
+    },
+    "createdOn": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the transaction was created."
+    },
+    "amount": {
+      "$ref": "#/components/schemas/Amount"
+    }
+  }
+}

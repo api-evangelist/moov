@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/TokenRequest",
+  "title": "TokenRequest",
+  "type": "object",
+  "description": "Request body for creating an OAuth2 access token.",
+  "required": [
+    "grant_type",
+    "client_id",
+    "client_secret"
+  ],
+  "properties": {
+    "grant_type": {
+      "type": "string",
+      "description": "OAuth2 grant type. Use \"client_credentials\" for server-side integrations.",
+      "enum": [
+        "client_credentials"
+      ]
+    },
+    "client_id": {
+      "type": "string",
+      "description": "The Moov API key public identifier."
+    },
+    "client_secret": {
+      "type": "string",
+      "description": "The Moov API key secret."
+    },
+    "scope": {
+      "type": "string",
+      "description": "Space-separated list of permission scopes to request. Scopes follow the pattern /accounts/{accountID}/transfers.write for resource-specific access, or /accounts.write for platform-level access."
+    }
+  }
+}

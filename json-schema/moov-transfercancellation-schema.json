@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/TransferCancellation",
+  "title": "TransferCancellation",
+  "type": "object",
+  "description": "A cancellation request for a pending transfer.",
+  "properties": {
+    "cancellationID": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for the cancellation."
+    },
+    "status": {
+      "type": "string",
+      "description": "Status of the cancellation request.",
+      "enum": [
+        "pending",
+        "confirmed",
+        "declined"
+      ]
+    },
+    "createdOn": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the cancellation was requested."
+    }
+  }
+}

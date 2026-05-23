@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/UpdatePaymentLinkRequest",
+  "title": "UpdatePaymentLinkRequest",
+  "type": "object",
+  "description": "Request body for updating a payment link.",
+  "properties": {
+    "amount": {
+      "$ref": "#/components/schemas/Amount"
+    },
+    "description": {
+      "type": "string",
+      "description": "Updated description for the payment link.",
+      "maxLength": 250
+    },
+    "status": {
+      "type": "string",
+      "description": "Update the status of the payment link.",
+      "enum": [
+        "active",
+        "inactive"
+      ]
+    },
+    "expiresOn": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Updated expiration timestamp for the payment link."
+    }
+  }
+}

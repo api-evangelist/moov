@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/Error",
+  "title": "Error",
+  "type": "object",
+  "description": "Standard error response returned by the Moov API.",
+  "properties": {
+    "error": {
+      "type": "string",
+      "description": "Human-readable description of the error."
+    },
+    "code": {
+      "type": "string",
+      "description": "Machine-readable error code."
+    }
+  }
+}

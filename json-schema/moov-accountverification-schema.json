@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/AccountVerification",
+  "title": "AccountVerification",
+  "type": "object",
+  "description": "Identity verification status for a Moov account.",
+  "properties": {
+    "verificationStatus": {
+      "type": "string",
+      "description": "Current KYC/KYB verification status.",
+      "enum": [
+        "unverified",
+        "pending",
+        "resubmit",
+        "review",
+        "verified",
+        "failed"
+      ]
+    }
+  }
+}

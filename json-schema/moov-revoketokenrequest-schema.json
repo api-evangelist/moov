@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/RevokeTokenRequest",
+  "title": "RevokeTokenRequest",
+  "type": "object",
+  "description": "Request body for revoking an OAuth2 access token.",
+  "required": [
+    "token"
+  ],
+  "properties": {
+    "token": {
+      "type": "string",
+      "description": "The access token to revoke."
+    }
+  }
+}

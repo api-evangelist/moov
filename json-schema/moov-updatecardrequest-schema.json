@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/UpdateCardRequest",
+  "title": "UpdateCardRequest",
+  "type": "object",
+  "description": "Request body for updating a linked card.",
+  "properties": {
+    "billingAddress": {
+      "$ref": "#/components/schemas/Address"
+    },
+    "expiration": {
+      "$ref": "#/components/schemas/CardExpiration"
+    },
+    "cardCvv": {
+      "type": "string",
+      "description": "Updated card security code.",
+      "minLength": 3,
+      "maxLength": 4
+    }
+  }
+}

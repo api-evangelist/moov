@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/BankAccountVerification",
+  "title": "BankAccountVerification",
+  "type": "object",
+  "description": "Status and details of a bank account verification attempt.",
+  "properties": {
+    "status": {
+      "type": "string",
+      "description": "Current status of the verification.",
+      "enum": [
+        "pending",
+        "completed",
+        "failed"
+      ]
+    },
+    "exceptionDetails": {
+      "type": "string",
+      "description": "Error details if the verification failed."
+    }
+  }
+}

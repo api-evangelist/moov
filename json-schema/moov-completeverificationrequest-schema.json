@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/CompleteVerificationRequest",
+  "title": "CompleteVerificationRequest",
+  "type": "object",
+  "description": "Request body for completing instant bank account verification.",
+  "properties": {
+    "code": {
+      "type": "string",
+      "description": "The verification code provided during the instant verification flow."
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/Amount",
+  "title": "Amount",
+  "type": "object",
+  "description": "A monetary amount with currency denomination.",
+  "properties": {
+    "currency": {
+      "type": "string",
+      "description": "ISO 4217 three-letter currency code.",
+      "default": "USD",
+      "minLength": 3,
+      "maxLength": 3
+    },
+    "value": {
+      "type": "integer",
+      "description": "Amount in the smallest currency unit (e.g., cents for USD).",
+      "minimum": 0
+    }
+  }
+}

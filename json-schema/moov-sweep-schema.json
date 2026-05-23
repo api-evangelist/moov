@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/Sweep",
+  "title": "Sweep",
+  "type": "object",
+  "description": "A single execution of a sweep transfer triggered by a sweep configuration.",
+  "properties": {
+    "sweepID": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this sweep execution."
+    },
+    "sweepConfigID": {
+      "type": "string",
+      "format": "uuid",
+      "description": "The sweep configuration that triggered this sweep."
+    },
+    "walletID": {
+      "type": "string",
+      "format": "uuid",
+      "description": "The wallet from which funds were swept."
+    },
+    "transferID": {
+      "type": "string",
+      "format": "uuid",
+      "description": "The transfer created to move the swept funds."
+    },
+    "status": {
+      "type": "string",
+      "description": "Execution status of the sweep.",
+      "enum": [
+        "scheduled",
+        "pending",
+        "completed",
+        "failed"
+      ]
+    },
+    "amount": {
+      "$ref": "#/components/schemas/Amount"
+    },
+    "createdOn": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the sweep was created."
+    }
+  }
+}

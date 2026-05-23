@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/TransferAccountRef",
+  "title": "TransferAccountRef",
+  "type": "object",
+  "description": "Reference to the Moov account involved in a transfer.",
+  "properties": {
+    "accountID": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier of the Moov account."
+    },
+    "email": {
+      "type": "string",
+      "format": "email",
+      "description": "Email address of the account holder."
+    },
+    "displayName": {
+      "type": "string",
+      "description": "Display name of the account."
+    }
+  }
+}

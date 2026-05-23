@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/TransferOptions",
+  "title": "TransferOptions",
+  "type": "object",
+  "description": "Available payment rails and options for a proposed transfer.",
+  "properties": {
+    "sourceOptions": {
+      "type": "array",
+      "description": "Eligible source payment methods with their available rails.",
+      "items": {
+        "$ref": "#/components/schemas/PaymentMethodOption"
+      }
+    },
+    "destinationOptions": {
+      "type": "array",
+      "description": "Eligible destination payment methods with their available rails.",
+      "items": {
+        "$ref": "#/components/schemas/PaymentMethodOption"
+      }
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/UpdateAccountRequest",
+  "title": "UpdateAccountRequest",
+  "type": "object",
+  "description": "Request body for updating a Moov account. Only provided fields are updated.",
+  "properties": {
+    "profile": {
+      "$ref": "#/components/schemas/AccountProfile"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Custom key-value metadata to attach to the account.",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "foreignID": {
+      "type": "string",
+      "description": "External identifier from your system."
+    }
+  }
+}

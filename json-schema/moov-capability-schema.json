@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/Capability",
+  "title": "Capability",
+  "type": "object",
+  "description": "A feature or permission that enables specific financial operations on a Moov account, such as the ability to send or receive funds.",
+  "properties": {
+    "capability": {
+      "type": "string",
+      "description": "Identifier for the capability type (e.g., \"transfers.push\", \"collect-funds\")."
+    },
+    "accountID": {
+      "type": "string",
+      "format": "uuid",
+      "description": "The account this capability belongs to."
+    },
+    "status": {
+      "type": "string",
+      "description": "Current activation status of the capability.",
+      "enum": [
+        "enabled",
+        "disabled",
+        "pending",
+        "in-review"
+      ]
+    },
+    "requirements": {
+      "type": "array",
+      "description": "List of requirements that must be fulfilled to activate this capability.",
+      "items": {
+        "$ref": "#/components/schemas/CapabilityRequirement"
+      }
+    },
+    "disabledReason": {
+      "type": "string",
+      "description": "Explanation of why the capability is disabled, if applicable."
+    },
+    "createdOn": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the capability was created."
+    },
+    "updatedOn": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the capability was last updated."
+    }
+  }
+}

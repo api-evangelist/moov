@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/SsnOrItin",
+  "title": "SsnOrItin",
+  "type": "object",
+  "description": "Social Security Number or Individual Taxpayer Identification Number.",
+  "properties": {
+    "full": {
+      "type": "string",
+      "description": "Full 9-digit SSN or ITIN. Only provided on write; masked on read.",
+      "pattern": "^\\d{9}$"
+    },
+    "lastFour": {
+      "type": "string",
+      "description": "Last four digits of the SSN or ITIN.",
+      "pattern": "^\\d{4}$"
+    }
+  }
+}

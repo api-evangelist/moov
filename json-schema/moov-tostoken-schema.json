@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/TosToken",
+  "title": "TosToken",
+  "type": "object",
+  "description": "Short-lived token confirming acceptance of Moov's terms of service.",
+  "properties": {
+    "token": {
+      "type": "string",
+      "description": "The terms of service token to include when creating an account."
+    },
+    "expiresOn": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the token expires."
+    }
+  }
+}

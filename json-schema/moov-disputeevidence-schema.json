@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/DisputeEvidence",
+  "title": "DisputeEvidence",
+  "type": "object",
+  "description": "A piece of evidence submitted in response to a card dispute.",
+  "properties": {
+    "evidenceID": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for the evidence item."
+    },
+    "disputeID": {
+      "type": "string",
+      "format": "uuid",
+      "description": "The dispute this evidence is associated with."
+    },
+    "evidenceType": {
+      "type": "string",
+      "description": "Classification of the evidence type.",
+      "enum": [
+        "customer-communication",
+        "customer-signature",
+        "receipt",
+        "refund-policy",
+        "service-documentation",
+        "shipping-documentation",
+        "shipping-tracking",
+        "other"
+      ]
+    },
+    "text": {
+      "type": "string",
+      "description": "Text content for text-based evidence submissions."
+    },
+    "createdOn": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the evidence was submitted."
+    }
+  }
+}

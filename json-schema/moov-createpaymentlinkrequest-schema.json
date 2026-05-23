@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/CreatePaymentLinkRequest",
+  "title": "CreatePaymentLinkRequest",
+  "type": "object",
+  "description": "Request body for creating a payment link.",
+  "required": [
+    "amount"
+  ],
+  "properties": {
+    "amount": {
+      "$ref": "#/components/schemas/Amount"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description of the payment that will be shown to the payer.",
+      "maxLength": 250
+    },
+    "expiresOn": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when this payment link should expire."
+    }
+  }
+}

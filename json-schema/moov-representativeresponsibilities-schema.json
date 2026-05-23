@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/RepresentativeResponsibilities",
+  "title": "RepresentativeResponsibilities",
+  "type": "object",
+  "description": "Ownership and control responsibilities of a business representative.",
+  "properties": {
+    "isController": {
+      "type": "boolean",
+      "description": "Whether this representative has significant control over the business."
+    },
+    "isOwner": {
+      "type": "boolean",
+      "description": "Whether this representative owns 25% or more of the business."
+    },
+    "ownershipPercentage": {
+      "type": "number",
+      "description": "Percentage of business ownership held by this representative.",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "jobTitle": {
+      "type": "string",
+      "description": "Representative's job title within the business."
+    }
+  }
+}

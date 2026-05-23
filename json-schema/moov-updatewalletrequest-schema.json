@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/UpdateWalletRequest",
+  "title": "UpdateWalletRequest",
+  "type": "object",
+  "description": "Request body for updating a Moov wallet.",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Display name for the wallet."
+    }
+  }
+}

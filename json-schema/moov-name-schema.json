@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/Name",
+  "title": "Name",
+  "type": "object",
+  "description": "Full name of an individual.",
+  "properties": {
+    "firstName": {
+      "type": "string",
+      "description": "Given name."
+    },
+    "middleName": {
+      "type": "string",
+      "description": "Middle name or initial."
+    },
+    "lastName": {
+      "type": "string",
+      "description": "Family name."
+    },
+    "suffix": {
+      "type": "string",
+      "description": "Name suffix (e.g., Jr., Sr., III)."
+    }
+  }
+}

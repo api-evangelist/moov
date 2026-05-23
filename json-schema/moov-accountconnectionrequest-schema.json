@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/AccountConnectionRequest",
+  "title": "AccountConnectionRequest",
+  "type": "object",
+  "description": "Request to share an account connection with another Moov account.",
+  "properties": {
+    "partnerAccountID": {
+      "type": "string",
+      "format": "uuid",
+      "description": "The account ID of the partner to connect with."
+    }
+  }
+}

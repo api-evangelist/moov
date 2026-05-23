@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/TransferOptionsRequest",
+  "title": "TransferOptionsRequest",
+  "type": "object",
+  "description": "Request body for retrieving available transfer options.",
+  "required": [
+    "source",
+    "destination",
+    "amount"
+  ],
+  "properties": {
+    "source": {
+      "type": "object",
+      "description": "The source account and optional payment method to evaluate.",
+      "properties": {
+        "accountID": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Account ID of the transfer source."
+        },
+        "paymentMethodID": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Optional specific payment method to evaluate."
+        }
+      }
+    },
+    "destination": {
+      "type": "object",
+      "description": "The destination account and optional payment method to evaluate.",
+      "properties": {
+        "accountID": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Account ID of the transfer destination."
+        },
+        "paymentMethodID": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Optional specific payment method to evaluate."
+        }
+      }
+    },
+    "amount": {
+      "$ref": "#/components/schemas/Amount"
+    }
+  }
+}

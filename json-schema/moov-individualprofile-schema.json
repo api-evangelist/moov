@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/IndividualProfile",
+  "title": "IndividualProfile",
+  "type": "object",
+  "description": "Profile data for an individual Moov account.",
+  "properties": {
+    "name": {
+      "$ref": "#/components/schemas/Name"
+    },
+    "email": {
+      "type": "string",
+      "format": "email",
+      "description": "Email address of the individual."
+    },
+    "phone": {
+      "$ref": "#/components/schemas/Phone"
+    },
+    "address": {
+      "$ref": "#/components/schemas/Address"
+    },
+    "birthDate": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of birth in ISO 8601 format (YYYY-MM-DD)."
+    },
+    "governmentID": {
+      "$ref": "#/components/schemas/GovernmentID"
+    }
+  }
+}

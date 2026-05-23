@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/Refund",
+  "title": "Refund",
+  "type": "object",
+  "description": "A refund issued against a completed card transfer.",
+  "properties": {
+    "refundID": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for the refund."
+    },
+    "status": {
+      "type": "string",
+      "description": "Current status of the refund.",
+      "enum": [
+        "created",
+        "pending",
+        "completed",
+        "failed"
+      ]
+    },
+    "amount": {
+      "$ref": "#/components/schemas/Amount"
+    },
+    "createdOn": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the refund was created."
+    },
+    "updatedOn": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the refund was last updated."
+    }
+  }
+}

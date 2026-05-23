@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/LinkCardRequest",
+  "title": "LinkCardRequest",
+  "type": "object",
+  "description": "Request body for linking a card to a Moov account.",
+  "properties": {
+    "cardNumber": {
+      "type": "string",
+      "description": "Full card number. Must be submitted via Moov.js to remain PCI compliant."
+    },
+    "expiration": {
+      "$ref": "#/components/schemas/CardExpiration"
+    },
+    "cardCvv": {
+      "type": "string",
+      "description": "Card security code.",
+      "minLength": 3,
+      "maxLength": 4
+    },
+    "holderName": {
+      "type": "string",
+      "description": "Name of the cardholder."
+    },
+    "billingAddress": {
+      "$ref": "#/components/schemas/Address"
+    }
+  }
+}

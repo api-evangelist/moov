@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/MicroDepositConfirmation",
+  "title": "MicroDepositConfirmation",
+  "type": "object",
+  "description": "Request body for confirming micro-deposit amounts.",
+  "required": [
+    "amounts"
+  ],
+  "properties": {
+    "amounts": {
+      "type": "array",
+      "description": "The two micro-deposit amounts in cents that were sent to the bank account.",
+      "items": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "minItems": 2,
+      "maxItems": 2
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/RequestCapabilitiesRequest",
+  "title": "RequestCapabilitiesRequest",
+  "type": "object",
+  "description": "Request body for enabling capabilities on a Moov account.",
+  "required": [
+    "capabilities"
+  ],
+  "properties": {
+    "capabilities": {
+      "type": "array",
+      "description": "List of capability identifiers to request.",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

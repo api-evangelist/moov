@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/TransferParticipant",
+  "title": "TransferParticipant",
+  "type": "object",
+  "description": "Source or destination participant in a Moov transfer.",
+  "properties": {
+    "paymentMethodID": {
+      "type": "string",
+      "format": "uuid",
+      "description": "The payment method used for this side of the transfer."
+    },
+    "paymentMethodType": {
+      "type": "string",
+      "description": "The type of payment method used.",
+      "enum": [
+        "moov-wallet",
+        "ach-debit-fund",
+        "ach-debit-collect",
+        "ach-credit-standard",
+        "ach-credit-same-day",
+        "rtp-credit",
+        "card-payment"
+      ]
+    },
+    "account": {
+      "$ref": "#/components/schemas/TransferAccountRef"
+    },
+    "bankAccount": {
+      "$ref": "#/components/schemas/BankAccount"
+    },
+    "wallet": {
+      "$ref": "#/components/schemas/Wallet"
+    },
+    "card": {
+      "$ref": "#/components/schemas/Card"
+    }
+  }
+}

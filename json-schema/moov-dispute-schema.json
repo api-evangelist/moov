@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/Dispute",
+  "title": "Dispute",
+  "type": "object",
+  "description": "A card payment dispute (chargeback) initiated by a cardholder through their card issuer. Disputes require evidence submission or acceptance.",
+  "properties": {
+    "disputeID": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for the dispute."
+    },
+    "transferID": {
+      "type": "string",
+      "format": "uuid",
+      "description": "The transfer associated with this dispute."
+    },
+    "phase": {
+      "type": "string",
+      "description": "Current phase of the dispute lifecycle.",
+      "enum": [
+        "new",
+        "pre-arbitration",
+        "arbitration",
+        "won",
+        "lost"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "description": "Current status of the dispute.",
+      "enum": [
+        "new",
+        "responded",
+        "under-review",
+        "waiting-for-customer",
+        "closed"
+      ]
+    },
+    "amount": {
+      "$ref": "#/components/schemas/Amount"
+    },
+    "reason": {
+      "type": "string",
+      "description": "Card network reason code for the dispute."
+    },
+    "networkReasonCode": {
+      "type": "string",
+      "description": "Specific reason code from the card network."
+    },
+    "respondBy": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 deadline for submitting evidence to contest the dispute."
+    },
+    "createdOn": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the dispute was created."
+    },
+    "updatedOn": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the dispute was last updated."
+    }
+  }
+}

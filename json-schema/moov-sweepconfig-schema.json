@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/SweepConfig",
+  "title": "SweepConfig",
+  "type": "object",
+  "description": "Configuration for automatic scheduled transfers from a Moov wallet to an external bank account. Sweeps execute daily based on the configured payment rail.",
+  "properties": {
+    "sweepConfigID": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for the sweep configuration."
+    },
+    "walletID": {
+      "type": "string",
+      "format": "uuid",
+      "description": "The wallet from which funds will be swept."
+    },
+    "paymentMethodID": {
+      "type": "string",
+      "format": "uuid",
+      "description": "The destination bank account payment method for the sweep."
+    },
+    "status": {
+      "type": "string",
+      "description": "Whether the sweep configuration is active.",
+      "enum": [
+        "enabled",
+        "disabled"
+      ]
+    },
+    "statementDescriptor": {
+      "type": "string",
+      "description": "Description that appears on bank statements for sweep transfers."
+    },
+    "minimumBalance": {
+      "$ref": "#/components/schemas/Amount"
+    },
+    "createdOn": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the sweep config was created."
+    },
+    "updatedOn": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the sweep config was last updated."
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/AccountProfile",
+  "title": "AccountProfile",
+  "type": "object",
+  "description": "Profile information for a Moov account.",
+  "properties": {
+    "individual": {
+      "$ref": "#/components/schemas/IndividualProfile"
+    },
+    "business": {
+      "$ref": "#/components/schemas/BusinessProfile"
+    }
+  }
+}

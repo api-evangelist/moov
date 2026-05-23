@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/Phone",
+  "title": "Phone",
+  "type": "object",
+  "description": "Phone number with country code.",
+  "properties": {
+    "number": {
+      "type": "string",
+      "description": "Phone number digits without formatting.",
+      "pattern": "^\\d{10,15}$"
+    },
+    "countryCode": {
+      "type": "string",
+      "description": "International country calling code (e.g., \"1\" for US)."
+    }
+  }
+}

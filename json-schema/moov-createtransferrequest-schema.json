@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/CreateTransferRequest",
+  "title": "CreateTransferRequest",
+  "type": "object",
+  "description": "Request body for initiating a new transfer between Moov accounts.",
+  "required": [
+    "source",
+    "destination",
+    "amount"
+  ],
+  "properties": {
+    "source": {
+      "type": "object",
+      "description": "The payment method to debit for this transfer.",
+      "required": [
+        "paymentMethodID"
+      ],
+      "properties": {
+        "paymentMethodID": {
+          "type": "string",
+          "format": "uuid",
+          "description": "The payment method ID to use as the transfer source."
+        },
+        "cardDetails": {
+          "type": "object",
+          "description": "Additional card-specific options for the source.",
+          "properties": {
+            "dynamicDescriptor": {
+              "type": "string",
+              "description": "Custom descriptor shown on card statements."
+            }
+          }
+        }
+      }
+    },
+    "destination": {
+      "type": "object",
+      "description": "The payment method to credit for this transfer.",
+      "required": [
+        "paymentMethodID"
+      ],
+      "properties": {
+        "paymentMethodID": {
+          "type": "string",
+          "format": "uuid",
+          "description": "The payment method ID to use as the transfer destination."
+        }
+      }
+    },
+    "amount": {
+      "$ref": "#/components/schemas/Amount"
+    },
+    "facilitatorFee": {
+      "$ref": "#/components/schemas/Amount"
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable description of the transfer purpose.",
+      "maxLength": 100
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Custom key-value pairs for application-specific data.",
+      "additionalProperties": {
+        "type": "string"
+      }
+    }
+  }
+}

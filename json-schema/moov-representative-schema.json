@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/Representative",
+  "title": "Representative",
+  "type": "object",
+  "description": "A business representative with significant ownership or control over a Moov business account, required for KYB compliance.",
+  "properties": {
+    "representativeID": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for the representative."
+    },
+    "name": {
+      "$ref": "#/components/schemas/Name"
+    },
+    "phone": {
+      "$ref": "#/components/schemas/Phone"
+    },
+    "email": {
+      "type": "string",
+      "format": "email",
+      "description": "Representative's email address."
+    },
+    "address": {
+      "$ref": "#/components/schemas/Address"
+    },
+    "birthDate": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of birth in ISO 8601 format."
+    },
+    "governmentID": {
+      "$ref": "#/components/schemas/GovernmentID"
+    },
+    "responsibilities": {
+      "$ref": "#/components/schemas/RepresentativeResponsibilities"
+    },
+    "createdOn": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the representative was added."
+    },
+    "updatedOn": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the representative was last updated."
+    },
+    "disabledOn": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the representative was disabled, if applicable."
+    }
+  }
+}

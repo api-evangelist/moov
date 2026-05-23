@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/CapabilityRequirement",
+  "title": "CapabilityRequirement",
+  "type": "object",
+  "description": "A requirement that must be satisfied to activate a capability.",
+  "properties": {
+    "requirement": {
+      "type": "string",
+      "description": "Machine-readable identifier for the requirement type."
+    },
+    "errorCode": {
+      "type": "string",
+      "description": "Error code providing more detail about why the requirement is unmet."
+    }
+  }
+}

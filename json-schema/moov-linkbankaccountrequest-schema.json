@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/LinkBankAccountRequest",
+  "title": "LinkBankAccountRequest",
+  "type": "object",
+  "description": "Request body for linking a bank account to a Moov account.",
+  "properties": {
+    "account": {
+      "type": "object",
+      "description": "Bank account details for direct linking.",
+      "properties": {
+        "routingNumber": {
+          "type": "string",
+          "description": "ABA routing transit number.",
+          "pattern": "^\\d{9}$"
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "Bank account number."
+        },
+        "bankAccountType": {
+          "type": "string",
+          "description": "Type of bank account.",
+          "enum": [
+            "checking",
+            "savings"
+          ]
+        },
+        "holderName": {
+          "type": "string",
+          "description": "Name of the account holder."
+        },
+        "holderType": {
+          "type": "string",
+          "description": "Whether the account is held by an individual or business.",
+          "enum": [
+            "individual",
+            "business"
+          ]
+        }
+      }
+    },
+    "plaid": {
+      "type": "object",
+      "description": "Link via Plaid public token for pre-verified accounts.",
+      "properties": {
+        "token": {
+          "type": "string",
+          "description": "Plaid public token from the Plaid Link flow."
+        }
+      }
+    },
+    "mx": {
+      "type": "object",
+      "description": "Link via MX widget token for pre-verified accounts.",
+      "properties": {
+        "token": {
+          "type": "string",
+          "description": "MX widget token."
+        }
+      }
+    }
+  }
+}

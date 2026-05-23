@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/BankAccount",
+  "title": "BankAccount",
+  "type": "object",
+  "description": "A bank account linked to a Moov account as a funding source for ACH and RTP transfers.",
+  "properties": {
+    "bankAccountID": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for the bank account."
+    },
+    "bankName": {
+      "type": "string",
+      "description": "Name of the financial institution."
+    },
+    "bankAccountType": {
+      "type": "string",
+      "description": "Type of bank account.",
+      "enum": [
+        "checking",
+        "savings",
+        "loan"
+      ]
+    },
+    "routingNumber": {
+      "type": "string",
+      "description": "ABA routing transit number for the bank.",
+      "pattern": "^\\d{9}$"
+    },
+    "lastFourAccountNumber": {
+      "type": "string",
+      "description": "Last four digits of the bank account number.",
+      "pattern": "^\\d{4}$"
+    },
+    "status": {
+      "type": "string",
+      "description": "Verification and usability status of the bank account.",
+      "enum": [
+        "new",
+        "unverified",
+        "pending",
+        "verified",
+        "errored"
+      ]
+    },
+    "verificationStatus": {
+      "type": "string",
+      "description": "Current state of the bank account verification process.",
+      "enum": [
+        "unverified",
+        "pending",
+        "verificationFailed",
+        "verified",
+        "mxVerified"
+      ]
+    },
+    "createdOn": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the bank account was linked."
+    },
+    "updatedOn": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the bank account was last updated."
+    }
+  }
+}

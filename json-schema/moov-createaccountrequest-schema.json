@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/CreateAccountRequest",
+  "title": "CreateAccountRequest",
+  "type": "object",
+  "description": "Request body for creating a new Moov account.",
+  "required": [
+    "accountType",
+    "profile"
+  ],
+  "properties": {
+    "accountType": {
+      "type": "string",
+      "description": "Whether the account is for an individual or a business.",
+      "enum": [
+        "individual",
+        "business"
+      ]
+    },
+    "profile": {
+      "$ref": "#/components/schemas/AccountProfile"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Custom key-value metadata to attach to the account.",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "termsOfService": {
+      "type": "object",
+      "description": "Terms of service acceptance details.",
+      "properties": {
+        "token": {
+          "type": "string",
+          "description": "Token obtained from the /tos-token endpoint."
+        }
+      }
+    },
+    "foreignID": {
+      "type": "string",
+      "description": "External identifier from your system to associate with this account."
+    }
+  }
+}

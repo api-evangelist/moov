@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/UpdateSweepConfigRequest",
+  "title": "UpdateSweepConfigRequest",
+  "type": "object",
+  "description": "Request body for updating a sweep configuration.",
+  "properties": {
+    "status": {
+      "type": "string",
+      "description": "Enable or disable the sweep configuration.",
+      "enum": [
+        "enabled",
+        "disabled"
+      ]
+    },
+    "statementDescriptor": {
+      "type": "string",
+      "description": "Updated statement descriptor for sweep transfers.",
+      "maxLength": 10
+    },
+    "minimumBalance": {
+      "$ref": "#/components/schemas/Amount"
+    }
+  }
+}

@@ -1,0 +1,1041 @@
+{
+  "provider": "Moov",
+  "providerId": "moov",
+  "kind": "json-structure",
+  "description": "Structural overview of the Moov API surface; extracted from openapi/.",
+  "schemaCount": 64,
+  "operationCount": 68,
+  "schemas": [
+    {
+      "name": "Error",
+      "type": "object",
+      "propertyCount": 2,
+      "required": []
+    },
+    {
+      "name": "TokenRequest",
+      "type": "object",
+      "propertyCount": 4,
+      "required": [
+        "grant_type",
+        "client_id",
+        "client_secret"
+      ]
+    },
+    {
+      "name": "AccessToken",
+      "type": "object",
+      "propertyCount": 4,
+      "required": []
+    },
+    {
+      "name": "RevokeTokenRequest",
+      "type": "object",
+      "propertyCount": 1,
+      "required": [
+        "token"
+      ]
+    },
+    {
+      "name": "TosToken",
+      "type": "object",
+      "propertyCount": 2,
+      "required": []
+    },
+    {
+      "name": "Account",
+      "type": "object",
+      "propertyCount": 8,
+      "required": []
+    },
+    {
+      "name": "AccountProfile",
+      "type": "object",
+      "propertyCount": 2,
+      "required": []
+    },
+    {
+      "name": "IndividualProfile",
+      "type": "object",
+      "propertyCount": 6,
+      "required": []
+    },
+    {
+      "name": "BusinessProfile",
+      "type": "object",
+      "propertyCount": 9,
+      "required": []
+    },
+    {
+      "name": "Name",
+      "type": "object",
+      "propertyCount": 4,
+      "required": []
+    },
+    {
+      "name": "Phone",
+      "type": "object",
+      "propertyCount": 2,
+      "required": []
+    },
+    {
+      "name": "Address",
+      "type": "object",
+      "propertyCount": 6,
+      "required": []
+    },
+    {
+      "name": "GovernmentID",
+      "type": "object",
+      "propertyCount": 2,
+      "required": []
+    },
+    {
+      "name": "SsnOrItin",
+      "type": "object",
+      "propertyCount": 2,
+      "required": []
+    },
+    {
+      "name": "TaxID",
+      "type": "object",
+      "propertyCount": 1,
+      "required": []
+    },
+    {
+      "name": "IndustryCodes",
+      "type": "object",
+      "propertyCount": 3,
+      "required": []
+    },
+    {
+      "name": "AccountVerification",
+      "type": "object",
+      "propertyCount": 1,
+      "required": []
+    },
+    {
+      "name": "Capability",
+      "type": "object",
+      "propertyCount": 7,
+      "required": []
+    },
+    {
+      "name": "CapabilityRequirement",
+      "type": "object",
+      "propertyCount": 2,
+      "required": []
+    },
+    {
+      "name": "Representative",
+      "type": "object",
+      "propertyCount": 11,
+      "required": []
+    },
+    {
+      "name": "RepresentativeResponsibilities",
+      "type": "object",
+      "propertyCount": 4,
+      "required": []
+    },
+    {
+      "name": "BankAccount",
+      "type": "object",
+      "propertyCount": 9,
+      "required": []
+    },
+    {
+      "name": "BankAccountVerification",
+      "type": "object",
+      "propertyCount": 2,
+      "required": []
+    },
+    {
+      "name": "Card",
+      "type": "object",
+      "propertyCount": 14,
+      "required": []
+    },
+    {
+      "name": "CardExpiration",
+      "type": "object",
+      "propertyCount": 2,
+      "required": []
+    },
+    {
+      "name": "CardVerification",
+      "type": "object",
+      "propertyCount": 3,
+      "required": []
+    },
+    {
+      "name": "Wallet",
+      "type": "object",
+      "propertyCount": 4,
+      "required": []
+    },
+    {
+      "name": "WalletTransaction",
+      "type": "object",
+      "propertyCount": 9,
+      "required": []
+    },
+    {
+      "name": "PaymentMethod",
+      "type": "object",
+      "propertyCount": 5,
+      "required": []
+    },
+    {
+      "name": "Transfer",
+      "type": "object",
+      "propertyCount": 13,
+      "required": []
+    },
+    {
+      "name": "TransferParticipant",
+      "type": "object",
+      "propertyCount": 6,
+      "required": []
+    },
+    {
+      "name": "TransferAccountRef",
+      "type": "object",
+      "propertyCount": 3,
+      "required": []
+    },
+    {
+      "name": "Refund",
+      "type": "object",
+      "propertyCount": 5,
+      "required": []
+    },
+    {
+      "name": "SweepConfig",
+      "type": "object",
+      "propertyCount": 8,
+      "required": []
+    },
+    {
+      "name": "Sweep",
+      "type": "object",
+      "propertyCount": 7,
+      "required": []
+    },
+    {
+      "name": "Dispute",
+      "type": "object",
+      "propertyCount": 10,
+      "required": []
+    },
+    {
+      "name": "DisputeEvidence",
+      "type": "object",
+      "propertyCount": 5,
+      "required": []
+    },
+    {
+      "name": "DisputeEvidenceText",
+      "type": "object",
+      "propertyCount": 2,
+      "required": [
+        "text",
+        "evidenceType"
+      ]
+    },
+    {
+      "name": "PaymentLink",
+      "type": "object",
+      "propertyCount": 10,
+      "required": []
+    },
+    {
+      "name": "Amount",
+      "type": "object",
+      "propertyCount": 2,
+      "required": []
+    },
+    {
+      "name": "TransferCancellation",
+      "type": "object",
+      "propertyCount": 3,
+      "required": []
+    },
+    {
+      "name": "TransferOptions",
+      "type": "object",
+      "propertyCount": 2,
+      "required": []
+    },
+    {
+      "name": "PaymentMethodOption",
+      "type": "object",
+      "propertyCount": 3,
+      "required": []
+    },
+    {
+      "name": "AccountConnectionRequest",
+      "type": "object",
+      "propertyCount": 1,
+      "required": []
+    },
+    {
+      "name": "AccountConnection",
+      "type": "object",
+      "propertyCount": 3,
+      "required": []
+    },
+    {
+      "name": "RequestCapabilitiesRequest",
+      "type": "object",
+      "propertyCount": 1,
+      "required": [
+        "capabilities"
+      ]
+    },
+    {
+      "name": "CreateAccountRequest",
+      "type": "object",
+      "propertyCount": 5,
+      "required": [
+        "accountType",
+        "profile"
+      ]
+    },
+    {
+      "name": "UpdateAccountRequest",
+      "type": "object",
+      "propertyCount": 3,
+      "required": []
+    },
+    {
+      "name": "CreateRepresentativeRequest",
+      "type": "object",
+      "propertyCount": 7,
+      "required": [
+        "name"
+      ]
+    },
+    {
+      "name": "UpdateRepresentativeRequest",
+      "type": "object",
+      "propertyCount": 7,
+      "required": []
+    },
+    {
+      "name": "LinkBankAccountRequest",
+      "type": "object",
+      "propertyCount": 3,
+      "required": []
+    },
+    {
+      "name": "CompleteVerificationRequest",
+      "type": "object",
+      "propertyCount": 1,
+      "required": []
+    },
+    {
+      "name": "MicroDepositConfirmation",
+      "type": "object",
+      "propertyCount": 1,
+      "required": [
+        "amounts"
+      ]
+    },
+    {
+      "name": "LinkCardRequest",
+      "type": "object",
+      "propertyCount": 5,
+      "required": []
+    },
+    {
+      "name": "UpdateCardRequest",
+      "type": "object",
+      "propertyCount": 3,
+      "required": []
+    },
+    {
+      "name": "UpdateWalletRequest",
+      "type": "object",
+      "propertyCount": 1,
+      "required": []
+    },
+    {
+      "name": "CreateTransferRequest",
+      "type": "object",
+      "propertyCount": 6,
+      "required": [
+        "source",
+        "destination",
+        "amount"
+      ]
+    },
+    {
+      "name": "UpdateTransferRequest",
+      "type": "object",
+      "propertyCount": 1,
+      "required": []
+    },
+    {
+      "name": "TransferOptionsRequest",
+      "type": "object",
+      "propertyCount": 3,
+      "required": [
+        "source",
+        "destination",
+        "amount"
+      ]
+    },
+    {
+      "name": "CreateRefundRequest",
+      "type": "object",
+      "propertyCount": 1,
+      "required": [
+        "amount"
+      ]
+    },
+    {
+      "name": "CreateSweepConfigRequest",
+      "type": "object",
+      "propertyCount": 4,
+      "required": [
+        "walletID",
+        "paymentMethodID"
+      ]
+    },
+    {
+      "name": "UpdateSweepConfigRequest",
+      "type": "object",
+      "propertyCount": 3,
+      "required": []
+    },
+    {
+      "name": "CreatePaymentLinkRequest",
+      "type": "object",
+      "propertyCount": 3,
+      "required": [
+        "amount"
+      ]
+    },
+    {
+      "name": "UpdatePaymentLinkRequest",
+      "type": "object",
+      "propertyCount": 4,
+      "required": []
+    }
+  ],
+  "operations": [
+    {
+      "method": "POST",
+      "path": "/oauth2/token",
+      "operationId": "createAccessToken",
+      "summary": "Create an access token",
+      "tags": [
+        "Authentication"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/oauth2/revoke",
+      "operationId": "revokeAccessToken",
+      "summary": "Revoke an access token",
+      "tags": [
+        "Authentication"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/tos-token",
+      "operationId": "generateTosToken",
+      "summary": "Generate a terms of service token",
+      "tags": [
+        "Accounts"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/accounts",
+      "operationId": "listAccounts",
+      "summary": "List accounts",
+      "tags": [
+        "Accounts"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/accounts",
+      "operationId": "createAccount",
+      "summary": "Create an account",
+      "tags": [
+        "Accounts"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/{accountID}",
+      "operationId": "getAccount",
+      "summary": "Retrieve an account",
+      "tags": [
+        "Accounts"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/accounts/{accountID}",
+      "operationId": "deleteAccount",
+      "summary": "Delete an account",
+      "tags": [
+        "Accounts"
+      ]
+    },
+    {
+      "method": "PATCH",
+      "path": "/accounts/{accountID}",
+      "operationId": "updateAccount",
+      "summary": "Update an account",
+      "tags": [
+        "Accounts"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/accounts/{accountID}/connections",
+      "operationId": "shareAccountConnection",
+      "summary": "Share an account connection",
+      "tags": [
+        "Accounts"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/{accountID}/connected-accounts",
+      "operationId": "listConnectedAccounts",
+      "summary": "List connected accounts",
+      "tags": [
+        "Accounts"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/{accountID}/capabilities",
+      "operationId": "listCapabilities",
+      "summary": "List capabilities",
+      "tags": [
+        "Capabilities"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/accounts/{accountID}/capabilities",
+      "operationId": "requestCapabilities",
+      "summary": "Request capabilities",
+      "tags": [
+        "Capabilities"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/{accountID}/capabilities/{capabilityID}",
+      "operationId": "getCapability",
+      "summary": "Retrieve a capability",
+      "tags": [
+        "Capabilities"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/accounts/{accountID}/capabilities/{capabilityID}",
+      "operationId": "disableCapability",
+      "summary": "Disable a capability",
+      "tags": [
+        "Capabilities"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/{accountID}/representatives",
+      "operationId": "listRepresentatives",
+      "summary": "List representatives",
+      "tags": [
+        "Representatives"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/accounts/{accountID}/representatives",
+      "operationId": "addRepresentative",
+      "summary": "Add a representative",
+      "tags": [
+        "Representatives"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/{accountID}/representatives/{representativeID}",
+      "operationId": "getRepresentative",
+      "summary": "Retrieve a representative",
+      "tags": [
+        "Representatives"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/accounts/{accountID}/representatives/{representativeID}",
+      "operationId": "removeRepresentative",
+      "summary": "Remove a representative",
+      "tags": [
+        "Representatives"
+      ]
+    },
+    {
+      "method": "PATCH",
+      "path": "/accounts/{accountID}/representatives/{representativeID}",
+      "operationId": "updateRepresentative",
+      "summary": "Update a representative",
+      "tags": [
+        "Representatives"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/{accountID}/bank-accounts",
+      "operationId": "listBankAccounts",
+      "summary": "List bank accounts",
+      "tags": [
+        "Bank Accounts"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/accounts/{accountID}/bank-accounts",
+      "operationId": "linkBankAccount",
+      "summary": "Link a bank account",
+      "tags": [
+        "Bank Accounts"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/{accountID}/bank-accounts/{bankAccountID}",
+      "operationId": "getBankAccount",
+      "summary": "Retrieve a bank account",
+      "tags": [
+        "Bank Accounts"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/accounts/{accountID}/bank-accounts/{bankAccountID}",
+      "operationId": "deleteBankAccount",
+      "summary": "Delete a bank account",
+      "tags": [
+        "Bank Accounts"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/{accountID}/bank-accounts/{bankAccountID}/verify",
+      "operationId": "getBankAccountVerificationStatus",
+      "summary": "Get verification status",
+      "tags": [
+        "Bank Accounts"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/accounts/{accountID}/bank-accounts/{bankAccountID}/verify",
+      "operationId": "initiateBankAccountVerification",
+      "summary": "Initiate bank account verification",
+      "tags": [
+        "Bank Accounts"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/accounts/{accountID}/bank-accounts/{bankAccountID}/verify",
+      "operationId": "completeBankAccountVerification",
+      "summary": "Complete bank account verification",
+      "tags": [
+        "Bank Accounts"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/accounts/{accountID}/bank-accounts/{bankAccountID}/micro-deposits",
+      "operationId": "initiateMicroDeposits",
+      "summary": "Initiate micro-deposits",
+      "tags": [
+        "Bank Accounts"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/accounts/{accountID}/bank-accounts/{bankAccountID}/micro-deposits",
+      "operationId": "completeMicroDeposits",
+      "summary": "Complete micro-deposit verification",
+      "tags": [
+        "Bank Accounts"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/{accountID}/cards",
+      "operationId": "listCards",
+      "summary": "List cards",
+      "tags": [
+        "Cards"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/accounts/{accountID}/cards",
+      "operationId": "linkCard",
+      "summary": "Link a card",
+      "tags": [
+        "Cards"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/{accountID}/cards/{cardID}",
+      "operationId": "getCard",
+      "summary": "Retrieve a card",
+      "tags": [
+        "Cards"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/accounts/{accountID}/cards/{cardID}",
+      "operationId": "disableCard",
+      "summary": "Disable a card",
+      "tags": [
+        "Cards"
+      ]
+    },
+    {
+      "method": "PATCH",
+      "path": "/accounts/{accountID}/cards/{cardID}",
+      "operationId": "updateCard",
+      "summary": "Update a card",
+      "tags": [
+        "Cards"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/{accountID}/wallets",
+      "operationId": "listWallets",
+      "summary": "List wallets",
+      "tags": [
+        "Wallets"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/accounts/{accountID}/wallets",
+      "operationId": "createWallet",
+      "summary": "Create a wallet",
+      "tags": [
+        "Wallets"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/{accountID}/wallets/{walletID}",
+      "operationId": "getWallet",
+      "summary": "Retrieve a wallet",
+      "tags": [
+        "Wallets"
+      ]
+    },
+    {
+      "method": "PATCH",
+      "path": "/accounts/{accountID}/wallets/{walletID}",
+      "operationId": "updateWallet",
+      "summary": "Update a wallet",
+      "tags": [
+        "Wallets"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/{accountID}/wallets/{walletID}/transactions",
+      "operationId": "listWalletTransactions",
+      "summary": "List wallet transactions",
+      "tags": [
+        "Wallets"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/{accountID}/wallets/{walletID}/transactions/{transactionID}",
+      "operationId": "getWalletTransaction",
+      "summary": "Retrieve a wallet transaction",
+      "tags": [
+        "Wallets"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/{accountID}/payment-methods",
+      "operationId": "listPaymentMethods",
+      "summary": "List payment methods",
+      "tags": [
+        "Payment Methods"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/{accountID}/payment-methods/{paymentMethodID}",
+      "operationId": "getPaymentMethod",
+      "summary": "Retrieve a payment method",
+      "tags": [
+        "Payment Methods"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/{accountID}/transfers",
+      "operationId": "listTransfers",
+      "summary": "List transfers",
+      "tags": [
+        "Transfers"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/accounts/{accountID}/transfers",
+      "operationId": "createTransfer",
+      "summary": "Create a transfer",
+      "tags": [
+        "Transfers"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/{accountID}/transfers/{transferID}",
+      "operationId": "getTransfer",
+      "summary": "Retrieve a transfer",
+      "tags": [
+        "Transfers"
+      ]
+    },
+    {
+      "method": "PATCH",
+      "path": "/accounts/{accountID}/transfers/{transferID}",
+      "operationId": "updateTransferMetadata",
+      "summary": "Update transfer metadata",
+      "tags": [
+        "Transfers"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/accounts/{accountID}/transfer-options",
+      "operationId": "getTransferOptions",
+      "summary": "Retrieve transfer options",
+      "tags": [
+        "Transfers"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/accounts/{accountID}/transfers/{transferID}/cancellations",
+      "operationId": "cancelTransfer",
+      "summary": "Cancel a transfer",
+      "tags": [
+        "Transfers"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/{accountID}/transfers/{transferID}/refunds",
+      "operationId": "listRefunds",
+      "summary": "List refunds",
+      "tags": [
+        "Refunds"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/accounts/{accountID}/transfers/{transferID}/refunds",
+      "operationId": "createRefund",
+      "summary": "Create a refund",
+      "tags": [
+        "Refunds"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/{accountID}/transfers/{transferID}/refunds/{refundID}",
+      "operationId": "getRefund",
+      "summary": "Retrieve a refund",
+      "tags": [
+        "Refunds"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/{accountID}/sweep-configs",
+      "operationId": "listSweepConfigs",
+      "summary": "List sweep configs",
+      "tags": [
+        "Sweeps"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/accounts/{accountID}/sweep-configs",
+      "operationId": "createSweepConfig",
+      "summary": "Create a sweep config",
+      "tags": [
+        "Sweeps"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/{accountID}/sweep-configs/{sweepConfigID}",
+      "operationId": "getSweepConfig",
+      "summary": "Get a sweep config",
+      "tags": [
+        "Sweeps"
+      ]
+    },
+    {
+      "method": "PATCH",
+      "path": "/accounts/{accountID}/sweep-configs/{sweepConfigID}",
+      "operationId": "updateSweepConfig",
+      "summary": "Update a sweep config",
+      "tags": [
+        "Sweeps"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/{accountID}/wallets/{walletID}/sweeps",
+      "operationId": "listSweeps",
+      "summary": "List sweeps",
+      "tags": [
+        "Sweeps"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/{accountID}/wallets/{walletID}/sweeps/{sweepID}",
+      "operationId": "getSweep",
+      "summary": "Get a sweep",
+      "tags": [
+        "Sweeps"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/{accountID}/disputes",
+      "operationId": "listDisputes",
+      "summary": "List disputes",
+      "tags": [
+        "Disputes"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/{accountID}/disputes/{disputeID}",
+      "operationId": "getDispute",
+      "summary": "Retrieve a dispute",
+      "tags": [
+        "Disputes"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/accounts/{accountID}/disputes/{disputeID}/accept",
+      "operationId": "acceptDispute",
+      "summary": "Accept a dispute",
+      "tags": [
+        "Disputes"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/accounts/{accountID}/disputes/{disputeID}/evidence-file",
+      "operationId": "uploadDisputeEvidenceFile",
+      "summary": "Upload evidence file",
+      "tags": [
+        "Disputes"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/accounts/{accountID}/disputes/{disputeID}/evidence-text",
+      "operationId": "uploadDisputeEvidenceText",
+      "summary": "Upload evidence text",
+      "tags": [
+        "Disputes"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/accounts/{accountID}/disputes/{disputeID}/evidence/submit",
+      "operationId": "submitDisputeEvidence",
+      "summary": "Submit dispute evidence",
+      "tags": [
+        "Disputes"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/{accountID}/payment-links",
+      "operationId": "listPaymentLinks",
+      "summary": "List payment links",
+      "tags": [
+        "Payment Links"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/accounts/{accountID}/payment-links",
+      "operationId": "createPaymentLink",
+      "summary": "Create a payment link",
+      "tags": [
+        "Payment Links"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/{accountID}/payment-links/{paymentLinkCode}",
+      "operationId": "getPaymentLink",
+      "summary": "Get a payment link",
+      "tags": [
+        "Payment Links"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/accounts/{accountID}/payment-links/{paymentLinkCode}",
+      "operationId": "disablePaymentLink",
+      "summary": "Disable a payment link",
+      "tags": [
+        "Payment Links"
+      ]
+    },
+    {
+      "method": "PATCH",
+      "path": "/accounts/{accountID}/payment-links/{paymentLinkCode}",
+      "operationId": "updatePaymentLink",
+      "summary": "Update a payment link",
+      "tags": [
+        "Payment Links"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/{accountID}/payment-links/{paymentLinkCode}/qrcode",
+      "operationId": "getPaymentLinkQrCode",
+      "summary": "Get payment link QR code",
+      "tags": [
+        "Payment Links"
+      ]
+    }
+  ]
+}

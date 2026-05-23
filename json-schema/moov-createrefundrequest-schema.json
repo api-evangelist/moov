@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/CreateRefundRequest",
+  "title": "CreateRefundRequest",
+  "type": "object",
+  "description": "Request body for creating a refund on a card transfer.",
+  "required": [
+    "amount"
+  ],
+  "properties": {
+    "amount": {
+      "type": "integer",
+      "description": "Amount to refund in the smallest currency unit (e.g., cents). Must not exceed the original transfer amount.",
+      "minimum": 1
+    }
+  }
+}

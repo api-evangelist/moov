@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/PaymentMethodOption",
+  "title": "PaymentMethodOption",
+  "type": "object",
+  "description": "A payment method option with its compatible payment rails.",
+  "properties": {
+    "paymentMethodID": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Identifier of the payment method."
+    },
+    "paymentMethodType": {
+      "type": "string",
+      "description": "The type of this payment method."
+    },
+    "rails": {
+      "type": "array",
+      "description": "Eligible payment rails for this method.",
+      "items": {
+        "type": "string",
+        "enum": [
+          "ach-debit-fund",
+          "ach-debit-collect",
+          "ach-credit-standard",
+          "ach-credit-same-day",
+          "rtp-credit",
+          "card-payment"
+        ]
+      }
+    }
+  }
+}

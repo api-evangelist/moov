@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/AccessToken",
+  "title": "AccessToken",
+  "type": "object",
+  "description": "OAuth2 access token response from the Moov API.",
+  "properties": {
+    "access_token": {
+      "type": "string",
+      "description": "The bearer token to include in API request headers."
+    },
+    "token_type": {
+      "type": "string",
+      "description": "Token type, always \"bearer\".",
+      "enum": [
+        "bearer"
+      ]
+    },
+    "expires_in": {
+      "type": "integer",
+      "description": "Number of seconds until the token expires."
+    },
+    "scope": {
+      "type": "string",
+      "description": "Space-separated list of granted permission scopes."
+    }
+  }
+}

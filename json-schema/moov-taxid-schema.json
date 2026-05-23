@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/TaxID",
+  "title": "TaxID",
+  "type": "object",
+  "description": "Business tax identification number.",
+  "properties": {
+    "ein": {
+      "type": "object",
+      "description": "Employer Identification Number for US businesses.",
+      "properties": {
+        "number": {
+          "type": "string",
+          "description": "Full EIN. Only provided on write; masked on read.",
+          "pattern": "^\\d{9}$"
+        }
+      }
+    }
+  }
+}

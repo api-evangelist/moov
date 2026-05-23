@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/PaymentLink",
+  "title": "PaymentLink",
+  "type": "object",
+  "description": "A shareable link that allows customers to make payments via card or bank account without requiring custom frontend development.",
+  "properties": {
+    "paymentLinkCode": {
+      "type": "string",
+      "description": "Unique code identifier used in the payment link URL."
+    },
+    "accountID": {
+      "type": "string",
+      "format": "uuid",
+      "description": "The Moov account that created this payment link."
+    },
+    "status": {
+      "type": "string",
+      "description": "Current usability status of the payment link.",
+      "enum": [
+        "active",
+        "inactive",
+        "expired"
+      ]
+    },
+    "amount": {
+      "$ref": "#/components/schemas/Amount"
+    },
+    "currency": {
+      "type": "string",
+      "description": "ISO 4217 currency code for the payment.",
+      "default": "USD"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description of what the payment is for."
+    },
+    "url": {
+      "type": "string",
+      "format": "uri",
+      "description": "The shareable URL for this payment link."
+    },
+    "expiresOn": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the payment link expires."
+    },
+    "createdOn": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the payment link was created."
+    },
+    "updatedOn": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the payment link was last updated."
+    }
+  }
+}

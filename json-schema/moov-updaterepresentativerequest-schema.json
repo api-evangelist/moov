@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/UpdateRepresentativeRequest",
+  "title": "UpdateRepresentativeRequest",
+  "type": "object",
+  "description": "Request body for updating a business representative. Only provided fields are updated.",
+  "properties": {
+    "name": {
+      "$ref": "#/components/schemas/Name"
+    },
+    "phone": {
+      "$ref": "#/components/schemas/Phone"
+    },
+    "email": {
+      "type": "string",
+      "format": "email",
+      "description": "Representative's email address."
+    },
+    "address": {
+      "$ref": "#/components/schemas/Address"
+    },
+    "birthDate": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of birth in ISO 8601 format."
+    },
+    "governmentID": {
+      "$ref": "#/components/schemas/GovernmentID"
+    },
+    "responsibilities": {
+      "$ref": "#/components/schemas/RepresentativeResponsibilities"
+    }
+  }
+}

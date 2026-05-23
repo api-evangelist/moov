@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/PaymentMethod",
+  "title": "PaymentMethod",
+  "type": "object",
+  "description": "A payment method on a Moov account, representing a bank account, card, or wallet that can be used as the source or destination of a transfer.",
+  "properties": {
+    "paymentMethodID": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for the payment method."
+    },
+    "paymentMethodType": {
+      "type": "string",
+      "description": "The type of underlying payment instrument.",
+      "enum": [
+        "moov-wallet",
+        "ach-debit-fund",
+        "ach-debit-collect",
+        "ach-credit-standard",
+        "ach-credit-same-day",
+        "rtp-credit",
+        "card-payment"
+      ]
+    },
+    "wallet": {
+      "$ref": "#/components/schemas/Wallet"
+    },
+    "bankAccount": {
+      "$ref": "#/components/schemas/BankAccount"
+    },
+    "card": {
+      "$ref": "#/components/schemas/Card"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/UpdateTransferRequest",
+  "title": "UpdateTransferRequest",
+  "type": "object",
+  "description": "Request body for updating transfer metadata.",
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "description": "Updated custom key-value pairs for the transfer.",
+      "additionalProperties": {
+        "type": "string"
+      }
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/GovernmentID",
+  "title": "GovernmentID",
+  "type": "object",
+  "description": "Government-issued identification for KYC verification.",
+  "properties": {
+    "ssn": {
+      "$ref": "#/components/schemas/SsnOrItin"
+    },
+    "itin": {
+      "$ref": "#/components/schemas/SsnOrItin"
+    }
+  }
+}

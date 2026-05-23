@@ -1,0 +1,40 @@
+name: Moov Domain Vocabulary
+provider: Moov
+providerId: moov
+description: Tag-derived vocabulary for the Moov API surface; sourced from openapi/ tags.
+terms:
+- term: Accounts
+  description: Create and manage Moov accounts representing individual or business legal entities. Accounts are the foundation
+    for all money movement operations.
+- term: Authentication
+  description: OAuth2 access token creation and revocation for API authentication.
+- term: Bank Accounts
+  description: Link and manage bank accounts as funding sources for ACH and RTP transfers. Includes micro-deposit and instant
+    verification flows.
+- term: Capabilities
+  description: Request and manage capabilities that enable specific financial operations on an account, such as send-funds
+    or collect-funds.
+- term: Cards
+  description: Link and manage debit and credit cards as payment sources on Moov accounts.
+- term: Disputes
+  description: Manage card payment disputes including evidence submission, acceptance, and lifecycle tracking for chargeback
+    resolution.
+- term: Payment Links
+  description: Create and manage shareable payment links that allow customers to pay via card or bank account without custom
+    code.
+- term: Payment Methods
+  description: Retrieve the available payment methods on an account, including bank accounts, cards, and wallets, which can
+    be used as transfer sources or destinations.
+- term: Refunds
+  description: Create and retrieve refunds for completed card transfers, including full and partial refund support.
+- term: Representatives
+  description: Manage business representatives associated with a Moov account for KYB compliance and ownership verification.
+- term: Sweeps
+  description: Configure automatic daily transfers from a Moov wallet to an external bank account on a set schedule using
+    ACH or RTP rails.
+- term: Transfers
+  description: Initiate and manage money movement between Moov accounts. Supports ACH, RTP, and card rails with full lifecycle
+    tracking.
+- term: Wallets
+  description: Create and manage Moov digital wallets that hold funds within the platform. Supports wallet transactions and
+    balance adjustments.

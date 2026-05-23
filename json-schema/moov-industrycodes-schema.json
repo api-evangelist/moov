@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/IndustryCodes",
+  "title": "IndustryCodes",
+  "type": "object",
+  "description": "Industry classification codes for the business.",
+  "properties": {
+    "naics": {
+      "type": "string",
+      "description": "North American Industry Classification System code."
+    },
+    "sic": {
+      "type": "string",
+      "description": "Standard Industrial Classification code."
+    },
+    "mcc": {
+      "type": "string",
+      "description": "Merchant Category Code for card payment processing."
+    }
+  }
+}
