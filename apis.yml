@@ -105,6 +105,12 @@ apis:
       - type: Documentation
         url: https://docs.moov.io/sdks/
 common:
+  - type: TrustCenter
+    url: security/moov-trust-center.yml
+  - type: DomainSecurity
+    url: security/moov-domain-security.yml
+  - type: Authentication
+    url: authentication/moov-authentication.yml
   - type: GitHubOrganization
     url: https://github.com/moovfinancial
   - type: LinkedIn
