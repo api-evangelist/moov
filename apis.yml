@@ -105,6 +105,8 @@ apis:
       - type: Documentation
         url: https://docs.moov.io/sdks/
 common:
+  - type: AgenticAccess
+    url: agentic-access/moov-agentic-access.yml
   - type: TrustCenter
     url: security/moov-trust-center.yml
   - type: DomainSecurity
