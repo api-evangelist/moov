@@ -1,0 +1,340 @@
+openapi: 3.1.0
+info:
+  title: Moov Accounts Cards API
+  description: The Moov API is a RESTful financial infrastructure platform that enables developers to integrate money movement capabilities into their applications. The API supports a full range of financial operations including account management, payment method onboarding, transfers, sweeps, refunds, dispute resolution, card issuing, and payment links. It provides capabilities for accepting payments, storing funds in digital wallets, sending money between accounts, and issuing cards for spend management. Authentication uses OAuth2 access tokens with permission scopes, and the API returns JSON responses using standard HTTP response codes.
+  version: 2026.01.00
+  contact:
+    name: Moov Support
+    url: https://docs.moov.io/
+  termsOfService: https://moov.io/legal/platform-agreement/
+servers:
+- url: https://api.moov.io
+  description: Production Server
+security:
+- bearerAuth: []
+tags:
+- name: Cards
+  description: Link and manage debit and credit cards as payment sources on Moov accounts.
+paths:
+  /accounts/{accountID}/cards:
+    post:
+      operationId: linkCard
+      summary: Link a card
+      description: Attach a debit or credit card to a Moov account as a payment source. Card data is handled in a PCI-compliant manner via Moov.js to keep sensitive card numbers out of developer infrastructure.
+      tags:
+      - Cards
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LinkCardRequest'
+      responses:
+        '200':
+          description: Card linked successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Card'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    get:
+      operationId: listCards
+      summary: List cards
+      description: Retrieve all cards linked to a Moov account, including their status, card brand, and last four digits.
+      tags:
+      - Cards
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      responses:
+        '200':
+          description: Cards returned successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Card'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /accounts/{accountID}/cards/{cardID}:
+    get:
+      operationId: getCard
+      summary: Retrieve a card
+      description: Fetch the details of a specific linked card on a Moov account, including card type, brand, expiration, and current status.
+      tags:
+      - Cards
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/CardIDParam'
+      responses:
+        '200':
+          description: Card details returned successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Card'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      operationId: updateCard
+      summary: Update a card
+      description: Update the billing address or other mutable attributes of a linked card on a Moov account.
+      tags:
+      - Cards
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/CardIDParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCardRequest'
+      responses:
+        '200':
+          description: Card updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Card'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      operationId: disableCard
+      summary: Disable a card
+      description: Remove a linked card from a Moov account. Disabled cards can no longer be used as a payment source for new transfers.
+      tags:
+      - Cards
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/CardIDParam'
+      responses:
+        '204':
+          description: Card disabled successfully.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  parameters:
+    AccountIDParam:
+      name: accountID
+      in: path
+      required: true
+      description: Unique identifier for the Moov account.
+      schema:
+        type: string
+        format: uuid
+    CardIDParam:
+      name: cardID
+      in: path
+      required: true
+      description: Unique identifier for the card.
+      schema:
+        type: string
+        format: uuid
+  schemas:
+    CardVerification:
+      type: object
+      description: Results of card verification checks.
+      properties:
+        cvv:
+          type: string
+          description: CVV verification result.
+          enum:
+          - match
+          - noMatch
+          - notChecked
+          - unavailable
+        addressLine1:
+          type: string
+          description: Address line 1 AVS verification result.
+          enum:
+          - match
+          - noMatch
+          - notChecked
+          - unavailable
+        postalCode:
+          type: string
+          description: Postal code AVS verification result.
+          enum:
+          - match
+          - noMatch
+          - notChecked
+          - unavailable
+    Error:
+      type: object
+      description: Standard error response returned by the Moov API.
+      properties:
+        error:
+          type: string
+          description: Human-readable description of the error.
+        code:
+          type: string
+          description: Machine-readable error code.
+    UpdateCardRequest:
+      type: object
+      description: Request body for updating a linked card.
+      properties:
+        billingAddress:
+          $ref: '#/components/schemas/Address'
+        expiration:
+          $ref: '#/components/schemas/CardExpiration'
+        cardCvv:
+          type: string
+          description: Updated card security code.
+          minLength: 3
+          maxLength: 4
+    Card:
+      type: object
+      description: A credit or debit card linked to a Moov account as a payment source.
+      properties:
+        cardID:
+          type: string
+          format: uuid
+          description: Unique identifier for the card.
+        fingerprint:
+          type: string
+          description: Unique fingerprint identifying the underlying card number.
+        brand:
+          type: string
+          description: Card network brand.
+          enum:
+          - Visa
+          - Mastercard
+          - AmericanExpress
+          - Discover
+          - DinersClub
+          - JCB
+        cardType:
+          type: string
+          description: Type of card.
+          enum:
+          - debit
+          - credit
+          - prepaid
+          - unknown
+        lastFourCardNumber:
+          type: string
+          description: Last four digits of the card number.
+          pattern: ^\d{4}$
+        bin:
+          type: string
+          description: First six digits of the card number (Bank Identification Number).
+        expiration:
+          $ref: '#/components/schemas/CardExpiration'
+        holderName:
+          type: string
+          description: Name of the cardholder as it appears on the card.
+        billingAddress:
+          $ref: '#/components/schemas/Address'
+        cardVerification:
+          $ref: '#/components/schemas/CardVerification'
+        issuer:
+          type: string
+          description: Name of the card-issuing financial institution.
+        issuerCountry:
+          type: string
+          description: Two-letter ISO country code of the card issuer.
+          maxLength: 2
+        createdOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the card was linked.
+        updatedOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the card was last updated.
+    CardExpiration:
+      type: object
+      description: Card expiration date.
+      properties:
+        month:
+          type: string
+          description: Two-digit expiration month.
+          pattern: ^(0[1-9]|1[0-2])$
+        year:
+          type: string
+          description: Two-digit expiration year.
+          pattern: ^\d{2}$
+    LinkCardRequest:
+      type: object
+      description: Request body for linking a card to a Moov account.
+      properties:
+        cardNumber:
+          type: string
+          description: Full card number. Must be submitted via Moov.js to remain PCI compliant.
+        expiration:
+          $ref: '#/components/schemas/CardExpiration'
+        cardCvv:
+          type: string
+          description: Card security code.
+          minLength: 3
+          maxLength: 4
+        holderName:
+          type: string
+          description: Name of the cardholder.
+        billingAddress:
+          $ref: '#/components/schemas/Address'
+    Address:
+      type: object
+      description: Physical or mailing address.
+      properties:
+        addressLine1:
+          type: string
+          description: Primary street address.
+        addressLine2:
+          type: string
+          description: Secondary address line (suite, apartment, etc.).
+        city:
+          type: string
+          description: City name.
+        stateOrProvince:
+          type: string
+          description: Two-letter state or province code.
+          maxLength: 2
+        postalCode:
+          type: string
+          description: Postal or ZIP code.
+        country:
+          type: string
+          description: Two-letter ISO 3166-1 alpha-2 country code.
+          maxLength: 2
+  responses:
+    Unauthorized:
+      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: The request was malformed or contained invalid parameters.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: OAuth2 bearer token obtained from the /oauth2/token endpoint. Include in the Authorization header as "Bearer {token}".
+externalDocs:
+  description: Moov API Documentation
+  url: https://docs.moov.io/api/

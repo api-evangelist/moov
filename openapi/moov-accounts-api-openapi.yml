@@ -1,0 +1,606 @@
+openapi: 3.1.0
+info:
+  title: Moov Accounts API
+  description: The Moov API is a RESTful financial infrastructure platform that enables developers to integrate money movement capabilities into their applications. The API supports a full range of financial operations including account management, payment method onboarding, transfers, sweeps, refunds, dispute resolution, card issuing, and payment links. It provides capabilities for accepting payments, storing funds in digital wallets, sending money between accounts, and issuing cards for spend management. Authentication uses OAuth2 access tokens with permission scopes, and the API returns JSON responses using standard HTTP response codes.
+  version: 2026.01.00
+  contact:
+    name: Moov Support
+    url: https://docs.moov.io/
+  termsOfService: https://moov.io/legal/platform-agreement/
+servers:
+- url: https://api.moov.io
+  description: Production Server
+security:
+- bearerAuth: []
+tags:
+- name: Accounts
+  description: Create and manage Moov accounts representing individual or business legal entities. Accounts are the foundation for all money movement operations.
+paths:
+  /tos-token:
+    get:
+      operationId: generateTosToken
+      summary: Generate a terms of service token
+      description: Retrieve a short-lived terms of service token required when creating new Moov accounts on behalf of users. The token confirms acceptance of Moov's platform agreement.
+      tags:
+      - Accounts
+      responses:
+        '200':
+          description: Terms of service token generated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TosToken'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /accounts:
+    post:
+      operationId: createAccount
+      summary: Create an account
+      description: Create a new Moov account representing an individual or business legal entity. Accounts are required before linking payment methods or initiating transfers. Include a terms of service token from the /tos-token endpoint.
+      tags:
+      - Accounts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAccountRequest'
+      responses:
+        '200':
+          description: Account created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    get:
+      operationId: listAccounts
+      summary: List accounts
+      description: Retrieve a list of accounts connected to your platform. Supports filtering by name, email, and type to locate specific accounts.
+      tags:
+      - Accounts
+      parameters:
+      - $ref: '#/components/parameters/CountParam'
+      - $ref: '#/components/parameters/SkipParam'
+      - name: name
+        in: query
+        description: Filter accounts by display name.
+        schema:
+          type: string
+      - name: email
+        in: query
+        description: Filter accounts by email address.
+        schema:
+          type: string
+          format: email
+      - name: type
+        in: query
+        description: Filter by account type (individual or business).
+        schema:
+          type: string
+          enum:
+          - individual
+          - business
+      responses:
+        '200':
+          description: List of accounts returned successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Account'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /accounts/{accountID}:
+    get:
+      operationId: getAccount
+      summary: Retrieve an account
+      description: Fetch the full details of a specific Moov account by its unique identifier, including profile information, verification status, and capabilities.
+      tags:
+      - Accounts
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      responses:
+        '200':
+          description: Account details returned successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      operationId: updateAccount
+      summary: Update an account
+      description: Modify the profile and settings of an existing Moov account. Only the fields provided in the request body will be updated; omitted fields remain unchanged.
+      tags:
+      - Accounts
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAccountRequest'
+      responses:
+        '200':
+          description: Account updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      operationId: deleteAccount
+      summary: Delete an account
+      description: Remove a Moov account and all associated data. This operation is irreversible. Ensure all funds have been disbursed before deleting an account.
+      tags:
+      - Accounts
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      responses:
+        '204':
+          description: Account deleted successfully.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /accounts/{accountID}/connections:
+    post:
+      operationId: shareAccountConnection
+      summary: Share an account connection
+      description: Establish a connection between two Moov accounts, enabling the platform account to act on behalf of the connected account for money movement and management operations.
+      tags:
+      - Accounts
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountConnectionRequest'
+      responses:
+        '200':
+          description: Account connection established.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountConnection'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /accounts/{accountID}/connected-accounts:
+    get:
+      operationId: listConnectedAccounts
+      summary: List connected accounts
+      description: Retrieve all accounts that have been connected to the specified account. Used by platform accounts to enumerate their linked user accounts.
+      tags:
+      - Accounts
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      responses:
+        '200':
+          description: Connected accounts returned successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Account'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  parameters:
+    CountParam:
+      name: count
+      in: query
+      description: Maximum number of results to return per page.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    AccountIDParam:
+      name: accountID
+      in: path
+      required: true
+      description: Unique identifier for the Moov account.
+      schema:
+        type: string
+        format: uuid
+    SkipParam:
+      name: skip
+      in: query
+      description: Number of results to skip for pagination.
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+  schemas:
+    GovernmentID:
+      type: object
+      description: Government-issued identification for KYC verification.
+      properties:
+        ssn:
+          $ref: '#/components/schemas/SsnOrItin'
+        itin:
+          $ref: '#/components/schemas/SsnOrItin'
+    UpdateAccountRequest:
+      type: object
+      description: Request body for updating a Moov account. Only provided fields are updated.
+      properties:
+        profile:
+          $ref: '#/components/schemas/AccountProfile'
+        metadata:
+          type: object
+          description: Custom key-value metadata to attach to the account.
+          additionalProperties:
+            type: string
+        foreignID:
+          type: string
+          description: External identifier from your system.
+    Phone:
+      type: object
+      description: Phone number with country code.
+      properties:
+        number:
+          type: string
+          description: Phone number digits without formatting.
+          pattern: ^\d{10,15}$
+        countryCode:
+          type: string
+          description: International country calling code (e.g., "1" for US).
+    BusinessProfile:
+      type: object
+      description: Profile data for a business Moov account.
+      properties:
+        legalBusinessName:
+          type: string
+          description: Registered legal name of the business.
+        businessType:
+          type: string
+          description: Type of business entity.
+          enum:
+          - soleProprietorship
+          - unincorporatedAssociation
+          - trust
+          - publicCorporation
+          - privateCorporation
+          - privateCorporation
+          - llc
+          - partnership
+          - unincorporatedNonProfit
+          - incorporatedNonProfit
+        address:
+          $ref: '#/components/schemas/Address'
+        phone:
+          $ref: '#/components/schemas/Phone'
+        email:
+          type: string
+          format: email
+          description: Primary business email address.
+        website:
+          type: string
+          format: uri
+          description: Business website URL.
+        description:
+          type: string
+          description: Brief description of the business and its products or services.
+        taxID:
+          $ref: '#/components/schemas/TaxID'
+        industryCodes:
+          $ref: '#/components/schemas/IndustryCodes'
+    Account:
+      type: object
+      description: A Moov account representing a legal entity (individual or business) that can send, receive, and store funds on the platform.
+      properties:
+        accountID:
+          type: string
+          format: uuid
+          description: Unique identifier for the account.
+        accountType:
+          type: string
+          description: Whether the account belongs to an individual or a business.
+          enum:
+          - individual
+          - business
+        displayName:
+          type: string
+          description: Human-readable name for the account.
+        profile:
+          $ref: '#/components/schemas/AccountProfile'
+        capabilities:
+          type: array
+          description: List of capabilities enabled on this account.
+          items:
+            $ref: '#/components/schemas/Capability'
+        verification:
+          $ref: '#/components/schemas/AccountVerification'
+        createdOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the account was created.
+        updatedOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the account was last updated.
+    CapabilityRequirement:
+      type: object
+      description: A requirement that must be satisfied to activate a capability.
+      properties:
+        requirement:
+          type: string
+          description: Machine-readable identifier for the requirement type.
+        errorCode:
+          type: string
+          description: Error code providing more detail about why the requirement is unmet.
+    Capability:
+      type: object
+      description: A feature or permission that enables specific financial operations on a Moov account, such as the ability to send or receive funds.
+      properties:
+        capability:
+          type: string
+          description: Identifier for the capability type (e.g., "transfers.push", "collect-funds").
+        accountID:
+          type: string
+          format: uuid
+          description: The account this capability belongs to.
+        status:
+          type: string
+          description: Current activation status of the capability.
+          enum:
+          - enabled
+          - disabled
+          - pending
+          - in-review
+        requirements:
+          type: array
+          description: List of requirements that must be fulfilled to activate this capability.
+          items:
+            $ref: '#/components/schemas/CapabilityRequirement'
+        disabledReason:
+          type: string
+          description: Explanation of why the capability is disabled, if applicable.
+        createdOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the capability was created.
+        updatedOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the capability was last updated.
+    CreateAccountRequest:
+      type: object
+      description: Request body for creating a new Moov account.
+      required:
+      - accountType
+      - profile
+      properties:
+        accountType:
+          type: string
+          description: Whether the account is for an individual or a business.
+          enum:
+          - individual
+          - business
+        profile:
+          $ref: '#/components/schemas/AccountProfile'
+        metadata:
+          type: object
+          description: Custom key-value metadata to attach to the account.
+          additionalProperties:
+            type: string
+        termsOfService:
+          type: object
+          description: Terms of service acceptance details.
+          properties:
+            token:
+              type: string
+              description: Token obtained from the /tos-token endpoint.
+        foreignID:
+          type: string
+          description: External identifier from your system to associate with this account.
+    TosToken:
+      type: object
+      description: Short-lived token confirming acceptance of Moov's terms of service.
+      properties:
+        token:
+          type: string
+          description: The terms of service token to include when creating an account.
+        expiresOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the token expires.
+    AccountProfile:
+      type: object
+      description: Profile information for a Moov account.
+      properties:
+        individual:
+          $ref: '#/components/schemas/IndividualProfile'
+        business:
+          $ref: '#/components/schemas/BusinessProfile'
+    SsnOrItin:
+      type: object
+      description: Social Security Number or Individual Taxpayer Identification Number.
+      properties:
+        full:
+          type: string
+          description: Full 9-digit SSN or ITIN. Only provided on write; masked on read.
+          pattern: ^\d{9}$
+        lastFour:
+          type: string
+          description: Last four digits of the SSN or ITIN.
+          pattern: ^\d{4}$
+    AccountConnection:
+      type: object
+      description: An established connection between two Moov accounts.
+      properties:
+        accountID:
+          type: string
+          format: uuid
+          description: The account that initiated the connection.
+        partnerAccountID:
+          type: string
+          format: uuid
+          description: The connected partner account.
+        createdOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the connection was created.
+    Address:
+      type: object
+      description: Physical or mailing address.
+      properties:
+        addressLine1:
+          type: string
+          description: Primary street address.
+        addressLine2:
+          type: string
+          description: Secondary address line (suite, apartment, etc.).
+        city:
+          type: string
+          description: City name.
+        stateOrProvince:
+          type: string
+          description: Two-letter state or province code.
+          maxLength: 2
+        postalCode:
+          type: string
+          description: Postal or ZIP code.
+        country:
+          type: string
+          description: Two-letter ISO 3166-1 alpha-2 country code.
+          maxLength: 2
+    IndividualProfile:
+      type: object
+      description: Profile data for an individual Moov account.
+      properties:
+        name:
+          $ref: '#/components/schemas/Name'
+        email:
+          type: string
+          format: email
+          description: Email address of the individual.
+        phone:
+          $ref: '#/components/schemas/Phone'
+        address:
+          $ref: '#/components/schemas/Address'
+        birthDate:
+          type: string
+          format: date
+          description: Date of birth in ISO 8601 format (YYYY-MM-DD).
+        governmentID:
+          $ref: '#/components/schemas/GovernmentID'
+    Error:
+      type: object
+      description: Standard error response returned by the Moov API.
+      properties:
+        error:
+          type: string
+          description: Human-readable description of the error.
+        code:
+          type: string
+          description: Machine-readable error code.
+    AccountConnectionRequest:
+      type: object
+      description: Request to share an account connection with another Moov account.
+      properties:
+        partnerAccountID:
+          type: string
+          format: uuid
+          description: The account ID of the partner to connect with.
+    Name:
+      type: object
+      description: Full name of an individual.
+      properties:
+        firstName:
+          type: string
+          description: Given name.
+        middleName:
+          type: string
+          description: Middle name or initial.
+        lastName:
+          type: string
+          description: Family name.
+        suffix:
+          type: string
+          description: Name suffix (e.g., Jr., Sr., III).
+    IndustryCodes:
+      type: object
+      description: Industry classification codes for the business.
+      properties:
+        naics:
+          type: string
+          description: North American Industry Classification System code.
+        sic:
+          type: string
+          description: Standard Industrial Classification code.
+        mcc:
+          type: string
+          description: Merchant Category Code for card payment processing.
+    TaxID:
+      type: object
+      description: Business tax identification number.
+      properties:
+        ein:
+          type: object
+          description: Employer Identification Number for US businesses.
+          properties:
+            number:
+              type: string
+              description: Full EIN. Only provided on write; masked on read.
+              pattern: ^\d{9}$
+    AccountVerification:
+      type: object
+      description: Identity verification status for a Moov account.
+      properties:
+        verificationStatus:
+          type: string
+          description: Current KYC/KYB verification status.
+          enum:
+          - unverified
+          - pending
+          - resubmit
+          - review
+          - verified
+          - failed
+  responses:
+    BadRequest:
+      description: The request was malformed or contained invalid parameters.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: OAuth2 bearer token obtained from the /oauth2/token endpoint. Include in the Authorization header as "Bearer {token}".
+externalDocs:
+  description: Moov API Documentation
+  url: https://docs.moov.io/api/

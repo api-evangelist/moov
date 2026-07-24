@@ -1,0 +1,319 @@
+openapi: 3.1.0
+info:
+  title: Moov Accounts Wallets API
+  description: The Moov API is a RESTful financial infrastructure platform that enables developers to integrate money movement capabilities into their applications. The API supports a full range of financial operations including account management, payment method onboarding, transfers, sweeps, refunds, dispute resolution, card issuing, and payment links. It provides capabilities for accepting payments, storing funds in digital wallets, sending money between accounts, and issuing cards for spend management. Authentication uses OAuth2 access tokens with permission scopes, and the API returns JSON responses using standard HTTP response codes.
+  version: 2026.01.00
+  contact:
+    name: Moov Support
+    url: https://docs.moov.io/
+  termsOfService: https://moov.io/legal/platform-agreement/
+servers:
+- url: https://api.moov.io
+  description: Production Server
+security:
+- bearerAuth: []
+tags:
+- name: Wallets
+  description: Create and manage Moov digital wallets that hold funds within the platform. Supports wallet transactions and balance adjustments.
+paths:
+  /accounts/{accountID}/wallets:
+    post:
+      operationId: createWallet
+      summary: Create a wallet
+      description: Create a Moov digital wallet for an account to hold funds within the platform. Wallets serve as an intermediate store of value for money movement operations.
+      tags:
+      - Wallets
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      responses:
+        '200':
+          description: Wallet created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Wallet'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    get:
+      operationId: listWallets
+      summary: List wallets
+      description: Retrieve all wallets associated with a Moov account, including their current balances and currencies.
+      tags:
+      - Wallets
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      responses:
+        '200':
+          description: Wallets returned successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Wallet'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /accounts/{accountID}/wallets/{walletID}:
+    get:
+      operationId: getWallet
+      summary: Retrieve a wallet
+      description: Fetch the details and current balance of a specific Moov wallet for an account.
+      tags:
+      - Wallets
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/WalletIDParam'
+      responses:
+        '200':
+          description: Wallet details returned successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Wallet'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      operationId: updateWallet
+      summary: Update a wallet
+      description: Modify the configuration of an existing Moov wallet, such as updating its display name or settings.
+      tags:
+      - Wallets
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/WalletIDParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateWalletRequest'
+      responses:
+        '200':
+          description: Wallet updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Wallet'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /accounts/{accountID}/wallets/{walletID}/transactions:
+    get:
+      operationId: listWalletTransactions
+      summary: List wallet transactions
+      description: Retrieve the transaction history for a Moov wallet, showing all credits and debits with timestamps and amounts.
+      tags:
+      - Wallets
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/WalletIDParam'
+      - $ref: '#/components/parameters/CountParam'
+      - $ref: '#/components/parameters/SkipParam'
+      responses:
+        '200':
+          description: Wallet transactions returned successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WalletTransaction'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /accounts/{accountID}/wallets/{walletID}/transactions/{transactionID}:
+    get:
+      operationId: getWalletTransaction
+      summary: Retrieve a wallet transaction
+      description: Fetch the details of a specific transaction within a Moov wallet, including its type, amount, and associated transfer reference.
+      tags:
+      - Wallets
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/WalletIDParam'
+      - name: transactionID
+        in: path
+        required: true
+        description: Unique identifier for the wallet transaction.
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Wallet transaction returned successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WalletTransaction'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  parameters:
+    CountParam:
+      name: count
+      in: query
+      description: Maximum number of results to return per page.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    AccountIDParam:
+      name: accountID
+      in: path
+      required: true
+      description: Unique identifier for the Moov account.
+      schema:
+        type: string
+        format: uuid
+    SkipParam:
+      name: skip
+      in: query
+      description: Number of results to skip for pagination.
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+    WalletIDParam:
+      name: walletID
+      in: path
+      required: true
+      description: Unique identifier for the wallet.
+      schema:
+        type: string
+        format: uuid
+  schemas:
+    UpdateWalletRequest:
+      type: object
+      description: Request body for updating a Moov wallet.
+      properties:
+        name:
+          type: string
+          description: Display name for the wallet.
+    Error:
+      type: object
+      description: Standard error response returned by the Moov API.
+      properties:
+        error:
+          type: string
+          description: Human-readable description of the error.
+        code:
+          type: string
+          description: Machine-readable error code.
+    Wallet:
+      type: object
+      description: A Moov digital wallet that holds funds on the platform for an account. Wallets serve as intermediate stores of value for money movement.
+      properties:
+        walletID:
+          type: string
+          format: uuid
+          description: Unique identifier for the wallet.
+        availableBalance:
+          $ref: '#/components/schemas/Amount'
+        createdOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the wallet was created.
+        updatedOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the wallet was last updated.
+    WalletTransaction:
+      type: object
+      description: A single credit or debit entry in the history of a Moov wallet.
+      properties:
+        walletID:
+          type: string
+          format: uuid
+          description: Identifier of the wallet this transaction belongs to.
+        transactionID:
+          type: string
+          format: uuid
+          description: Unique identifier for the wallet transaction.
+        transactionType:
+          type: string
+          description: Type of wallet transaction.
+          enum:
+          - ach-reversal
+          - card-payment
+          - ach-payment
+          - rtp-payment
+          - wallet-transfer
+          - dispute
+          - dispute-reversal
+          - moov-fee
+          - moov-fee-reversal
+          - refund
+          - refund-failure
+        sourceType:
+          type: string
+          description: The source that triggered this wallet transaction.
+        sourceID:
+          type: string
+          format: uuid
+          description: Identifier of the source object (e.g., transfer ID).
+        status:
+          type: string
+          description: Transaction status.
+          enum:
+          - pending
+          - completed
+          - failed
+        memo:
+          type: string
+          description: Human-readable description of the transaction.
+        createdOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the transaction was created.
+        amount:
+          $ref: '#/components/schemas/Amount'
+    Amount:
+      type: object
+      description: A monetary amount with currency denomination.
+      properties:
+        currency:
+          type: string
+          description: ISO 4217 three-letter currency code.
+          default: USD
+          minLength: 3
+          maxLength: 3
+        value:
+          type: integer
+          description: Amount in the smallest currency unit (e.g., cents for USD).
+          minimum: 0
+  responses:
+    Unauthorized:
+      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: The request was malformed or contained invalid parameters.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: OAuth2 bearer token obtained from the /oauth2/token endpoint. Include in the Authorization header as "Bearer {token}".
+externalDocs:
+  description: Moov API Documentation
+  url: https://docs.moov.io/api/

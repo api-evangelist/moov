@@ -1,0 +1,298 @@
+openapi: 3.1.0
+info:
+  title: Moov Accounts Payment Links API
+  description: The Moov API is a RESTful financial infrastructure platform that enables developers to integrate money movement capabilities into their applications. The API supports a full range of financial operations including account management, payment method onboarding, transfers, sweeps, refunds, dispute resolution, card issuing, and payment links. It provides capabilities for accepting payments, storing funds in digital wallets, sending money between accounts, and issuing cards for spend management. Authentication uses OAuth2 access tokens with permission scopes, and the API returns JSON responses using standard HTTP response codes.
+  version: 2026.01.00
+  contact:
+    name: Moov Support
+    url: https://docs.moov.io/
+  termsOfService: https://moov.io/legal/platform-agreement/
+servers:
+- url: https://api.moov.io
+  description: Production Server
+security:
+- bearerAuth: []
+tags:
+- name: Payment Links
+  description: Create and manage shareable payment links that allow customers to pay via card or bank account without custom code.
+paths:
+  /accounts/{accountID}/payment-links:
+    post:
+      operationId: createPaymentLink
+      summary: Create a payment link
+      description: Generate a shareable payment link that allows customers to pay via credit card, debit card, or bank account without requiring custom frontend code. Payment links can be shared via email, SMS, or embedded in applications.
+      tags:
+      - Payment Links
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePaymentLinkRequest'
+      responses:
+        '200':
+          description: Payment link created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentLink'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    get:
+      operationId: listPaymentLinks
+      summary: List payment links
+      description: Retrieve all payment links for a Moov account, including their status, amounts, and usage statistics.
+      tags:
+      - Payment Links
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      responses:
+        '200':
+          description: Payment links returned successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PaymentLink'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /accounts/{accountID}/payment-links/{paymentLinkCode}:
+    get:
+      operationId: getPaymentLink
+      summary: Get a payment link
+      description: Retrieve the details of a specific payment link using its unique code.
+      tags:
+      - Payment Links
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/PaymentLinkCodeParam'
+      responses:
+        '200':
+          description: Payment link returned successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentLink'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      operationId: updatePaymentLink
+      summary: Update a payment link
+      description: Modify the configuration of an existing payment link, such as updating the amount, description, or expiration date.
+      tags:
+      - Payment Links
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/PaymentLinkCodeParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePaymentLinkRequest'
+      responses:
+        '200':
+          description: Payment link updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentLink'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      operationId: disablePaymentLink
+      summary: Disable a payment link
+      description: Deactivate a payment link so it can no longer be used to collect payments.
+      tags:
+      - Payment Links
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/PaymentLinkCodeParam'
+      responses:
+        '204':
+          description: Payment link disabled successfully.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /accounts/{accountID}/payment-links/{paymentLinkCode}/qrcode:
+    get:
+      operationId: getPaymentLinkQrCode
+      summary: Get payment link QR code
+      description: Retrieve a QR code image for a payment link, suitable for embedding in invoices, receipts, or printed materials to allow in-person payments.
+      tags:
+      - Payment Links
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/PaymentLinkCodeParam'
+      responses:
+        '200':
+          description: QR code image returned successfully.
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  parameters:
+    PaymentLinkCodeParam:
+      name: paymentLinkCode
+      in: path
+      required: true
+      description: Unique code identifier for the payment link.
+      schema:
+        type: string
+    AccountIDParam:
+      name: accountID
+      in: path
+      required: true
+      description: Unique identifier for the Moov account.
+      schema:
+        type: string
+        format: uuid
+  schemas:
+    Error:
+      type: object
+      description: Standard error response returned by the Moov API.
+      properties:
+        error:
+          type: string
+          description: Human-readable description of the error.
+        code:
+          type: string
+          description: Machine-readable error code.
+    UpdatePaymentLinkRequest:
+      type: object
+      description: Request body for updating a payment link.
+      properties:
+        amount:
+          $ref: '#/components/schemas/Amount'
+        description:
+          type: string
+          description: Updated description for the payment link.
+          maxLength: 250
+        status:
+          type: string
+          description: Update the status of the payment link.
+          enum:
+          - active
+          - inactive
+        expiresOn:
+          type: string
+          format: date-time
+          description: Updated expiration timestamp for the payment link.
+    Amount:
+      type: object
+      description: A monetary amount with currency denomination.
+      properties:
+        currency:
+          type: string
+          description: ISO 4217 three-letter currency code.
+          default: USD
+          minLength: 3
+          maxLength: 3
+        value:
+          type: integer
+          description: Amount in the smallest currency unit (e.g., cents for USD).
+          minimum: 0
+    CreatePaymentLinkRequest:
+      type: object
+      description: Request body for creating a payment link.
+      required:
+      - amount
+      properties:
+        amount:
+          $ref: '#/components/schemas/Amount'
+        description:
+          type: string
+          description: Description of the payment that will be shown to the payer.
+          maxLength: 250
+        expiresOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when this payment link should expire.
+    PaymentLink:
+      type: object
+      description: A shareable link that allows customers to make payments via card or bank account without requiring custom frontend development.
+      properties:
+        paymentLinkCode:
+          type: string
+          description: Unique code identifier used in the payment link URL.
+        accountID:
+          type: string
+          format: uuid
+          description: The Moov account that created this payment link.
+        status:
+          type: string
+          description: Current usability status of the payment link.
+          enum:
+          - active
+          - inactive
+          - expired
+        amount:
+          $ref: '#/components/schemas/Amount'
+        currency:
+          type: string
+          description: ISO 4217 currency code for the payment.
+          default: USD
+        description:
+          type: string
+          description: Description of what the payment is for.
+        url:
+          type: string
+          format: uri
+          description: The shareable URL for this payment link.
+        expiresOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the payment link expires.
+        createdOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the payment link was created.
+        updatedOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the payment link was last updated.
+  responses:
+    Unauthorized:
+      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: The request was malformed or contained invalid parameters.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: OAuth2 bearer token obtained from the /oauth2/token endpoint. Include in the Authorization header as "Bearer {token}".
+externalDocs:
+  description: Moov API Documentation
+  url: https://docs.moov.io/api/

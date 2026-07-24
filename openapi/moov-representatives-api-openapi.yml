@@ -1,0 +1,357 @@
+openapi: 3.1.0
+info:
+  title: Moov Accounts Representatives API
+  description: The Moov API is a RESTful financial infrastructure platform that enables developers to integrate money movement capabilities into their applications. The API supports a full range of financial operations including account management, payment method onboarding, transfers, sweeps, refunds, dispute resolution, card issuing, and payment links. It provides capabilities for accepting payments, storing funds in digital wallets, sending money between accounts, and issuing cards for spend management. Authentication uses OAuth2 access tokens with permission scopes, and the API returns JSON responses using standard HTTP response codes.
+  version: 2026.01.00
+  contact:
+    name: Moov Support
+    url: https://docs.moov.io/
+  termsOfService: https://moov.io/legal/platform-agreement/
+servers:
+- url: https://api.moov.io
+  description: Production Server
+security:
+- bearerAuth: []
+tags:
+- name: Representatives
+  description: Manage business representatives associated with a Moov account for KYB compliance and ownership verification.
+paths:
+  /accounts/{accountID}/representatives:
+    post:
+      operationId: addRepresentative
+      summary: Add a representative
+      description: Add a business representative to a Moov account for KYB compliance. Representatives are individuals with significant ownership or control over the business, as required by FinCEN beneficial ownership rules.
+      tags:
+      - Representatives
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRepresentativeRequest'
+      responses:
+        '200':
+          description: Representative added successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Representative'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    get:
+      operationId: listRepresentatives
+      summary: List representatives
+      description: Retrieve all business representatives associated with a Moov account, including their verification status and ownership details.
+      tags:
+      - Representatives
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      responses:
+        '200':
+          description: Representatives returned successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Representative'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /accounts/{accountID}/representatives/{representativeID}:
+    get:
+      operationId: getRepresentative
+      summary: Retrieve a representative
+      description: Fetch the full profile and verification details for a specific business representative on a Moov account.
+      tags:
+      - Representatives
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/RepresentativeIDParam'
+      responses:
+        '200':
+          description: Representative details returned successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Representative'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      operationId: updateRepresentative
+      summary: Update a representative
+      description: Modify the information for an existing business representative. Use this to correct or update personal details, ownership percentages, or contact information as part of KYB compliance maintenance.
+      tags:
+      - Representatives
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/RepresentativeIDParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateRepresentativeRequest'
+      responses:
+        '200':
+          description: Representative updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Representative'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      operationId: removeRepresentative
+      summary: Remove a representative
+      description: Delete a business representative from a Moov account. This may affect the account's compliance status and capability eligibility.
+      tags:
+      - Representatives
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/RepresentativeIDParam'
+      responses:
+        '204':
+          description: Representative removed successfully.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  parameters:
+    RepresentativeIDParam:
+      name: representativeID
+      in: path
+      required: true
+      description: Unique identifier for the representative.
+      schema:
+        type: string
+        format: uuid
+    AccountIDParam:
+      name: accountID
+      in: path
+      required: true
+      description: Unique identifier for the Moov account.
+      schema:
+        type: string
+        format: uuid
+  schemas:
+    GovernmentID:
+      type: object
+      description: Government-issued identification for KYC verification.
+      properties:
+        ssn:
+          $ref: '#/components/schemas/SsnOrItin'
+        itin:
+          $ref: '#/components/schemas/SsnOrItin'
+    Error:
+      type: object
+      description: Standard error response returned by the Moov API.
+      properties:
+        error:
+          type: string
+          description: Human-readable description of the error.
+        code:
+          type: string
+          description: Machine-readable error code.
+    CreateRepresentativeRequest:
+      type: object
+      description: Request body for adding a business representative to an account.
+      required:
+      - name
+      properties:
+        name:
+          $ref: '#/components/schemas/Name'
+        phone:
+          $ref: '#/components/schemas/Phone'
+        email:
+          type: string
+          format: email
+          description: Representative's email address.
+        address:
+          $ref: '#/components/schemas/Address'
+        birthDate:
+          type: string
+          format: date
+          description: Date of birth in ISO 8601 format (YYYY-MM-DD).
+        governmentID:
+          $ref: '#/components/schemas/GovernmentID'
+        responsibilities:
+          $ref: '#/components/schemas/RepresentativeResponsibilities'
+    Phone:
+      type: object
+      description: Phone number with country code.
+      properties:
+        number:
+          type: string
+          description: Phone number digits without formatting.
+          pattern: ^\d{10,15}$
+        countryCode:
+          type: string
+          description: International country calling code (e.g., "1" for US).
+    UpdateRepresentativeRequest:
+      type: object
+      description: Request body for updating a business representative. Only provided fields are updated.
+      properties:
+        name:
+          $ref: '#/components/schemas/Name'
+        phone:
+          $ref: '#/components/schemas/Phone'
+        email:
+          type: string
+          format: email
+          description: Representative's email address.
+        address:
+          $ref: '#/components/schemas/Address'
+        birthDate:
+          type: string
+          format: date
+          description: Date of birth in ISO 8601 format.
+        governmentID:
+          $ref: '#/components/schemas/GovernmentID'
+        responsibilities:
+          $ref: '#/components/schemas/RepresentativeResponsibilities'
+    Name:
+      type: object
+      description: Full name of an individual.
+      properties:
+        firstName:
+          type: string
+          description: Given name.
+        middleName:
+          type: string
+          description: Middle name or initial.
+        lastName:
+          type: string
+          description: Family name.
+        suffix:
+          type: string
+          description: Name suffix (e.g., Jr., Sr., III).
+    RepresentativeResponsibilities:
+      type: object
+      description: Ownership and control responsibilities of a business representative.
+      properties:
+        isController:
+          type: boolean
+          description: Whether this representative has significant control over the business.
+        isOwner:
+          type: boolean
+          description: Whether this representative owns 25% or more of the business.
+        ownershipPercentage:
+          type: number
+          description: Percentage of business ownership held by this representative.
+          minimum: 0
+          maximum: 100
+        jobTitle:
+          type: string
+          description: Representative's job title within the business.
+    SsnOrItin:
+      type: object
+      description: Social Security Number or Individual Taxpayer Identification Number.
+      properties:
+        full:
+          type: string
+          description: Full 9-digit SSN or ITIN. Only provided on write; masked on read.
+          pattern: ^\d{9}$
+        lastFour:
+          type: string
+          description: Last four digits of the SSN or ITIN.
+          pattern: ^\d{4}$
+    Representative:
+      type: object
+      description: A business representative with significant ownership or control over a Moov business account, required for KYB compliance.
+      properties:
+        representativeID:
+          type: string
+          format: uuid
+          description: Unique identifier for the representative.
+        name:
+          $ref: '#/components/schemas/Name'
+        phone:
+          $ref: '#/components/schemas/Phone'
+        email:
+          type: string
+          format: email
+          description: Representative's email address.
+        address:
+          $ref: '#/components/schemas/Address'
+        birthDate:
+          type: string
+          format: date
+          description: Date of birth in ISO 8601 format.
+        governmentID:
+          $ref: '#/components/schemas/GovernmentID'
+        responsibilities:
+          $ref: '#/components/schemas/RepresentativeResponsibilities'
+        createdOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the representative was added.
+        updatedOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the representative was last updated.
+        disabledOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the representative was disabled, if applicable.
+    Address:
+      type: object
+      description: Physical or mailing address.
+      properties:
+        addressLine1:
+          type: string
+          description: Primary street address.
+        addressLine2:
+          type: string
+          description: Secondary address line (suite, apartment, etc.).
+        city:
+          type: string
+          description: City name.
+        stateOrProvince:
+          type: string
+          description: Two-letter state or province code.
+          maxLength: 2
+        postalCode:
+          type: string
+          description: Postal or ZIP code.
+        country:
+          type: string
+          description: Two-letter ISO 3166-1 alpha-2 country code.
+          maxLength: 2
+  responses:
+    Unauthorized:
+      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: The request was malformed or contained invalid parameters.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: OAuth2 bearer token obtained from the /oauth2/token endpoint. Include in the Authorization header as "Bearer {token}".
+externalDocs:
+  description: Moov API Documentation
+  url: https://docs.moov.io/api/

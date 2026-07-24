@@ -1,0 +1,213 @@
+openapi: 3.1.0
+info:
+  title: Moov Accounts Capabilities API
+  description: The Moov API is a RESTful financial infrastructure platform that enables developers to integrate money movement capabilities into their applications. The API supports a full range of financial operations including account management, payment method onboarding, transfers, sweeps, refunds, dispute resolution, card issuing, and payment links. It provides capabilities for accepting payments, storing funds in digital wallets, sending money between accounts, and issuing cards for spend management. Authentication uses OAuth2 access tokens with permission scopes, and the API returns JSON responses using standard HTTP response codes.
+  version: 2026.01.00
+  contact:
+    name: Moov Support
+    url: https://docs.moov.io/
+  termsOfService: https://moov.io/legal/platform-agreement/
+servers:
+- url: https://api.moov.io
+  description: Production Server
+security:
+- bearerAuth: []
+tags:
+- name: Capabilities
+  description: Request and manage capabilities that enable specific financial operations on an account, such as send-funds or collect-funds.
+paths:
+  /accounts/{accountID}/capabilities:
+    post:
+      operationId: requestCapabilities
+      summary: Request capabilities
+      description: Request one or more capabilities for a Moov account to enable specific financial operations. Moov will evaluate the request and may require additional information before granting capabilities.
+      tags:
+      - Capabilities
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestCapabilitiesRequest'
+      responses:
+        '200':
+          description: Capabilities requested successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Capability'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    get:
+      operationId: listCapabilities
+      summary: List capabilities
+      description: Retrieve all capabilities associated with an account, including their current status and any outstanding requirements needed for activation.
+      tags:
+      - Capabilities
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      responses:
+        '200':
+          description: Capabilities returned successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Capability'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /accounts/{accountID}/capabilities/{capabilityID}:
+    get:
+      operationId: getCapability
+      summary: Retrieve a capability
+      description: Fetch the current status and requirements for a specific capability on a Moov account. Use this to track onboarding progress for a given feature.
+      tags:
+      - Capabilities
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/CapabilityIDParam'
+      responses:
+        '200':
+          description: Capability details returned successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Capability'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      operationId: disableCapability
+      summary: Disable a capability
+      description: Remove a capability from a Moov account, preventing the associated financial operations from being performed on that account.
+      tags:
+      - Capabilities
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/CapabilityIDParam'
+      responses:
+        '204':
+          description: Capability disabled successfully.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  parameters:
+    AccountIDParam:
+      name: accountID
+      in: path
+      required: true
+      description: Unique identifier for the Moov account.
+      schema:
+        type: string
+        format: uuid
+    CapabilityIDParam:
+      name: capabilityID
+      in: path
+      required: true
+      description: Unique identifier for the capability.
+      schema:
+        type: string
+  schemas:
+    Error:
+      type: object
+      description: Standard error response returned by the Moov API.
+      properties:
+        error:
+          type: string
+          description: Human-readable description of the error.
+        code:
+          type: string
+          description: Machine-readable error code.
+    RequestCapabilitiesRequest:
+      type: object
+      description: Request body for enabling capabilities on a Moov account.
+      required:
+      - capabilities
+      properties:
+        capabilities:
+          type: array
+          description: List of capability identifiers to request.
+          items:
+            type: string
+    CapabilityRequirement:
+      type: object
+      description: A requirement that must be satisfied to activate a capability.
+      properties:
+        requirement:
+          type: string
+          description: Machine-readable identifier for the requirement type.
+        errorCode:
+          type: string
+          description: Error code providing more detail about why the requirement is unmet.
+    Capability:
+      type: object
+      description: A feature or permission that enables specific financial operations on a Moov account, such as the ability to send or receive funds.
+      properties:
+        capability:
+          type: string
+          description: Identifier for the capability type (e.g., "transfers.push", "collect-funds").
+        accountID:
+          type: string
+          format: uuid
+          description: The account this capability belongs to.
+        status:
+          type: string
+          description: Current activation status of the capability.
+          enum:
+          - enabled
+          - disabled
+          - pending
+          - in-review
+        requirements:
+          type: array
+          description: List of requirements that must be fulfilled to activate this capability.
+          items:
+            $ref: '#/components/schemas/CapabilityRequirement'
+        disabledReason:
+          type: string
+          description: Explanation of why the capability is disabled, if applicable.
+        createdOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the capability was created.
+        updatedOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the capability was last updated.
+  responses:
+    Unauthorized:
+      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: The request was malformed or contained invalid parameters.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: OAuth2 bearer token obtained from the /oauth2/token endpoint. Include in the Authorization header as "Bearer {token}".
+externalDocs:
+  description: Moov API Documentation
+  url: https://docs.moov.io/api/

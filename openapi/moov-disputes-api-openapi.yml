@@ -1,0 +1,353 @@
+openapi: 3.1.0
+info:
+  title: Moov Accounts Disputes API
+  description: The Moov API is a RESTful financial infrastructure platform that enables developers to integrate money movement capabilities into their applications. The API supports a full range of financial operations including account management, payment method onboarding, transfers, sweeps, refunds, dispute resolution, card issuing, and payment links. It provides capabilities for accepting payments, storing funds in digital wallets, sending money between accounts, and issuing cards for spend management. Authentication uses OAuth2 access tokens with permission scopes, and the API returns JSON responses using standard HTTP response codes.
+  version: 2026.01.00
+  contact:
+    name: Moov Support
+    url: https://docs.moov.io/
+  termsOfService: https://moov.io/legal/platform-agreement/
+servers:
+- url: https://api.moov.io
+  description: Production Server
+security:
+- bearerAuth: []
+tags:
+- name: Disputes
+  description: Manage card payment disputes including evidence submission, acceptance, and lifecycle tracking for chargeback resolution.
+paths:
+  /accounts/{accountID}/disputes:
+    get:
+      operationId: listDisputes
+      summary: List disputes
+      description: Retrieve all card payment disputes for a Moov account, including their status, disputed amount, and reason codes.
+      tags:
+      - Disputes
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/CountParam'
+      - $ref: '#/components/parameters/SkipParam'
+      responses:
+        '200':
+          description: Disputes returned successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Dispute'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /accounts/{accountID}/disputes/{disputeID}:
+    get:
+      operationId: getDispute
+      summary: Retrieve a dispute
+      description: Fetch the full details of a specific card dispute, including reason codes, amounts, deadlines for evidence submission, and current status.
+      tags:
+      - Disputes
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/DisputeIDParam'
+      responses:
+        '200':
+          description: Dispute details returned successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dispute'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /accounts/{accountID}/disputes/{disputeID}/accept:
+    post:
+      operationId: acceptDispute
+      summary: Accept a dispute
+      description: Accept a card dispute without contesting it. Use this when the dispute is valid and you wish to return the funds to the cardholder without going through the evidence submission process.
+      tags:
+      - Disputes
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/DisputeIDParam'
+      responses:
+        '200':
+          description: Dispute accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dispute'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /accounts/{accountID}/disputes/{disputeID}/evidence-file:
+    post:
+      operationId: uploadDisputeEvidenceFile
+      summary: Upload evidence file
+      description: Upload a file as evidence for contesting a card dispute. Accepted file types include images and PDFs of receipts, correspondence, and other relevant documentation.
+      tags:
+      - Disputes
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/DisputeIDParam'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The evidence file to upload.
+                evidenceType:
+                  type: string
+                  description: Classification of the evidence type.
+      responses:
+        '200':
+          description: Evidence file uploaded successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DisputeEvidence'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /accounts/{accountID}/disputes/{disputeID}/evidence-text:
+    post:
+      operationId: uploadDisputeEvidenceText
+      summary: Upload evidence text
+      description: Submit a text-based statement as evidence when contesting a card dispute. Use this for written explanations that supplement file-based evidence.
+      tags:
+      - Disputes
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/DisputeIDParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DisputeEvidenceText'
+      responses:
+        '200':
+          description: Evidence text uploaded successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DisputeEvidence'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /accounts/{accountID}/disputes/{disputeID}/evidence/submit:
+    post:
+      operationId: submitDisputeEvidence
+      summary: Submit dispute evidence
+      description: Finalize and submit all uploaded evidence for a dispute to the card network for review. Once submitted, no additional evidence can be added.
+      tags:
+      - Disputes
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/DisputeIDParam'
+      responses:
+        '200':
+          description: Evidence submitted for dispute review.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dispute'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  parameters:
+    CountParam:
+      name: count
+      in: query
+      description: Maximum number of results to return per page.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    AccountIDParam:
+      name: accountID
+      in: path
+      required: true
+      description: Unique identifier for the Moov account.
+      schema:
+        type: string
+        format: uuid
+    DisputeIDParam:
+      name: disputeID
+      in: path
+      required: true
+      description: Unique identifier for the dispute.
+      schema:
+        type: string
+        format: uuid
+    SkipParam:
+      name: skip
+      in: query
+      description: Number of results to skip for pagination.
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+  schemas:
+    Error:
+      type: object
+      description: Standard error response returned by the Moov API.
+      properties:
+        error:
+          type: string
+          description: Human-readable description of the error.
+        code:
+          type: string
+          description: Machine-readable error code.
+    Amount:
+      type: object
+      description: A monetary amount with currency denomination.
+      properties:
+        currency:
+          type: string
+          description: ISO 4217 three-letter currency code.
+          default: USD
+          minLength: 3
+          maxLength: 3
+        value:
+          type: integer
+          description: Amount in the smallest currency unit (e.g., cents for USD).
+          minimum: 0
+    Dispute:
+      type: object
+      description: A card payment dispute (chargeback) initiated by a cardholder through their card issuer. Disputes require evidence submission or acceptance.
+      properties:
+        disputeID:
+          type: string
+          format: uuid
+          description: Unique identifier for the dispute.
+        transferID:
+          type: string
+          format: uuid
+          description: The transfer associated with this dispute.
+        phase:
+          type: string
+          description: Current phase of the dispute lifecycle.
+          enum:
+          - new
+          - pre-arbitration
+          - arbitration
+          - won
+          - lost
+        status:
+          type: string
+          description: Current status of the dispute.
+          enum:
+          - new
+          - responded
+          - under-review
+          - waiting-for-customer
+          - closed
+        amount:
+          $ref: '#/components/schemas/Amount'
+        reason:
+          type: string
+          description: Card network reason code for the dispute.
+        networkReasonCode:
+          type: string
+          description: Specific reason code from the card network.
+        respondBy:
+          type: string
+          format: date-time
+          description: ISO 8601 deadline for submitting evidence to contest the dispute.
+        createdOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the dispute was created.
+        updatedOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the dispute was last updated.
+    DisputeEvidenceText:
+      type: object
+      description: Request body for submitting text-based dispute evidence.
+      required:
+      - text
+      - evidenceType
+      properties:
+        text:
+          type: string
+          description: The written statement or explanation for contesting the dispute.
+        evidenceType:
+          type: string
+          description: Classification of the text evidence.
+          enum:
+          - customer-communication
+          - refund-policy
+          - service-documentation
+          - other
+    DisputeEvidence:
+      type: object
+      description: A piece of evidence submitted in response to a card dispute.
+      properties:
+        evidenceID:
+          type: string
+          format: uuid
+          description: Unique identifier for the evidence item.
+        disputeID:
+          type: string
+          format: uuid
+          description: The dispute this evidence is associated with.
+        evidenceType:
+          type: string
+          description: Classification of the evidence type.
+          enum:
+          - customer-communication
+          - customer-signature
+          - receipt
+          - refund-policy
+          - service-documentation
+          - shipping-documentation
+          - shipping-tracking
+          - other
+        text:
+          type: string
+          description: Text content for text-based evidence submissions.
+        createdOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the evidence was submitted.
+  responses:
+    Unauthorized:
+      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: The request was malformed or contained invalid parameters.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: OAuth2 bearer token obtained from the /oauth2/token endpoint. Include in the Authorization header as "Bearer {token}".
+externalDocs:
+  description: Moov API Documentation
+  url: https://docs.moov.io/api/

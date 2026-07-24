@@ -1,0 +1,695 @@
+openapi: 3.1.0
+info:
+  title: Moov Accounts Transfers API
+  description: The Moov API is a RESTful financial infrastructure platform that enables developers to integrate money movement capabilities into their applications. The API supports a full range of financial operations including account management, payment method onboarding, transfers, sweeps, refunds, dispute resolution, card issuing, and payment links. It provides capabilities for accepting payments, storing funds in digital wallets, sending money between accounts, and issuing cards for spend management. Authentication uses OAuth2 access tokens with permission scopes, and the API returns JSON responses using standard HTTP response codes.
+  version: 2026.01.00
+  contact:
+    name: Moov Support
+    url: https://docs.moov.io/
+  termsOfService: https://moov.io/legal/platform-agreement/
+servers:
+- url: https://api.moov.io
+  description: Production Server
+security:
+- bearerAuth: []
+tags:
+- name: Transfers
+  description: Initiate and manage money movement between Moov accounts. Supports ACH, RTP, and card rails with full lifecycle tracking.
+paths:
+  /accounts/{accountID}/transfers:
+    post:
+      operationId: createTransfer
+      summary: Create a transfer
+      description: Initiate a money movement from a source payment method to a destination payment method. Transfers can move funds via ACH, RTP, or card rails. Every transfer has a source (where the money comes from) and a destination (where the money goes).
+      tags:
+      - Transfers
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTransferRequest'
+      responses:
+        '200':
+          description: Transfer created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transfer'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    get:
+      operationId: listTransfers
+      summary: List transfers
+      description: Retrieve the transfer history for a Moov account, with optional filters for date range, status, and transfer type.
+      tags:
+      - Transfers
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/CountParam'
+      - $ref: '#/components/parameters/SkipParam'
+      - name: status
+        in: query
+        description: Filter transfers by their current status.
+        schema:
+          type: string
+          enum:
+          - created
+          - pending
+          - completed
+          - failed
+          - reversed
+      responses:
+        '200':
+          description: Transfers returned successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Transfer'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /accounts/{accountID}/transfers/{transferID}:
+    get:
+      operationId: getTransfer
+      summary: Retrieve a transfer
+      description: Fetch the full details of a specific transfer, including its status, source, destination, amount, and rail-specific status updates.
+      tags:
+      - Transfers
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/TransferIDParam'
+      responses:
+        '200':
+          description: Transfer details returned successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transfer'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      operationId: updateTransferMetadata
+      summary: Update transfer metadata
+      description: Update the metadata associated with an existing transfer. Only custom metadata fields can be modified after a transfer is created.
+      tags:
+      - Transfers
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/TransferIDParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTransferRequest'
+      responses:
+        '200':
+          description: Transfer metadata updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transfer'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /accounts/{accountID}/transfer-options:
+    post:
+      operationId: getTransferOptions
+      summary: Retrieve transfer options
+      description: Get the available transfer options for a given source and destination account pair, including eligible payment rails, fees, and estimated settlement times to help users choose the best transfer method.
+      tags:
+      - Transfers
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransferOptionsRequest'
+      responses:
+        '200':
+          description: Transfer options returned successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransferOptions'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /accounts/{accountID}/transfers/{transferID}/cancellations:
+    post:
+      operationId: cancelTransfer
+      summary: Cancel a transfer
+      description: Attempt to cancel a pending transfer before it is processed. Cancellation is only available for transfers that have not yet been submitted to the payment rail.
+      tags:
+      - Transfers
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/TransferIDParam'
+      responses:
+        '200':
+          description: Transfer cancellation initiated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransferCancellation'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  schemas:
+    PaymentMethodOption:
+      type: object
+      description: A payment method option with its compatible payment rails.
+      properties:
+        paymentMethodID:
+          type: string
+          format: uuid
+          description: Identifier of the payment method.
+        paymentMethodType:
+          type: string
+          description: The type of this payment method.
+        rails:
+          type: array
+          description: Eligible payment rails for this method.
+          items:
+            type: string
+            enum:
+            - ach-debit-fund
+            - ach-debit-collect
+            - ach-credit-standard
+            - ach-credit-same-day
+            - rtp-credit
+            - card-payment
+    UpdateTransferRequest:
+      type: object
+      description: Request body for updating transfer metadata.
+      properties:
+        metadata:
+          type: object
+          description: Updated custom key-value pairs for the transfer.
+          additionalProperties:
+            type: string
+    CardExpiration:
+      type: object
+      description: Card expiration date.
+      properties:
+        month:
+          type: string
+          description: Two-digit expiration month.
+          pattern: ^(0[1-9]|1[0-2])$
+        year:
+          type: string
+          description: Two-digit expiration year.
+          pattern: ^\d{2}$
+    TransferAccountRef:
+      type: object
+      description: Reference to the Moov account involved in a transfer.
+      properties:
+        accountID:
+          type: string
+          format: uuid
+          description: Unique identifier of the Moov account.
+        email:
+          type: string
+          format: email
+          description: Email address of the account holder.
+        displayName:
+          type: string
+          description: Display name of the account.
+    Address:
+      type: object
+      description: Physical or mailing address.
+      properties:
+        addressLine1:
+          type: string
+          description: Primary street address.
+        addressLine2:
+          type: string
+          description: Secondary address line (suite, apartment, etc.).
+        city:
+          type: string
+          description: City name.
+        stateOrProvince:
+          type: string
+          description: Two-letter state or province code.
+          maxLength: 2
+        postalCode:
+          type: string
+          description: Postal or ZIP code.
+        country:
+          type: string
+          description: Two-letter ISO 3166-1 alpha-2 country code.
+          maxLength: 2
+    Error:
+      type: object
+      description: Standard error response returned by the Moov API.
+      properties:
+        error:
+          type: string
+          description: Human-readable description of the error.
+        code:
+          type: string
+          description: Machine-readable error code.
+    TransferOptionsRequest:
+      type: object
+      description: Request body for retrieving available transfer options.
+      required:
+      - source
+      - destination
+      - amount
+      properties:
+        source:
+          type: object
+          description: The source account and optional payment method to evaluate.
+          properties:
+            accountID:
+              type: string
+              format: uuid
+              description: Account ID of the transfer source.
+            paymentMethodID:
+              type: string
+              format: uuid
+              description: Optional specific payment method to evaluate.
+        destination:
+          type: object
+          description: The destination account and optional payment method to evaluate.
+          properties:
+            accountID:
+              type: string
+              format: uuid
+              description: Account ID of the transfer destination.
+            paymentMethodID:
+              type: string
+              format: uuid
+              description: Optional specific payment method to evaluate.
+        amount:
+          $ref: '#/components/schemas/Amount'
+    TransferOptions:
+      type: object
+      description: Available payment rails and options for a proposed transfer.
+      properties:
+        sourceOptions:
+          type: array
+          description: Eligible source payment methods with their available rails.
+          items:
+            $ref: '#/components/schemas/PaymentMethodOption'
+        destinationOptions:
+          type: array
+          description: Eligible destination payment methods with their available rails.
+          items:
+            $ref: '#/components/schemas/PaymentMethodOption'
+    CardVerification:
+      type: object
+      description: Results of card verification checks.
+      properties:
+        cvv:
+          type: string
+          description: CVV verification result.
+          enum:
+          - match
+          - noMatch
+          - notChecked
+          - unavailable
+        addressLine1:
+          type: string
+          description: Address line 1 AVS verification result.
+          enum:
+          - match
+          - noMatch
+          - notChecked
+          - unavailable
+        postalCode:
+          type: string
+          description: Postal code AVS verification result.
+          enum:
+          - match
+          - noMatch
+          - notChecked
+          - unavailable
+    Card:
+      type: object
+      description: A credit or debit card linked to a Moov account as a payment source.
+      properties:
+        cardID:
+          type: string
+          format: uuid
+          description: Unique identifier for the card.
+        fingerprint:
+          type: string
+          description: Unique fingerprint identifying the underlying card number.
+        brand:
+          type: string
+          description: Card network brand.
+          enum:
+          - Visa
+          - Mastercard
+          - AmericanExpress
+          - Discover
+          - DinersClub
+          - JCB
+        cardType:
+          type: string
+          description: Type of card.
+          enum:
+          - debit
+          - credit
+          - prepaid
+          - unknown
+        lastFourCardNumber:
+          type: string
+          description: Last four digits of the card number.
+          pattern: ^\d{4}$
+        bin:
+          type: string
+          description: First six digits of the card number (Bank Identification Number).
+        expiration:
+          $ref: '#/components/schemas/CardExpiration'
+        holderName:
+          type: string
+          description: Name of the cardholder as it appears on the card.
+        billingAddress:
+          $ref: '#/components/schemas/Address'
+        cardVerification:
+          $ref: '#/components/schemas/CardVerification'
+        issuer:
+          type: string
+          description: Name of the card-issuing financial institution.
+        issuerCountry:
+          type: string
+          description: Two-letter ISO country code of the card issuer.
+          maxLength: 2
+        createdOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the card was linked.
+        updatedOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the card was last updated.
+    Wallet:
+      type: object
+      description: A Moov digital wallet that holds funds on the platform for an account. Wallets serve as intermediate stores of value for money movement.
+      properties:
+        walletID:
+          type: string
+          format: uuid
+          description: Unique identifier for the wallet.
+        availableBalance:
+          $ref: '#/components/schemas/Amount'
+        createdOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the wallet was created.
+        updatedOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the wallet was last updated.
+    TransferCancellation:
+      type: object
+      description: A cancellation request for a pending transfer.
+      properties:
+        cancellationID:
+          type: string
+          format: uuid
+          description: Unique identifier for the cancellation.
+        status:
+          type: string
+          description: Status of the cancellation request.
+          enum:
+          - pending
+          - confirmed
+          - declined
+        createdOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the cancellation was requested.
+    Transfer:
+      type: object
+      description: A money movement operation between two Moov accounts. Transfers have a source (origin) and destination, and are processed over ACH, RTP, or card rails.
+      properties:
+        transferID:
+          type: string
+          format: uuid
+          description: Unique identifier for the transfer.
+        status:
+          type: string
+          description: Current lifecycle status of the transfer.
+          enum:
+          - created
+          - pending
+          - completed
+          - failed
+          - reversed
+        source:
+          $ref: '#/components/schemas/TransferParticipant'
+        destination:
+          $ref: '#/components/schemas/TransferParticipant'
+        amount:
+          $ref: '#/components/schemas/Amount'
+        description:
+          type: string
+          description: Human-readable description of the transfer purpose.
+        metadata:
+          type: object
+          description: Custom key-value pairs for application-specific data.
+          additionalProperties:
+            type: string
+        facilitatorFee:
+          $ref: '#/components/schemas/Amount'
+        moovFee:
+          type: integer
+          description: Moov platform fee in cents.
+        moovFeeDecimal:
+          type: string
+          description: Moov platform fee as a decimal string for precision.
+        createdOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the transfer was created.
+        updatedOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the transfer was last updated.
+        completedOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the transfer completed.
+    Amount:
+      type: object
+      description: A monetary amount with currency denomination.
+      properties:
+        currency:
+          type: string
+          description: ISO 4217 three-letter currency code.
+          default: USD
+          minLength: 3
+          maxLength: 3
+        value:
+          type: integer
+          description: Amount in the smallest currency unit (e.g., cents for USD).
+          minimum: 0
+    CreateTransferRequest:
+      type: object
+      description: Request body for initiating a new transfer between Moov accounts.
+      required:
+      - source
+      - destination
+      - amount
+      properties:
+        source:
+          type: object
+          description: The payment method to debit for this transfer.
+          required:
+          - paymentMethodID
+          properties:
+            paymentMethodID:
+              type: string
+              format: uuid
+              description: The payment method ID to use as the transfer source.
+            cardDetails:
+              type: object
+              description: Additional card-specific options for the source.
+              properties:
+                dynamicDescriptor:
+                  type: string
+                  description: Custom descriptor shown on card statements.
+        destination:
+          type: object
+          description: The payment method to credit for this transfer.
+          required:
+          - paymentMethodID
+          properties:
+            paymentMethodID:
+              type: string
+              format: uuid
+              description: The payment method ID to use as the transfer destination.
+        amount:
+          $ref: '#/components/schemas/Amount'
+        facilitatorFee:
+          $ref: '#/components/schemas/Amount'
+        description:
+          type: string
+          description: Human-readable description of the transfer purpose.
+          maxLength: 100
+        metadata:
+          type: object
+          description: Custom key-value pairs for application-specific data.
+          additionalProperties:
+            type: string
+    TransferParticipant:
+      type: object
+      description: Source or destination participant in a Moov transfer.
+      properties:
+        paymentMethodID:
+          type: string
+          format: uuid
+          description: The payment method used for this side of the transfer.
+        paymentMethodType:
+          type: string
+          description: The type of payment method used.
+          enum:
+          - moov-wallet
+          - ach-debit-fund
+          - ach-debit-collect
+          - ach-credit-standard
+          - ach-credit-same-day
+          - rtp-credit
+          - card-payment
+        account:
+          $ref: '#/components/schemas/TransferAccountRef'
+        bankAccount:
+          $ref: '#/components/schemas/BankAccount'
+        wallet:
+          $ref: '#/components/schemas/Wallet'
+        card:
+          $ref: '#/components/schemas/Card'
+    BankAccount:
+      type: object
+      description: A bank account linked to a Moov account as a funding source for ACH and RTP transfers.
+      properties:
+        bankAccountID:
+          type: string
+          format: uuid
+          description: Unique identifier for the bank account.
+        bankName:
+          type: string
+          description: Name of the financial institution.
+        bankAccountType:
+          type: string
+          description: Type of bank account.
+          enum:
+          - checking
+          - savings
+          - loan
+        routingNumber:
+          type: string
+          description: ABA routing transit number for the bank.
+          pattern: ^\d{9}$
+        lastFourAccountNumber:
+          type: string
+          description: Last four digits of the bank account number.
+          pattern: ^\d{4}$
+        status:
+          type: string
+          description: Verification and usability status of the bank account.
+          enum:
+          - new
+          - unverified
+          - pending
+          - verified
+          - errored
+        verificationStatus:
+          type: string
+          description: Current state of the bank account verification process.
+          enum:
+          - unverified
+          - pending
+          - verificationFailed
+          - verified
+          - mxVerified
+        createdOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the bank account was linked.
+        updatedOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the bank account was last updated.
+  parameters:
+    AccountIDParam:
+      name: accountID
+      in: path
+      required: true
+      description: Unique identifier for the Moov account.
+      schema:
+        type: string
+        format: uuid
+    CountParam:
+      name: count
+      in: query
+      description: Maximum number of results to return per page.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    SkipParam:
+      name: skip
+      in: query
+      description: Number of results to skip for pagination.
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+    TransferIDParam:
+      name: transferID
+      in: path
+      required: true
+      description: Unique identifier for the transfer.
+      schema:
+        type: string
+        format: uuid
+  responses:
+    BadRequest:
+      description: The request was malformed or contained invalid parameters.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: OAuth2 bearer token obtained from the /oauth2/token endpoint. Include in the Authorization header as "Bearer {token}".
+externalDocs:
+  description: Moov API Documentation
+  url: https://docs.moov.io/api/

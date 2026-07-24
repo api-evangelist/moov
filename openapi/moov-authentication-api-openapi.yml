@@ -1,0 +1,145 @@
+openapi: 3.1.0
+info:
+  title: Moov Accounts Authentication API
+  description: The Moov API is a RESTful financial infrastructure platform that enables developers to integrate money movement capabilities into their applications. The API supports a full range of financial operations including account management, payment method onboarding, transfers, sweeps, refunds, dispute resolution, card issuing, and payment links. It provides capabilities for accepting payments, storing funds in digital wallets, sending money between accounts, and issuing cards for spend management. Authentication uses OAuth2 access tokens with permission scopes, and the API returns JSON responses using standard HTTP response codes.
+  version: 2026.01.00
+  contact:
+    name: Moov Support
+    url: https://docs.moov.io/
+  termsOfService: https://moov.io/legal/platform-agreement/
+servers:
+- url: https://api.moov.io
+  description: Production Server
+security:
+- bearerAuth: []
+tags:
+- name: Authentication
+  description: OAuth2 access token creation and revocation for API authentication.
+paths:
+  /oauth2/token:
+    post:
+      operationId: createAccessToken
+      summary: Create an access token
+      description: Exchange credentials for an OAuth2 access token. The token must be included as a Bearer token in the Authorization header for all subsequent API requests. Include the required scopes to grant permission for the operations you intend to perform.
+      tags:
+      - Authentication
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRequest'
+      responses:
+        '200':
+          description: Access token created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessToken'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /oauth2/revoke:
+    post:
+      operationId: revokeAccessToken
+      summary: Revoke an access token
+      description: Revoke a previously issued OAuth2 access token to invalidate it immediately. Use this when a token is no longer needed or when rotating credentials.
+      tags:
+      - Authentication
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RevokeTokenRequest'
+      responses:
+        '204':
+          description: Token revoked successfully.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  schemas:
+    RevokeTokenRequest:
+      type: object
+      description: Request body for revoking an OAuth2 access token.
+      required:
+      - token
+      properties:
+        token:
+          type: string
+          description: The access token to revoke.
+    Error:
+      type: object
+      description: Standard error response returned by the Moov API.
+      properties:
+        error:
+          type: string
+          description: Human-readable description of the error.
+        code:
+          type: string
+          description: Machine-readable error code.
+    AccessToken:
+      type: object
+      description: OAuth2 access token response from the Moov API.
+      properties:
+        access_token:
+          type: string
+          description: The bearer token to include in API request headers.
+        token_type:
+          type: string
+          description: Token type, always "bearer".
+          enum:
+          - bearer
+        expires_in:
+          type: integer
+          description: Number of seconds until the token expires.
+        scope:
+          type: string
+          description: Space-separated list of granted permission scopes.
+    TokenRequest:
+      type: object
+      description: Request body for creating an OAuth2 access token.
+      required:
+      - grant_type
+      - client_id
+      - client_secret
+      properties:
+        grant_type:
+          type: string
+          description: OAuth2 grant type. Use "client_credentials" for server-side integrations.
+          enum:
+          - client_credentials
+        client_id:
+          type: string
+          description: The Moov API key public identifier.
+        client_secret:
+          type: string
+          description: The Moov API key secret.
+        scope:
+          type: string
+          description: Space-separated list of permission scopes to request. Scopes follow the pattern /accounts/{accountID}/transfers.write for resource-specific access, or /accounts.write for platform-level access.
+  responses:
+    Unauthorized:
+      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: The request was malformed or contained invalid parameters.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: OAuth2 bearer token obtained from the /oauth2/token endpoint. Include in the Authorization header as "Bearer {token}".
+externalDocs:
+  description: Moov API Documentation
+  url: https://docs.moov.io/api/

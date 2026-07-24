@@ -1,0 +1,345 @@
+openapi: 3.1.0
+info:
+  title: Moov Accounts Sweeps API
+  description: The Moov API is a RESTful financial infrastructure platform that enables developers to integrate money movement capabilities into their applications. The API supports a full range of financial operations including account management, payment method onboarding, transfers, sweeps, refunds, dispute resolution, card issuing, and payment links. It provides capabilities for accepting payments, storing funds in digital wallets, sending money between accounts, and issuing cards for spend management. Authentication uses OAuth2 access tokens with permission scopes, and the API returns JSON responses using standard HTTP response codes.
+  version: 2026.01.00
+  contact:
+    name: Moov Support
+    url: https://docs.moov.io/
+  termsOfService: https://moov.io/legal/platform-agreement/
+servers:
+- url: https://api.moov.io
+  description: Production Server
+security:
+- bearerAuth: []
+tags:
+- name: Sweeps
+  description: Configure automatic daily transfers from a Moov wallet to an external bank account on a set schedule using ACH or RTP rails.
+paths:
+  /accounts/{accountID}/sweep-configs:
+    post:
+      operationId: createSweepConfig
+      summary: Create a sweep config
+      description: Configure automatic daily transfers from a Moov wallet to a linked bank account. Choose from standard ACH, same-day ACH, or RTP rails with varying settlement times from instant to next business day.
+      tags:
+      - Sweeps
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSweepConfigRequest'
+      responses:
+        '200':
+          description: Sweep config created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SweepConfig'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    get:
+      operationId: listSweepConfigs
+      summary: List sweep configs
+      description: Retrieve all sweep configurations for a Moov account.
+      tags:
+      - Sweeps
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      responses:
+        '200':
+          description: Sweep configs returned successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SweepConfig'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /accounts/{accountID}/sweep-configs/{sweepConfigID}:
+    get:
+      operationId: getSweepConfig
+      summary: Get a sweep config
+      description: Retrieve the details of a specific sweep configuration for a Moov account.
+      tags:
+      - Sweeps
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/SweepConfigIDParam'
+      responses:
+        '200':
+          description: Sweep config returned successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SweepConfig'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      operationId: updateSweepConfig
+      summary: Update a sweep config
+      description: Modify an existing sweep configuration, such as changing the target bank account, transfer rail, or schedule parameters.
+      tags:
+      - Sweeps
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/SweepConfigIDParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSweepConfigRequest'
+      responses:
+        '200':
+          description: Sweep config updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SweepConfig'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /accounts/{accountID}/wallets/{walletID}/sweeps:
+    get:
+      operationId: listSweeps
+      summary: List sweeps
+      description: Retrieve a list of sweep executions for a wallet, showing each automatic transfer that has been triggered by a sweep configuration.
+      tags:
+      - Sweeps
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/WalletIDParam'
+      responses:
+        '200':
+          description: Sweeps returned successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Sweep'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /accounts/{accountID}/wallets/{walletID}/sweeps/{sweepID}:
+    get:
+      operationId: getSweep
+      summary: Get a sweep
+      description: Fetch the details of a specific sweep execution, including its transfer amount, status, and associated transfer ID.
+      tags:
+      - Sweeps
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/WalletIDParam'
+      - name: sweepID
+        in: path
+        required: true
+        description: Unique identifier for the sweep execution.
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Sweep details returned successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sweep'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  parameters:
+    AccountIDParam:
+      name: accountID
+      in: path
+      required: true
+      description: Unique identifier for the Moov account.
+      schema:
+        type: string
+        format: uuid
+    SweepConfigIDParam:
+      name: sweepConfigID
+      in: path
+      required: true
+      description: Unique identifier for the sweep configuration.
+      schema:
+        type: string
+        format: uuid
+    WalletIDParam:
+      name: walletID
+      in: path
+      required: true
+      description: Unique identifier for the wallet.
+      schema:
+        type: string
+        format: uuid
+  schemas:
+    Error:
+      type: object
+      description: Standard error response returned by the Moov API.
+      properties:
+        error:
+          type: string
+          description: Human-readable description of the error.
+        code:
+          type: string
+          description: Machine-readable error code.
+    SweepConfig:
+      type: object
+      description: Configuration for automatic scheduled transfers from a Moov wallet to an external bank account. Sweeps execute daily based on the configured payment rail.
+      properties:
+        sweepConfigID:
+          type: string
+          format: uuid
+          description: Unique identifier for the sweep configuration.
+        walletID:
+          type: string
+          format: uuid
+          description: The wallet from which funds will be swept.
+        paymentMethodID:
+          type: string
+          format: uuid
+          description: The destination bank account payment method for the sweep.
+        status:
+          type: string
+          description: Whether the sweep configuration is active.
+          enum:
+          - enabled
+          - disabled
+        statementDescriptor:
+          type: string
+          description: Description that appears on bank statements for sweep transfers.
+        minimumBalance:
+          $ref: '#/components/schemas/Amount'
+        createdOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the sweep config was created.
+        updatedOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the sweep config was last updated.
+    Amount:
+      type: object
+      description: A monetary amount with currency denomination.
+      properties:
+        currency:
+          type: string
+          description: ISO 4217 three-letter currency code.
+          default: USD
+          minLength: 3
+          maxLength: 3
+        value:
+          type: integer
+          description: Amount in the smallest currency unit (e.g., cents for USD).
+          minimum: 0
+    Sweep:
+      type: object
+      description: A single execution of a sweep transfer triggered by a sweep configuration.
+      properties:
+        sweepID:
+          type: string
+          format: uuid
+          description: Unique identifier for this sweep execution.
+        sweepConfigID:
+          type: string
+          format: uuid
+          description: The sweep configuration that triggered this sweep.
+        walletID:
+          type: string
+          format: uuid
+          description: The wallet from which funds were swept.
+        transferID:
+          type: string
+          format: uuid
+          description: The transfer created to move the swept funds.
+        status:
+          type: string
+          description: Execution status of the sweep.
+          enum:
+          - scheduled
+          - pending
+          - completed
+          - failed
+        amount:
+          $ref: '#/components/schemas/Amount'
+        createdOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the sweep was created.
+    UpdateSweepConfigRequest:
+      type: object
+      description: Request body for updating a sweep configuration.
+      properties:
+        status:
+          type: string
+          description: Enable or disable the sweep configuration.
+          enum:
+          - enabled
+          - disabled
+        statementDescriptor:
+          type: string
+          description: Updated statement descriptor for sweep transfers.
+          maxLength: 10
+        minimumBalance:
+          $ref: '#/components/schemas/Amount'
+    CreateSweepConfigRequest:
+      type: object
+      description: Request body for creating a sweep configuration.
+      required:
+      - walletID
+      - paymentMethodID
+      properties:
+        walletID:
+          type: string
+          format: uuid
+          description: The wallet from which funds will be swept.
+        paymentMethodID:
+          type: string
+          format: uuid
+          description: The bank account payment method to sweep funds to.
+        statementDescriptor:
+          type: string
+          description: Descriptor that appears on bank statements for sweep transfers.
+          maxLength: 10
+        minimumBalance:
+          $ref: '#/components/schemas/Amount'
+  responses:
+    Unauthorized:
+      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: The request was malformed or contained invalid parameters.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: OAuth2 bearer token obtained from the /oauth2/token endpoint. Include in the Authorization header as "Bearer {token}".
+externalDocs:
+  description: Moov API Documentation
+  url: https://docs.moov.io/api/

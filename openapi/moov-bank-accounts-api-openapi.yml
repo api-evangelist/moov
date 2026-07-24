@@ -1,0 +1,397 @@
+openapi: 3.1.0
+info:
+  title: Moov Accounts Bank Accounts API
+  description: The Moov API is a RESTful financial infrastructure platform that enables developers to integrate money movement capabilities into their applications. The API supports a full range of financial operations including account management, payment method onboarding, transfers, sweeps, refunds, dispute resolution, card issuing, and payment links. It provides capabilities for accepting payments, storing funds in digital wallets, sending money between accounts, and issuing cards for spend management. Authentication uses OAuth2 access tokens with permission scopes, and the API returns JSON responses using standard HTTP response codes.
+  version: 2026.01.00
+  contact:
+    name: Moov Support
+    url: https://docs.moov.io/
+  termsOfService: https://moov.io/legal/platform-agreement/
+servers:
+- url: https://api.moov.io
+  description: Production Server
+security:
+- bearerAuth: []
+tags:
+- name: Bank Accounts
+  description: Link and manage bank accounts as funding sources for ACH and RTP transfers. Includes micro-deposit and instant verification flows.
+paths:
+  /accounts/{accountID}/bank-accounts:
+    post:
+      operationId: linkBankAccount
+      summary: Link a bank account
+      description: Connect a bank account to a Moov account as a funding source for ACH and RTP transfers. After linking, verify the bank account using either instant verification or micro-deposits before it can be used for transfers.
+      tags:
+      - Bank Accounts
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LinkBankAccountRequest'
+      responses:
+        '200':
+          description: Bank account linked successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankAccount'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    get:
+      operationId: listBankAccounts
+      summary: List bank accounts
+      description: Retrieve all bank accounts linked to a Moov account, including their verification status and account details.
+      tags:
+      - Bank Accounts
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      responses:
+        '200':
+          description: Bank accounts returned successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BankAccount'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /accounts/{accountID}/bank-accounts/{bankAccountID}:
+    get:
+      operationId: getBankAccount
+      summary: Retrieve a bank account
+      description: Fetch the details and verification status of a specific bank account linked to a Moov account.
+      tags:
+      - Bank Accounts
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/BankAccountIDParam'
+      responses:
+        '200':
+          description: Bank account details returned successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankAccount'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      operationId: deleteBankAccount
+      summary: Delete a bank account
+      description: Unlink and remove a bank account from a Moov account. This does not close the underlying bank account, only removes it from the Moov platform.
+      tags:
+      - Bank Accounts
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/BankAccountIDParam'
+      responses:
+        '204':
+          description: Bank account deleted successfully.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /accounts/{accountID}/bank-accounts/{bankAccountID}/verify:
+    post:
+      operationId: initiateBankAccountVerification
+      summary: Initiate bank account verification
+      description: Start the instant verification flow for a linked bank account. This method uses real-time data to verify the account without requiring micro-deposits, providing faster time-to-use for the funding source.
+      tags:
+      - Bank Accounts
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/BankAccountIDParam'
+      responses:
+        '200':
+          description: Bank account verification initiated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankAccountVerification'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    put:
+      operationId: completeBankAccountVerification
+      summary: Complete bank account verification
+      description: Submit the verification code or confirmation to finalize instant verification of a linked bank account.
+      tags:
+      - Bank Accounts
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/BankAccountIDParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompleteVerificationRequest'
+      responses:
+        '200':
+          description: Bank account verification completed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankAccount'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    get:
+      operationId: getBankAccountVerificationStatus
+      summary: Get verification status
+      description: Check the current status of a bank account verification attempt, including whether it is pending, completed, or has failed.
+      tags:
+      - Bank Accounts
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/BankAccountIDParam'
+      responses:
+        '200':
+          description: Verification status returned successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankAccountVerification'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /accounts/{accountID}/bank-accounts/{bankAccountID}/micro-deposits:
+    post:
+      operationId: initiateMicroDeposits
+      summary: Initiate micro-deposits
+      description: Start the micro-deposit verification process by sending two small amounts to the linked bank account. The account holder must confirm these amounts to complete verification.
+      tags:
+      - Bank Accounts
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/BankAccountIDParam'
+      responses:
+        '204':
+          description: Micro-deposits initiated successfully.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    put:
+      operationId: completeMicroDeposits
+      summary: Complete micro-deposit verification
+      description: Confirm the micro-deposit amounts that were sent to the linked bank account to complete the verification process and activate the bank account for transfers.
+      tags:
+      - Bank Accounts
+      parameters:
+      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/BankAccountIDParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MicroDepositConfirmation'
+      responses:
+        '200':
+          description: Micro-deposit verification completed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankAccount'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  schemas:
+    CompleteVerificationRequest:
+      type: object
+      description: Request body for completing instant bank account verification.
+      properties:
+        code:
+          type: string
+          description: The verification code provided during the instant verification flow.
+    LinkBankAccountRequest:
+      type: object
+      description: Request body for linking a bank account to a Moov account.
+      properties:
+        account:
+          type: object
+          description: Bank account details for direct linking.
+          properties:
+            routingNumber:
+              type: string
+              description: ABA routing transit number.
+              pattern: ^\d{9}$
+            accountNumber:
+              type: string
+              description: Bank account number.
+            bankAccountType:
+              type: string
+              description: Type of bank account.
+              enum:
+              - checking
+              - savings
+            holderName:
+              type: string
+              description: Name of the account holder.
+            holderType:
+              type: string
+              description: Whether the account is held by an individual or business.
+              enum:
+              - individual
+              - business
+        plaid:
+          type: object
+          description: Link via Plaid public token for pre-verified accounts.
+          properties:
+            token:
+              type: string
+              description: Plaid public token from the Plaid Link flow.
+        mx:
+          type: object
+          description: Link via MX widget token for pre-verified accounts.
+          properties:
+            token:
+              type: string
+              description: MX widget token.
+    Error:
+      type: object
+      description: Standard error response returned by the Moov API.
+      properties:
+        error:
+          type: string
+          description: Human-readable description of the error.
+        code:
+          type: string
+          description: Machine-readable error code.
+    MicroDepositConfirmation:
+      type: object
+      description: Request body for confirming micro-deposit amounts.
+      required:
+      - amounts
+      properties:
+        amounts:
+          type: array
+          description: The two micro-deposit amounts in cents that were sent to the bank account.
+          items:
+            type: integer
+            minimum: 1
+          minItems: 2
+          maxItems: 2
+    BankAccountVerification:
+      type: object
+      description: Status and details of a bank account verification attempt.
+      properties:
+        status:
+          type: string
+          description: Current status of the verification.
+          enum:
+          - pending
+          - completed
+          - failed
+        exceptionDetails:
+          type: string
+          description: Error details if the verification failed.
+    BankAccount:
+      type: object
+      description: A bank account linked to a Moov account as a funding source for ACH and RTP transfers.
+      properties:
+        bankAccountID:
+          type: string
+          format: uuid
+          description: Unique identifier for the bank account.
+        bankName:
+          type: string
+          description: Name of the financial institution.
+        bankAccountType:
+          type: string
+          description: Type of bank account.
+          enum:
+          - checking
+          - savings
+          - loan
+        routingNumber:
+          type: string
+          description: ABA routing transit number for the bank.
+          pattern: ^\d{9}$
+        lastFourAccountNumber:
+          type: string
+          description: Last four digits of the bank account number.
+          pattern: ^\d{4}$
+        status:
+          type: string
+          description: Verification and usability status of the bank account.
+          enum:
+          - new
+          - unverified
+          - pending
+          - verified
+          - errored
+        verificationStatus:
+          type: string
+          description: Current state of the bank account verification process.
+          enum:
+          - unverified
+          - pending
+          - verificationFailed
+          - verified
+          - mxVerified
+        createdOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the bank account was linked.
+        updatedOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the bank account was last updated.
+  parameters:
+    AccountIDParam:
+      name: accountID
+      in: path
+      required: true
+      description: Unique identifier for the Moov account.
+      schema:
+        type: string
+        format: uuid
+    BankAccountIDParam:
+      name: bankAccountID
+      in: path
+      required: true
+      description: Unique identifier for the bank account.
+      schema:
+        type: string
+        format: uuid
+  responses:
+    Unauthorized:
+      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: The request was malformed or contained invalid parameters.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: OAuth2 bearer token obtained from the /oauth2/token endpoint. Include in the Authorization header as "Bearer {token}".
+externalDocs:
+  description: Moov API Documentation
+  url: https://docs.moov.io/api/
