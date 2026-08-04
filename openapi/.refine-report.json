@@ -1,0 +1,38 @@
+{
+  "provider": "moov",
+  "sources": [
+    "moov-accounts-api-openapi.yml",
+    "moov-authentication-api-openapi.yml",
+    "moov-bank-accounts-api-openapi.yml",
+    "moov-capabilities-api-openapi.yml",
+    "moov-cards-api-openapi.yml",
+    "moov-disputes-api-openapi.yml",
+    "moov-payment-links-api-openapi.yml",
+    "moov-payment-methods-api-openapi.yml",
+    "moov-refunds-api-openapi.yml",
+    "moov-representatives-api-openapi.yml",
+    "moov-sweeps-api-openapi.yml",
+    "moov-transfers-api-openapi.yml",
+    "moov-wallets-api-openapi.yml"
+  ],
+  "outputs": [
+    "moov-accounts-api-openapi.yml",
+    "moov-authentication-api-openapi.yml",
+    "moov-bank-accounts-api-openapi.yml",
+    "moov-capabilities-api-openapi.yml",
+    "moov-cards-api-openapi.yml",
+    "moov-disputes-api-openapi.yml",
+    "moov-payment-links-api-openapi.yml",
+    "moov-payment-methods-api-openapi.yml",
+    "moov-refunds-api-openapi.yml",
+    "moov-representatives-api-openapi.yml",
+    "moov-sweeps-api-openapi.yml",
+    "moov-transfers-api-openapi.yml",
+    "moov-wallets-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}
