@@ -346,6 +346,22 @@ apis:
   - type: JSONLD
     url: json-ld/moov-context.jsonld
 common:
+- type: Roadmap
+  url: https://moov.io/platform/roadmap
+- type: Support
+  url: https://support.moov.io
+- type: Webhooks
+  url: https://docs.moov.io/guides/webhooks/
+- type: StatusPage
+  url: https://status.moov.io
+- type: ChangeLog
+  url: https://docs.moov.io/changelog
+- type: PrivacyPolicy
+  url: https://moov.io/legal/privacy-policy
+- type: TermsOfService
+  url: https://docs.moov.io/moovjs/drops/terms-of-service/
+- type: GettingStarted
+  url: https://docs.moov.io/guides/quick-start
 - type: AgenticAccess
   url: agentic-access/moov-agentic-access.yml
 - type: TrustCenter
