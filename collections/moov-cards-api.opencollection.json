@@ -1,0 +1,145 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Moov Accounts Cards API",
+    "version": "2026.01.00"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Cards",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List cards",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.moov.io/accounts/:accountID/cards",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              }
+            ]
+          },
+          "docs": "Retrieve all cards linked to a Moov account, including their status, card brand, and last four digits."
+        },
+        {
+          "info": {
+            "name": "Link a card",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.moov.io/accounts/:accountID/cards",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Attach a debit or credit card to a Moov account as a payment source. Card data is handled in a PCI-compliant manner via Moov.js to keep sensitive card numbers out of developer infrastructure."
+        },
+        {
+          "info": {
+            "name": "Retrieve a card",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.moov.io/accounts/:accountID/cards/:cardID",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "cardID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the card."
+              }
+            ]
+          },
+          "docs": "Fetch the details of a specific linked card on a Moov account, including card type, brand, expiration, and current status."
+        },
+        {
+          "info": {
+            "name": "Update a card",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.moov.io/accounts/:accountID/cards/:cardID",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "cardID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the card."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update the billing address or other mutable attributes of a linked card on a Moov account."
+        },
+        {
+          "info": {
+            "name": "Disable a card",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.moov.io/accounts/:accountID/cards/:cardID",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "cardID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the card."
+              }
+            ]
+          },
+          "docs": "Remove a linked card from a Moov account. Disabled cards can no longer be used as a payment source for new transfers."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

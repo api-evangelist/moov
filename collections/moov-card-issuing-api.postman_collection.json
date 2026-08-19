@@ -1,0 +1,991 @@
+{
+  "item": [
+    {
+      "id": "feb1970c-c2e3-4530-a01e-d4198e2b13c9",
+      "name": "Card Issuing",
+      "description": {
+        "content": "Virtual spending cards, authorizations, and card transactions.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "77fc7c54-a3da-4f70-bbbe-3b5cf18ec020",
+          "name": "Create a spending card.",
+          "request": {
+            "name": "Create a spending card.",
+            "description": {},
+            "url": {
+              "path": [
+                "issuing",
+                ":accountID",
+                "cards"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "accountID",
+                  "description": "(Required) The Moov account identifier."
+                }
+              ]
+            },
+            "method": "POST",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "4a64e754-faca-45d2-b238-586625991292",
+              "name": "The created spending card.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "issuing",
+                    ":accountID",
+                    "cards"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) The Moov account identifier."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "ff38f73c-8669-4033-9ceb-beda6c4db85f",
+          "name": "List spending cards.",
+          "request": {
+            "name": "List spending cards.",
+            "description": {},
+            "url": {
+              "path": [
+                "issuing",
+                ":accountID",
+                "cards"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "accountID",
+                  "description": "(Required) The Moov account identifier."
+                }
+              ]
+            },
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "6edab2b4-948c-4ffc-9002-e94d0a5f8d0e",
+              "name": "A list of spending cards.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "issuing",
+                    ":accountID",
+                    "cards"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) The Moov account identifier."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "38e9ede5-15b1-446b-b489-90debfde183f",
+          "name": "Retrieve a spending card.",
+          "request": {
+            "name": "Retrieve a spending card.",
+            "description": {},
+            "url": {
+              "path": [
+                "issuing",
+                ":accountID",
+                "cards",
+                ":issuedCardID"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "accountID",
+                  "description": "(Required) The Moov account identifier."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "issuedCardID",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "b479486a-4385-4793-a177-2e3d52380bfc",
+              "name": "The spending card.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "issuing",
+                    ":accountID",
+                    "cards",
+                    ":issuedCardID"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) The Moov account identifier."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "issuedCardID",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "97dd270b-4fb6-43f6-9b24-dd2d041aaea4",
+          "name": "Update a spending card.",
+          "request": {
+            "name": "Update a spending card.",
+            "description": {},
+            "url": {
+              "path": [
+                "issuing",
+                ":accountID",
+                "cards",
+                ":issuedCardID"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "accountID",
+                  "description": "(Required) The Moov account identifier."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "issuedCardID",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "method": "PATCH",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "4f515f5a-8b1c-4cad-8a79-f47a3db8699e",
+              "name": "The updated spending card.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "issuing",
+                    ":accountID",
+                    "cards",
+                    ":issuedCardID"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) The Moov account identifier."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "issuedCardID",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "d1dbfb37-058f-456f-bf48-9696db311772",
+          "name": "Get PCI details for a spending card.",
+          "request": {
+            "name": "Get PCI details for a spending card.",
+            "description": {},
+            "url": {
+              "path": [
+                "issuing",
+                ":accountID",
+                "cards",
+                ":issuedCardID",
+                "details"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "accountID",
+                  "description": "(Required) The Moov account identifier."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "issuedCardID",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "eaf2f11b-7dba-4320-9157-00b2b7815f92",
+              "name": "The full PCI card details.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "issuing",
+                    ":accountID",
+                    "cards",
+                    ":issuedCardID",
+                    "details"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) The Moov account identifier."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "issuedCardID",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "2cc29875-6c80-4897-8ec1-3ef24b89d0e1",
+          "name": "List authorizations.",
+          "request": {
+            "name": "List authorizations.",
+            "description": {},
+            "url": {
+              "path": [
+                "issuing",
+                ":accountID",
+                "authorizations"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "accountID",
+                  "description": "(Required) The Moov account identifier."
+                }
+              ]
+            },
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "04bb39fe-3879-4871-9d9b-e74d6baa9b09",
+              "name": "A list of authorizations.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "issuing",
+                    ":accountID",
+                    "authorizations"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) The Moov account identifier."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "01d05229-deb0-4e43-accf-215d43b4ec9a",
+          "name": "Retrieve an authorization.",
+          "request": {
+            "name": "Retrieve an authorization.",
+            "description": {},
+            "url": {
+              "path": [
+                "issuing",
+                ":accountID",
+                "authorizations",
+                ":authorizationID"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "accountID",
+                  "description": "(Required) The Moov account identifier."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "authorizationID",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "8438c853-913c-475e-a8ca-85779542fce7",
+              "name": "The authorization.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "issuing",
+                    ":accountID",
+                    "authorizations",
+                    ":authorizationID"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) The Moov account identifier."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "authorizationID",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "f6fed27e-f8c0-4739-ab52-b235c975afd9",
+          "name": "List authorization events.",
+          "request": {
+            "name": "List authorization events.",
+            "description": {},
+            "url": {
+              "path": [
+                "issuing",
+                ":accountID",
+                "authorizations",
+                ":authorizationID",
+                "events"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "accountID",
+                  "description": "(Required) The Moov account identifier."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "authorizationID",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "bea22652-7abe-432b-9e67-aad990e6cc65",
+              "name": "A list of authorization events.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "issuing",
+                    ":accountID",
+                    "authorizations",
+                    ":authorizationID",
+                    "events"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) The Moov account identifier."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "authorizationID",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "bd0f9918-7362-4666-a7e2-85fc257c323a",
+          "name": "List card transactions.",
+          "request": {
+            "name": "List card transactions.",
+            "description": {},
+            "url": {
+              "path": [
+                "issuing",
+                ":accountID",
+                "card-transactions"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "accountID",
+                  "description": "(Required) The Moov account identifier."
+                }
+              ]
+            },
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "5aab7233-e0e6-428c-b12d-9edc65458bd5",
+              "name": "A list of card transactions.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "issuing",
+                    ":accountID",
+                    "card-transactions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) The Moov account identifier."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "ae25a0ac-f880-48c0-a266-6e1b974f780b",
+          "name": "Retrieve a card transaction.",
+          "request": {
+            "name": "Retrieve a card transaction.",
+            "description": {},
+            "url": {
+              "path": [
+                "issuing",
+                ":accountID",
+                "card-transactions",
+                ":cardTransactionID"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "accountID",
+                  "description": "(Required) The Moov account identifier."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "cardTransactionID",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "a0e13151-22b0-4b9e-816d-691e556c2d5b",
+              "name": "The card transaction.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "issuing",
+                    ":accountID",
+                    "card-transactions",
+                    ":cardTransactionID"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) The Moov account identifier."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "cardTransactionID",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.moov.io",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "76220681-1f65-4d5f-98fc-71c4a16b5c85",
+    "name": "Moov Accounts Card Issuing API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The Moov API lets software platforms accept, store, send, and spend money through a single REST API. It is organized around Moov accounts, funding sources (bank accounts, cards, wallets, payment methods), and money movement (transfers, refunds, disputes, sweeps, card issuing). The API is based on REST principles, returns JSON, and uses standard HTTP response codes. Requests are authenticated with an OAuth 2.0 access token (Bearer). Event notifications are delivered via webhooks (HTTPS POST with an HMAC SHA-512 signature); Moov does not expose a public WebSocket API. This document models a representative subset of the commercial hosted API at api.moov.io - the canonical, machine-generated OpenAPI spec is published by Moov (see externalDocs). Separately, Moov maintains open-source Go libraries for banking file formats at github.com/moov-io, which are not part of this API.\n\nContact Support:\n Name: Moov",
+      "type": "text/plain"
+    }
+  }
+}

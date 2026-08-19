@@ -1,0 +1,199 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Moov Accounts Disputes API",
+    "version": "2026.01.00"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Disputes",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List disputes",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.moov.io/accounts/:accountID/disputes",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "count",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of results to return per page."
+              },
+              {
+                "name": "skip",
+                "value": "",
+                "type": "query",
+                "description": "Number of results to skip for pagination."
+              }
+            ]
+          },
+          "docs": "Retrieve all card payment disputes for a Moov account, including their status, disputed amount, and reason codes."
+        },
+        {
+          "info": {
+            "name": "Retrieve a dispute",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.moov.io/accounts/:accountID/disputes/:disputeID",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "disputeID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the dispute."
+              }
+            ]
+          },
+          "docs": "Fetch the full details of a specific card dispute, including reason codes, amounts, deadlines for evidence submission, and current status."
+        },
+        {
+          "info": {
+            "name": "Accept a dispute",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.moov.io/accounts/:accountID/disputes/:disputeID/accept",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "disputeID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the dispute."
+              }
+            ]
+          },
+          "docs": "Accept a card dispute without contesting it. Use this when the dispute is valid and you wish to return the funds to the cardholder without going through the evidence submission process."
+        },
+        {
+          "info": {
+            "name": "Upload evidence file",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.moov.io/accounts/:accountID/disputes/:disputeID/evidence-file",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "disputeID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the dispute."
+              }
+            ],
+            "body": {
+              "type": "multipart-form",
+              "data": [
+                {
+                  "name": "file",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "evidenceType",
+                  "type": "text",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Upload a file as evidence for contesting a card dispute. Accepted file types include images and PDFs of receipts, correspondence, and other relevant documentation."
+        },
+        {
+          "info": {
+            "name": "Upload evidence text",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.moov.io/accounts/:accountID/disputes/:disputeID/evidence-text",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "disputeID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the dispute."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Submit a text-based statement as evidence when contesting a card dispute. Use this for written explanations that supplement file-based evidence."
+        },
+        {
+          "info": {
+            "name": "Submit dispute evidence",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.moov.io/accounts/:accountID/disputes/:disputeID/evidence/submit",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "disputeID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the dispute."
+              }
+            ]
+          },
+          "docs": "Finalize and submit all uploaded evidence for a dispute to the card network for review. Once submitted, no additional evidence can be added."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,145 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Moov Accounts Representatives API",
+    "version": "2026.01.00"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Representatives",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List representatives",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.moov.io/accounts/:accountID/representatives",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              }
+            ]
+          },
+          "docs": "Retrieve all business representatives associated with a Moov account, including their verification status and ownership details."
+        },
+        {
+          "info": {
+            "name": "Add a representative",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.moov.io/accounts/:accountID/representatives",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Add a business representative to a Moov account for KYB compliance. Representatives are individuals with significant ownership or control over the business, as required by FinCEN beneficial ownership rules."
+        },
+        {
+          "info": {
+            "name": "Retrieve a representative",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.moov.io/accounts/:accountID/representatives/:representativeID",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "representativeID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the representative."
+              }
+            ]
+          },
+          "docs": "Fetch the full profile and verification details for a specific business representative on a Moov account."
+        },
+        {
+          "info": {
+            "name": "Update a representative",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.moov.io/accounts/:accountID/representatives/:representativeID",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "representativeID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the representative."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Modify the information for an existing business representative. Use this to correct or update personal details, ownership percentages, or contact information as part of KYB compliance maintenance."
+        },
+        {
+          "info": {
+            "name": "Remove a representative",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.moov.io/accounts/:accountID/representatives/:representativeID",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "representativeID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the representative."
+              }
+            ]
+          },
+          "docs": "Delete a business representative from a Moov account. This may affect the account's compliance status and capability eligibility."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

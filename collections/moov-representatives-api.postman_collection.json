@@ -1,0 +1,1243 @@
+{
+  "item": [
+    {
+      "id": "c92d473c-5dd9-407f-9bb9-00689620ce61",
+      "name": "Representatives",
+      "description": {
+        "content": "Manage business representatives associated with a Moov account for KYB compliance and ownership verification.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "0dc34b1a-53cd-4d61-9f53-6f4084dc2d12",
+          "name": "Add a representative",
+          "request": {
+            "name": "Add a representative",
+            "description": {
+              "content": "Add a business representative to a Moov account for KYB compliance. Representatives are individuals with significant ownership or control over the business, as required by FinCEN beneficial ownership rules.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "accounts",
+                ":accountID",
+                "representatives"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "accountID",
+                  "description": "(Required) Unique identifier for the Moov account."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": {\n    \"firstName\": \"<string>\",\n    \"middleName\": \"<string>\",\n    \"lastName\": \"<string>\",\n    \"suffix\": \"<string>\"\n  },\n  \"phone\": {\n    \"number\": \"<string>\",\n    \"countryCode\": \"<string>\"\n  },\n  \"email\": \"<email>\",\n  \"address\": {\n    \"addressLine1\": \"<string>\",\n    \"addressLine2\": \"<string>\",\n    \"city\": \"<string>\",\n    \"stateOrProvince\": \"<string>\",\n    \"postalCode\": \"<string>\",\n    \"country\": \"<string>\"\n  },\n  \"birthDate\": \"<date>\",\n  \"governmentID\": {\n    \"ssn\": {\n      \"full\": \"<string>\",\n      \"lastFour\": \"<string>\"\n    },\n    \"itin\": {\n      \"full\": \"<string>\",\n      \"lastFour\": \"<string>\"\n    }\n  },\n  \"responsibilities\": {\n    \"isController\": \"<boolean>\",\n    \"isOwner\": \"<boolean>\",\n    \"ownershipPercentage\": \"<number>\",\n    \"jobTitle\": \"<string>\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "056181ae-a3f2-417f-b736-a416bc1b41cb",
+              "name": "Representative added successfully.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts",
+                    ":accountID",
+                    "representatives"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) Unique identifier for the Moov account."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": {\n    \"firstName\": \"string\",\n    \"middleName\": \"string\",\n    \"lastName\": \"string\",\n    \"suffix\": \"string\"\n  },\n  \"phone\": {\n    \"number\": \"05458933964971\",\n    \"countryCode\": \"string\"\n  },\n  \"email\": \"<email>\",\n  \"address\": {\n    \"addressLine1\": \"string\",\n    \"addressLine2\": \"string\",\n    \"city\": \"string\",\n    \"stateOrProvince\": \"st\",\n    \"postalCode\": \"string\",\n    \"country\": \"st\"\n  },\n  \"birthDate\": \"<date>\",\n  \"governmentID\": {\n    \"ssn\": {\n      \"full\": \"708535092\",\n      \"lastFour\": \"9505\"\n    },\n    \"itin\": {\n      \"full\": \"692263852\",\n      \"lastFour\": \"5261\"\n    }\n  },\n  \"responsibilities\": {\n    \"isController\": false,\n    \"isOwner\": true,\n    \"ownershipPercentage\": 97.93167551462273,\n    \"jobTitle\": \"string\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"representativeID\": \"46a59710-1d13-3964-47d7-c267c2d8d11a\",\n  \"name\": {\n    \"firstName\": \"string\",\n    \"middleName\": \"string\",\n    \"lastName\": \"string\",\n    \"suffix\": \"string\"\n  },\n  \"phone\": {\n    \"number\": \"16861849153\",\n    \"countryCode\": \"string\"\n  },\n  \"email\": \"T5Uj@lgdnTECCu.xlf\",\n  \"address\": {\n    \"addressLine1\": \"string\",\n    \"addressLine2\": \"string\",\n    \"city\": \"string\",\n    \"stateOrProvince\": \"st\",\n    \"postalCode\": \"string\",\n    \"country\": \"st\"\n  },\n  \"birthDate\": \"1951-05-21\",\n  \"governmentID\": {\n    \"ssn\": {\n      \"full\": \"645067448\",\n      \"lastFour\": \"0843\"\n    },\n    \"itin\": {\n      \"full\": \"852852812\",\n      \"lastFour\": \"5431\"\n    }\n  },\n  \"responsibilities\": {\n    \"isController\": true,\n    \"isOwner\": true,\n    \"ownershipPercentage\": 44.020715565598934,\n    \"jobTitle\": \"string\"\n  },\n  \"createdOn\": \"2016-02-05T21:09:14.412Z\",\n  \"updatedOn\": \"1961-10-12T22:35:41.289Z\",\n  \"disabledOn\": \"1967-11-21T23:16:08.728Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ff8a5af3-8c65-4edc-bece-a1cc455aa33b",
+              "name": "The request was malformed or contained invalid parameters.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts",
+                    ":accountID",
+                    "representatives"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) Unique identifier for the Moov account."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": {\n    \"firstName\": \"string\",\n    \"middleName\": \"string\",\n    \"lastName\": \"string\",\n    \"suffix\": \"string\"\n  },\n  \"phone\": {\n    \"number\": \"05458933964971\",\n    \"countryCode\": \"string\"\n  },\n  \"email\": \"<email>\",\n  \"address\": {\n    \"addressLine1\": \"string\",\n    \"addressLine2\": \"string\",\n    \"city\": \"string\",\n    \"stateOrProvince\": \"st\",\n    \"postalCode\": \"string\",\n    \"country\": \"st\"\n  },\n  \"birthDate\": \"<date>\",\n  \"governmentID\": {\n    \"ssn\": {\n      \"full\": \"708535092\",\n      \"lastFour\": \"9505\"\n    },\n    \"itin\": {\n      \"full\": \"692263852\",\n      \"lastFour\": \"5261\"\n    }\n  },\n  \"responsibilities\": {\n    \"isController\": false,\n    \"isOwner\": true,\n    \"ownershipPercentage\": 97.93167551462273,\n    \"jobTitle\": \"string\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"code\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ec741910-f0f4-4ffd-be8a-695edeec8896",
+              "name": "Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts",
+                    ":accountID",
+                    "representatives"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) Unique identifier for the Moov account."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": {\n    \"firstName\": \"string\",\n    \"middleName\": \"string\",\n    \"lastName\": \"string\",\n    \"suffix\": \"string\"\n  },\n  \"phone\": {\n    \"number\": \"05458933964971\",\n    \"countryCode\": \"string\"\n  },\n  \"email\": \"<email>\",\n  \"address\": {\n    \"addressLine1\": \"string\",\n    \"addressLine2\": \"string\",\n    \"city\": \"string\",\n    \"stateOrProvince\": \"st\",\n    \"postalCode\": \"string\",\n    \"country\": \"st\"\n  },\n  \"birthDate\": \"<date>\",\n  \"governmentID\": {\n    \"ssn\": {\n      \"full\": \"708535092\",\n      \"lastFour\": \"9505\"\n    },\n    \"itin\": {\n      \"full\": \"692263852\",\n      \"lastFour\": \"5261\"\n    }\n  },\n  \"responsibilities\": {\n    \"isController\": false,\n    \"isOwner\": true,\n    \"ownershipPercentage\": 97.93167551462273,\n    \"jobTitle\": \"string\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"code\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "04bf88f9-0a7d-45ad-87a5-b4f840e2361e",
+          "name": "List representatives",
+          "request": {
+            "name": "List representatives",
+            "description": {
+              "content": "Retrieve all business representatives associated with a Moov account, including their verification status and ownership details.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "accounts",
+                ":accountID",
+                "representatives"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "accountID",
+                  "description": "(Required) Unique identifier for the Moov account."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "6467775e-01b3-48cb-ba3a-652b7ed5bc98",
+              "name": "Representatives returned successfully.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts",
+                    ":accountID",
+                    "representatives"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) Unique identifier for the Moov account."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"representativeID\": \"7e1ead2b-e6f8-5e2b-07eb-b747f135099c\",\n    \"name\": {\n      \"firstName\": \"string\",\n      \"middleName\": \"string\",\n      \"lastName\": \"string\",\n      \"suffix\": \"string\"\n    },\n    \"phone\": {\n      \"number\": \"08504000190\",\n      \"countryCode\": \"string\"\n    },\n    \"email\": \"Nae7@iAQZvywpx.qu\",\n    \"address\": {\n      \"addressLine1\": \"string\",\n      \"addressLine2\": \"string\",\n      \"city\": \"string\",\n      \"stateOrProvince\": \"st\",\n      \"postalCode\": \"string\",\n      \"country\": \"st\"\n    },\n    \"birthDate\": \"1957-11-08\",\n    \"governmentID\": {\n      \"ssn\": {\n        \"full\": \"370984167\",\n        \"lastFour\": \"3979\"\n      },\n      \"itin\": {\n        \"full\": \"187668598\",\n        \"lastFour\": \"6420\"\n      }\n    },\n    \"responsibilities\": {\n      \"isController\": true,\n      \"isOwner\": true,\n      \"ownershipPercentage\": 58.854427157144784,\n      \"jobTitle\": \"string\"\n    },\n    \"createdOn\": \"1968-03-20T15:50:48.312Z\",\n    \"updatedOn\": \"2015-07-31T22:07:36.316Z\",\n    \"disabledOn\": \"2021-11-15T11:39:49.375Z\"\n  },\n  {\n    \"representativeID\": \"794353d5-71e7-8059-079f-3e9b07f4a92e\",\n    \"name\": {\n      \"firstName\": \"string\",\n      \"middleName\": \"string\",\n      \"lastName\": \"string\",\n      \"suffix\": \"string\"\n    },\n    \"phone\": {\n      \"number\": \"42108577254960\",\n      \"countryCode\": \"string\"\n    },\n    \"email\": \"35FDHf4@vcN.ykvx\",\n    \"address\": {\n      \"addressLine1\": \"string\",\n      \"addressLine2\": \"string\",\n      \"city\": \"string\",\n      \"stateOrProvince\": \"st\",\n      \"postalCode\": \"string\",\n      \"country\": \"st\"\n    },\n    \"birthDate\": \"1967-11-26\",\n    \"governmentID\": {\n      \"ssn\": {\n        \"full\": \"731989919\",\n        \"lastFour\": \"5550\"\n      },\n      \"itin\": {\n        \"full\": \"331889356\",\n        \"lastFour\": \"0738\"\n      }\n    },\n    \"responsibilities\": {\n      \"isController\": true,\n      \"isOwner\": true,\n      \"ownershipPercentage\": 63.29505733518758,\n      \"jobTitle\": \"string\"\n    },\n    \"createdOn\": \"1965-11-27T12:12:13.439Z\",\n    \"updatedOn\": \"1953-04-04T11:21:32.426Z\",\n    \"disabledOn\": \"2019-04-05T05:33:47.538Z\"\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b102f6fd-d6b4-4a28-8bb9-b0910a5b016f",
+              "name": "Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts",
+                    ":accountID",
+                    "representatives"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) Unique identifier for the Moov account."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"code\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "b52aa7c9-5086-4816-b5b4-49339a177bc6",
+          "name": "Retrieve a representative",
+          "request": {
+            "name": "Retrieve a representative",
+            "description": {
+              "content": "Fetch the full profile and verification details for a specific business representative on a Moov account.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "accounts",
+                ":accountID",
+                "representatives",
+                ":representativeID"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "accountID",
+                  "description": "(Required) Unique identifier for the Moov account."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "representativeID",
+                  "description": "(Required) Unique identifier for the representative."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "fbb62aa4-8b53-4fd2-b057-f9acc276c896",
+              "name": "Representative details returned successfully.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts",
+                    ":accountID",
+                    "representatives",
+                    ":representativeID"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) Unique identifier for the Moov account."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "representativeID",
+                      "description": "(Required) Unique identifier for the representative."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"representativeID\": \"46a59710-1d13-3964-47d7-c267c2d8d11a\",\n  \"name\": {\n    \"firstName\": \"string\",\n    \"middleName\": \"string\",\n    \"lastName\": \"string\",\n    \"suffix\": \"string\"\n  },\n  \"phone\": {\n    \"number\": \"16861849153\",\n    \"countryCode\": \"string\"\n  },\n  \"email\": \"T5Uj@lgdnTECCu.xlf\",\n  \"address\": {\n    \"addressLine1\": \"string\",\n    \"addressLine2\": \"string\",\n    \"city\": \"string\",\n    \"stateOrProvince\": \"st\",\n    \"postalCode\": \"string\",\n    \"country\": \"st\"\n  },\n  \"birthDate\": \"1951-05-21\",\n  \"governmentID\": {\n    \"ssn\": {\n      \"full\": \"645067448\",\n      \"lastFour\": \"0843\"\n    },\n    \"itin\": {\n      \"full\": \"852852812\",\n      \"lastFour\": \"5431\"\n    }\n  },\n  \"responsibilities\": {\n    \"isController\": true,\n    \"isOwner\": true,\n    \"ownershipPercentage\": 44.020715565598934,\n    \"jobTitle\": \"string\"\n  },\n  \"createdOn\": \"2016-02-05T21:09:14.412Z\",\n  \"updatedOn\": \"1961-10-12T22:35:41.289Z\",\n  \"disabledOn\": \"1967-11-21T23:16:08.728Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d4e5fc14-7408-4676-a4a7-d8fcf23169e2",
+              "name": "Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts",
+                    ":accountID",
+                    "representatives",
+                    ":representativeID"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) Unique identifier for the Moov account."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "representativeID",
+                      "description": "(Required) Unique identifier for the representative."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"code\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8c3849f9-4cc5-4ffd-8ca2-efd762893a0e",
+              "name": "The requested resource was not found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts",
+                    ":accountID",
+                    "representatives",
+                    ":representativeID"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) Unique identifier for the Moov account."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "representativeID",
+                      "description": "(Required) Unique identifier for the representative."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"code\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "d5053769-ce63-4b03-8dfd-a84ffce4b727",
+          "name": "Update a representative",
+          "request": {
+            "name": "Update a representative",
+            "description": {
+              "content": "Modify the information for an existing business representative. Use this to correct or update personal details, ownership percentages, or contact information as part of KYB compliance maintenance.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "accounts",
+                ":accountID",
+                "representatives",
+                ":representativeID"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "accountID",
+                  "description": "(Required) Unique identifier for the Moov account."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "representativeID",
+                  "description": "(Required) Unique identifier for the representative."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "PATCH",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": {\n    \"firstName\": \"<string>\",\n    \"middleName\": \"<string>\",\n    \"lastName\": \"<string>\",\n    \"suffix\": \"<string>\"\n  },\n  \"phone\": {\n    \"number\": \"<string>\",\n    \"countryCode\": \"<string>\"\n  },\n  \"email\": \"<email>\",\n  \"address\": {\n    \"addressLine1\": \"<string>\",\n    \"addressLine2\": \"<string>\",\n    \"city\": \"<string>\",\n    \"stateOrProvince\": \"<string>\",\n    \"postalCode\": \"<string>\",\n    \"country\": \"<string>\"\n  },\n  \"birthDate\": \"<date>\",\n  \"governmentID\": {\n    \"ssn\": {\n      \"full\": \"<string>\",\n      \"lastFour\": \"<string>\"\n    },\n    \"itin\": {\n      \"full\": \"<string>\",\n      \"lastFour\": \"<string>\"\n    }\n  },\n  \"responsibilities\": {\n    \"isController\": \"<boolean>\",\n    \"isOwner\": \"<boolean>\",\n    \"ownershipPercentage\": \"<number>\",\n    \"jobTitle\": \"<string>\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "cfebf178-387c-40ae-b107-5f017ff15331",
+              "name": "Representative updated successfully.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts",
+                    ":accountID",
+                    "representatives",
+                    ":representativeID"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) Unique identifier for the Moov account."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "representativeID",
+                      "description": "(Required) Unique identifier for the representative."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": {\n    \"firstName\": \"string\",\n    \"middleName\": \"string\",\n    \"lastName\": \"string\",\n    \"suffix\": \"string\"\n  },\n  \"phone\": {\n    \"number\": \"4995771925\",\n    \"countryCode\": \"string\"\n  },\n  \"email\": \"<email>\",\n  \"address\": {\n    \"addressLine1\": \"string\",\n    \"addressLine2\": \"string\",\n    \"city\": \"string\",\n    \"stateOrProvince\": \"st\",\n    \"postalCode\": \"string\",\n    \"country\": \"st\"\n  },\n  \"birthDate\": \"<date>\",\n  \"governmentID\": {\n    \"ssn\": {\n      \"full\": \"569929777\",\n      \"lastFour\": \"3822\"\n    },\n    \"itin\": {\n      \"full\": \"937084023\",\n      \"lastFour\": \"5765\"\n    }\n  },\n  \"responsibilities\": {\n    \"isController\": false,\n    \"isOwner\": false,\n    \"ownershipPercentage\": 20.327933784591036,\n    \"jobTitle\": \"string\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"representativeID\": \"46a59710-1d13-3964-47d7-c267c2d8d11a\",\n  \"name\": {\n    \"firstName\": \"string\",\n    \"middleName\": \"string\",\n    \"lastName\": \"string\",\n    \"suffix\": \"string\"\n  },\n  \"phone\": {\n    \"number\": \"16861849153\",\n    \"countryCode\": \"string\"\n  },\n  \"email\": \"T5Uj@lgdnTECCu.xlf\",\n  \"address\": {\n    \"addressLine1\": \"string\",\n    \"addressLine2\": \"string\",\n    \"city\": \"string\",\n    \"stateOrProvince\": \"st\",\n    \"postalCode\": \"string\",\n    \"country\": \"st\"\n  },\n  \"birthDate\": \"1951-05-21\",\n  \"governmentID\": {\n    \"ssn\": {\n      \"full\": \"645067448\",\n      \"lastFour\": \"0843\"\n    },\n    \"itin\": {\n      \"full\": \"852852812\",\n      \"lastFour\": \"5431\"\n    }\n  },\n  \"responsibilities\": {\n    \"isController\": true,\n    \"isOwner\": true,\n    \"ownershipPercentage\": 44.020715565598934,\n    \"jobTitle\": \"string\"\n  },\n  \"createdOn\": \"2016-02-05T21:09:14.412Z\",\n  \"updatedOn\": \"1961-10-12T22:35:41.289Z\",\n  \"disabledOn\": \"1967-11-21T23:16:08.728Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "bd6939ca-cfd8-47ac-b2ab-ad6d2a4d09f0",
+              "name": "The request was malformed or contained invalid parameters.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts",
+                    ":accountID",
+                    "representatives",
+                    ":representativeID"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) Unique identifier for the Moov account."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "representativeID",
+                      "description": "(Required) Unique identifier for the representative."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": {\n    \"firstName\": \"string\",\n    \"middleName\": \"string\",\n    \"lastName\": \"string\",\n    \"suffix\": \"string\"\n  },\n  \"phone\": {\n    \"number\": \"4995771925\",\n    \"countryCode\": \"string\"\n  },\n  \"email\": \"<email>\",\n  \"address\": {\n    \"addressLine1\": \"string\",\n    \"addressLine2\": \"string\",\n    \"city\": \"string\",\n    \"stateOrProvince\": \"st\",\n    \"postalCode\": \"string\",\n    \"country\": \"st\"\n  },\n  \"birthDate\": \"<date>\",\n  \"governmentID\": {\n    \"ssn\": {\n      \"full\": \"569929777\",\n      \"lastFour\": \"3822\"\n    },\n    \"itin\": {\n      \"full\": \"937084023\",\n      \"lastFour\": \"5765\"\n    }\n  },\n  \"responsibilities\": {\n    \"isController\": false,\n    \"isOwner\": false,\n    \"ownershipPercentage\": 20.327933784591036,\n    \"jobTitle\": \"string\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"code\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e3ceaaed-dd80-4c94-9a95-97cffe05628d",
+              "name": "Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts",
+                    ":accountID",
+                    "representatives",
+                    ":representativeID"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) Unique identifier for the Moov account."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "representativeID",
+                      "description": "(Required) Unique identifier for the representative."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": {\n    \"firstName\": \"string\",\n    \"middleName\": \"string\",\n    \"lastName\": \"string\",\n    \"suffix\": \"string\"\n  },\n  \"phone\": {\n    \"number\": \"4995771925\",\n    \"countryCode\": \"string\"\n  },\n  \"email\": \"<email>\",\n  \"address\": {\n    \"addressLine1\": \"string\",\n    \"addressLine2\": \"string\",\n    \"city\": \"string\",\n    \"stateOrProvince\": \"st\",\n    \"postalCode\": \"string\",\n    \"country\": \"st\"\n  },\n  \"birthDate\": \"<date>\",\n  \"governmentID\": {\n    \"ssn\": {\n      \"full\": \"569929777\",\n      \"lastFour\": \"3822\"\n    },\n    \"itin\": {\n      \"full\": \"937084023\",\n      \"lastFour\": \"5765\"\n    }\n  },\n  \"responsibilities\": {\n    \"isController\": false,\n    \"isOwner\": false,\n    \"ownershipPercentage\": 20.327933784591036,\n    \"jobTitle\": \"string\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"code\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "0d29de29-6fdc-434f-8a22-973b585d30ea",
+              "name": "The requested resource was not found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts",
+                    ":accountID",
+                    "representatives",
+                    ":representativeID"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) Unique identifier for the Moov account."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "representativeID",
+                      "description": "(Required) Unique identifier for the representative."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": {\n    \"firstName\": \"string\",\n    \"middleName\": \"string\",\n    \"lastName\": \"string\",\n    \"suffix\": \"string\"\n  },\n  \"phone\": {\n    \"number\": \"4995771925\",\n    \"countryCode\": \"string\"\n  },\n  \"email\": \"<email>\",\n  \"address\": {\n    \"addressLine1\": \"string\",\n    \"addressLine2\": \"string\",\n    \"city\": \"string\",\n    \"stateOrProvince\": \"st\",\n    \"postalCode\": \"string\",\n    \"country\": \"st\"\n  },\n  \"birthDate\": \"<date>\",\n  \"governmentID\": {\n    \"ssn\": {\n      \"full\": \"569929777\",\n      \"lastFour\": \"3822\"\n    },\n    \"itin\": {\n      \"full\": \"937084023\",\n      \"lastFour\": \"5765\"\n    }\n  },\n  \"responsibilities\": {\n    \"isController\": false,\n    \"isOwner\": false,\n    \"ownershipPercentage\": 20.327933784591036,\n    \"jobTitle\": \"string\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"code\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "b2c577ca-4d0e-45f4-88d0-3d160cd64173",
+          "name": "Remove a representative",
+          "request": {
+            "name": "Remove a representative",
+            "description": {
+              "content": "Delete a business representative from a Moov account. This may affect the account's compliance status and capability eligibility.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "accounts",
+                ":accountID",
+                "representatives",
+                ":representativeID"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "accountID",
+                  "description": "(Required) Unique identifier for the Moov account."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "representativeID",
+                  "description": "(Required) Unique identifier for the representative."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "DELETE",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "56de8bbf-fcd7-4192-8838-35d97cde41c9",
+              "name": "Representative removed successfully.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts",
+                    ":accountID",
+                    "representatives",
+                    ":representativeID"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) Unique identifier for the Moov account."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "representativeID",
+                      "description": "(Required) Unique identifier for the representative."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "No Content",
+              "code": 204,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "774326b6-a2fb-49e2-bff4-e10d7b951d5d",
+              "name": "Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts",
+                    ":accountID",
+                    "representatives",
+                    ":representativeID"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) Unique identifier for the Moov account."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "representativeID",
+                      "description": "(Required) Unique identifier for the representative."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"code\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "4c7427ba-6e7b-4a2a-841c-4986a1ecdd45",
+              "name": "The requested resource was not found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts",
+                    ":accountID",
+                    "representatives",
+                    ":representativeID"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) Unique identifier for the Moov account."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "representativeID",
+                      "description": "(Required) Unique identifier for the representative."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"code\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.moov.io",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "61a7d294-ea4c-4d23-bdfd-67f50ec47c9b",
+    "name": "Moov Accounts Representatives API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The Moov API is a RESTful financial infrastructure platform that enables developers to integrate money movement capabilities into their applications. The API supports a full range of financial operations including account management, payment method onboarding, transfers, sweeps, refunds, dispute resolution, card issuing, and payment links. It provides capabilities for accepting payments, storing funds in digital wallets, sending money between accounts, and issuing cards for spend management. Authentication uses OAuth2 access tokens with permission scopes, and the API returns JSON responses using standard HTTP response codes.\n\nContact Support:\n Name: Moov Support",
+      "type": "text/plain"
+    }
+  }
+}

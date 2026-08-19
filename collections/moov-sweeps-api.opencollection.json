@@ -1,0 +1,176 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Moov Accounts Sweeps API",
+    "version": "2026.01.00"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Sweeps",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List sweep configs",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.moov.io/accounts/:accountID/sweep-configs",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              }
+            ]
+          },
+          "docs": "Retrieve all sweep configurations for a Moov account."
+        },
+        {
+          "info": {
+            "name": "Create a sweep config",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.moov.io/accounts/:accountID/sweep-configs",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Configure automatic daily transfers from a Moov wallet to a linked bank account. Choose from standard ACH, same-day ACH, or RTP rails with varying settlement times from instant to next business day."
+        },
+        {
+          "info": {
+            "name": "Get a sweep config",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.moov.io/accounts/:accountID/sweep-configs/:sweepConfigID",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "sweepConfigID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the sweep configuration."
+              }
+            ]
+          },
+          "docs": "Retrieve the details of a specific sweep configuration for a Moov account."
+        },
+        {
+          "info": {
+            "name": "Update a sweep config",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.moov.io/accounts/:accountID/sweep-configs/:sweepConfigID",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "sweepConfigID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the sweep configuration."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Modify an existing sweep configuration, such as changing the target bank account, transfer rail, or schedule parameters."
+        },
+        {
+          "info": {
+            "name": "List sweeps",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.moov.io/accounts/:accountID/wallets/:walletID/sweeps",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "walletID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the wallet."
+              }
+            ]
+          },
+          "docs": "Retrieve a list of sweep executions for a wallet, showing each automatic transfer that has been triggered by a sweep configuration."
+        },
+        {
+          "info": {
+            "name": "Get a sweep",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.moov.io/accounts/:accountID/wallets/:walletID/sweeps/:sweepID",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "walletID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the wallet."
+              },
+              {
+                "name": "sweepID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the sweep execution."
+              }
+            ]
+          },
+          "docs": "Fetch the details of a specific sweep execution, including its transfer amount, status, and associated transfer ID."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,428 @@
+{
+  "item": [
+    {
+      "id": "0a829047-3978-4bb7-b6db-95b5b37bbfc5",
+      "name": "Payment Methods",
+      "description": {
+        "content": "Retrieve the available payment methods on an account, including bank accounts, cards, and wallets, which can be used as transfer sources or destinations.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "fdce8035-912a-4878-9dae-784998b7c6c2",
+          "name": "List payment methods",
+          "request": {
+            "name": "List payment methods",
+            "description": {
+              "content": "Retrieve all available payment methods for a Moov account, including bank accounts, cards, and wallets. The available methods depend on linked funding sources and the account's enabled capabilities.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "accounts",
+                ":accountID",
+                "payment-methods"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "accountID",
+                  "description": "(Required) Unique identifier for the Moov account."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "385b1ae0-f18a-4df4-a44f-ecc06e8e6a60",
+              "name": "Payment methods returned successfully.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts",
+                    ":accountID",
+                    "payment-methods"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) Unique identifier for the Moov account."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"paymentMethodID\": \"a1e6240c-6b55-749a-5abb-48fb5acf3a82\",\n    \"paymentMethodType\": \"card-payment\",\n    \"wallet\": {\n      \"walletID\": \"bbfd3f6b-8984-1ff9-a70a-0bf14143d467\",\n      \"availableBalance\": {\n        \"currency\": \"USD\",\n        \"value\": 7201\n      },\n      \"createdOn\": \"2004-02-20T01:06:26.695Z\",\n      \"updatedOn\": \"1950-07-18T12:15:05.793Z\"\n    },\n    \"bankAccount\": {\n      \"bankAccountID\": \"3a645e97-cc75-44e4-ab27-24abdd8d0a52\",\n      \"bankName\": \"string\",\n      \"bankAccountType\": \"loan\",\n      \"routingNumber\": \"913913382\",\n      \"lastFourAccountNumber\": \"2413\",\n      \"status\": \"unverified\",\n      \"verificationStatus\": \"verified\",\n      \"createdOn\": \"2007-11-08T12:53:52.334Z\",\n      \"updatedOn\": \"1988-12-16T12:45:29.487Z\"\n    },\n    \"card\": {\n      \"cardID\": \"c5c100cc-9679-e11b-584e-89e3fed8143b\",\n      \"fingerprint\": \"string\",\n      \"brand\": \"Visa\",\n      \"cardType\": \"unknown\",\n      \"lastFourCardNumber\": \"6996\",\n      \"bin\": \"string\",\n      \"expiration\": {\n        \"month\": \"05\",\n        \"year\": \"26\"\n      },\n      \"holderName\": \"string\",\n      \"billingAddress\": {\n        \"addressLine1\": \"string\",\n        \"addressLine2\": \"string\",\n        \"city\": \"string\",\n        \"stateOrProvince\": \"st\",\n        \"postalCode\": \"string\",\n        \"country\": \"st\"\n      },\n      \"cardVerification\": {\n        \"cvv\": \"unavailable\",\n        \"addressLine1\": \"unavailable\",\n        \"postalCode\": \"notChecked\"\n      },\n      \"issuer\": \"string\",\n      \"issuerCountry\": \"st\",\n      \"createdOn\": \"1957-09-29T01:24:35.223Z\",\n      \"updatedOn\": \"2018-01-31T14:27:16.549Z\"\n    }\n  },\n  {\n    \"paymentMethodID\": \"8efa4589-74a9-c227-9e90-d5671c57ab71\",\n    \"paymentMethodType\": \"moov-wallet\",\n    \"wallet\": {\n      \"walletID\": \"89e4db0a-0838-ad05-ace8-1c4ae217e061\",\n      \"availableBalance\": {\n        \"currency\": \"USD\",\n        \"value\": 4454\n      },\n      \"createdOn\": \"2017-11-29T21:12:49.041Z\",\n      \"updatedOn\": \"1998-02-15T09:00:38.794Z\"\n    },\n    \"bankAccount\": {\n      \"bankAccountID\": \"e6abd748-7bdc-69d9-9778-6b6abfde3d36\",\n      \"bankName\": \"string\",\n      \"bankAccountType\": \"loan\",\n      \"routingNumber\": \"430028666\",\n      \"lastFourAccountNumber\": \"3396\",\n      \"status\": \"pending\",\n      \"verificationStatus\": \"unverified\",\n      \"createdOn\": \"1996-03-19T00:00:50.788Z\",\n      \"updatedOn\": \"1951-01-26T09:25:42.123Z\"\n    },\n    \"card\": {\n      \"cardID\": \"a6987e50-e2b5-c16a-8205-8235e1577208\",\n      \"fingerprint\": \"string\",\n      \"brand\": \"Discover\",\n      \"cardType\": \"unknown\",\n      \"lastFourCardNumber\": \"4849\",\n      \"bin\": \"string\",\n      \"expiration\": {\n        \"month\": \"09\",\n        \"year\": \"84\"\n      },\n      \"holderName\": \"string\",\n      \"billingAddress\": {\n        \"addressLine1\": \"string\",\n        \"addressLine2\": \"string\",\n        \"city\": \"string\",\n        \"stateOrProvince\": \"st\",\n        \"postalCode\": \"string\",\n        \"country\": \"st\"\n      },\n      \"cardVerification\": {\n        \"cvv\": \"notChecked\",\n        \"addressLine1\": \"noMatch\",\n        \"postalCode\": \"match\"\n      },\n      \"issuer\": \"string\",\n      \"issuerCountry\": \"st\",\n      \"createdOn\": \"2004-10-28T13:34:37.583Z\",\n      \"updatedOn\": \"2020-04-01T16:35:05.595Z\"\n    }\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "845cc57d-8f3d-4239-bf56-12bf57bfdcde",
+              "name": "Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts",
+                    ":accountID",
+                    "payment-methods"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) Unique identifier for the Moov account."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"code\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "fffec7ee-3030-4ec5-9556-9b865d1ad068",
+          "name": "Retrieve a payment method",
+          "request": {
+            "name": "Retrieve a payment method",
+            "description": {
+              "content": "Fetch the details of a specific payment method on a Moov account.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "accounts",
+                ":accountID",
+                "payment-methods",
+                ":paymentMethodID"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "accountID",
+                  "description": "(Required) Unique identifier for the Moov account."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "paymentMethodID",
+                  "description": "(Required) Unique identifier for the payment method."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "4f4746cd-1451-40bc-a52b-295872c76e6f",
+              "name": "Payment method returned successfully.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts",
+                    ":accountID",
+                    "payment-methods",
+                    ":paymentMethodID"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) Unique identifier for the Moov account."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "paymentMethodID",
+                      "description": "(Required) Unique identifier for the payment method."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"paymentMethodID\": \"16a0dd53-b208-959d-3bd3-bafd8e5fd9eb\",\n  \"paymentMethodType\": \"ach-debit-collect\",\n  \"wallet\": {\n    \"walletID\": \"37fc35bc-e963-6dcb-720d-e9b1bbd87fc0\",\n    \"availableBalance\": {\n      \"currency\": \"USD\",\n      \"value\": 4166\n    },\n    \"createdOn\": \"2013-09-28T18:41:49.763Z\",\n    \"updatedOn\": \"2011-09-01T02:50:11.318Z\"\n  },\n  \"bankAccount\": {\n    \"bankAccountID\": \"f5ff3fbd-e93d-f8ae-d895-72e35df1adcf\",\n    \"bankName\": \"string\",\n    \"bankAccountType\": \"checking\",\n    \"routingNumber\": \"968603407\",\n    \"lastFourAccountNumber\": \"8932\",\n    \"status\": \"new\",\n    \"verificationStatus\": \"verificationFailed\",\n    \"createdOn\": \"2002-09-19T19:28:06.499Z\",\n    \"updatedOn\": \"2005-07-14T15:46:36.183Z\"\n  },\n  \"card\": {\n    \"cardID\": \"bab7126e-f664-9679-f242-183d52c6207b\",\n    \"fingerprint\": \"string\",\n    \"brand\": \"DinersClub\",\n    \"cardType\": \"credit\",\n    \"lastFourCardNumber\": \"9997\",\n    \"bin\": \"string\",\n    \"expiration\": {\n      \"month\": \"12\",\n      \"year\": \"64\"\n    },\n    \"holderName\": \"string\",\n    \"billingAddress\": {\n      \"addressLine1\": \"string\",\n      \"addressLine2\": \"string\",\n      \"city\": \"string\",\n      \"stateOrProvince\": \"st\",\n      \"postalCode\": \"string\",\n      \"country\": \"st\"\n    },\n    \"cardVerification\": {\n      \"cvv\": \"match\",\n      \"addressLine1\": \"match\",\n      \"postalCode\": \"notChecked\"\n    },\n    \"issuer\": \"string\",\n    \"issuerCountry\": \"st\",\n    \"createdOn\": \"1982-01-03T16:53:54.565Z\",\n    \"updatedOn\": \"2022-11-25T03:12:40.156Z\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "6f9ceb58-86ce-4d72-a401-425adadb9b37",
+              "name": "Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts",
+                    ":accountID",
+                    "payment-methods",
+                    ":paymentMethodID"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) Unique identifier for the Moov account."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "paymentMethodID",
+                      "description": "(Required) Unique identifier for the payment method."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"code\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d9b9fc11-6be4-4770-af05-96a5b000742b",
+              "name": "The requested resource was not found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts",
+                    ":accountID",
+                    "payment-methods",
+                    ":paymentMethodID"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) Unique identifier for the Moov account."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "paymentMethodID",
+                      "description": "(Required) Unique identifier for the payment method."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"code\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.moov.io",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "9dbc689c-5cb5-425e-8360-991d836cebf2",
+    "name": "Moov Accounts Payment Methods API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The Moov API is a RESTful financial infrastructure platform that enables developers to integrate money movement capabilities into their applications. The API supports a full range of financial operations including account management, payment method onboarding, transfers, sweeps, refunds, dispute resolution, card issuing, and payment links. It provides capabilities for accepting payments, storing funds in digital wallets, sending money between accounts, and issuing cards for spend management. Authentication uses OAuth2 access tokens with permission scopes, and the API returns JSON responses using standard HTTP response codes.\n\nContact Support:\n Name: Moov Support",
+      "type": "text/plain"
+    }
+  }
+}

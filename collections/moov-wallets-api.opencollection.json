@@ -1,0 +1,184 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Moov Accounts Wallets API",
+    "version": "2026.01.00"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Wallets",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List wallets",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.moov.io/accounts/:accountID/wallets",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              }
+            ]
+          },
+          "docs": "Retrieve all wallets associated with a Moov account, including their current balances and currencies."
+        },
+        {
+          "info": {
+            "name": "Create a wallet",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.moov.io/accounts/:accountID/wallets",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              }
+            ]
+          },
+          "docs": "Create a Moov digital wallet for an account to hold funds within the platform. Wallets serve as an intermediate store of value for money movement operations."
+        },
+        {
+          "info": {
+            "name": "Retrieve a wallet",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.moov.io/accounts/:accountID/wallets/:walletID",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "walletID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the wallet."
+              }
+            ]
+          },
+          "docs": "Fetch the details and current balance of a specific Moov wallet for an account."
+        },
+        {
+          "info": {
+            "name": "Update a wallet",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.moov.io/accounts/:accountID/wallets/:walletID",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "walletID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the wallet."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Modify the configuration of an existing Moov wallet, such as updating its display name or settings."
+        },
+        {
+          "info": {
+            "name": "List wallet transactions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.moov.io/accounts/:accountID/wallets/:walletID/transactions",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "walletID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the wallet."
+              },
+              {
+                "name": "count",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of results to return per page."
+              },
+              {
+                "name": "skip",
+                "value": "",
+                "type": "query",
+                "description": "Number of results to skip for pagination."
+              }
+            ]
+          },
+          "docs": "Retrieve the transaction history for a Moov wallet, showing all credits and debits with timestamps and amounts."
+        },
+        {
+          "info": {
+            "name": "Retrieve a wallet transaction",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.moov.io/accounts/:accountID/wallets/:walletID/transactions/:transactionID",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "walletID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the wallet."
+              },
+              {
+                "name": "transactionID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the wallet transaction."
+              }
+            ]
+          },
+          "docs": "Fetch the details of a specific transaction within a Moov wallet, including its type, amount, and associated transfer reference."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

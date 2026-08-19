@@ -1,0 +1,62 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Moov Accounts Underwriting API",
+    "version": "v2026.04.00"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Underwriting",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Retrieve underwriting details.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.moov.io/accounts/:accountID/underwriting",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "The Moov account identifier."
+              }
+            ]
+          },
+          "docs": "Retrieve underwriting details."
+        },
+        {
+          "info": {
+            "name": "Create or update underwriting details.",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.moov.io/accounts/:accountID/underwriting",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "The Moov account identifier."
+              }
+            ]
+          },
+          "docs": "Create or update underwriting details."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

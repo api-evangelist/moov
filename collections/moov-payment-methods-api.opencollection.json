@@ -1,0 +1,68 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Moov Accounts Payment Methods API",
+    "version": "2026.01.00"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Payment Methods",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List payment methods",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.moov.io/accounts/:accountID/payment-methods",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              }
+            ]
+          },
+          "docs": "Retrieve all available payment methods for a Moov account, including bank accounts, cards, and wallets. The available methods depend on linked funding sources and the account's enabled capabilities."
+        },
+        {
+          "info": {
+            "name": "Retrieve a payment method",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.moov.io/accounts/:accountID/payment-methods/:paymentMethodID",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "paymentMethodID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the payment method."
+              }
+            ]
+          },
+          "docs": "Fetch the details of a specific payment method on a Moov account."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

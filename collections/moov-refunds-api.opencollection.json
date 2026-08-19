@@ -1,0 +1,109 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Moov Accounts Refunds API",
+    "version": "2026.01.00"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Refunds",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List refunds",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.moov.io/accounts/:accountID/transfers/:transferID/refunds",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "transferID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the transfer."
+              }
+            ]
+          },
+          "docs": "Retrieve all refunds associated with a specific transfer."
+        },
+        {
+          "info": {
+            "name": "Create a refund",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.moov.io/accounts/:accountID/transfers/:transferID/refunds",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "transferID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the transfer."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Initiate a refund for a completed card transfer. Supports full and partial refunds. The refunded amount will be returned to the original payment method."
+        },
+        {
+          "info": {
+            "name": "Retrieve a refund",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.moov.io/accounts/:accountID/transfers/:transferID/refunds/:refundID",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "transferID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the transfer."
+              },
+              {
+                "name": "refundID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the refund."
+              }
+            ]
+          },
+          "docs": "Fetch the details and current status of a specific refund on a transfer."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

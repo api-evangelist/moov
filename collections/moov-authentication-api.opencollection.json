@@ -1,0 +1,54 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Moov Accounts Authentication API",
+    "version": "2026.01.00"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Authentication",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Create an access token",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.moov.io/oauth2/token",
+            "body": {
+              "type": "form-urlencoded",
+              "data": []
+            }
+          },
+          "docs": "Exchange credentials for an OAuth2 access token. The token must be included as a Bearer token in the Authorization header for all subsequent API requests. Include the required scopes to grant permission for the operations you intend to perform."
+        },
+        {
+          "info": {
+            "name": "Revoke an access token",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.moov.io/oauth2/revoke",
+            "body": {
+              "type": "form-urlencoded",
+              "data": []
+            }
+          },
+          "docs": "Revoke a previously issued OAuth2 access token to invalidate it immediately. Use this when a token is no longer needed or when rotating credentials."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

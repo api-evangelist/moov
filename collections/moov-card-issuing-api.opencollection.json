@@ -1,0 +1,244 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Moov Accounts Card Issuing API",
+    "version": "v2026.04.00"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Card Issuing",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List spending cards.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.moov.io/issuing/:accountID/cards",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "The Moov account identifier."
+              }
+            ]
+          },
+          "docs": "List spending cards."
+        },
+        {
+          "info": {
+            "name": "Create a spending card.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.moov.io/issuing/:accountID/cards",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "The Moov account identifier."
+              }
+            ]
+          },
+          "docs": "Create a spending card."
+        },
+        {
+          "info": {
+            "name": "Retrieve a spending card.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.moov.io/issuing/:accountID/cards/:issuedCardID",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "The Moov account identifier."
+              },
+              {
+                "name": "issuedCardID",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Retrieve a spending card."
+        },
+        {
+          "info": {
+            "name": "Update a spending card.",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.moov.io/issuing/:accountID/cards/:issuedCardID",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "The Moov account identifier."
+              },
+              {
+                "name": "issuedCardID",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Update a spending card."
+        },
+        {
+          "info": {
+            "name": "Get PCI details for a spending card.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.moov.io/issuing/:accountID/cards/:issuedCardID/details",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "The Moov account identifier."
+              },
+              {
+                "name": "issuedCardID",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get PCI details for a spending card."
+        },
+        {
+          "info": {
+            "name": "List authorizations.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.moov.io/issuing/:accountID/authorizations",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "The Moov account identifier."
+              }
+            ]
+          },
+          "docs": "List authorizations."
+        },
+        {
+          "info": {
+            "name": "Retrieve an authorization.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.moov.io/issuing/:accountID/authorizations/:authorizationID",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "The Moov account identifier."
+              },
+              {
+                "name": "authorizationID",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Retrieve an authorization."
+        },
+        {
+          "info": {
+            "name": "List authorization events.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.moov.io/issuing/:accountID/authorizations/:authorizationID/events",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "The Moov account identifier."
+              },
+              {
+                "name": "authorizationID",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "List authorization events."
+        },
+        {
+          "info": {
+            "name": "List card transactions.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.moov.io/issuing/:accountID/card-transactions",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "The Moov account identifier."
+              }
+            ]
+          },
+          "docs": "List card transactions."
+        },
+        {
+          "info": {
+            "name": "Retrieve a card transaction.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.moov.io/issuing/:accountID/card-transactions/:cardTransactionID",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "The Moov account identifier."
+              },
+              {
+                "name": "cardTransactionID",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Retrieve a card transaction."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

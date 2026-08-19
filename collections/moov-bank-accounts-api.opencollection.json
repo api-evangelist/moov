@@ -1,0 +1,249 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Moov Accounts Bank Accounts API",
+    "version": "2026.01.00"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Bank Accounts",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List bank accounts",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.moov.io/accounts/:accountID/bank-accounts",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              }
+            ]
+          },
+          "docs": "Retrieve all bank accounts linked to a Moov account, including their verification status and account details."
+        },
+        {
+          "info": {
+            "name": "Link a bank account",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.moov.io/accounts/:accountID/bank-accounts",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Connect a bank account to a Moov account as a funding source for ACH and RTP transfers. After linking, verify the bank account using either instant verification or micro-deposits before it can be used for transfers."
+        },
+        {
+          "info": {
+            "name": "Retrieve a bank account",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.moov.io/accounts/:accountID/bank-accounts/:bankAccountID",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "bankAccountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the bank account."
+              }
+            ]
+          },
+          "docs": "Fetch the details and verification status of a specific bank account linked to a Moov account."
+        },
+        {
+          "info": {
+            "name": "Delete a bank account",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.moov.io/accounts/:accountID/bank-accounts/:bankAccountID",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "bankAccountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the bank account."
+              }
+            ]
+          },
+          "docs": "Unlink and remove a bank account from a Moov account. This does not close the underlying bank account, only removes it from the Moov platform."
+        },
+        {
+          "info": {
+            "name": "Get verification status",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.moov.io/accounts/:accountID/bank-accounts/:bankAccountID/verify",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "bankAccountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the bank account."
+              }
+            ]
+          },
+          "docs": "Check the current status of a bank account verification attempt, including whether it is pending, completed, or has failed."
+        },
+        {
+          "info": {
+            "name": "Initiate bank account verification",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.moov.io/accounts/:accountID/bank-accounts/:bankAccountID/verify",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "bankAccountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the bank account."
+              }
+            ]
+          },
+          "docs": "Start the instant verification flow for a linked bank account. This method uses real-time data to verify the account without requiring micro-deposits, providing faster time-to-use for the funding source."
+        },
+        {
+          "info": {
+            "name": "Complete bank account verification",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.moov.io/accounts/:accountID/bank-accounts/:bankAccountID/verify",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "bankAccountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the bank account."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Submit the verification code or confirmation to finalize instant verification of a linked bank account."
+        },
+        {
+          "info": {
+            "name": "Initiate micro-deposits",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.moov.io/accounts/:accountID/bank-accounts/:bankAccountID/micro-deposits",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "bankAccountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the bank account."
+              }
+            ]
+          },
+          "docs": "Start the micro-deposit verification process by sending two small amounts to the linked bank account. The account holder must confirm these amounts to complete verification."
+        },
+        {
+          "info": {
+            "name": "Complete micro-deposit verification",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.moov.io/accounts/:accountID/bank-accounts/:bankAccountID/micro-deposits",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "bankAccountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the bank account."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Confirm the micro-deposit amounts that were sent to the linked bank account to complete the verification process and activate the bank account for transfers."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

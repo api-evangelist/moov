@@ -1,0 +1,170 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Moov Accounts Payment Links API",
+    "version": "2026.01.00"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Payment Links",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List payment links",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.moov.io/accounts/:accountID/payment-links",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              }
+            ]
+          },
+          "docs": "Retrieve all payment links for a Moov account, including their status, amounts, and usage statistics."
+        },
+        {
+          "info": {
+            "name": "Create a payment link",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.moov.io/accounts/:accountID/payment-links",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Generate a shareable payment link that allows customers to pay via credit card, debit card, or bank account without requiring custom frontend code. Payment links can be shared via email, SMS, or embedded in applications."
+        },
+        {
+          "info": {
+            "name": "Get a payment link",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.moov.io/accounts/:accountID/payment-links/:paymentLinkCode",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "paymentLinkCode",
+                "value": "",
+                "type": "path",
+                "description": "Unique code identifier for the payment link."
+              }
+            ]
+          },
+          "docs": "Retrieve the details of a specific payment link using its unique code."
+        },
+        {
+          "info": {
+            "name": "Update a payment link",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.moov.io/accounts/:accountID/payment-links/:paymentLinkCode",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "paymentLinkCode",
+                "value": "",
+                "type": "path",
+                "description": "Unique code identifier for the payment link."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Modify the configuration of an existing payment link, such as updating the amount, description, or expiration date."
+        },
+        {
+          "info": {
+            "name": "Disable a payment link",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.moov.io/accounts/:accountID/payment-links/:paymentLinkCode",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "paymentLinkCode",
+                "value": "",
+                "type": "path",
+                "description": "Unique code identifier for the payment link."
+              }
+            ]
+          },
+          "docs": "Deactivate a payment link so it can no longer be used to collect payments."
+        },
+        {
+          "info": {
+            "name": "Get payment link QR code",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.moov.io/accounts/:accountID/payment-links/:paymentLinkCode/qrcode",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "paymentLinkCode",
+                "value": "",
+                "type": "path",
+                "description": "Unique code identifier for the payment link."
+              }
+            ]
+          },
+          "docs": "Retrieve a QR code image for a payment link, suitable for embedding in invoices, receipts, or printed materials to allow in-person payments."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,1642 @@
+{
+  "item": [
+    {
+      "id": "5a4e44fd-a16d-4ee0-9f2f-2611d6a4537e",
+      "name": "Accounts",
+      "description": {
+        "content": "Create and manage Moov accounts representing individual or business legal entities. Accounts are the foundation for all money movement operations.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "875d76c8-6910-4dd9-87a5-1b21be7fa61e",
+          "name": "Generate a terms of service token",
+          "request": {
+            "name": "Generate a terms of service token",
+            "description": {
+              "content": "Retrieve a short-lived terms of service token required when creating new Moov accounts on behalf of users. The token confirms acceptance of Moov's platform agreement.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "tos-token"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "5dd69def-44c3-4ea5-b522-0403db79d706",
+              "name": "Terms of service token generated.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "tos-token"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"token\": \"string\",\n  \"expiresOn\": \"1976-03-16T13:31:49.777Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "02ac1a9f-04ad-42b7-af37-cef4bdcaa193",
+              "name": "Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "tos-token"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"code\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "cf8f2a88-f8bc-4673-9e4e-4e0e44343c84",
+          "name": "Create an account",
+          "request": {
+            "name": "Create an account",
+            "description": {
+              "content": "Create a new Moov account representing an individual or business legal entity. Accounts are required before linking payment methods or initiating transfers. Include a terms of service token from the /tos-token endpoint.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "accounts"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"accountType\": \"<string>\",\n  \"profile\": {\n    \"individual\": {\n      \"name\": {\n        \"firstName\": \"<string>\",\n        \"middleName\": \"<string>\",\n        \"lastName\": \"<string>\",\n        \"suffix\": \"<string>\"\n      },\n      \"email\": \"<email>\",\n      \"phone\": {\n        \"number\": \"<string>\",\n        \"countryCode\": \"<string>\"\n      },\n      \"address\": {\n        \"addressLine1\": \"<string>\",\n        \"addressLine2\": \"<string>\",\n        \"city\": \"<string>\",\n        \"stateOrProvince\": \"<string>\",\n        \"postalCode\": \"<string>\",\n        \"country\": \"<string>\"\n      },\n      \"birthDate\": \"<date>\",\n      \"governmentID\": {\n        \"ssn\": {\n          \"full\": \"<string>\",\n          \"lastFour\": \"<string>\"\n        },\n        \"itin\": {\n          \"full\": \"<string>\",\n          \"lastFour\": \"<string>\"\n        }\n      }\n    },\n    \"business\": {\n      \"legalBusinessName\": \"<string>\",\n      \"businessType\": \"<string>\",\n      \"address\": {\n        \"addressLine1\": \"<string>\",\n        \"addressLine2\": \"<string>\",\n        \"city\": \"<string>\",\n        \"stateOrProvince\": \"<string>\",\n        \"postalCode\": \"<string>\",\n        \"country\": \"<string>\"\n      },\n      \"phone\": {\n        \"number\": \"<string>\",\n        \"countryCode\": \"<string>\"\n      },\n      \"email\": \"<email>\",\n      \"website\": \"<uri>\",\n      \"description\": \"<string>\",\n      \"taxID\": {\n        \"ein\": {\n          \"number\": \"<string>\"\n        }\n      },\n      \"industryCodes\": {\n        \"naics\": \"<string>\",\n        \"sic\": \"<string>\",\n        \"mcc\": \"<string>\"\n      }\n    }\n  },\n  \"metadata\": {\n    \"key_0\": \"<string>\"\n  },\n  \"termsOfService\": {\n    \"token\": \"<string>\"\n  },\n  \"foreignID\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "8df43335-4cf0-4179-866a-3b7e0938acf5",
+              "name": "Account created successfully.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"accountType\": \"<string>\",\n  \"profile\": {\n    \"individual\": {\n      \"name\": {\n        \"firstName\": \"string\",\n        \"middleName\": \"string\",\n        \"lastName\": \"string\",\n        \"suffix\": \"string\"\n      },\n      \"email\": \"MIlM@zjjlTyH.qdgk\",\n      \"phone\": {\n        \"number\": \"68523010490845\",\n        \"countryCode\": \"string\"\n      },\n      \"address\": {\n        \"addressLine1\": \"string\",\n        \"addressLine2\": \"string\",\n        \"city\": \"string\",\n        \"stateOrProvince\": \"st\",\n        \"postalCode\": \"string\",\n        \"country\": \"st\"\n      },\n      \"birthDate\": \"2003-06-30\",\n      \"governmentID\": {\n        \"ssn\": {\n          \"full\": \"008460614\",\n          \"lastFour\": \"9185\"\n        },\n        \"itin\": {\n          \"full\": \"815569681\",\n          \"lastFour\": \"6154\"\n        }\n      }\n    },\n    \"business\": {\n      \"legalBusinessName\": \"string\",\n      \"businessType\": \"soleProprietorship\",\n      \"address\": {\n        \"addressLine1\": \"string\",\n        \"addressLine2\": \"string\",\n        \"city\": \"string\",\n        \"stateOrProvince\": \"st\",\n        \"postalCode\": \"string\",\n        \"country\": \"st\"\n      },\n      \"phone\": {\n        \"number\": \"392783559016285\",\n        \"countryCode\": \"string\"\n      },\n      \"email\": \"7qqi2zRCp4uE@ri.zcfk\",\n      \"website\": \"https://TApfsGqRraQDSjWuTIzxxQkSRvPj.xsQ2ibqIyznD7BdPXeSUvDcFKh8+RC3f4cNFLVJjNkr0jq1vUmzQlRvOw7KRQQJFCdQfnLilHvk9He\",\n      \"description\": \"string\",\n      \"taxID\": {\n        \"ein\": {\n          \"number\": \"382425933\"\n        }\n      },\n      \"industryCodes\": {\n        \"naics\": \"string\",\n        \"sic\": \"string\",\n        \"mcc\": \"string\"\n      }\n    }\n  },\n  \"metadata\": {\n    \"key_0\": \"<string>\",\n    \"key_1\": \"<string>\"\n  },\n  \"termsOfService\": {\n    \"token\": \"<string>\"\n  },\n  \"foreignID\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"accountID\": \"c4f52d42-f6b0-e719-2aed-d976bc533844\",\n  \"accountType\": \"business\",\n  \"displayName\": \"string\",\n  \"profile\": {\n    \"individual\": {\n      \"name\": {\n        \"firstName\": \"string\",\n        \"middleName\": \"string\",\n        \"lastName\": \"string\",\n        \"suffix\": \"string\"\n      },\n      \"email\": \"YcW@AmtEKyBbGwKzyGNhKmgdCWEYasId.cpnb\",\n      \"phone\": {\n        \"number\": \"195034394366963\",\n        \"countryCode\": \"string\"\n      },\n      \"address\": {\n        \"addressLine1\": \"string\",\n        \"addressLine2\": \"string\",\n        \"city\": \"string\",\n        \"stateOrProvince\": \"st\",\n        \"postalCode\": \"string\",\n        \"country\": \"st\"\n      },\n      \"birthDate\": \"2024-03-23\",\n      \"governmentID\": {\n        \"ssn\": {\n          \"full\": \"658894339\",\n          \"lastFour\": \"6430\"\n        },\n        \"itin\": {\n          \"full\": \"682882112\",\n          \"lastFour\": \"7468\"\n        }\n      }\n    },\n    \"business\": {\n      \"legalBusinessName\": \"string\",\n      \"businessType\": \"soleProprietorship\",\n      \"address\": {\n        \"addressLine1\": \"string\",\n        \"addressLine2\": \"string\",\n        \"city\": \"string\",\n        \"stateOrProvince\": \"st\",\n        \"postalCode\": \"string\",\n        \"country\": \"st\"\n      },\n      \"phone\": {\n        \"number\": \"595877151536\",\n        \"countryCode\": \"string\"\n      },\n      \"email\": \"8h5@TORmns.ln\",\n      \"website\": \"http://se.zlfR9HdytNAnuQEjGZ.wZ8CahNYZZ5.4q.BRxsTFQbDUizsoUmfEU40,Gu4c\",\n      \"description\": \"string\",\n      \"taxID\": {\n        \"ein\": {\n          \"number\": \"226374537\"\n        }\n      },\n      \"industryCodes\": {\n        \"naics\": \"string\",\n        \"sic\": \"string\",\n        \"mcc\": \"string\"\n      }\n    }\n  },\n  \"capabilities\": [\n    {\n      \"capability\": \"string\",\n      \"accountID\": \"b7294bbe-a513-5841-d7b5-9125653687b2\",\n      \"status\": \"disabled\",\n      \"requirements\": [\n        {\n          \"requirement\": \"string\",\n          \"errorCode\": \"string\"\n        },\n        {\n          \"requirement\": \"string\",\n          \"errorCode\": \"string\"\n        }\n      ],\n      \"disabledReason\": \"string\",\n      \"createdOn\": \"1991-03-19T13:51:35.797Z\",\n      \"updatedOn\": \"1969-02-25T12:40:04.585Z\"\n    },\n    {\n      \"capability\": \"string\",\n      \"accountID\": \"7c4617e0-1c51-bfe6-4593-6525538b4735\",\n      \"status\": \"disabled\",\n      \"requirements\": [\n        {\n          \"requirement\": \"string\",\n          \"errorCode\": \"string\"\n        },\n        {\n          \"requirement\": \"string\",\n          \"errorCode\": \"string\"\n        }\n      ],\n      \"disabledReason\": \"string\",\n      \"createdOn\": \"1977-06-03T04:25:33.254Z\",\n      \"updatedOn\": \"1981-07-13T08:53:23.083Z\"\n    }\n  ],\n  \"verification\": {\n    \"verificationStatus\": \"review\"\n  },\n  \"createdOn\": \"2025-10-03T03:34:34.453Z\",\n  \"updatedOn\": \"1950-08-28T00:38:27.787Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3248bc2f-19d2-408c-bd88-6f2b059abc8e",
+              "name": "The request was malformed or contained invalid parameters.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"accountType\": \"<string>\",\n  \"profile\": {\n    \"individual\": {\n      \"name\": {\n        \"firstName\": \"string\",\n        \"middleName\": \"string\",\n        \"lastName\": \"string\",\n        \"suffix\": \"string\"\n      },\n      \"email\": \"MIlM@zjjlTyH.qdgk\",\n      \"phone\": {\n        \"number\": \"68523010490845\",\n        \"countryCode\": \"string\"\n      },\n      \"address\": {\n        \"addressLine1\": \"string\",\n        \"addressLine2\": \"string\",\n        \"city\": \"string\",\n        \"stateOrProvince\": \"st\",\n        \"postalCode\": \"string\",\n        \"country\": \"st\"\n      },\n      \"birthDate\": \"2003-06-30\",\n      \"governmentID\": {\n        \"ssn\": {\n          \"full\": \"008460614\",\n          \"lastFour\": \"9185\"\n        },\n        \"itin\": {\n          \"full\": \"815569681\",\n          \"lastFour\": \"6154\"\n        }\n      }\n    },\n    \"business\": {\n      \"legalBusinessName\": \"string\",\n      \"businessType\": \"soleProprietorship\",\n      \"address\": {\n        \"addressLine1\": \"string\",\n        \"addressLine2\": \"string\",\n        \"city\": \"string\",\n        \"stateOrProvince\": \"st\",\n        \"postalCode\": \"string\",\n        \"country\": \"st\"\n      },\n      \"phone\": {\n        \"number\": \"392783559016285\",\n        \"countryCode\": \"string\"\n      },\n      \"email\": \"7qqi2zRCp4uE@ri.zcfk\",\n      \"website\": \"https://TApfsGqRraQDSjWuTIzxxQkSRvPj.xsQ2ibqIyznD7BdPXeSUvDcFKh8+RC3f4cNFLVJjNkr0jq1vUmzQlRvOw7KRQQJFCdQfnLilHvk9He\",\n      \"description\": \"string\",\n      \"taxID\": {\n        \"ein\": {\n          \"number\": \"382425933\"\n        }\n      },\n      \"industryCodes\": {\n        \"naics\": \"string\",\n        \"sic\": \"string\",\n        \"mcc\": \"string\"\n      }\n    }\n  },\n  \"metadata\": {\n    \"key_0\": \"<string>\",\n    \"key_1\": \"<string>\"\n  },\n  \"termsOfService\": {\n    \"token\": \"<string>\"\n  },\n  \"foreignID\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"code\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "6f8061ce-0916-4e5f-8ed4-f8d2a2f6621c",
+              "name": "Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"accountType\": \"<string>\",\n  \"profile\": {\n    \"individual\": {\n      \"name\": {\n        \"firstName\": \"string\",\n        \"middleName\": \"string\",\n        \"lastName\": \"string\",\n        \"suffix\": \"string\"\n      },\n      \"email\": \"MIlM@zjjlTyH.qdgk\",\n      \"phone\": {\n        \"number\": \"68523010490845\",\n        \"countryCode\": \"string\"\n      },\n      \"address\": {\n        \"addressLine1\": \"string\",\n        \"addressLine2\": \"string\",\n        \"city\": \"string\",\n        \"stateOrProvince\": \"st\",\n        \"postalCode\": \"string\",\n        \"country\": \"st\"\n      },\n      \"birthDate\": \"2003-06-30\",\n      \"governmentID\": {\n        \"ssn\": {\n          \"full\": \"008460614\",\n          \"lastFour\": \"9185\"\n        },\n        \"itin\": {\n          \"full\": \"815569681\",\n          \"lastFour\": \"6154\"\n        }\n      }\n    },\n    \"business\": {\n      \"legalBusinessName\": \"string\",\n      \"businessType\": \"soleProprietorship\",\n      \"address\": {\n        \"addressLine1\": \"string\",\n        \"addressLine2\": \"string\",\n        \"city\": \"string\",\n        \"stateOrProvince\": \"st\",\n        \"postalCode\": \"string\",\n        \"country\": \"st\"\n      },\n      \"phone\": {\n        \"number\": \"392783559016285\",\n        \"countryCode\": \"string\"\n      },\n      \"email\": \"7qqi2zRCp4uE@ri.zcfk\",\n      \"website\": \"https://TApfsGqRraQDSjWuTIzxxQkSRvPj.xsQ2ibqIyznD7BdPXeSUvDcFKh8+RC3f4cNFLVJjNkr0jq1vUmzQlRvOw7KRQQJFCdQfnLilHvk9He\",\n      \"description\": \"string\",\n      \"taxID\": {\n        \"ein\": {\n          \"number\": \"382425933\"\n        }\n      },\n      \"industryCodes\": {\n        \"naics\": \"string\",\n        \"sic\": \"string\",\n        \"mcc\": \"string\"\n      }\n    }\n  },\n  \"metadata\": {\n    \"key_0\": \"<string>\",\n    \"key_1\": \"<string>\"\n  },\n  \"termsOfService\": {\n    \"token\": \"<string>\"\n  },\n  \"foreignID\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"code\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "0d869c46-5ae1-4929-ac4c-c4646e09014f",
+          "name": "List accounts",
+          "request": {
+            "name": "List accounts",
+            "description": {
+              "content": "Retrieve a list of accounts connected to your platform. Supports filtering by name, email, and type to locate specific accounts.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "accounts"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "count",
+                  "value": "20",
+                  "description": "Maximum number of results to return per page."
+                },
+                {
+                  "disabled": false,
+                  "key": "skip",
+                  "value": "0",
+                  "description": "Number of results to skip for pagination."
+                },
+                {
+                  "disabled": false,
+                  "key": "name",
+                  "value": "<string>",
+                  "description": "Filter accounts by display name."
+                },
+                {
+                  "disabled": false,
+                  "key": "email",
+                  "value": "<email>",
+                  "description": "Filter accounts by email address."
+                },
+                {
+                  "disabled": false,
+                  "key": "type",
+                  "value": "<string>",
+                  "description": "Filter by account type (individual or business)."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "15058a01-0270-4bdb-80d1-cb4edcc7262c",
+              "name": "List of accounts returned successfully.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "count",
+                      "value": "20"
+                    },
+                    {
+                      "key": "skip",
+                      "value": "0"
+                    },
+                    {
+                      "key": "name",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "email",
+                      "value": "<email>"
+                    },
+                    {
+                      "key": "type",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"accountID\": \"c1741366-5155-e07a-fbca-57432c3a7b24\",\n    \"accountType\": \"individual\",\n    \"displayName\": \"string\",\n    \"profile\": {\n      \"individual\": {\n        \"name\": {\n          \"firstName\": \"string\",\n          \"middleName\": \"string\",\n          \"lastName\": \"string\",\n          \"suffix\": \"string\"\n        },\n        \"email\": \"yxZT191R6PD1TM@hjIkoTmuZOPGuinmQLStWDTYPwm.xj\",\n        \"phone\": {\n          \"number\": \"94345212245\",\n          \"countryCode\": \"string\"\n        },\n        \"address\": {\n          \"addressLine1\": \"string\",\n          \"addressLine2\": \"string\",\n          \"city\": \"string\",\n          \"stateOrProvince\": \"st\",\n          \"postalCode\": \"string\",\n          \"country\": \"st\"\n        },\n        \"birthDate\": \"2002-02-01\",\n        \"governmentID\": {\n          \"ssn\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"itin\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        }\n      },\n      \"business\": {\n        \"legalBusinessName\": \"string\",\n        \"businessType\": \"unincorporatedNonProfit\",\n        \"address\": {\n          \"addressLine1\": \"string\",\n          \"addressLine2\": \"string\",\n          \"city\": \"string\",\n          \"stateOrProvince\": \"st\",\n          \"postalCode\": \"string\",\n          \"country\": \"st\"\n        },\n        \"phone\": {\n          \"number\": \"465895736203974\",\n          \"countryCode\": \"string\"\n        },\n        \"email\": \"m4ndEKEurbZpW5@URHMhmPNb.kzof\",\n        \"website\": \"http://cShGWkkW.scurUmb,o2ZRMvyTaKNJUNvLO3pMgg\",\n        \"description\": \"string\",\n        \"taxID\": {\n          \"ein\": {\n            \"number\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            }\n          }\n        },\n        \"industryCodes\": {\n          \"naics\": \"string\",\n          \"sic\": \"string\",\n          \"mcc\": \"string\"\n        }\n      }\n    },\n    \"capabilities\": [\n      {\n        \"capability\": \"string\",\n        \"accountID\": \"dea4b070-fac8-800a-88c0-4ca4672411d7\",\n        \"status\": \"in-review\",\n        \"requirements\": [\n          {\n            \"requirement\": \"string\",\n            \"errorCode\": \"string\"\n          },\n          {\n            \"requirement\": \"string\",\n            \"errorCode\": \"string\"\n          }\n        ],\n        \"disabledReason\": \"string\",\n        \"createdOn\": \"1979-10-26T19:26:57.406Z\",\n        \"updatedOn\": \"1955-07-09T20:18:54.800Z\"\n      },\n      {\n        \"capability\": \"string\",\n        \"accountID\": \"3557a4d0-eafa-d345-08a5-2891574a7659\",\n        \"status\": \"pending\",\n        \"requirements\": [\n          {\n            \"requirement\": \"string\",\n            \"errorCode\": \"string\"\n          },\n          {\n            \"requirement\": \"string\",\n            \"errorCode\": \"string\"\n          }\n        ],\n        \"disabledReason\": \"string\",\n        \"createdOn\": \"1997-07-29T14:09:22.138Z\",\n        \"updatedOn\": \"1986-02-25T17:27:30.233Z\"\n      }\n    ],\n    \"verification\": {\n      \"verificationStatus\": \"verified\"\n    },\n    \"createdOn\": \"1976-04-09T14:07:05.600Z\",\n    \"updatedOn\": \"1987-04-27T08:23:06.701Z\"\n  },\n  {\n    \"accountID\": \"098523f6-f4b6-56f7-2b3b-5ad2d0859fdf\",\n    \"accountType\": \"business\",\n    \"displayName\": \"string\",\n    \"profile\": {\n      \"individual\": {\n        \"name\": {\n          \"firstName\": \"string\",\n          \"middleName\": \"string\",\n          \"lastName\": \"string\",\n          \"suffix\": \"string\"\n        },\n        \"email\": \"TPN2YZerovdPraE@gcVLUuQesSeJxhnXKObISpXhFEHKmBCK.cxb\",\n        \"phone\": {\n          \"number\": \"596294085187894\",\n          \"countryCode\": \"string\"\n        },\n        \"address\": {\n          \"addressLine1\": \"string\",\n          \"addressLine2\": \"string\",\n          \"city\": \"string\",\n          \"stateOrProvince\": \"st\",\n          \"postalCode\": \"string\",\n          \"country\": \"st\"\n        },\n        \"birthDate\": \"2013-07-16\",\n        \"governmentID\": {\n          \"ssn\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"itin\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        }\n      },\n      \"business\": {\n        \"legalBusinessName\": \"string\",\n        \"businessType\": \"trust\",\n        \"address\": {\n          \"addressLine1\": \"string\",\n          \"addressLine2\": \"string\",\n          \"city\": \"string\",\n          \"stateOrProvince\": \"st\",\n          \"postalCode\": \"string\",\n          \"country\": \"st\"\n        },\n        \"phone\": {\n          \"number\": \"23250729154794\",\n          \"countryCode\": \"string\"\n        },\n        \"email\": \"60GE0khXnP@AMTmDgrJNfUrWmsIx.ue\",\n        \"website\": \"http://FJFBCIuMHTQsPIrQEPv.becnZKXjBtLr,z6Vt12zSBJY2GJyB0mHnEqGHirK8b\",\n        \"description\": \"string\",\n        \"taxID\": {\n          \"ein\": {\n            \"number\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            }\n          }\n        },\n        \"industryCodes\": {\n          \"naics\": \"string\",\n          \"sic\": \"string\",\n          \"mcc\": \"string\"\n        }\n      }\n    },\n    \"capabilities\": [\n      {\n        \"capability\": \"string\",\n        \"accountID\": \"810a0002-eb92-5f01-72ae-dbea9140f7e6\",\n        \"status\": \"enabled\",\n        \"requirements\": [\n          {\n            \"requirement\": \"string\",\n            \"errorCode\": \"string\"\n          },\n          {\n            \"requirement\": \"string\",\n            \"errorCode\": \"string\"\n          }\n        ],\n        \"disabledReason\": \"string\",\n        \"createdOn\": \"1996-03-04T23:16:46.473Z\",\n        \"updatedOn\": \"1967-04-17T20:51:08.880Z\"\n      },\n      {\n        \"capability\": \"string\",\n        \"accountID\": \"7353cf44-be8e-4551-c493-cc227c0f5fa4\",\n        \"status\": \"enabled\",\n        \"requirements\": [\n          {\n            \"requirement\": \"string\",\n            \"errorCode\": \"string\"\n          },\n          {\n            \"requirement\": \"string\",\n            \"errorCode\": \"string\"\n          }\n        ],\n        \"disabledReason\": \"string\",\n        \"createdOn\": \"1960-07-27T04:02:22.560Z\",\n        \"updatedOn\": \"2002-02-08T10:13:16.006Z\"\n      }\n    ],\n    \"verification\": {\n      \"verificationStatus\": \"failed\"\n    },\n    \"createdOn\": \"2020-11-18T18:37:30.656Z\",\n    \"updatedOn\": \"1992-09-08T12:17:40.782Z\"\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8a7b9027-9f27-476f-87d5-95af8ac2654f",
+              "name": "Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "count",
+                      "value": "20"
+                    },
+                    {
+                      "key": "skip",
+                      "value": "0"
+                    },
+                    {
+                      "key": "name",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "email",
+                      "value": "<email>"
+                    },
+                    {
+                      "key": "type",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"code\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "d0164e97-aca9-406a-a4e9-084f9e0cde43",
+          "name": "Retrieve an account",
+          "request": {
+            "name": "Retrieve an account",
+            "description": {
+              "content": "Fetch the full details of a specific Moov account by its unique identifier, including profile information, verification status, and capabilities.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "accounts",
+                ":accountID"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "accountID",
+                  "description": "(Required) Unique identifier for the Moov account."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "3071284e-bb43-4d50-854a-fb7fcc0f306f",
+              "name": "Account details returned successfully.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts",
+                    ":accountID"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) Unique identifier for the Moov account."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"accountID\": \"c4f52d42-f6b0-e719-2aed-d976bc533844\",\n  \"accountType\": \"business\",\n  \"displayName\": \"string\",\n  \"profile\": {\n    \"individual\": {\n      \"name\": {\n        \"firstName\": \"string\",\n        \"middleName\": \"string\",\n        \"lastName\": \"string\",\n        \"suffix\": \"string\"\n      },\n      \"email\": \"YcW@AmtEKyBbGwKzyGNhKmgdCWEYasId.cpnb\",\n      \"phone\": {\n        \"number\": \"195034394366963\",\n        \"countryCode\": \"string\"\n      },\n      \"address\": {\n        \"addressLine1\": \"string\",\n        \"addressLine2\": \"string\",\n        \"city\": \"string\",\n        \"stateOrProvince\": \"st\",\n        \"postalCode\": \"string\",\n        \"country\": \"st\"\n      },\n      \"birthDate\": \"2024-03-23\",\n      \"governmentID\": {\n        \"ssn\": {\n          \"full\": \"658894339\",\n          \"lastFour\": \"6430\"\n        },\n        \"itin\": {\n          \"full\": \"682882112\",\n          \"lastFour\": \"7468\"\n        }\n      }\n    },\n    \"business\": {\n      \"legalBusinessName\": \"string\",\n      \"businessType\": \"soleProprietorship\",\n      \"address\": {\n        \"addressLine1\": \"string\",\n        \"addressLine2\": \"string\",\n        \"city\": \"string\",\n        \"stateOrProvince\": \"st\",\n        \"postalCode\": \"string\",\n        \"country\": \"st\"\n      },\n      \"phone\": {\n        \"number\": \"595877151536\",\n        \"countryCode\": \"string\"\n      },\n      \"email\": \"8h5@TORmns.ln\",\n      \"website\": \"http://se.zlfR9HdytNAnuQEjGZ.wZ8CahNYZZ5.4q.BRxsTFQbDUizsoUmfEU40,Gu4c\",\n      \"description\": \"string\",\n      \"taxID\": {\n        \"ein\": {\n          \"number\": \"226374537\"\n        }\n      },\n      \"industryCodes\": {\n        \"naics\": \"string\",\n        \"sic\": \"string\",\n        \"mcc\": \"string\"\n      }\n    }\n  },\n  \"capabilities\": [\n    {\n      \"capability\": \"string\",\n      \"accountID\": \"b7294bbe-a513-5841-d7b5-9125653687b2\",\n      \"status\": \"disabled\",\n      \"requirements\": [\n        {\n          \"requirement\": \"string\",\n          \"errorCode\": \"string\"\n        },\n        {\n          \"requirement\": \"string\",\n          \"errorCode\": \"string\"\n        }\n      ],\n      \"disabledReason\": \"string\",\n      \"createdOn\": \"1991-03-19T13:51:35.797Z\",\n      \"updatedOn\": \"1969-02-25T12:40:04.585Z\"\n    },\n    {\n      \"capability\": \"string\",\n      \"accountID\": \"7c4617e0-1c51-bfe6-4593-6525538b4735\",\n      \"status\": \"disabled\",\n      \"requirements\": [\n        {\n          \"requirement\": \"string\",\n          \"errorCode\": \"string\"\n        },\n        {\n          \"requirement\": \"string\",\n          \"errorCode\": \"string\"\n        }\n      ],\n      \"disabledReason\": \"string\",\n      \"createdOn\": \"1977-06-03T04:25:33.254Z\",\n      \"updatedOn\": \"1981-07-13T08:53:23.083Z\"\n    }\n  ],\n  \"verification\": {\n    \"verificationStatus\": \"review\"\n  },\n  \"createdOn\": \"2025-10-03T03:34:34.453Z\",\n  \"updatedOn\": \"1950-08-28T00:38:27.787Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "4a7380d9-8e7b-4525-a208-b28fdbddb3aa",
+              "name": "Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts",
+                    ":accountID"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) Unique identifier for the Moov account."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"code\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "512fc488-c503-48ff-a6a1-5086c632523d",
+              "name": "The requested resource was not found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts",
+                    ":accountID"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) Unique identifier for the Moov account."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"code\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "58922e78-115f-403c-ab36-5f7e711f6844",
+          "name": "Update an account",
+          "request": {
+            "name": "Update an account",
+            "description": {
+              "content": "Modify the profile and settings of an existing Moov account. Only the fields provided in the request body will be updated; omitted fields remain unchanged.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "accounts",
+                ":accountID"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "accountID",
+                  "description": "(Required) Unique identifier for the Moov account."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "PATCH",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"profile\": {\n    \"individual\": {\n      \"name\": {\n        \"firstName\": \"<string>\",\n        \"middleName\": \"<string>\",\n        \"lastName\": \"<string>\",\n        \"suffix\": \"<string>\"\n      },\n      \"email\": \"<email>\",\n      \"phone\": {\n        \"number\": \"<string>\",\n        \"countryCode\": \"<string>\"\n      },\n      \"address\": {\n        \"addressLine1\": \"<string>\",\n        \"addressLine2\": \"<string>\",\n        \"city\": \"<string>\",\n        \"stateOrProvince\": \"<string>\",\n        \"postalCode\": \"<string>\",\n        \"country\": \"<string>\"\n      },\n      \"birthDate\": \"<date>\",\n      \"governmentID\": {\n        \"ssn\": {\n          \"full\": \"<string>\",\n          \"lastFour\": \"<string>\"\n        },\n        \"itin\": {\n          \"full\": \"<string>\",\n          \"lastFour\": \"<string>\"\n        }\n      }\n    },\n    \"business\": {\n      \"legalBusinessName\": \"<string>\",\n      \"businessType\": \"<string>\",\n      \"address\": {\n        \"addressLine1\": \"<string>\",\n        \"addressLine2\": \"<string>\",\n        \"city\": \"<string>\",\n        \"stateOrProvince\": \"<string>\",\n        \"postalCode\": \"<string>\",\n        \"country\": \"<string>\"\n      },\n      \"phone\": {\n        \"number\": \"<string>\",\n        \"countryCode\": \"<string>\"\n      },\n      \"email\": \"<email>\",\n      \"website\": \"<uri>\",\n      \"description\": \"<string>\",\n      \"taxID\": {\n        \"ein\": {\n          \"number\": \"<string>\"\n        }\n      },\n      \"industryCodes\": {\n        \"naics\": \"<string>\",\n        \"sic\": \"<string>\",\n        \"mcc\": \"<string>\"\n      }\n    }\n  },\n  \"metadata\": {\n    \"key_0\": \"<string>\",\n    \"key_1\": \"<string>\",\n    \"key_2\": \"<string>\",\n    \"key_3\": \"<string>\"\n  },\n  \"foreignID\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "4e8c29c2-a185-45d1-bce2-d4a81b9aea7b",
+              "name": "Account updated successfully.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts",
+                    ":accountID"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) Unique identifier for the Moov account."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"profile\": {\n    \"individual\": {\n      \"name\": {\n        \"firstName\": \"string\",\n        \"middleName\": \"string\",\n        \"lastName\": \"string\",\n        \"suffix\": \"string\"\n      },\n      \"email\": \"0Bbs5KwXNYaBU3R@aPRgFWWbWHlbGfG.hszb\",\n      \"phone\": {\n        \"number\": \"2385907771586\",\n        \"countryCode\": \"string\"\n      },\n      \"address\": {\n        \"addressLine1\": \"string\",\n        \"addressLine2\": \"string\",\n        \"city\": \"string\",\n        \"stateOrProvince\": \"st\",\n        \"postalCode\": \"string\",\n        \"country\": \"st\"\n      },\n      \"birthDate\": \"2015-07-09\",\n      \"governmentID\": {\n        \"ssn\": {\n          \"full\": \"808104486\",\n          \"lastFour\": \"6784\"\n        },\n        \"itin\": {\n          \"full\": \"086870511\",\n          \"lastFour\": \"6971\"\n        }\n      }\n    },\n    \"business\": {\n      \"legalBusinessName\": \"string\",\n      \"businessType\": \"privateCorporation\",\n      \"address\": {\n        \"addressLine1\": \"string\",\n        \"addressLine2\": \"string\",\n        \"city\": \"string\",\n        \"stateOrProvince\": \"st\",\n        \"postalCode\": \"string\",\n        \"country\": \"st\"\n      },\n      \"phone\": {\n        \"number\": \"433677220957\",\n        \"countryCode\": \"string\"\n      },\n      \"email\": \"vEpKK-WiHAaFvtC@dAKOJcCWqyOpF.hg\",\n      \"website\": \"http://bQfCtmHJkiPkNYVhiqvyXP.fdyrGDOK+,whS8TmpZxz,8f.CV7Yhk5m.\",\n      \"description\": \"string\",\n      \"taxID\": {\n        \"ein\": {\n          \"number\": \"942966544\"\n        }\n      },\n      \"industryCodes\": {\n        \"naics\": \"string\",\n        \"sic\": \"string\",\n        \"mcc\": \"string\"\n      }\n    }\n  },\n  \"metadata\": {\n    \"key_0\": \"<string>\"\n  },\n  \"foreignID\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"accountID\": \"c4f52d42-f6b0-e719-2aed-d976bc533844\",\n  \"accountType\": \"business\",\n  \"displayName\": \"string\",\n  \"profile\": {\n    \"individual\": {\n      \"name\": {\n        \"firstName\": \"string\",\n        \"middleName\": \"string\",\n        \"lastName\": \"string\",\n        \"suffix\": \"string\"\n      },\n      \"email\": \"YcW@AmtEKyBbGwKzyGNhKmgdCWEYasId.cpnb\",\n      \"phone\": {\n        \"number\": \"195034394366963\",\n        \"countryCode\": \"string\"\n      },\n      \"address\": {\n        \"addressLine1\": \"string\",\n        \"addressLine2\": \"string\",\n        \"city\": \"string\",\n        \"stateOrProvince\": \"st\",\n        \"postalCode\": \"string\",\n        \"country\": \"st\"\n      },\n      \"birthDate\": \"2024-03-23\",\n      \"governmentID\": {\n        \"ssn\": {\n          \"full\": \"658894339\",\n          \"lastFour\": \"6430\"\n        },\n        \"itin\": {\n          \"full\": \"682882112\",\n          \"lastFour\": \"7468\"\n        }\n      }\n    },\n    \"business\": {\n      \"legalBusinessName\": \"string\",\n      \"businessType\": \"soleProprietorship\",\n      \"address\": {\n        \"addressLine1\": \"string\",\n        \"addressLine2\": \"string\",\n        \"city\": \"string\",\n        \"stateOrProvince\": \"st\",\n        \"postalCode\": \"string\",\n        \"country\": \"st\"\n      },\n      \"phone\": {\n        \"number\": \"595877151536\",\n        \"countryCode\": \"string\"\n      },\n      \"email\": \"8h5@TORmns.ln\",\n      \"website\": \"http://se.zlfR9HdytNAnuQEjGZ.wZ8CahNYZZ5.4q.BRxsTFQbDUizsoUmfEU40,Gu4c\",\n      \"description\": \"string\",\n      \"taxID\": {\n        \"ein\": {\n          \"number\": \"226374537\"\n        }\n      },\n      \"industryCodes\": {\n        \"naics\": \"string\",\n        \"sic\": \"string\",\n        \"mcc\": \"string\"\n      }\n    }\n  },\n  \"capabilities\": [\n    {\n      \"capability\": \"string\",\n      \"accountID\": \"b7294bbe-a513-5841-d7b5-9125653687b2\",\n      \"status\": \"disabled\",\n      \"requirements\": [\n        {\n          \"requirement\": \"string\",\n          \"errorCode\": \"string\"\n        },\n        {\n          \"requirement\": \"string\",\n          \"errorCode\": \"string\"\n        }\n      ],\n      \"disabledReason\": \"string\",\n      \"createdOn\": \"1991-03-19T13:51:35.797Z\",\n      \"updatedOn\": \"1969-02-25T12:40:04.585Z\"\n    },\n    {\n      \"capability\": \"string\",\n      \"accountID\": \"7c4617e0-1c51-bfe6-4593-6525538b4735\",\n      \"status\": \"disabled\",\n      \"requirements\": [\n        {\n          \"requirement\": \"string\",\n          \"errorCode\": \"string\"\n        },\n        {\n          \"requirement\": \"string\",\n          \"errorCode\": \"string\"\n        }\n      ],\n      \"disabledReason\": \"string\",\n      \"createdOn\": \"1977-06-03T04:25:33.254Z\",\n      \"updatedOn\": \"1981-07-13T08:53:23.083Z\"\n    }\n  ],\n  \"verification\": {\n    \"verificationStatus\": \"review\"\n  },\n  \"createdOn\": \"2025-10-03T03:34:34.453Z\",\n  \"updatedOn\": \"1950-08-28T00:38:27.787Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "bb2c37a5-bafd-4a45-9bf9-bd1880497e9e",
+              "name": "The request was malformed or contained invalid parameters.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts",
+                    ":accountID"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) Unique identifier for the Moov account."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"profile\": {\n    \"individual\": {\n      \"name\": {\n        \"firstName\": \"string\",\n        \"middleName\": \"string\",\n        \"lastName\": \"string\",\n        \"suffix\": \"string\"\n      },\n      \"email\": \"0Bbs5KwXNYaBU3R@aPRgFWWbWHlbGfG.hszb\",\n      \"phone\": {\n        \"number\": \"2385907771586\",\n        \"countryCode\": \"string\"\n      },\n      \"address\": {\n        \"addressLine1\": \"string\",\n        \"addressLine2\": \"string\",\n        \"city\": \"string\",\n        \"stateOrProvince\": \"st\",\n        \"postalCode\": \"string\",\n        \"country\": \"st\"\n      },\n      \"birthDate\": \"2015-07-09\",\n      \"governmentID\": {\n        \"ssn\": {\n          \"full\": \"808104486\",\n          \"lastFour\": \"6784\"\n        },\n        \"itin\": {\n          \"full\": \"086870511\",\n          \"lastFour\": \"6971\"\n        }\n      }\n    },\n    \"business\": {\n      \"legalBusinessName\": \"string\",\n      \"businessType\": \"privateCorporation\",\n      \"address\": {\n        \"addressLine1\": \"string\",\n        \"addressLine2\": \"string\",\n        \"city\": \"string\",\n        \"stateOrProvince\": \"st\",\n        \"postalCode\": \"string\",\n        \"country\": \"st\"\n      },\n      \"phone\": {\n        \"number\": \"433677220957\",\n        \"countryCode\": \"string\"\n      },\n      \"email\": \"vEpKK-WiHAaFvtC@dAKOJcCWqyOpF.hg\",\n      \"website\": \"http://bQfCtmHJkiPkNYVhiqvyXP.fdyrGDOK+,whS8TmpZxz,8f.CV7Yhk5m.\",\n      \"description\": \"string\",\n      \"taxID\": {\n        \"ein\": {\n          \"number\": \"942966544\"\n        }\n      },\n      \"industryCodes\": {\n        \"naics\": \"string\",\n        \"sic\": \"string\",\n        \"mcc\": \"string\"\n      }\n    }\n  },\n  \"metadata\": {\n    \"key_0\": \"<string>\"\n  },\n  \"foreignID\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"code\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3304c694-e047-4166-b1a0-c352a9e959de",
+              "name": "Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts",
+                    ":accountID"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) Unique identifier for the Moov account."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"profile\": {\n    \"individual\": {\n      \"name\": {\n        \"firstName\": \"string\",\n        \"middleName\": \"string\",\n        \"lastName\": \"string\",\n        \"suffix\": \"string\"\n      },\n      \"email\": \"0Bbs5KwXNYaBU3R@aPRgFWWbWHlbGfG.hszb\",\n      \"phone\": {\n        \"number\": \"2385907771586\",\n        \"countryCode\": \"string\"\n      },\n      \"address\": {\n        \"addressLine1\": \"string\",\n        \"addressLine2\": \"string\",\n        \"city\": \"string\",\n        \"stateOrProvince\": \"st\",\n        \"postalCode\": \"string\",\n        \"country\": \"st\"\n      },\n      \"birthDate\": \"2015-07-09\",\n      \"governmentID\": {\n        \"ssn\": {\n          \"full\": \"808104486\",\n          \"lastFour\": \"6784\"\n        },\n        \"itin\": {\n          \"full\": \"086870511\",\n          \"lastFour\": \"6971\"\n        }\n      }\n    },\n    \"business\": {\n      \"legalBusinessName\": \"string\",\n      \"businessType\": \"privateCorporation\",\n      \"address\": {\n        \"addressLine1\": \"string\",\n        \"addressLine2\": \"string\",\n        \"city\": \"string\",\n        \"stateOrProvince\": \"st\",\n        \"postalCode\": \"string\",\n        \"country\": \"st\"\n      },\n      \"phone\": {\n        \"number\": \"433677220957\",\n        \"countryCode\": \"string\"\n      },\n      \"email\": \"vEpKK-WiHAaFvtC@dAKOJcCWqyOpF.hg\",\n      \"website\": \"http://bQfCtmHJkiPkNYVhiqvyXP.fdyrGDOK+,whS8TmpZxz,8f.CV7Yhk5m.\",\n      \"description\": \"string\",\n      \"taxID\": {\n        \"ein\": {\n          \"number\": \"942966544\"\n        }\n      },\n      \"industryCodes\": {\n        \"naics\": \"string\",\n        \"sic\": \"string\",\n        \"mcc\": \"string\"\n      }\n    }\n  },\n  \"metadata\": {\n    \"key_0\": \"<string>\"\n  },\n  \"foreignID\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"code\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e23f353d-546c-483d-b640-47911f60b2a9",
+              "name": "The requested resource was not found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts",
+                    ":accountID"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) Unique identifier for the Moov account."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"profile\": {\n    \"individual\": {\n      \"name\": {\n        \"firstName\": \"string\",\n        \"middleName\": \"string\",\n        \"lastName\": \"string\",\n        \"suffix\": \"string\"\n      },\n      \"email\": \"0Bbs5KwXNYaBU3R@aPRgFWWbWHlbGfG.hszb\",\n      \"phone\": {\n        \"number\": \"2385907771586\",\n        \"countryCode\": \"string\"\n      },\n      \"address\": {\n        \"addressLine1\": \"string\",\n        \"addressLine2\": \"string\",\n        \"city\": \"string\",\n        \"stateOrProvince\": \"st\",\n        \"postalCode\": \"string\",\n        \"country\": \"st\"\n      },\n      \"birthDate\": \"2015-07-09\",\n      \"governmentID\": {\n        \"ssn\": {\n          \"full\": \"808104486\",\n          \"lastFour\": \"6784\"\n        },\n        \"itin\": {\n          \"full\": \"086870511\",\n          \"lastFour\": \"6971\"\n        }\n      }\n    },\n    \"business\": {\n      \"legalBusinessName\": \"string\",\n      \"businessType\": \"privateCorporation\",\n      \"address\": {\n        \"addressLine1\": \"string\",\n        \"addressLine2\": \"string\",\n        \"city\": \"string\",\n        \"stateOrProvince\": \"st\",\n        \"postalCode\": \"string\",\n        \"country\": \"st\"\n      },\n      \"phone\": {\n        \"number\": \"433677220957\",\n        \"countryCode\": \"string\"\n      },\n      \"email\": \"vEpKK-WiHAaFvtC@dAKOJcCWqyOpF.hg\",\n      \"website\": \"http://bQfCtmHJkiPkNYVhiqvyXP.fdyrGDOK+,whS8TmpZxz,8f.CV7Yhk5m.\",\n      \"description\": \"string\",\n      \"taxID\": {\n        \"ein\": {\n          \"number\": \"942966544\"\n        }\n      },\n      \"industryCodes\": {\n        \"naics\": \"string\",\n        \"sic\": \"string\",\n        \"mcc\": \"string\"\n      }\n    }\n  },\n  \"metadata\": {\n    \"key_0\": \"<string>\"\n  },\n  \"foreignID\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"code\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "aa71aac5-1a61-4913-8f05-5748b2ffc2a3",
+          "name": "Delete an account",
+          "request": {
+            "name": "Delete an account",
+            "description": {
+              "content": "Remove a Moov account and all associated data. This operation is irreversible. Ensure all funds have been disbursed before deleting an account.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "accounts",
+                ":accountID"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "accountID",
+                  "description": "(Required) Unique identifier for the Moov account."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "DELETE",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "d11b241d-0c13-4bd3-8bc9-701a96ff49cc",
+              "name": "Account deleted successfully.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts",
+                    ":accountID"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) Unique identifier for the Moov account."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "No Content",
+              "code": 204,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "f15947ec-e539-41b5-8b1a-411f6269a0f9",
+              "name": "Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts",
+                    ":accountID"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) Unique identifier for the Moov account."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"code\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3fcf3fe3-4d7c-4d6b-bac9-d7a94080a8d3",
+              "name": "The requested resource was not found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts",
+                    ":accountID"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) Unique identifier for the Moov account."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"code\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "f52c3f96-a146-4c67-a39a-81a70b46c627",
+          "name": "Share an account connection",
+          "request": {
+            "name": "Share an account connection",
+            "description": {
+              "content": "Establish a connection between two Moov accounts, enabling the platform account to act on behalf of the connected account for money movement and management operations.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "accounts",
+                ":accountID",
+                "connections"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "accountID",
+                  "description": "(Required) Unique identifier for the Moov account."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"partnerAccountID\": \"<uuid>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "0c08628c-86b4-476a-96b2-1eb7c202f1a6",
+              "name": "Account connection established.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts",
+                    ":accountID",
+                    "connections"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) Unique identifier for the Moov account."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"partnerAccountID\": \"<uuid>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"accountID\": \"eb177a60-0003-d9ce-fd08-5bef62beea5d\",\n  \"partnerAccountID\": \"b24169a4-70fd-5500-e3e0-20d2daa73a3b\",\n  \"createdOn\": \"1990-12-22T15:42:50.033Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "6891fb02-5bbe-425b-be11-c95ebd76dfb4",
+              "name": "The request was malformed or contained invalid parameters.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts",
+                    ":accountID",
+                    "connections"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) Unique identifier for the Moov account."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"partnerAccountID\": \"<uuid>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"code\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "77b4e101-01ef-479e-b529-a0b100751e95",
+              "name": "Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts",
+                    ":accountID",
+                    "connections"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) Unique identifier for the Moov account."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"partnerAccountID\": \"<uuid>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"code\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "dda5b998-a96f-4aff-be7f-12051a33fafe",
+          "name": "List connected accounts",
+          "request": {
+            "name": "List connected accounts",
+            "description": {
+              "content": "Retrieve all accounts that have been connected to the specified account. Used by platform accounts to enumerate their linked user accounts.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "accounts",
+                ":accountID",
+                "connected-accounts"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "accountID",
+                  "description": "(Required) Unique identifier for the Moov account."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "2e30d23a-fd58-4347-9b92-3be96f3a3362",
+              "name": "Connected accounts returned successfully.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts",
+                    ":accountID",
+                    "connected-accounts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) Unique identifier for the Moov account."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"accountID\": \"c1741366-5155-e07a-fbca-57432c3a7b24\",\n    \"accountType\": \"individual\",\n    \"displayName\": \"string\",\n    \"profile\": {\n      \"individual\": {\n        \"name\": {\n          \"firstName\": \"string\",\n          \"middleName\": \"string\",\n          \"lastName\": \"string\",\n          \"suffix\": \"string\"\n        },\n        \"email\": \"yxZT191R6PD1TM@hjIkoTmuZOPGuinmQLStWDTYPwm.xj\",\n        \"phone\": {\n          \"number\": \"94345212245\",\n          \"countryCode\": \"string\"\n        },\n        \"address\": {\n          \"addressLine1\": \"string\",\n          \"addressLine2\": \"string\",\n          \"city\": \"string\",\n          \"stateOrProvince\": \"st\",\n          \"postalCode\": \"string\",\n          \"country\": \"st\"\n        },\n        \"birthDate\": \"2002-02-01\",\n        \"governmentID\": {\n          \"ssn\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"itin\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        }\n      },\n      \"business\": {\n        \"legalBusinessName\": \"string\",\n        \"businessType\": \"unincorporatedNonProfit\",\n        \"address\": {\n          \"addressLine1\": \"string\",\n          \"addressLine2\": \"string\",\n          \"city\": \"string\",\n          \"stateOrProvince\": \"st\",\n          \"postalCode\": \"string\",\n          \"country\": \"st\"\n        },\n        \"phone\": {\n          \"number\": \"465895736203974\",\n          \"countryCode\": \"string\"\n        },\n        \"email\": \"m4ndEKEurbZpW5@URHMhmPNb.kzof\",\n        \"website\": \"http://cShGWkkW.scurUmb,o2ZRMvyTaKNJUNvLO3pMgg\",\n        \"description\": \"string\",\n        \"taxID\": {\n          \"ein\": {\n            \"number\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            }\n          }\n        },\n        \"industryCodes\": {\n          \"naics\": \"string\",\n          \"sic\": \"string\",\n          \"mcc\": \"string\"\n        }\n      }\n    },\n    \"capabilities\": [\n      {\n        \"capability\": \"string\",\n        \"accountID\": \"dea4b070-fac8-800a-88c0-4ca4672411d7\",\n        \"status\": \"in-review\",\n        \"requirements\": [\n          {\n            \"requirement\": \"string\",\n            \"errorCode\": \"string\"\n          },\n          {\n            \"requirement\": \"string\",\n            \"errorCode\": \"string\"\n          }\n        ],\n        \"disabledReason\": \"string\",\n        \"createdOn\": \"1979-10-26T19:26:57.406Z\",\n        \"updatedOn\": \"1955-07-09T20:18:54.800Z\"\n      },\n      {\n        \"capability\": \"string\",\n        \"accountID\": \"3557a4d0-eafa-d345-08a5-2891574a7659\",\n        \"status\": \"pending\",\n        \"requirements\": [\n          {\n            \"requirement\": \"string\",\n            \"errorCode\": \"string\"\n          },\n          {\n            \"requirement\": \"string\",\n            \"errorCode\": \"string\"\n          }\n        ],\n        \"disabledReason\": \"string\",\n        \"createdOn\": \"1997-07-29T14:09:22.138Z\",\n        \"updatedOn\": \"1986-02-25T17:27:30.233Z\"\n      }\n    ],\n    \"verification\": {\n      \"verificationStatus\": \"verified\"\n    },\n    \"createdOn\": \"1976-04-09T14:07:05.600Z\",\n    \"updatedOn\": \"1987-04-27T08:23:06.701Z\"\n  },\n  {\n    \"accountID\": \"098523f6-f4b6-56f7-2b3b-5ad2d0859fdf\",\n    \"accountType\": \"business\",\n    \"displayName\": \"string\",\n    \"profile\": {\n      \"individual\": {\n        \"name\": {\n          \"firstName\": \"string\",\n          \"middleName\": \"string\",\n          \"lastName\": \"string\",\n          \"suffix\": \"string\"\n        },\n        \"email\": \"TPN2YZerovdPraE@gcVLUuQesSeJxhnXKObISpXhFEHKmBCK.cxb\",\n        \"phone\": {\n          \"number\": \"596294085187894\",\n          \"countryCode\": \"string\"\n        },\n        \"address\": {\n          \"addressLine1\": \"string\",\n          \"addressLine2\": \"string\",\n          \"city\": \"string\",\n          \"stateOrProvince\": \"st\",\n          \"postalCode\": \"string\",\n          \"country\": \"st\"\n        },\n        \"birthDate\": \"2013-07-16\",\n        \"governmentID\": {\n          \"ssn\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"itin\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        }\n      },\n      \"business\": {\n        \"legalBusinessName\": \"string\",\n        \"businessType\": \"trust\",\n        \"address\": {\n          \"addressLine1\": \"string\",\n          \"addressLine2\": \"string\",\n          \"city\": \"string\",\n          \"stateOrProvince\": \"st\",\n          \"postalCode\": \"string\",\n          \"country\": \"st\"\n        },\n        \"phone\": {\n          \"number\": \"23250729154794\",\n          \"countryCode\": \"string\"\n        },\n        \"email\": \"60GE0khXnP@AMTmDgrJNfUrWmsIx.ue\",\n        \"website\": \"http://FJFBCIuMHTQsPIrQEPv.becnZKXjBtLr,z6Vt12zSBJY2GJyB0mHnEqGHirK8b\",\n        \"description\": \"string\",\n        \"taxID\": {\n          \"ein\": {\n            \"number\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            }\n          }\n        },\n        \"industryCodes\": {\n          \"naics\": \"string\",\n          \"sic\": \"string\",\n          \"mcc\": \"string\"\n        }\n      }\n    },\n    \"capabilities\": [\n      {\n        \"capability\": \"string\",\n        \"accountID\": \"810a0002-eb92-5f01-72ae-dbea9140f7e6\",\n        \"status\": \"enabled\",\n        \"requirements\": [\n          {\n            \"requirement\": \"string\",\n            \"errorCode\": \"string\"\n          },\n          {\n            \"requirement\": \"string\",\n            \"errorCode\": \"string\"\n          }\n        ],\n        \"disabledReason\": \"string\",\n        \"createdOn\": \"1996-03-04T23:16:46.473Z\",\n        \"updatedOn\": \"1967-04-17T20:51:08.880Z\"\n      },\n      {\n        \"capability\": \"string\",\n        \"accountID\": \"7353cf44-be8e-4551-c493-cc227c0f5fa4\",\n        \"status\": \"enabled\",\n        \"requirements\": [\n          {\n            \"requirement\": \"string\",\n            \"errorCode\": \"string\"\n          },\n          {\n            \"requirement\": \"string\",\n            \"errorCode\": \"string\"\n          }\n        ],\n        \"disabledReason\": \"string\",\n        \"createdOn\": \"1960-07-27T04:02:22.560Z\",\n        \"updatedOn\": \"2002-02-08T10:13:16.006Z\"\n      }\n    ],\n    \"verification\": {\n      \"verificationStatus\": \"failed\"\n    },\n    \"createdOn\": \"2020-11-18T18:37:30.656Z\",\n    \"updatedOn\": \"1992-09-08T12:17:40.782Z\"\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2af5d1db-5534-455b-8b34-d45f490beb0a",
+              "name": "Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "accounts",
+                    ":accountID",
+                    "connected-accounts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "accountID",
+                      "description": "(Required) Unique identifier for the Moov account."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"code\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.moov.io",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "32a142c0-eb3d-4165-9693-f4e0e150d08f",
+    "name": "Moov Accounts API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The Moov API is a RESTful financial infrastructure platform that enables developers to integrate money movement capabilities into their applications. The API supports a full range of financial operations including account management, payment method onboarding, transfers, sweeps, refunds, dispute resolution, card issuing, and payment links. It provides capabilities for accepting payments, storing funds in digital wallets, sending money between accounts, and issuing cards for spend management. Authentication uses OAuth2 access tokens with permission scopes, and the API returns JSON responses using standard HTTP response codes.\n\nContact Support:\n Name: Moov Support",
+      "type": "text/plain"
+    }
+  }
+}

@@ -1,0 +1,186 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Moov Accounts Transfers API",
+    "version": "2026.01.00"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Transfers",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List transfers",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.moov.io/accounts/:accountID/transfers",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "count",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of results to return per page."
+              },
+              {
+                "name": "skip",
+                "value": "",
+                "type": "query",
+                "description": "Number of results to skip for pagination."
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "query",
+                "description": "Filter transfers by their current status."
+              }
+            ]
+          },
+          "docs": "Retrieve the transfer history for a Moov account, with optional filters for date range, status, and transfer type."
+        },
+        {
+          "info": {
+            "name": "Create a transfer",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.moov.io/accounts/:accountID/transfers",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Initiate a money movement from a source payment method to a destination payment method. Transfers can move funds via ACH, RTP, or card rails. Every transfer has a source (where the money comes from) and a destination (where the money goes)."
+        },
+        {
+          "info": {
+            "name": "Retrieve a transfer",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.moov.io/accounts/:accountID/transfers/:transferID",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "transferID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the transfer."
+              }
+            ]
+          },
+          "docs": "Fetch the full details of a specific transfer, including its status, source, destination, amount, and rail-specific status updates."
+        },
+        {
+          "info": {
+            "name": "Update transfer metadata",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.moov.io/accounts/:accountID/transfers/:transferID",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "transferID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the transfer."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update the metadata associated with an existing transfer. Only custom metadata fields can be modified after a transfer is created."
+        },
+        {
+          "info": {
+            "name": "Retrieve transfer options",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.moov.io/accounts/:accountID/transfer-options",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Get the available transfer options for a given source and destination account pair, including eligible payment rails, fees, and estimated settlement times to help users choose the best transfer method."
+        },
+        {
+          "info": {
+            "name": "Cancel a transfer",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.moov.io/accounts/:accountID/transfers/:transferID/cancellations",
+            "params": [
+              {
+                "name": "accountID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the Moov account."
+              },
+              {
+                "name": "transferID",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the transfer."
+              }
+            ]
+          },
+          "docs": "Attempt to cancel a pending transfer before it is processed. Cancellation is only available for transfers that have not yet been submitted to the payment rail."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
