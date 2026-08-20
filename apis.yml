@@ -105,6 +105,8 @@ apis:
     are the foundation for all money movement operations.
   humanURL: https://docs.moov.io/api/
   tags:
+  - Account
+  tags_raw:
   - Accounts
   properties:
   - type: OpenAPI
