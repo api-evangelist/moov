@@ -47,11 +47,12 @@ tags:
 apis:
 - aid: moov:moov-js
   name: Moov.js
-  description: Moov.js is a client-side JavaScript SDK designed to streamline interactions with the Moov
-    API while keeping personally identifiable information out of developer infrastructure. All PII is
-    transmitted directly to Moov, relieving developers of the responsibility for storing or handling sensitive
-    user data. The SDK supports account creation, funding source integration, and transfer facilitation,
-    along with pre-built UI components called Moov Drops.
+  description: >-
+    Moov.js is a client-side JavaScript SDK designed to streamline interactions with the Moov API while
+    keeping personally identifiable information out of developer infrastructure. All PII is transmitted
+    directly to Moov, relieving developers of the responsibility for storing or handling sensitive user
+    data. The SDK supports account creation, funding source integration, and transfer facilitation, along
+    with pre-built UI components called Moov Drops.
   humanURL: https://docs.moov.io/moovjs/
   tags:
   - Client SDK
@@ -64,11 +65,12 @@ apis:
     url: https://docs.moov.io/moovjs/
 - aid: moov:moov-drops
   name: Moov Drops
-  description: Moov Drops are pre-built, drop-in web UI components for complicated payment and account
-    management flows. These components securely collect payment and account information from users without
-    developers needing to build complex financial forms from scratch. Drops integrate with the Moov API
-    and Moov.js to provide a cohesive front-end experience for onboarding, bank account linking, card
-    collection, and other payment-related workflows.
+  description: >-
+    Moov Drops are pre-built, drop-in web UI components for complicated payment and account management
+    flows. These components securely collect payment and account information from users without developers
+    needing to build complex financial forms from scratch. Drops integrate with the Moov API and Moov.js
+    to provide a cohesive front-end experience for onboarding, bank account linking, card collection,
+    and other payment-related workflows.
   humanURL: https://docs.moov.io/guides/developer-tools/
   tags:
   - Embedded Finance
@@ -81,11 +83,12 @@ apis:
     url: https://docs.moov.io/guides/developer-tools/
 - aid: moov:moov-backend-sdks
   name: Moov Backend SDKs
-  description: Moov provides official server-side client libraries for interacting with the Moov API across
-    multiple programming languages, including Go, TypeScript, Python, Java, PHP, Ruby, and C#/.NET. These
-    SDKs abstract the HTTP layer and provide idiomatic interfaces for each language to access Moov's full
-    range of financial operations. Each SDK is actively maintained and versioned to track the Moov API's
-    versioning scheme.
+  description: >-
+    Moov provides official server-side client libraries for interacting with the Moov API across multiple
+    programming languages, including Go, TypeScript, Python, Java, PHP, Ruby, and C#/.NET. These SDKs
+    abstract the HTTP layer and provide idiomatic interfaces for each language to access Moov's full range
+    of financial operations. Each SDK is actively maintained and versioned to track the Moov API's versioning
+    scheme.
   humanURL: https://docs.moov.io/sdks/
   tags:
   - .NET
@@ -101,8 +104,9 @@ apis:
     url: https://docs.moov.io/sdks/
 - aid: moov:moov-accounts-api
   name: Moov Accounts API
-  description: Create and manage Moov accounts representing individual or business legal entities. Accounts
-    are the foundation for all money movement operations.
+  description: >-
+    Create and manage Moov accounts representing individual or business legal entities. Accounts are the
+    foundation for all money movement operations.
   humanURL: https://docs.moov.io/api/
   tags:
   - Account
@@ -142,7 +146,8 @@ apis:
     url: json-ld/moov-context.jsonld
 - aid: moov:moov-bank-accounts-api
   name: Moov Bank Accounts API
-  description: Link and manage bank accounts as funding sources for ACH and RTP transfers. Includes micro-deposit
+  description: >-
+    Link and manage bank accounts as funding sources for ACH and RTP transfers. Includes micro-deposit
     and instant verification flows.
   humanURL: https://docs.moov.io/api/
   tags:
@@ -162,8 +167,9 @@ apis:
     url: json-ld/moov-context.jsonld
 - aid: moov:moov-capabilities-api
   name: Moov Capabilities API
-  description: Request and manage capabilities that enable specific financial operations on an account,
-    such as send-funds or collect-funds.
+  description: >-
+    Request and manage capabilities that enable specific financial operations on an account, such as send-funds
+    or collect-funds.
   humanURL: https://docs.moov.io/api/
   tags:
   - Capabilities
@@ -201,8 +207,9 @@ apis:
     url: json-ld/moov-context.jsonld
 - aid: moov:moov-disputes-api
   name: Moov Disputes API
-  description: Manage card payment disputes including evidence submission, acceptance, and lifecycle tracking
-    for chargeback resolution.
+  description: >-
+    Manage card payment disputes including evidence submission, acceptance, and lifecycle tracking for
+    chargeback resolution.
   humanURL: https://docs.moov.io/api/
   tags:
   - Disputes
@@ -221,8 +228,9 @@ apis:
     url: json-ld/moov-context.jsonld
 - aid: moov:moov-payment-links-api
   name: Moov Payment Links API
-  description: Create and manage shareable payment links that allow customers to pay via card or bank
-    account without custom code.
+  description: >-
+    Create and manage shareable payment links that allow customers to pay via card or bank account without
+    custom code.
   humanURL: https://docs.moov.io/api/
   tags:
   - Payment Links
@@ -241,8 +249,9 @@ apis:
     url: json-ld/moov-context.jsonld
 - aid: moov:moov-payment-methods-api
   name: Moov Payment Methods API
-  description: Retrieve the available payment methods on an account, including bank accounts, cards, and
-    wallets, which can be used as transfer sources or destinations.
+  description: >-
+    Retrieve the available payment methods on an account, including bank accounts, cards, and wallets,
+    which can be used as transfer sources or destinations.
   humanURL: https://docs.moov.io/api/
   tags:
   - Payment Methods
@@ -261,8 +270,8 @@ apis:
     url: json-ld/moov-context.jsonld
 - aid: moov:moov-refunds-api
   name: Moov Refunds API
-  description: Create and retrieve refunds for completed card transfers, including full and partial refund
-    support.
+  description: >-
+    Create and retrieve refunds for completed card transfers, including full and partial refund support.
   humanURL: https://docs.moov.io/api/
   tags:
   - Refunds
@@ -281,8 +290,8 @@ apis:
     url: json-ld/moov-context.jsonld
 - aid: moov:moov-representatives-api
   name: Moov Representatives API
-  description: Manage business representatives associated with a Moov account for KYB compliance and ownership
-    verification.
+  description: >-
+    Manage business representatives associated with a Moov account for KYB compliance and ownership verification.
   humanURL: https://docs.moov.io/api/
   tags:
   - Representatives
@@ -301,8 +310,9 @@ apis:
     url: json-ld/moov-context.jsonld
 - aid: moov:moov-sweeps-api
   name: Moov Sweeps API
-  description: Configure automatic daily transfers from a Moov wallet to an external bank account on a
-    set schedule using ACH or RTP rails.
+  description: >-
+    Configure automatic daily transfers from a Moov wallet to an external bank account on a set schedule
+    using ACH or RTP rails.
   humanURL: https://docs.moov.io/api/
   tags:
   - Sweeps
@@ -321,8 +331,9 @@ apis:
     url: json-ld/moov-context.jsonld
 - aid: moov:moov-transfers-api
   name: Moov Transfers API
-  description: Initiate and manage money movement between Moov accounts. Supports ACH, RTP, and card rails
-    with full lifecycle tracking.
+  description: >-
+    Initiate and manage money movement between Moov accounts. Supports ACH, RTP, and card rails with full
+    lifecycle tracking.
   humanURL: https://docs.moov.io/api/
   tags:
   - Transfers
@@ -341,8 +352,9 @@ apis:
     url: json-ld/moov-context.jsonld
 - aid: moov:moov-wallets-api
   name: Moov Wallets API
-  description: Create and manage Moov digital wallets that hold funds within the platform. Supports wallet
-    transactions and balance adjustments.
+  description: >-
+    Create and manage Moov digital wallets that hold funds within the platform. Supports wallet transactions
+    and balance adjustments.
   humanURL: https://docs.moov.io/api/
   tags:
   - Wallets
@@ -359,6 +371,33 @@ apis:
     url: json-schema/moov-transfer-schema.json
   - type: JSONLD
     url: json-ld/moov-context.jsonld
+- aid: moov:moov-card-issuing-api
+  name: Moov Card Issuing API
+  description: Virtual spending cards, authorizations, and card transactions.
+  humanURL: https://docs.moov.io/moovjs/
+  tags:
+  - Card Issuing
+  properties:
+  - type: OpenAPI
+    url: openapi/moov-card-issuing-api-openapi.yml
+- aid: moov:moov-institutions-api
+  name: Moov Institutions API
+  description: Financial institution lookup by routing number.
+  humanURL: https://docs.moov.io/moovjs/
+  tags:
+  - Institutions
+  properties:
+  - type: OpenAPI
+    url: openapi/moov-institutions-api-openapi.yml
+- aid: moov:moov-underwriting-api
+  name: Moov Underwriting API
+  description: Underwriting details used to enable card acquiring and higher-risk activity.
+  humanURL: https://docs.moov.io/moovjs/
+  tags:
+  - Underwriting
+  properties:
+  - type: OpenAPI
+    url: openapi/moov-underwriting-api-openapi.yml
 common:
 - type: Roadmap
   url: https://moov.io/platform/roadmap
