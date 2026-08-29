@@ -399,6 +399,9 @@ apis:
   - type: OpenAPI
     url: openapi/moov-underwriting-api-openapi.yml
 common:
+- type: CapabilityMap
+  url: capabilities/moov-capability-edges.yml
+  name: Moov Business Capability Map
 - type: Roadmap
   url: https://moov.io/platform/roadmap
 - type: Support

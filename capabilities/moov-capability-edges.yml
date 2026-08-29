@@ -1,0 +1,94 @@
+slug: moov
+provider: Moov
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Banking & Capital Markets
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 8
+edges:
+- tag: Card Issuing
+  spec_file: moov-card-issuing-api-openapi.yml
+  capability_id: BC-1340.60
+  capability_id_l1: BC-1340
+  capability_name: Card Issuance Management
+  confidence: 0.9
+  evidence: POST /issuing/{accountID}/cards  createIssuedCard  Create a spending card.; GET /issuing/{accountID}/cards/{issuedCardID}/details  Get
+    PCI details for a spending card.
+  reason: Operations create, retrieve and update issued spending cards including PCI card details, plus
+    authorizations and card transactions - card issuance for spend management, with adjacent transaction/authorisation
+    visibility.
+- tag: Disputes
+  spec_file: moov-disputes-api-openapi.yml
+  capability_id: BC-1340.70
+  capability_id_l1: BC-1340
+  capability_name: Card Transaction Processing Management
+  confidence: 0.82
+  evidence: POST /accounts/{accountID}/disputes/{disputeID}/accept  acceptDispute  Accept a dispute; uploadDisputeEvidenceFile  Upload
+    evidence file
+  reason: Card payment dispute/chargeback handling with evidence submission — squarely card transaction
+    processing (chargebacks) within payments and card management.
+- tag: Accounts
+  spec_file: moov-accounts-api-openapi.yml
+  capability_id: BC-1300.10
+  capability_id_l1: BC-1300
+  capability_name: Customer Onboarding Management
+  confidence: 0.8
+  evidence: 'POST /accounts  createAccount  Create an account; schemas: AccountVerification, IndividualProfile,
+    BusinessProfile, SsnOrItin, GovernmentID, TaxID, TosToken'
+  reason: Creates and maintains individual/business accounts on a money-movement platform with identity
+    artefacts (government ID, SSN/ITIN, tax ID), verification status and terms-of-service acceptance -
+    i.e. account opening and identity verification for onboarding customers onto financial services.
+- tag: Transfers
+  spec_file: moov-transfers-api-openapi.yml
+  capability_id: BC-1340.10
+  capability_id_l1: BC-1340
+  capability_name: Payment Initiation Management
+  confidence: 0.8
+  evidence: POST /accounts/{accountID}/transfers  createTransfer  Create a transfer; POST /accounts/{accountID}/transfer-options  getTransferOptions
+  reason: 'Core money-movement API: capture, option/validation, authorisation and cancellation of transfer
+    instructions — payment initiation within payments management.'
+- tag: Payment Links
+  spec_file: moov-payment-links-api-openapi.yml
+  capability_id: BC-1340.10
+  capability_id_l1: BC-1340
+  capability_name: Payment Initiation Management
+  confidence: 0.78
+  evidence: POST /accounts/{accountID}/payment-links  createPaymentLink  Create a payment link
+  reason: Payment links are instruments to capture and initiate a payment instruction from a payer, including
+    QR code presentment — payment initiation.
+- tag: Refunds
+  spec_file: moov-refunds-api-openapi.yml
+  capability_id: BC-1340.70
+  capability_id_l1: BC-1340
+  capability_name: Card Transaction Processing Management
+  confidence: 0.72
+  evidence: POST /accounts/{accountID}/transfers/{transferID}/reversals  createReversal  Cancel or refund
+    a card transfer (reversal).
+  reason: Refund and reversal processing of card/transfer payments — payment/card transaction processing.
+    Some ambiguity between payment processing (1340.20) and card transaction processing.
+- tag: Representatives
+  spec_file: moov-representatives-api-openapi.yml
+  capability_id: BC-1300.20
+  capability_id_l1: BC-1300
+  capability_name: KYC & Customer Due Diligence Management
+  confidence: 0.72
+  evidence: 'schemas: SsnOrItin, GovernmentID, RepresentativeResponsibilities, Representative'
+  reason: Capture of beneficial owners/controllers of a business account with government ID and SSN —
+    this is KYC/CDD data collection for onboarding a financial account holder.
+- tag: Payment Methods
+  spec_file: moov-payment-methods-api-openapi.yml
+  capability_id: BC-1340
+  capability_id_l1: BC-1340
+  capability_name: Payments & Card Management
+  confidence: 0.7
+  evidence: 'GET /accounts/{accountID}/payment-methods  listPaymentMethods; schemas: PaymentMethod, Wallet,
+    BankAccount, Card, CardVerification'
+  reason: Management/retrieval of funding instruments (cards, bank accounts, wallets) used for money movement;
+    clearly payments domain but sub-capability is ambiguous between initiation and card management.
