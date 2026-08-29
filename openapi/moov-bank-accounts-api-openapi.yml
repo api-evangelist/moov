@@ -1,12 +1,9 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Moov Accounts Bank Accounts API
-  description: The Moov API is a RESTful financial infrastructure platform that enables developers to integrate money movement capabilities into their applications. The API supports a full range of financial operations including account management, payment method onboarding, transfers, sweeps, refunds, dispute resolution, card issuing, and payment links. It provides capabilities for accepting payments, storing funds in digital wallets, sending money between accounts, and issuing cards for spend management. Authentication uses OAuth2 access tokens with permission scopes, and the API returns JSON responses using standard HTTP response codes.
-  version: 2026.01.00
-  contact:
-    name: Moov Support
-    url: https://docs.moov.io/
+  title: Moov Bank Accounts API
   termsOfService: https://moov.io/legal/platform-agreement/
+  version: '1.0'
+  description: 'Operations tagged Bank Accounts across 2 of this provider''s published API definitions: moov-api-openapi.yml, moov-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.moov.io
   description: Production Server
@@ -61,6 +58,11 @@ paths:
                   $ref: '#/components/schemas/BankAccount'
         '401':
           $ref: '#/components/responses/Unauthorized'
+    parameters:
+    - $ref: '#/components/parameters/accountID'
+    servers:
+    - url: https://api.moov.io
+      description: Production Server
   /accounts/{accountID}/bank-accounts/{bankAccountID}:
     get:
       operationId: getBankAccount
@@ -98,6 +100,12 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+    parameters:
+    - $ref: '#/components/parameters/accountID'
+    - $ref: '#/components/parameters/bankAccountID'
+    servers:
+    - url: https://api.moov.io
+      description: Production Server
   /accounts/{accountID}/bank-accounts/{bankAccountID}/verify:
     post:
       operationId: initiateBankAccountVerification
@@ -165,6 +173,12 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+    parameters:
+    - $ref: '#/components/parameters/accountID'
+    - $ref: '#/components/parameters/bankAccountID'
+    servers:
+    - url: https://api.moov.io
+      description: Production Server
   /accounts/{accountID}/bank-accounts/{bankAccountID}/micro-deposits:
     post:
       operationId: initiateMicroDeposits
@@ -208,8 +222,113 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+    parameters:
+    - $ref: '#/components/parameters/accountID'
+    - $ref: '#/components/parameters/bankAccountID'
+    servers:
+    - url: https://api.moov.io
+      description: Production Server
 components:
+  responses:
+    BadRequest:
+      description: The request was malformed or contained invalid parameters.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
+    BankAccountVerification:
+      type: object
+      description: Status and details of a bank account verification attempt.
+      properties:
+        status:
+          type: string
+          description: Current status of the verification.
+          enum:
+          - pending
+          - completed
+          - failed
+        exceptionDetails:
+          type: string
+          description: Error details if the verification failed.
+    MicroDepositConfirmation:
+      type: object
+      description: Request body for confirming micro-deposit amounts.
+      required:
+      - amounts
+      properties:
+        amounts:
+          type: array
+          description: The two micro-deposit amounts in cents that were sent to the bank account.
+          items:
+            type: integer
+            minimum: 1
+          minItems: 2
+          maxItems: 2
+    BankAccount:
+      type: object
+      description: A bank account linked to a Moov account as a funding source for ACH and RTP transfers.
+      properties:
+        bankAccountID:
+          type: string
+          format: uuid
+          description: Unique identifier for the bank account.
+        bankName:
+          type: string
+          description: Name of the financial institution.
+        bankAccountType:
+          type: string
+          description: Type of bank account.
+          enum:
+          - checking
+          - savings
+          - loan
+        routingNumber:
+          type: string
+          description: ABA routing transit number for the bank.
+          pattern: ^\d{9}$
+        lastFourAccountNumber:
+          type: string
+          description: Last four digits of the bank account number.
+          pattern: ^\d{4}$
+        status:
+          type: string
+          description: Verification and usability status of the bank account.
+          enum:
+          - new
+          - unverified
+          - pending
+          - verified
+          - errored
+        verificationStatus:
+          type: string
+          description: Current state of the bank account verification process.
+          enum:
+          - unverified
+          - pending
+          - verificationFailed
+          - verified
+          - mxVerified
+        createdOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the bank account was linked.
+        updatedOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the bank account was last updated.
     CompleteVerificationRequest:
       type: object
       description: Request body for completing instant bank account verification.
@@ -271,95 +390,7 @@ components:
         code:
           type: string
           description: Machine-readable error code.
-    MicroDepositConfirmation:
-      type: object
-      description: Request body for confirming micro-deposit amounts.
-      required:
-      - amounts
-      properties:
-        amounts:
-          type: array
-          description: The two micro-deposit amounts in cents that were sent to the bank account.
-          items:
-            type: integer
-            minimum: 1
-          minItems: 2
-          maxItems: 2
-    BankAccountVerification:
-      type: object
-      description: Status and details of a bank account verification attempt.
-      properties:
-        status:
-          type: string
-          description: Current status of the verification.
-          enum:
-          - pending
-          - completed
-          - failed
-        exceptionDetails:
-          type: string
-          description: Error details if the verification failed.
-    BankAccount:
-      type: object
-      description: A bank account linked to a Moov account as a funding source for ACH and RTP transfers.
-      properties:
-        bankAccountID:
-          type: string
-          format: uuid
-          description: Unique identifier for the bank account.
-        bankName:
-          type: string
-          description: Name of the financial institution.
-        bankAccountType:
-          type: string
-          description: Type of bank account.
-          enum:
-          - checking
-          - savings
-          - loan
-        routingNumber:
-          type: string
-          description: ABA routing transit number for the bank.
-          pattern: ^\d{9}$
-        lastFourAccountNumber:
-          type: string
-          description: Last four digits of the bank account number.
-          pattern: ^\d{4}$
-        status:
-          type: string
-          description: Verification and usability status of the bank account.
-          enum:
-          - new
-          - unverified
-          - pending
-          - verified
-          - errored
-        verificationStatus:
-          type: string
-          description: Current state of the bank account verification process.
-          enum:
-          - unverified
-          - pending
-          - verificationFailed
-          - verified
-          - mxVerified
-        createdOn:
-          type: string
-          format: date-time
-          description: ISO 8601 timestamp when the bank account was linked.
-        updatedOn:
-          type: string
-          format: date-time
-          description: ISO 8601 timestamp when the bank account was last updated.
   parameters:
-    AccountIDParam:
-      name: accountID
-      in: path
-      required: true
-      description: Unique identifier for the Moov account.
-      schema:
-        type: string
-        format: uuid
     BankAccountIDParam:
       name: bankAccountID
       in: path
@@ -368,30 +399,34 @@ components:
       schema:
         type: string
         format: uuid
-  responses:
-    Unauthorized:
-      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    BadRequest:
-      description: The request was malformed or contained invalid parameters.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+    AccountIDParam:
+      name: accountID
+      in: path
+      required: true
+      description: Unique identifier for the Moov account.
+      schema:
+        type: string
+        format: uuid
+    bankAccountID:
+      name: bankAccountID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    accountID:
+      name: accountID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The Moov account identifier.
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       description: OAuth2 bearer token obtained from the /oauth2/token endpoint. Include in the Authorization header as "Bearer {token}".
-externalDocs:
-  description: Moov API Documentation
-  url: https://docs.moov.io/api/
+x-refined-from:
+- moov-api-openapi.yml
+- moov-openapi.yml

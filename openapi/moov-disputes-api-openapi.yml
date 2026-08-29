@@ -1,12 +1,9 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Moov Accounts Disputes API
-  description: The Moov API is a RESTful financial infrastructure platform that enables developers to integrate money movement capabilities into their applications. The API supports a full range of financial operations including account management, payment method onboarding, transfers, sweeps, refunds, dispute resolution, card issuing, and payment links. It provides capabilities for accepting payments, storing funds in digital wallets, sending money between accounts, and issuing cards for spend management. Authentication uses OAuth2 access tokens with permission scopes, and the API returns JSON responses using standard HTTP response codes.
-  version: 2026.01.00
-  contact:
-    name: Moov Support
-    url: https://docs.moov.io/
+  title: Moov Disputes API
   termsOfService: https://moov.io/legal/platform-agreement/
+  version: '1.0'
+  description: 'Operations tagged Disputes across 2 of this provider''s published API definitions: moov-api-openapi.yml, moov-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.moov.io
   description: Production Server
@@ -38,6 +35,11 @@ paths:
                   $ref: '#/components/schemas/Dispute'
         '401':
           $ref: '#/components/responses/Unauthorized'
+    parameters:
+    - $ref: '#/components/parameters/accountID'
+    servers:
+    - url: https://api.moov.io
+      description: Production Server
   /accounts/{accountID}/disputes/{disputeID}:
     get:
       operationId: getDispute
@@ -59,6 +61,12 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+    parameters:
+    - $ref: '#/components/parameters/accountID'
+    - $ref: '#/components/parameters/disputeID'
+    servers:
+    - url: https://api.moov.io
+      description: Production Server
   /accounts/{accountID}/disputes/{disputeID}/accept:
     post:
       operationId: acceptDispute
@@ -82,6 +90,12 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+    parameters:
+    - $ref: '#/components/parameters/accountID'
+    - $ref: '#/components/parameters/disputeID'
+    servers:
+    - url: https://api.moov.io
+      description: Production Server
   /accounts/{accountID}/disputes/{disputeID}/evidence-file:
     post:
       operationId: uploadDisputeEvidenceFile
@@ -117,6 +131,12 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+    parameters:
+    - $ref: '#/components/parameters/accountID'
+    - $ref: '#/components/parameters/disputeID'
+    servers:
+    - url: https://api.moov.io
+      description: Production Server
   /accounts/{accountID}/disputes/{disputeID}/evidence-text:
     post:
       operationId: uploadDisputeEvidenceText
@@ -144,6 +164,12 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+    parameters:
+    - $ref: '#/components/parameters/accountID'
+    - $ref: '#/components/parameters/disputeID'
+    servers:
+    - url: https://api.moov.io
+      description: Production Server
   /accounts/{accountID}/disputes/{disputeID}/evidence/submit:
     post:
       operationId: submitDisputeEvidence
@@ -165,7 +191,95 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+    parameters:
+    - $ref: '#/components/parameters/accountID'
+    - $ref: '#/components/parameters/disputeID'
+    servers:
+    - url: https://api.moov.io
+      description: Production Server
+  /accounts/{accountID}/disputes/{disputeID}/evidence:
+    parameters:
+    - $ref: '#/components/parameters/accountID'
+    - $ref: '#/components/parameters/disputeID'
+    get:
+      operationId: listDisputeEvidence
+      tags:
+      - Disputes
+      summary: List dispute evidence.
+      responses:
+        '200':
+          description: A list of evidence.
+    servers:
+    - url: https://api.moov.io
+      description: Moov production
+  /accounts/{accountID}/disputes/{disputeID}/evidence/{evidenceID}:
+    parameters:
+    - $ref: '#/components/parameters/accountID'
+    - $ref: '#/components/parameters/disputeID'
+    - $ref: '#/components/parameters/evidenceID'
+    get:
+      operationId: getDisputeEvidence
+      tags:
+      - Disputes
+      summary: Retrieve dispute evidence.
+      responses:
+        '200':
+          description: The evidence.
+    patch:
+      operationId: updateDisputeEvidence
+      tags:
+      - Disputes
+      summary: Update dispute evidence.
+      responses:
+        '200':
+          description: The updated evidence.
+    delete:
+      operationId: deleteDisputeEvidence
+      tags:
+      - Disputes
+      summary: Delete dispute evidence.
+      responses:
+        '204':
+          description: Evidence deleted.
+    servers:
+    - url: https://api.moov.io
+      description: Moov production
+  /accounts/{accountID}/disputes/{disputeID}/evidence/{evidenceID}/data:
+    parameters:
+    - $ref: '#/components/parameters/accountID'
+    - $ref: '#/components/parameters/disputeID'
+    - $ref: '#/components/parameters/evidenceID'
+    get:
+      operationId: getDisputeEvidenceData
+      tags:
+      - Disputes
+      summary: Retrieve dispute evidence data.
+      responses:
+        '200':
+          description: The evidence file data.
+    servers:
+    - url: https://api.moov.io
+      description: Moov production
 components:
+  responses:
+    BadRequest:
+      description: The request was malformed or contained invalid parameters.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   parameters:
     CountParam:
       name: count
@@ -176,19 +290,19 @@ components:
         minimum: 1
         maximum: 100
         default: 20
-    AccountIDParam:
-      name: accountID
-      in: path
-      required: true
-      description: Unique identifier for the Moov account.
-      schema:
-        type: string
-        format: uuid
     DisputeIDParam:
       name: disputeID
       in: path
       required: true
       description: Unique identifier for the dispute.
+      schema:
+        type: string
+        format: uuid
+    AccountIDParam:
+      name: accountID
+      in: path
+      required: true
+      description: Unique identifier for the Moov account.
       schema:
         type: string
         format: uuid
@@ -200,17 +314,47 @@ components:
         type: integer
         minimum: 0
         default: 0
+    accountID:
+      name: accountID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The Moov account identifier.
+    evidenceID:
+      name: evidenceID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    disputeID:
+      name: disputeID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
   schemas:
-    Error:
+    DisputeEvidenceText:
       type: object
-      description: Standard error response returned by the Moov API.
+      description: Request body for submitting text-based dispute evidence.
+      required:
+      - text
+      - evidenceType
       properties:
-        error:
+        text:
           type: string
-          description: Human-readable description of the error.
-        code:
+          description: The written statement or explanation for contesting the dispute.
+        evidenceType:
           type: string
-          description: Machine-readable error code.
+          description: Classification of the text evidence.
+          enum:
+          - customer-communication
+          - refund-policy
+          - service-documentation
+          - other
     Amount:
       type: object
       description: A monetary amount with currency denomination.
@@ -275,24 +419,6 @@ components:
           type: string
           format: date-time
           description: ISO 8601 timestamp when the dispute was last updated.
-    DisputeEvidenceText:
-      type: object
-      description: Request body for submitting text-based dispute evidence.
-      required:
-      - text
-      - evidenceType
-      properties:
-        text:
-          type: string
-          description: The written statement or explanation for contesting the dispute.
-        evidenceType:
-          type: string
-          description: Classification of the text evidence.
-          enum:
-          - customer-communication
-          - refund-policy
-          - service-documentation
-          - other
     DisputeEvidence:
       type: object
       description: A piece of evidence submitted in response to a card dispute.
@@ -324,30 +450,21 @@ components:
           type: string
           format: date-time
           description: ISO 8601 timestamp when the evidence was submitted.
-  responses:
-    Unauthorized:
-      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    BadRequest:
-      description: The request was malformed or contained invalid parameters.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+    Error:
+      type: object
+      description: Standard error response returned by the Moov API.
+      properties:
+        error:
+          type: string
+          description: Human-readable description of the error.
+        code:
+          type: string
+          description: Machine-readable error code.
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       description: OAuth2 bearer token obtained from the /oauth2/token endpoint. Include in the Authorization header as "Bearer {token}".
-externalDocs:
-  description: Moov API Documentation
-  url: https://docs.moov.io/api/
+x-refined-from:
+- moov-api-openapi.yml
+- moov-openapi.yml

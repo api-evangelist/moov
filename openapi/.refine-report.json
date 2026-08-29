@@ -1,19 +1,8 @@
 {
   "provider": "moov",
   "sources": [
-    "moov-accounts-api-openapi.yml",
-    "moov-authentication-api-openapi.yml",
-    "moov-bank-accounts-api-openapi.yml",
-    "moov-capabilities-api-openapi.yml",
-    "moov-cards-api-openapi.yml",
-    "moov-disputes-api-openapi.yml",
-    "moov-payment-links-api-openapi.yml",
-    "moov-payment-methods-api-openapi.yml",
-    "moov-refunds-api-openapi.yml",
-    "moov-representatives-api-openapi.yml",
-    "moov-sweeps-api-openapi.yml",
-    "moov-transfers-api-openapi.yml",
-    "moov-wallets-api-openapi.yml"
+    "_original/moov-api-openapi.yml",
+    "_original/moov-openapi.yml"
   ],
   "outputs": [
     "moov-accounts-api-openapi.yml",
@@ -28,11 +17,46 @@
     "moov-representatives-api-openapi.yml",
     "moov-sweeps-api-openapi.yml",
     "moov-transfers-api-openapi.yml",
-    "moov-wallets-api-openapi.yml"
+    "moov-wallets-api-openapi.yml",
+    "moov-card-issuing-api-openapi.yml",
+    "moov-institutions-api-openapi.yml",
+    "moov-underwriting-api-openapi.yml"
   ],
   "archived": [],
   "errors": [],
   "warnings": [],
-  "notes": [],
-  "skipped": []
+  "notes": [
+    "sourced from openapi/_original/ (2 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "moov-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "moov-openapi.yml: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
+    "tag 'Accounts' spans 2 source specs (moov-api-openapi.yml, moov-openapi.yml): per-path servers applied",
+    "tag 'Bank Accounts' spans 2 source specs (moov-api-openapi.yml, moov-openapi.yml): per-path servers applied",
+    "tag 'Capabilities' spans 2 source specs (moov-api-openapi.yml, moov-openapi.yml): per-path servers applied",
+    "tag 'Cards' spans 2 source specs (moov-api-openapi.yml, moov-openapi.yml): per-path servers applied",
+    "tag 'Disputes' spans 2 source specs (moov-api-openapi.yml, moov-openapi.yml): per-path servers applied",
+    "tag 'Payment Methods' spans 2 source specs (moov-api-openapi.yml, moov-openapi.yml): per-path servers applied",
+    "tag 'Refunds' spans 2 source specs (moov-api-openapi.yml, moov-openapi.yml): per-path servers applied",
+    "tag 'Representatives' spans 2 source specs (moov-api-openapi.yml, moov-openapi.yml): per-path servers applied",
+    "tag 'Sweeps' spans 2 source specs (moov-api-openapi.yml, moov-openapi.yml): per-path servers applied",
+    "tag 'Transfers' spans 2 source specs (moov-api-openapi.yml, moov-openapi.yml): per-path servers applied",
+    "tag 'Wallets' spans 2 source specs (moov-api-openapi.yml, moov-openapi.yml): per-path servers applied"
+  ],
+  "skipped": [
+    "moov-accounts-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "moov-authentication-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "moov-bank-accounts-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "moov-capabilities-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "moov-card-issuing-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "moov-cards-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "moov-disputes-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "moov-institutions-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "moov-payment-links-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "moov-payment-methods-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "moov-refunds-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "moov-representatives-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "moov-sweeps-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "moov-transfers-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "moov-underwriting-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "moov-wallets-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }
