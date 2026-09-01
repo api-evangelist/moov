@@ -385,7 +385,7 @@ apis:
   description: Financial institution lookup by routing number.
   humanURL: https://docs.moov.io/moovjs/
   tags:
-  - institutions
+  - Institutions
   tags_raw:
   - Institutions
   properties:
