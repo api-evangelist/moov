@@ -1,0 +1,31 @@
+generated: '2026-09-11'
+method: probed
+source: https://docs.moov.io/mcp
+status: published
+server:
+  name: moov
+  transport: http
+  url: https://docs.moov.io/mcp
+deployment:
+  mode: remote
+  endpoint: https://docs.moov.io/mcp
+  verified: probed
+  probe: live
+  checked: '2026-09-11'
+  source: docs-check 2026-09-11 (endpoint found in the provider's own documentation, then probed)
+tools_count: 6
+tools:
+- name: search_moov_docs
+  description: ''
+- name: get_moov_doc
+  description: ''
+- name: list_moov_sections
+  description: ''
+- name: get_api_operation
+  description: ''
+- name: read_skill
+  description: ''
+- name: get_code_sample
+  description: ''
+tools_source: live tools/list via initialize handshake, 2026-09-11 (signals/audit_mcp_authorship.py --probe)
+authorship: provider
