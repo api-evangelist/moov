@@ -1,155 +1,193 @@
-specification: API Commons Plans
-specificationVersion: '0.1'
-schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/Plans
-provider: Moov
-providerId: moov
-created: '2026-05-04'
-# Provenance stamped 2026-08-11: this artifact was written by the API Evangelist
-# bulk sweep dated 2026-05-04, not harvested from the provider. See roadmap#35.
-method: generated
-modified: '2026-05-04'
-reconciled: true
-tags:
-  - Payments
-  - Embedded Finance
-  - BaaS
-description: Moov pay-as-you-go with $500/month minimum. Per-transaction pricing.
+# Pricing transcribed from the provider's own page — see provenance. Numbers are quoted, not derived.
+generated: '2026-09-20'
+method: searched
+source: https://moov.io/pricing/
 sources:
-  - https://moov.io/pricing
+- https://moov.io/pricing/
+provenance:
+  tool: planning/api-economics/harvest_pricing.py
+  run: 20260920T124425
+  grounding: every price_text was found verbatim in the fetched page text
+audience: developer-api
+pricing_basis: ad-valorem
+published: true
+note: Detailed per-product fee schedule for Moov payments platform; standard pricing has a $500 monthly
+  minimum, custom pricing via contact sales.
+plan_count: 29
+currency: USD
 plans:
-  - id: moov-card-acceptance
-    name: Card Acceptance
-    type: usage-based
-    description: Interchange+ + 0.60% + $0.15 per transaction.
-    entries:
-      - label: Per transaction
-        name: tx
-        type: metered
-        metric: transaction
-        limit: -1
-        timeFrame: usage
-        geo: US
-        unit: 1
-        price: IC++ + 0.60% + $0.15
-        userMultiplied: false
-      - label: International surcharge
-        name: intl
-        type: metered
-        metric: transaction
-        limit: -1
-        timeFrame: usage
-        geo: global
-        unit: 1
-        price: +1.5%
-        userMultiplied: false
-    elements:
-      - name: Online card + mobile wallets
-      - name: Apple Pay / Google Pay
-      - name: $500/mo minimum
-  - id: moov-tap-to-pay
-    name: Tap to Pay
-    type: usage-based
-    description: Interchange+ + 0.50% + $0.15.
-    entries:
-      - label: Per transaction
-        name: tx
-        type: metered
-        metric: transaction
-        limit: -1
-        timeFrame: usage
-        geo: US
-        unit: 1
-        price: IC++ + 0.50% + $0.15
-        userMultiplied: false
-    elements:
-      - name: Contactless on iPhone/Android
-      - name: Multiple card networks
-  - id: moov-instant-payments
-    name: Instant Payments
-    type: usage-based
-    description: 0.95% per transaction (50¢ min, $5 cap).
-    entries:
-      - label: Per transaction
-        name: tx
-        type: metered
-        metric: transaction
-        limit: -1
-        timeFrame: usage
-        geo: US
-        unit: 1
-        price: 0.95% (50¢ min, $5 cap)
-        userMultiplied: false
-    elements:
-      - name: RTP credit to bank
-      - name: Instant push to debit cards
-  - id: moov-bank-transfers
-    name: Bank Transfers (ACH)
-    type: usage-based
-    description: $0.25-$0.40 per ACH.
-    entries:
-      - label: Per ACH
-        name: ach
-        type: metered
-        metric: transaction
-        limit: -1
-        timeFrame: usage
-        geo: US
-        unit: 1
-        price: 0.25-0.40
-        userMultiplied: false
-    elements:
-      - name: Same-day and next-day ACH
-      - name: Failed transaction handling
-  - id: moov-wallets
-    name: Moov Wallets
-    type: subscription
-    description: $0.50/month per active wallet.
-    entries:
-      - label: Per active wallet-month
-        name: wallet
-        type: subscription
-        metric: month
-        limit: -1
-        timeFrame: month
-        geo: global
-        unit: 1
-        price: '0.50'
-        userMultiplied: true
-    elements:
-      - name: Fund storage and balance tracking
-      - name: Automated payouts and transfers
-  - id: moov-virtual-cards
-    name: Virtual Cards
-    type: usage-based
-    description: $0.15 per card creation.
-    entries:
-      - label: Per card
-        name: card
-        type: metered
-        metric: card
-        limit: -1
-        timeFrame: usage
-        geo: US
-        unit: 1
-        price: '0.15'
-        userMultiplied: false
-    elements:
-      - name: Visa commercial debit cards
-      - name: Vendor payment processing
-  - id: moov-custom
-    name: Custom (High Volume)
-    type: enterprise
-    description: Custom pricing.
-    entries:
-      - label: Annual (custom)
-        name: annual
-        type: subscription
-        metric: year
-        limit: -1
-        timeFrame: year
-        geo: global
-        unit: 1
-        price: custom
-        userMultiplied: false
-    elements:
-      - name: Volume discounts
+- name: Standard pricing
+  price_text: $500 monthly minimum
+  price: 500
+  currency: USD
+  period: month
+  unit: minimum
+  included_quota: No setup fees or hidden fees. Pay as you go and get everything you need to start moving
+    money.
+- name: Custom pricing
+  price_text: Contact sales
+  period: none
+  included_quota: Available for businesses with large payment volume or unique business models.
+- name: Card acceptance
+  price_text: Interchange+ + 0.60% + 15¢
+  currency: USD
+  period: per-use
+  unit: per successful charge
+  included_quota: U.S. domestic cards
+  overage: +1.5% for international cards
+- name: Tap to Pay
+  price_text: Interchange+ + 0.50% + 15¢
+  currency: USD
+  period: per-use
+  unit: per successful charge
+  included_quota: U.S. domestic cards
+  overage: +1.5% for international cards
+- name: Card account updater
+  price_text: 25¢
+  price: 25
+  currency: USD
+  period: per-use
+  unit: per update
+- name: Disputes (card)
+  price_text: $15.00
+  price: 15
+  currency: USD
+  period: per-use
+  unit: per dispute
+- name: Instant RTP credit
+  price_text: 0.95%
+  price: 0.95
+  currency: USD
+  period: per-use
+  unit: per transaction
+  included_quota: 'Minimum fee: 50¢ $5.00 cap'
+- name: Instant push to card
+  price_text: 0.95%
+  price: 0.95
+  currency: USD
+  period: per-use
+  unit: per transaction
+  included_quota: 'Minimum fee: 50¢ $5.00 cap'
+- name: Deferred delivery push to card
+  price_text: 25¢
+  price: 25
+  currency: USD
+  period: per-use
+  unit: per transaction
+- name: Instant pull from card
+  price_text: 0.50% + 75¢
+  currency: USD
+  period: per-use
+  unit: per transaction
+- name: ACH same-day
+  price_text: 40¢
+  price: 40
+  currency: USD
+  period: per-use
+  unit: per transaction
+- name: ACH next-day credit
+  price_text: 25¢
+  price: 25
+  currency: USD
+  period: per-use
+  unit: per transaction
+- name: Notice of change
+  price_text: 75¢
+  price: 75
+  currency: USD
+  period: per-use
+  unit: per update
+- name: ACH returns
+  price_text: $5.00
+  price: 5
+  currency: USD
+  period: per-use
+  unit: per return
+- name: Unauthorized returns
+  price_text: $15.00
+  price: 15
+  currency: USD
+  period: per-use
+  unit: per return
+- name: Moov wallet
+  price_text: 50¢ monthly
+  price: 50
+  currency: USD
+  period: month
+  unit: per active wallet
+- name: Payment links
+  price_text: Included
+  period: none
+  included_quota: Waived for accounts with standard pricing.
+- name: Branded receipts
+  price_text: Included
+  period: none
+  included_quota: Waived for accounts with standard pricing.
+- name: Invoices
+  price_text: 25¢
+  price: 25
+  currency: USD
+  period: per-use
+  unit: per paid invoice
+- name: Virtual card creation
+  price_text: 15¢
+  price: 15
+  currency: USD
+  period: per-use
+  unit: per virtual card
+- name: Instant bank account validation
+  price_text: 75¢
+  price: 75
+  currency: USD
+  period: per-use
+  unit: per instant validation attempt
+  included_quota: ACH micro-deposits are free.
+- name: Third-party bank account validation
+  price_text: $1.50
+  price: 1.5
+  currency: USD
+  period: per-use
+  unit: per validation attempt
+  included_quota: $500 monthly minimum.
+- name: Verified business (KYB)
+  price_text: $4.50
+  price: 4.5
+  currency: USD
+  period: per-use
+  unit: per business
+- name: Verified individual (KYC)
+  price_text: $2.50
+  price: 2.5
+  currency: USD
+  period: per-use
+  unit: per individual
+  included_quota: $0.50 per individual per month.
+- name: IRS Form 1099-K issuance
+  price_text: $5.00 annually
+  price: 5
+  currency: USD
+  period: year
+  unit: per business
+- name: Merchant processing account fee
+  price_text: $5.00 monthly
+  price: 5
+  currency: USD
+  period: month
+  unit: per business
+- name: Transaction monitoring
+  price_text: Included
+  period: none
+  included_quota: Waived for accounts with standard pricing.
+- name: PCI compliance
+  price_text: $2.00 monthly
+  price: 2
+  currency: USD
+  period: month
+  unit: per business
+- name: Data Sync
+  price_text: 2¢
+  price: 2
+  currency: USD
+  period: per-use
+  unit: per transaction
+  included_quota: $500 monthly minimum.
