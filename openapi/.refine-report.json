@@ -39,7 +39,8 @@
     "tag 'Representatives' spans 2 source specs (moov-api-openapi.yml, moov-openapi.yml): per-path servers applied",
     "tag 'Sweeps' spans 2 source specs (moov-api-openapi.yml, moov-openapi.yml): per-path servers applied",
     "tag 'Transfers' spans 2 source specs (moov-api-openapi.yml, moov-openapi.yml): per-path servers applied",
-    "tag 'Wallets' spans 2 source specs (moov-api-openapi.yml, moov-openapi.yml): per-path servers applied"
+    "tag 'Wallets' spans 2 source specs (moov-api-openapi.yml, moov-openapi.yml): per-path servers applied",
+    "apis.yml register: already-registered"
   ],
   "skipped": [
     "moov-accounts-api-openapi.yml: previously refined output, superseded by openapi/_original/",

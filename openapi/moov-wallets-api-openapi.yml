@@ -187,7 +187,7 @@ paths:
       operationId: listAdjustments
       tags:
       - Wallets
-      summary: List balance adjustments.
+      summary: List balance adjustments
       responses:
         '200':
           description: A list of adjustments.
@@ -206,7 +206,7 @@ paths:
       operationId: getAdjustment
       tags:
       - Wallets
-      summary: Retrieve a balance adjustment.
+      summary: Retrieve a balance adjustment
       responses:
         '200':
           description: The adjustment.
@@ -214,75 +214,38 @@ paths:
     - url: https://api.moov.io
       description: Moov production
 components:
-  parameters:
-    CountParam:
-      name: count
-      in: query
-      description: Maximum number of results to return per page.
-      schema:
-        type: integer
-        minimum: 1
-        maximum: 100
-        default: 20
-    AccountIDParam:
-      name: accountID
-      in: path
-      required: true
-      description: Unique identifier for the Moov account.
-      schema:
-        type: string
-        format: uuid
-    WalletIDParam:
-      name: walletID
-      in: path
-      required: true
-      description: Unique identifier for the wallet.
-      schema:
-        type: string
-        format: uuid
-    SkipParam:
-      name: skip
-      in: query
-      description: Number of results to skip for pagination.
-      schema:
-        type: integer
-        minimum: 0
-        default: 0
-    walletID:
-      name: walletID
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
-    accountID:
-      name: accountID
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
-      description: The Moov account identifier.
-  responses:
-    BadRequest:
-      description: The request was malformed or contained invalid parameters.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   schemas:
+    Amount:
+      type: object
+      description: A monetary amount with currency denomination.
+      properties:
+        currency:
+          type: string
+          description: ISO 4217 three-letter currency code.
+          default: USD
+          minLength: 3
+          maxLength: 3
+        value:
+          type: integer
+          description: Amount in the smallest currency unit (e.g., cents for USD).
+          minimum: 0
+    Error:
+      type: object
+      description: Standard error response returned by the Moov API.
+      properties:
+        error:
+          type: string
+          description: Human-readable description of the error.
+        code:
+          type: string
+          description: Machine-readable error code.
+    UpdateWalletRequest:
+      type: object
+      description: Request body for updating a Moov wallet.
+      properties:
+        name:
+          type: string
+          description: Display name for the wallet.
     Wallet:
       type: object
       description: A Moov digital wallet that holds funds on the platform for an account. Wallets serve as intermediate stores of value for money movement.
@@ -351,37 +314,74 @@ components:
           description: ISO 8601 timestamp when the transaction was created.
         amount:
           $ref: '#/components/schemas/Amount'
-    Amount:
-      type: object
-      description: A monetary amount with currency denomination.
-      properties:
-        currency:
-          type: string
-          description: ISO 4217 three-letter currency code.
-          default: USD
-          minLength: 3
-          maxLength: 3
-        value:
-          type: integer
-          description: Amount in the smallest currency unit (e.g., cents for USD).
-          minimum: 0
-    UpdateWalletRequest:
-      type: object
-      description: Request body for updating a Moov wallet.
-      properties:
-        name:
-          type: string
-          description: Display name for the wallet.
-    Error:
-      type: object
-      description: Standard error response returned by the Moov API.
-      properties:
-        error:
-          type: string
-          description: Human-readable description of the error.
-        code:
-          type: string
-          description: Machine-readable error code.
+  responses:
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: The request was malformed or contained invalid parameters.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  parameters:
+    SkipParam:
+      name: skip
+      in: query
+      description: Number of results to skip for pagination.
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+    AccountIDParam:
+      name: accountID
+      in: path
+      required: true
+      description: Unique identifier for the Moov account.
+      schema:
+        type: string
+        format: uuid
+    WalletIDParam:
+      name: walletID
+      in: path
+      required: true
+      description: Unique identifier for the wallet.
+      schema:
+        type: string
+        format: uuid
+    CountParam:
+      name: count
+      in: query
+      description: Maximum number of results to return per page.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    accountID:
+      name: accountID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The Moov account identifier.
+    walletID:
+      name: walletID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
   securitySchemes:
     bearerAuth:
       type: http

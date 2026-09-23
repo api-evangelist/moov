@@ -1,7 +1,7 @@
 openapi: 3.2.0
 info:
   title: Moov Underwriting API
-  description: The Moov API lets software platforms accept, store, send, and spend money through a single REST API. It is organized around Moov accounts, funding sources (bank accounts, cards, wallets, payment methods), and money movement (transfers, refunds, disputes, sweeps, card issuing). The API is based on REST principles, returns JSON, and uses standard HTTP response codes. Requests are authenticated with an OAuth 2.0 access token (Bearer). Event notifications are delivered via webhooks (HTTPS POST with an HMAC SHA-512 signature); Moov does not expose a public WebSocket API. This document models a representative subset of the commercial hosted API at api.moov.io - the canonical, machine-generated OpenAPI spec is published by Moov (see externalDocs). Separately, Moov maintains open-source Go libraries for banking file formats at github.com/moov-io, which are not part of this API.
+  description: The Moov API lets software platforms accept, store, send, and spend money through a single REST API.
   version: v2026.04.00
   contact:
     name: Moov
@@ -23,7 +23,7 @@ paths:
       operationId: getUnderwriting
       tags:
       - Underwriting
-      summary: Retrieve underwriting details.
+      summary: Retrieve underwriting details
       responses:
         '200':
           description: The underwriting details.
@@ -31,7 +31,7 @@ paths:
       operationId: upsertUnderwriting
       tags:
       - Underwriting
-      summary: Create or update underwriting details.
+      summary: Create or update underwriting details
       responses:
         '200':
           description: The updated underwriting details.

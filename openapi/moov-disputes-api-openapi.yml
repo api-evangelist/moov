@@ -205,7 +205,7 @@ paths:
       operationId: listDisputeEvidence
       tags:
       - Disputes
-      summary: List dispute evidence.
+      summary: List dispute evidence
       responses:
         '200':
           description: A list of evidence.
@@ -221,7 +221,7 @@ paths:
       operationId: getDisputeEvidence
       tags:
       - Disputes
-      summary: Retrieve dispute evidence.
+      summary: Retrieve dispute evidence
       responses:
         '200':
           description: The evidence.
@@ -229,7 +229,7 @@ paths:
       operationId: updateDisputeEvidence
       tags:
       - Disputes
-      summary: Update dispute evidence.
+      summary: Update dispute evidence
       responses:
         '200':
           description: The updated evidence.
@@ -237,7 +237,7 @@ paths:
       operationId: deleteDisputeEvidence
       tags:
       - Disputes
-      summary: Delete dispute evidence.
+      summary: Delete dispute evidence
       responses:
         '204':
           description: Evidence deleted.
@@ -253,7 +253,7 @@ paths:
       operationId: getDisputeEvidenceData
       tags:
       - Disputes
-      summary: Retrieve dispute evidence data.
+      summary: Retrieve dispute evidence data
       responses:
         '200':
           description: The evidence file data.
@@ -268,107 +268,19 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
     NotFound:
       description: The requested resource was not found.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-  parameters:
-    CountParam:
-      name: count
-      in: query
-      description: Maximum number of results to return per page.
-      schema:
-        type: integer
-        minimum: 1
-        maximum: 100
-        default: 20
-    DisputeIDParam:
-      name: disputeID
-      in: path
-      required: true
-      description: Unique identifier for the dispute.
-      schema:
-        type: string
-        format: uuid
-    AccountIDParam:
-      name: accountID
-      in: path
-      required: true
-      description: Unique identifier for the Moov account.
-      schema:
-        type: string
-        format: uuid
-    SkipParam:
-      name: skip
-      in: query
-      description: Number of results to skip for pagination.
-      schema:
-        type: integer
-        minimum: 0
-        default: 0
-    accountID:
-      name: accountID
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
-      description: The Moov account identifier.
-    evidenceID:
-      name: evidenceID
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
-    disputeID:
-      name: disputeID
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
+    Unauthorized:
+      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
-    DisputeEvidenceText:
-      type: object
-      description: Request body for submitting text-based dispute evidence.
-      required:
-      - text
-      - evidenceType
-      properties:
-        text:
-          type: string
-          description: The written statement or explanation for contesting the dispute.
-        evidenceType:
-          type: string
-          description: Classification of the text evidence.
-          enum:
-          - customer-communication
-          - refund-policy
-          - service-documentation
-          - other
-    Amount:
-      type: object
-      description: A monetary amount with currency denomination.
-      properties:
-        currency:
-          type: string
-          description: ISO 4217 three-letter currency code.
-          default: USD
-          minLength: 3
-          maxLength: 3
-        value:
-          type: integer
-          description: Amount in the smallest currency unit (e.g., cents for USD).
-          minimum: 0
     Dispute:
       type: object
       description: A card payment dispute (chargeback) initiated by a cardholder through their card issuer. Disputes require evidence submission or acceptance.
@@ -419,6 +331,30 @@ components:
           type: string
           format: date-time
           description: ISO 8601 timestamp when the dispute was last updated.
+    Amount:
+      type: object
+      description: A monetary amount with currency denomination.
+      properties:
+        currency:
+          type: string
+          description: ISO 4217 three-letter currency code.
+          default: USD
+          minLength: 3
+          maxLength: 3
+        value:
+          type: integer
+          description: Amount in the smallest currency unit (e.g., cents for USD).
+          minimum: 0
+    Error:
+      type: object
+      description: Standard error response returned by the Moov API.
+      properties:
+        error:
+          type: string
+          description: Human-readable description of the error.
+        code:
+          type: string
+          description: Machine-readable error code.
     DisputeEvidence:
       type: object
       description: A piece of evidence submitted in response to a card dispute.
@@ -450,16 +386,80 @@ components:
           type: string
           format: date-time
           description: ISO 8601 timestamp when the evidence was submitted.
-    Error:
+    DisputeEvidenceText:
       type: object
-      description: Standard error response returned by the Moov API.
+      description: Request body for submitting text-based dispute evidence.
+      required:
+      - text
+      - evidenceType
       properties:
-        error:
+        text:
           type: string
-          description: Human-readable description of the error.
-        code:
+          description: The written statement or explanation for contesting the dispute.
+        evidenceType:
           type: string
-          description: Machine-readable error code.
+          description: Classification of the text evidence.
+          enum:
+          - customer-communication
+          - refund-policy
+          - service-documentation
+          - other
+  parameters:
+    DisputeIDParam:
+      name: disputeID
+      in: path
+      required: true
+      description: Unique identifier for the dispute.
+      schema:
+        type: string
+        format: uuid
+    SkipParam:
+      name: skip
+      in: query
+      description: Number of results to skip for pagination.
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+    AccountIDParam:
+      name: accountID
+      in: path
+      required: true
+      description: Unique identifier for the Moov account.
+      schema:
+        type: string
+        format: uuid
+    CountParam:
+      name: count
+      in: query
+      description: Maximum number of results to return per page.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    evidenceID:
+      name: evidenceID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    disputeID:
+      name: disputeID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    accountID:
+      name: accountID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The Moov account identifier.
   securitySchemes:
     bearerAuth:
       type: http

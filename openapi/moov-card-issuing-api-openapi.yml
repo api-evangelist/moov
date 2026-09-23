@@ -1,7 +1,7 @@
 openapi: 3.2.0
 info:
   title: Moov Card Issuing API
-  description: The Moov API lets software platforms accept, store, send, and spend money through a single REST API. It is organized around Moov accounts, funding sources (bank accounts, cards, wallets, payment methods), and money movement (transfers, refunds, disputes, sweeps, card issuing). The API is based on REST principles, returns JSON, and uses standard HTTP response codes. Requests are authenticated with an OAuth 2.0 access token (Bearer). Event notifications are delivered via webhooks (HTTPS POST with an HMAC SHA-512 signature); Moov does not expose a public WebSocket API. This document models a representative subset of the commercial hosted API at api.moov.io - the canonical, machine-generated OpenAPI spec is published by Moov (see externalDocs). Separately, Moov maintains open-source Go libraries for banking file formats at github.com/moov-io, which are not part of this API.
+  description: The Moov API lets software platforms accept, store, send, and spend money through a single REST API.
   version: v2026.04.00
   contact:
     name: Moov
@@ -23,7 +23,7 @@ paths:
       operationId: createIssuedCard
       tags:
       - Card Issuing
-      summary: Create a spending card.
+      summary: Create a spending card
       responses:
         '200':
           description: The created spending card.
@@ -31,7 +31,7 @@ paths:
       operationId: listIssuedCards
       tags:
       - Card Issuing
-      summary: List spending cards.
+      summary: List spending cards
       responses:
         '200':
           description: A list of spending cards.
@@ -43,7 +43,7 @@ paths:
       operationId: getIssuedCard
       tags:
       - Card Issuing
-      summary: Retrieve a spending card.
+      summary: Retrieve a spending card
       responses:
         '200':
           description: The spending card.
@@ -51,7 +51,7 @@ paths:
       operationId: updateIssuedCard
       tags:
       - Card Issuing
-      summary: Update a spending card.
+      summary: Update a spending card
       responses:
         '200':
           description: The updated spending card.
@@ -63,7 +63,7 @@ paths:
       operationId: getIssuedCardDetails
       tags:
       - Card Issuing
-      summary: Get PCI details for a spending card.
+      summary: Get PCI details for a spending card
       responses:
         '200':
           description: The full PCI card details.
@@ -74,7 +74,7 @@ paths:
       operationId: listAuthorizations
       tags:
       - Card Issuing
-      summary: List authorizations.
+      summary: List authorizations
       responses:
         '200':
           description: A list of authorizations.
@@ -90,7 +90,7 @@ paths:
       operationId: getAuthorization
       tags:
       - Card Issuing
-      summary: Retrieve an authorization.
+      summary: Retrieve an authorization
       responses:
         '200':
           description: The authorization.
@@ -106,7 +106,7 @@ paths:
       operationId: listAuthorizationEvents
       tags:
       - Card Issuing
-      summary: List authorization events.
+      summary: List authorization events
       responses:
         '200':
           description: A list of authorization events.
@@ -117,7 +117,7 @@ paths:
       operationId: listCardTransactions
       tags:
       - Card Issuing
-      summary: List card transactions.
+      summary: List card transactions
       responses:
         '200':
           description: A list of card transactions.
@@ -133,19 +133,12 @@ paths:
       operationId: getCardTransaction
       tags:
       - Card Issuing
-      summary: Retrieve a card transaction.
+      summary: Retrieve a card transaction
       responses:
         '200':
           description: The card transaction.
 components:
   parameters:
-    issuedCardID:
-      name: issuedCardID
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
     accountID:
       name: accountID
       in: path
@@ -154,6 +147,13 @@ components:
         type: string
         format: uuid
       description: The Moov account identifier.
+    issuedCardID:
+      name: issuedCardID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
   securitySchemes:
     bearerAuth:
       type: http

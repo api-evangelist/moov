@@ -229,25 +229,6 @@ paths:
     - url: https://api.moov.io
       description: Production Server
 components:
-  responses:
-    BadRequest:
-      description: The request was malformed or contained invalid parameters.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   schemas:
     BankAccountVerification:
       type: object
@@ -263,20 +244,6 @@ components:
         exceptionDetails:
           type: string
           description: Error details if the verification failed.
-    MicroDepositConfirmation:
-      type: object
-      description: Request body for confirming micro-deposit amounts.
-      required:
-      - amounts
-      properties:
-        amounts:
-          type: array
-          description: The two micro-deposit amounts in cents that were sent to the bank account.
-          items:
-            type: integer
-            minimum: 1
-          minItems: 2
-          maxItems: 2
     BankAccount:
       type: object
       description: A bank account linked to a Moov account as a funding source for ACH and RTP transfers.
@@ -329,13 +296,16 @@ components:
           type: string
           format: date-time
           description: ISO 8601 timestamp when the bank account was last updated.
-    CompleteVerificationRequest:
+    Error:
       type: object
-      description: Request body for completing instant bank account verification.
+      description: Standard error response returned by the Moov API.
       properties:
+        error:
+          type: string
+          description: Human-readable description of the error.
         code:
           type: string
-          description: The verification code provided during the instant verification flow.
+          description: Machine-readable error code.
     LinkBankAccountRequest:
       type: object
       description: Request body for linking a bank account to a Moov account.
@@ -380,16 +350,46 @@ components:
             token:
               type: string
               description: MX widget token.
-    Error:
+    MicroDepositConfirmation:
       type: object
-      description: Standard error response returned by the Moov API.
+      description: Request body for confirming micro-deposit amounts.
+      required:
+      - amounts
       properties:
-        error:
-          type: string
-          description: Human-readable description of the error.
+        amounts:
+          type: array
+          description: The two micro-deposit amounts in cents that were sent to the bank account.
+          items:
+            type: integer
+            minimum: 1
+          minItems: 2
+          maxItems: 2
+    CompleteVerificationRequest:
+      type: object
+      description: Request body for completing instant bank account verification.
+      properties:
         code:
           type: string
-          description: Machine-readable error code.
+          description: The verification code provided during the instant verification flow.
+  responses:
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: The request was malformed or contained invalid parameters.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   parameters:
     BankAccountIDParam:
       name: bankAccountID
@@ -407,13 +407,6 @@ components:
       schema:
         type: string
         format: uuid
-    bankAccountID:
-      name: bankAccountID
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
     accountID:
       name: accountID
       in: path
@@ -422,6 +415,13 @@ components:
         type: string
         format: uuid
       description: The Moov account identifier.
+    bankAccountID:
+      name: bankAccountID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
   securitySchemes:
     bearerAuth:
       type: http

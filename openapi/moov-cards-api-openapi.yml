@@ -140,62 +140,6 @@ paths:
       description: Production Server
 components:
   schemas:
-    LinkCardRequest:
-      type: object
-      description: Request body for linking a card to a Moov account.
-      properties:
-        cardNumber:
-          type: string
-          description: Full card number. Must be submitted via Moov.js to remain PCI compliant.
-        expiration:
-          $ref: '#/components/schemas/CardExpiration'
-        cardCvv:
-          type: string
-          description: Card security code.
-          minLength: 3
-          maxLength: 4
-        holderName:
-          type: string
-          description: Name of the cardholder.
-        billingAddress:
-          $ref: '#/components/schemas/Address'
-    Address:
-      type: object
-      description: Physical or mailing address.
-      properties:
-        addressLine1:
-          type: string
-          description: Primary street address.
-        addressLine2:
-          type: string
-          description: Secondary address line (suite, apartment, etc.).
-        city:
-          type: string
-          description: City name.
-        stateOrProvince:
-          type: string
-          description: Two-letter state or province code.
-          maxLength: 2
-        postalCode:
-          type: string
-          description: Postal or ZIP code.
-        country:
-          type: string
-          description: Two-letter ISO 3166-1 alpha-2 country code.
-          maxLength: 2
-    UpdateCardRequest:
-      type: object
-      description: Request body for updating a linked card.
-      properties:
-        billingAddress:
-          $ref: '#/components/schemas/Address'
-        expiration:
-          $ref: '#/components/schemas/CardExpiration'
-        cardCvv:
-          type: string
-          description: Updated card security code.
-          minLength: 3
-          maxLength: 4
     Card:
       type: object
       description: A credit or debit card linked to a Moov account as a payment source.
@@ -268,6 +212,35 @@ components:
           type: string
           description: Two-digit expiration year.
           pattern: ^\d{2}$
+    LinkCardRequest:
+      type: object
+      description: Request body for linking a card to a Moov account.
+      properties:
+        cardNumber:
+          type: string
+          description: Full card number. Must be submitted via Moov.js to remain PCI compliant.
+        expiration:
+          $ref: '#/components/schemas/CardExpiration'
+        cardCvv:
+          type: string
+          description: Card security code.
+          minLength: 3
+          maxLength: 4
+        holderName:
+          type: string
+          description: Name of the cardholder.
+        billingAddress:
+          $ref: '#/components/schemas/Address'
+    Error:
+      type: object
+      description: Standard error response returned by the Moov API.
+      properties:
+        error:
+          type: string
+          description: Human-readable description of the error.
+        code:
+          type: string
+          description: Machine-readable error code.
     CardVerification:
       type: object
       description: Results of card verification checks.
@@ -296,35 +269,43 @@ components:
           - noMatch
           - notChecked
           - unavailable
-    Error:
+    UpdateCardRequest:
       type: object
-      description: Standard error response returned by the Moov API.
+      description: Request body for updating a linked card.
       properties:
-        error:
+        billingAddress:
+          $ref: '#/components/schemas/Address'
+        expiration:
+          $ref: '#/components/schemas/CardExpiration'
+        cardCvv:
           type: string
-          description: Human-readable description of the error.
-        code:
+          description: Updated card security code.
+          minLength: 3
+          maxLength: 4
+    Address:
+      type: object
+      description: Physical or mailing address.
+      properties:
+        addressLine1:
           type: string
-          description: Machine-readable error code.
-  responses:
-    BadRequest:
-      description: The request was malformed or contained invalid parameters.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+          description: Primary street address.
+        addressLine2:
+          type: string
+          description: Secondary address line (suite, apartment, etc.).
+        city:
+          type: string
+          description: City name.
+        stateOrProvince:
+          type: string
+          description: Two-letter state or province code.
+          maxLength: 2
+        postalCode:
+          type: string
+          description: Postal or ZIP code.
+        country:
+          type: string
+          description: Two-letter ISO 3166-1 alpha-2 country code.
+          maxLength: 2
   parameters:
     CardIDParam:
       name: cardID
@@ -350,6 +331,25 @@ components:
         type: string
         format: uuid
       description: The Moov account identifier.
+  responses:
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: The request was malformed or contained invalid parameters.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     bearerAuth:
       type: http

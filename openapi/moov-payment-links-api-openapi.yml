@@ -1,7 +1,7 @@
 openapi: 3.2.0
 info:
   title: Moov Payment Links API
-  description: The Moov API is a RESTful financial infrastructure platform that enables developers to integrate money movement capabilities into their applications. The API supports a full range of financial operations including account management, payment method onboarding, transfers, sweeps, refunds, dispute resolution, card issuing, and payment links. It provides capabilities for accepting payments, storing funds in digital wallets, sending money between accounts, and issuing cards for spend management. Authentication uses OAuth2 access tokens with permission scopes, and the API returns JSON responses using standard HTTP response codes.
+  description: The Moov API is a RESTful financial infrastructure platform that enables developers to integrate money movement capabilities into their applications.
   version: 2026.01.00
   contact:
     name: Moov Support
@@ -150,26 +150,20 @@ paths:
           $ref: '#/components/responses/NotFound'
 components:
   schemas:
-    UpdatePaymentLinkRequest:
+    Amount:
       type: object
-      description: Request body for updating a payment link.
+      description: A monetary amount with currency denomination.
       properties:
-        amount:
-          $ref: '#/components/schemas/Amount'
-        description:
+        currency:
           type: string
-          description: Updated description for the payment link.
-          maxLength: 250
-        status:
-          type: string
-          description: Update the status of the payment link.
-          enum:
-          - active
-          - inactive
-        expiresOn:
-          type: string
-          format: date-time
-          description: Updated expiration timestamp for the payment link.
+          description: ISO 4217 three-letter currency code.
+          default: USD
+          minLength: 3
+          maxLength: 3
+        value:
+          type: integer
+          description: Amount in the smallest currency unit (e.g., cents for USD).
+          minimum: 0
     PaymentLink:
       type: object
       description: A shareable link that allows customers to make payments via card or bank account without requiring custom frontend development.
@@ -213,6 +207,36 @@ components:
           type: string
           format: date-time
           description: ISO 8601 timestamp when the payment link was last updated.
+    Error:
+      type: object
+      description: Standard error response returned by the Moov API.
+      properties:
+        error:
+          type: string
+          description: Human-readable description of the error.
+        code:
+          type: string
+          description: Machine-readable error code.
+    UpdatePaymentLinkRequest:
+      type: object
+      description: Request body for updating a payment link.
+      properties:
+        amount:
+          $ref: '#/components/schemas/Amount'
+        description:
+          type: string
+          description: Updated description for the payment link.
+          maxLength: 250
+        status:
+          type: string
+          description: Update the status of the payment link.
+          enum:
+          - active
+          - inactive
+        expiresOn:
+          type: string
+          format: date-time
+          description: Updated expiration timestamp for the payment link.
     CreatePaymentLinkRequest:
       type: object
       description: Request body for creating a payment link.
@@ -229,33 +253,9 @@ components:
           type: string
           format: date-time
           description: ISO 8601 timestamp when this payment link should expire.
-    Amount:
-      type: object
-      description: A monetary amount with currency denomination.
-      properties:
-        currency:
-          type: string
-          description: ISO 4217 three-letter currency code.
-          default: USD
-          minLength: 3
-          maxLength: 3
-        value:
-          type: integer
-          description: Amount in the smallest currency unit (e.g., cents for USD).
-          minimum: 0
-    Error:
-      type: object
-      description: Standard error response returned by the Moov API.
-      properties:
-        error:
-          type: string
-          description: Human-readable description of the error.
-        code:
-          type: string
-          description: Machine-readable error code.
   responses:
-    BadRequest:
-      description: The request was malformed or contained invalid parameters.
+    NotFound:
+      description: The requested resource was not found.
       content:
         application/json:
           schema:
@@ -266,13 +266,20 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    NotFound:
-      description: The requested resource was not found.
+    BadRequest:
+      description: The request was malformed or contained invalid parameters.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
   parameters:
+    PaymentLinkCodeParam:
+      name: paymentLinkCode
+      in: path
+      required: true
+      description: Unique code identifier for the payment link.
+      schema:
+        type: string
     AccountIDParam:
       name: accountID
       in: path
@@ -281,13 +288,6 @@ components:
       schema:
         type: string
         format: uuid
-    PaymentLinkCodeParam:
-      name: paymentLinkCode
-      in: path
-      required: true
-      description: Unique code identifier for the payment link.
-      schema:
-        type: string
   securitySchemes:
     bearerAuth:
       type: http
