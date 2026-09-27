@@ -139,6 +139,13 @@ paths:
           description: The card transaction.
 components:
   parameters:
+    issuedCardID:
+      name: issuedCardID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
     accountID:
       name: accountID
       in: path
@@ -147,13 +154,6 @@ components:
         type: string
         format: uuid
       description: The Moov account identifier.
-    issuedCardID:
-      name: issuedCardID
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
   securitySchemes:
     bearerAuth:
       type: http

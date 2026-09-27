@@ -62,6 +62,19 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
+  responses:
+    BadRequest:
+      description: The request was malformed or contained invalid parameters.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
     TokenRequest:
       type: object
@@ -85,16 +98,6 @@ components:
         scope:
           type: string
           description: Space-separated list of permission scopes to request. Scopes follow the pattern /accounts/{accountID}/transfers.write for resource-specific access, or /accounts.write for platform-level access.
-    Error:
-      type: object
-      description: Standard error response returned by the Moov API.
-      properties:
-        error:
-          type: string
-          description: Human-readable description of the error.
-        code:
-          type: string
-          description: Machine-readable error code.
     RevokeTokenRequest:
       type: object
       description: Request body for revoking an OAuth2 access token.
@@ -122,19 +125,16 @@ components:
         scope:
           type: string
           description: Space-separated list of granted permission scopes.
-  responses:
-    BadRequest:
-      description: The request was malformed or contained invalid parameters.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+    Error:
+      type: object
+      description: Standard error response returned by the Moov API.
+      properties:
+        error:
+          type: string
+          description: Human-readable description of the error.
+        code:
+          type: string
+          description: Machine-readable error code.
   securitySchemes:
     bearerAuth:
       type: http

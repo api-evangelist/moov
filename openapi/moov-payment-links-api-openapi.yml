@@ -149,21 +149,26 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 components:
+  responses:
+    BadRequest:
+      description: The request was malformed or contained invalid parameters.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
-    Amount:
-      type: object
-      description: A monetary amount with currency denomination.
-      properties:
-        currency:
-          type: string
-          description: ISO 4217 three-letter currency code.
-          default: USD
-          minLength: 3
-          maxLength: 3
-        value:
-          type: integer
-          description: Amount in the smallest currency unit (e.g., cents for USD).
-          minimum: 0
     PaymentLink:
       type: object
       description: A shareable link that allows customers to make payments via card or bank account without requiring custom frontend development.
@@ -207,16 +212,36 @@ components:
           type: string
           format: date-time
           description: ISO 8601 timestamp when the payment link was last updated.
-    Error:
+    Amount:
       type: object
-      description: Standard error response returned by the Moov API.
+      description: A monetary amount with currency denomination.
       properties:
-        error:
+        currency:
           type: string
-          description: Human-readable description of the error.
-        code:
+          description: ISO 4217 three-letter currency code.
+          default: USD
+          minLength: 3
+          maxLength: 3
+        value:
+          type: integer
+          description: Amount in the smallest currency unit (e.g., cents for USD).
+          minimum: 0
+    CreatePaymentLinkRequest:
+      type: object
+      description: Request body for creating a payment link.
+      required:
+      - amount
+      properties:
+        amount:
+          $ref: '#/components/schemas/Amount'
+        description:
           type: string
-          description: Machine-readable error code.
+          description: Description of the payment that will be shown to the payer.
+          maxLength: 250
+        expiresOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when this payment link should expire.
     UpdatePaymentLinkRequest:
       type: object
       description: Request body for updating a payment link.
@@ -237,49 +262,17 @@ components:
           type: string
           format: date-time
           description: Updated expiration timestamp for the payment link.
-    CreatePaymentLinkRequest:
+    Error:
       type: object
-      description: Request body for creating a payment link.
-      required:
-      - amount
+      description: Standard error response returned by the Moov API.
       properties:
-        amount:
-          $ref: '#/components/schemas/Amount'
-        description:
+        error:
           type: string
-          description: Description of the payment that will be shown to the payer.
-          maxLength: 250
-        expiresOn:
+          description: Human-readable description of the error.
+        code:
           type: string
-          format: date-time
-          description: ISO 8601 timestamp when this payment link should expire.
-  responses:
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    BadRequest:
-      description: The request was malformed or contained invalid parameters.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+          description: Machine-readable error code.
   parameters:
-    PaymentLinkCodeParam:
-      name: paymentLinkCode
-      in: path
-      required: true
-      description: Unique code identifier for the payment link.
-      schema:
-        type: string
     AccountIDParam:
       name: accountID
       in: path
@@ -288,6 +281,13 @@ components:
       schema:
         type: string
         format: uuid
+    PaymentLinkCodeParam:
+      name: paymentLinkCode
+      in: path
+      required: true
+      description: Unique code identifier for the payment link.
+      schema:
+        type: string
   securitySchemes:
     bearerAuth:
       type: http

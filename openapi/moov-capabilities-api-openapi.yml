@@ -113,7 +113,71 @@ paths:
     - url: https://api.moov.io
       description: Production Server
 components:
+  responses:
+    BadRequest:
+      description: The request was malformed or contained invalid parameters.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  parameters:
+    CapabilityIDParam:
+      name: capabilityID
+      in: path
+      required: true
+      description: Unique identifier for the capability.
+      schema:
+        type: string
+    AccountIDParam:
+      name: accountID
+      in: path
+      required: true
+      description: Unique identifier for the Moov account.
+      schema:
+        type: string
+        format: uuid
+    accountID:
+      name: accountID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The Moov account identifier.
   schemas:
+    CapabilityRequirement:
+      type: object
+      description: A requirement that must be satisfied to activate a capability.
+      properties:
+        requirement:
+          type: string
+          description: Machine-readable identifier for the requirement type.
+        errorCode:
+          type: string
+          description: Error code providing more detail about why the requirement is unmet.
+    RequestCapabilitiesRequest:
+      type: object
+      description: Request body for enabling capabilities on a Moov account.
+      required:
+      - capabilities
+      properties:
+        capabilities:
+          type: array
+          description: List of capability identifiers to request.
+          items:
+            type: string
     Capability:
       type: object
       description: A feature or permission that enables specific financial operations on a Moov account, such as the ability to send or receive funds.
@@ -149,27 +213,6 @@ components:
           type: string
           format: date-time
           description: ISO 8601 timestamp when the capability was last updated.
-    RequestCapabilitiesRequest:
-      type: object
-      description: Request body for enabling capabilities on a Moov account.
-      required:
-      - capabilities
-      properties:
-        capabilities:
-          type: array
-          description: List of capability identifiers to request.
-          items:
-            type: string
-    CapabilityRequirement:
-      type: object
-      description: A requirement that must be satisfied to activate a capability.
-      properties:
-        requirement:
-          type: string
-          description: Machine-readable identifier for the requirement type.
-        errorCode:
-          type: string
-          description: Error code providing more detail about why the requirement is unmet.
     Error:
       type: object
       description: Standard error response returned by the Moov API.
@@ -180,49 +223,6 @@ components:
         code:
           type: string
           description: Machine-readable error code.
-  responses:
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    BadRequest:
-      description: The request was malformed or contained invalid parameters.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-  parameters:
-    CapabilityIDParam:
-      name: capabilityID
-      in: path
-      required: true
-      description: Unique identifier for the capability.
-      schema:
-        type: string
-    AccountIDParam:
-      name: accountID
-      in: path
-      required: true
-      description: Unique identifier for the Moov account.
-      schema:
-        type: string
-        format: uuid
-    accountID:
-      name: accountID
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
-      description: The Moov account identifier.
   securitySchemes:
     bearerAuth:
       type: http

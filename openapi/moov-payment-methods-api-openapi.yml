@@ -71,6 +71,111 @@ paths:
       description: Production Server
 components:
   schemas:
+    BankAccount:
+      type: object
+      description: A bank account linked to a Moov account as a funding source for ACH and RTP transfers.
+      properties:
+        bankAccountID:
+          type: string
+          format: uuid
+          description: Unique identifier for the bank account.
+        bankName:
+          type: string
+          description: Name of the financial institution.
+        bankAccountType:
+          type: string
+          description: Type of bank account.
+          enum:
+          - checking
+          - savings
+          - loan
+        routingNumber:
+          type: string
+          description: ABA routing transit number for the bank.
+          pattern: ^\d{9}$
+        lastFourAccountNumber:
+          type: string
+          description: Last four digits of the bank account number.
+          pattern: ^\d{4}$
+        status:
+          type: string
+          description: Verification and usability status of the bank account.
+          enum:
+          - new
+          - unverified
+          - pending
+          - verified
+          - errored
+        verificationStatus:
+          type: string
+          description: Current state of the bank account verification process.
+          enum:
+          - unverified
+          - pending
+          - verificationFailed
+          - verified
+          - mxVerified
+        createdOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the bank account was linked.
+        updatedOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the bank account was last updated.
+    PaymentMethod:
+      type: object
+      description: A payment method on a Moov account, representing a bank account, card, or wallet that can be used as the source or destination of a transfer.
+      properties:
+        paymentMethodID:
+          type: string
+          format: uuid
+          description: Unique identifier for the payment method.
+        paymentMethodType:
+          type: string
+          description: The type of underlying payment instrument.
+          enum:
+          - moov-wallet
+          - ach-debit-fund
+          - ach-debit-collect
+          - ach-credit-standard
+          - ach-credit-same-day
+          - rtp-credit
+          - card-payment
+        wallet:
+          $ref: '#/components/schemas/Wallet'
+        bankAccount:
+          $ref: '#/components/schemas/BankAccount'
+        card:
+          $ref: '#/components/schemas/Card'
+    CardVerification:
+      type: object
+      description: Results of card verification checks.
+      properties:
+        cvv:
+          type: string
+          description: CVV verification result.
+          enum:
+          - match
+          - noMatch
+          - notChecked
+          - unavailable
+        addressLine1:
+          type: string
+          description: Address line 1 AVS verification result.
+          enum:
+          - match
+          - noMatch
+          - notChecked
+          - unavailable
+        postalCode:
+          type: string
+          description: Postal code AVS verification result.
+          enum:
+          - match
+          - noMatch
+          - notChecked
+          - unavailable
     Card:
       type: object
       description: A credit or debit card linked to a Moov account as a payment source.
@@ -131,18 +236,24 @@ components:
           type: string
           format: date-time
           description: ISO 8601 timestamp when the card was last updated.
-    CardExpiration:
+    Wallet:
       type: object
-      description: Card expiration date.
+      description: A Moov digital wallet that holds funds on the platform for an account. Wallets serve as intermediate stores of value for money movement.
       properties:
-        month:
+        walletID:
           type: string
-          description: Two-digit expiration month.
-          pattern: ^(0[1-9]|1[0-2])$
-        year:
+          format: uuid
+          description: Unique identifier for the wallet.
+        availableBalance:
+          $ref: '#/components/schemas/Amount'
+        createdOn:
           type: string
-          description: Two-digit expiration year.
-          pattern: ^\d{2}$
+          format: date-time
+          description: ISO 8601 timestamp when the wallet was created.
+        updatedOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the wallet was last updated.
     Amount:
       type: object
       description: A monetary amount with currency denomination.
@@ -157,86 +268,18 @@ components:
           type: integer
           description: Amount in the smallest currency unit (e.g., cents for USD).
           minimum: 0
-    BankAccount:
+    CardExpiration:
       type: object
-      description: A bank account linked to a Moov account as a funding source for ACH and RTP transfers.
+      description: Card expiration date.
       properties:
-        bankAccountID:
+        month:
           type: string
-          format: uuid
-          description: Unique identifier for the bank account.
-        bankName:
+          description: Two-digit expiration month.
+          pattern: ^(0[1-9]|1[0-2])$
+        year:
           type: string
-          description: Name of the financial institution.
-        bankAccountType:
-          type: string
-          description: Type of bank account.
-          enum:
-          - checking
-          - savings
-          - loan
-        routingNumber:
-          type: string
-          description: ABA routing transit number for the bank.
-          pattern: ^\d{9}$
-        lastFourAccountNumber:
-          type: string
-          description: Last four digits of the bank account number.
-          pattern: ^\d{4}$
-        status:
-          type: string
-          description: Verification and usability status of the bank account.
-          enum:
-          - new
-          - unverified
-          - pending
-          - verified
-          - errored
-        verificationStatus:
-          type: string
-          description: Current state of the bank account verification process.
-          enum:
-          - unverified
-          - pending
-          - verificationFailed
-          - verified
-          - mxVerified
-        createdOn:
-          type: string
-          format: date-time
-          description: ISO 8601 timestamp when the bank account was linked.
-        updatedOn:
-          type: string
-          format: date-time
-          description: ISO 8601 timestamp when the bank account was last updated.
-    CardVerification:
-      type: object
-      description: Results of card verification checks.
-      properties:
-        cvv:
-          type: string
-          description: CVV verification result.
-          enum:
-          - match
-          - noMatch
-          - notChecked
-          - unavailable
-        addressLine1:
-          type: string
-          description: Address line 1 AVS verification result.
-          enum:
-          - match
-          - noMatch
-          - notChecked
-          - unavailable
-        postalCode:
-          type: string
-          description: Postal code AVS verification result.
-          enum:
-          - match
-          - noMatch
-          - notChecked
-          - unavailable
+          description: Two-digit expiration year.
+          pattern: ^\d{2}$
     Error:
       type: object
       description: Standard error response returned by the Moov API.
@@ -247,31 +290,6 @@ components:
         code:
           type: string
           description: Machine-readable error code.
-    PaymentMethod:
-      type: object
-      description: A payment method on a Moov account, representing a bank account, card, or wallet that can be used as the source or destination of a transfer.
-      properties:
-        paymentMethodID:
-          type: string
-          format: uuid
-          description: Unique identifier for the payment method.
-        paymentMethodType:
-          type: string
-          description: The type of underlying payment instrument.
-          enum:
-          - moov-wallet
-          - ach-debit-fund
-          - ach-debit-collect
-          - ach-credit-standard
-          - ach-credit-same-day
-          - rtp-credit
-          - card-payment
-        wallet:
-          $ref: '#/components/schemas/Wallet'
-        bankAccount:
-          $ref: '#/components/schemas/BankAccount'
-        card:
-          $ref: '#/components/schemas/Card'
     Address:
       type: object
       description: Physical or mailing address.
@@ -296,24 +314,6 @@ components:
           type: string
           description: Two-letter ISO 3166-1 alpha-2 country code.
           maxLength: 2
-    Wallet:
-      type: object
-      description: A Moov digital wallet that holds funds on the platform for an account. Wallets serve as intermediate stores of value for money movement.
-      properties:
-        walletID:
-          type: string
-          format: uuid
-          description: Unique identifier for the wallet.
-        availableBalance:
-          $ref: '#/components/schemas/Amount'
-        createdOn:
-          type: string
-          format: date-time
-          description: ISO 8601 timestamp when the wallet was created.
-        updatedOn:
-          type: string
-          format: date-time
-          description: ISO 8601 timestamp when the wallet was last updated.
   responses:
     NotFound:
       description: The requested resource was not found.
@@ -328,19 +328,19 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
   parameters:
-    PaymentMethodIDParam:
-      name: paymentMethodID
-      in: path
-      required: true
-      description: Unique identifier for the payment method.
-      schema:
-        type: string
-        format: uuid
     AccountIDParam:
       name: accountID
       in: path
       required: true
       description: Unique identifier for the Moov account.
+      schema:
+        type: string
+        format: uuid
+    PaymentMethodIDParam:
+      name: paymentMethodID
+      in: path
+      required: true
+      description: Unique identifier for the payment method.
       schema:
         type: string
         format: uuid

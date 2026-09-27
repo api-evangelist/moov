@@ -139,7 +139,36 @@ paths:
     - url: https://api.moov.io
       description: Production Server
 components:
+  responses:
+    BadRequest:
+      description: The request was malformed or contained invalid parameters.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
+    Error:
+      type: object
+      description: Standard error response returned by the Moov API.
+      properties:
+        error:
+          type: string
+          description: Human-readable description of the error.
+        code:
+          type: string
+          description: Machine-readable error code.
     Card:
       type: object
       description: A credit or debit card linked to a Moov account as a payment source.
@@ -200,6 +229,34 @@ components:
           type: string
           format: date-time
           description: ISO 8601 timestamp when the card was last updated.
+    CardVerification:
+      type: object
+      description: Results of card verification checks.
+      properties:
+        cvv:
+          type: string
+          description: CVV verification result.
+          enum:
+          - match
+          - noMatch
+          - notChecked
+          - unavailable
+        addressLine1:
+          type: string
+          description: Address line 1 AVS verification result.
+          enum:
+          - match
+          - noMatch
+          - notChecked
+          - unavailable
+        postalCode:
+          type: string
+          description: Postal code AVS verification result.
+          enum:
+          - match
+          - noMatch
+          - notChecked
+          - unavailable
     CardExpiration:
       type: object
       description: Card expiration date.
@@ -231,44 +288,6 @@ components:
           description: Name of the cardholder.
         billingAddress:
           $ref: '#/components/schemas/Address'
-    Error:
-      type: object
-      description: Standard error response returned by the Moov API.
-      properties:
-        error:
-          type: string
-          description: Human-readable description of the error.
-        code:
-          type: string
-          description: Machine-readable error code.
-    CardVerification:
-      type: object
-      description: Results of card verification checks.
-      properties:
-        cvv:
-          type: string
-          description: CVV verification result.
-          enum:
-          - match
-          - noMatch
-          - notChecked
-          - unavailable
-        addressLine1:
-          type: string
-          description: Address line 1 AVS verification result.
-          enum:
-          - match
-          - noMatch
-          - notChecked
-          - unavailable
-        postalCode:
-          type: string
-          description: Postal code AVS verification result.
-          enum:
-          - match
-          - noMatch
-          - notChecked
-          - unavailable
     UpdateCardRequest:
       type: object
       description: Request body for updating a linked card.
@@ -331,25 +350,6 @@ components:
         type: string
         format: uuid
       description: The Moov account identifier.
-  responses:
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    BadRequest:
-      description: The request was malformed or contained invalid parameters.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   securitySchemes:
     bearerAuth:
       type: http

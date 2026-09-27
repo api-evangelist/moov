@@ -281,6 +281,37 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
   schemas:
+    DisputeEvidence:
+      type: object
+      description: A piece of evidence submitted in response to a card dispute.
+      properties:
+        evidenceID:
+          type: string
+          format: uuid
+          description: Unique identifier for the evidence item.
+        disputeID:
+          type: string
+          format: uuid
+          description: The dispute this evidence is associated with.
+        evidenceType:
+          type: string
+          description: Classification of the evidence type.
+          enum:
+          - customer-communication
+          - customer-signature
+          - receipt
+          - refund-policy
+          - service-documentation
+          - shipping-documentation
+          - shipping-tracking
+          - other
+        text:
+          type: string
+          description: Text content for text-based evidence submissions.
+        createdOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the evidence was submitted.
     Dispute:
       type: object
       description: A card payment dispute (chargeback) initiated by a cardholder through their card issuer. Disputes require evidence submission or acceptance.
@@ -345,47 +376,6 @@ components:
           type: integer
           description: Amount in the smallest currency unit (e.g., cents for USD).
           minimum: 0
-    Error:
-      type: object
-      description: Standard error response returned by the Moov API.
-      properties:
-        error:
-          type: string
-          description: Human-readable description of the error.
-        code:
-          type: string
-          description: Machine-readable error code.
-    DisputeEvidence:
-      type: object
-      description: A piece of evidence submitted in response to a card dispute.
-      properties:
-        evidenceID:
-          type: string
-          format: uuid
-          description: Unique identifier for the evidence item.
-        disputeID:
-          type: string
-          format: uuid
-          description: The dispute this evidence is associated with.
-        evidenceType:
-          type: string
-          description: Classification of the evidence type.
-          enum:
-          - customer-communication
-          - customer-signature
-          - receipt
-          - refund-policy
-          - service-documentation
-          - shipping-documentation
-          - shipping-tracking
-          - other
-        text:
-          type: string
-          description: Text content for text-based evidence submissions.
-        createdOn:
-          type: string
-          format: date-time
-          description: ISO 8601 timestamp when the evidence was submitted.
     DisputeEvidenceText:
       type: object
       description: Request body for submitting text-based dispute evidence.
@@ -404,12 +394,39 @@ components:
           - refund-policy
           - service-documentation
           - other
+    Error:
+      type: object
+      description: Standard error response returned by the Moov API.
+      properties:
+        error:
+          type: string
+          description: Human-readable description of the error.
+        code:
+          type: string
+          description: Machine-readable error code.
   parameters:
+    CountParam:
+      name: count
+      in: query
+      description: Maximum number of results to return per page.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
     DisputeIDParam:
       name: disputeID
       in: path
       required: true
       description: Unique identifier for the dispute.
+      schema:
+        type: string
+        format: uuid
+    AccountIDParam:
+      name: accountID
+      in: path
+      required: true
+      description: Unique identifier for the Moov account.
       schema:
         type: string
         format: uuid
@@ -421,30 +438,6 @@ components:
         type: integer
         minimum: 0
         default: 0
-    AccountIDParam:
-      name: accountID
-      in: path
-      required: true
-      description: Unique identifier for the Moov account.
-      schema:
-        type: string
-        format: uuid
-    CountParam:
-      name: count
-      in: query
-      description: Maximum number of results to return per page.
-      schema:
-        type: integer
-        minimum: 1
-        maximum: 100
-        default: 20
-    evidenceID:
-      name: evidenceID
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
     disputeID:
       name: disputeID
       in: path
@@ -460,6 +453,13 @@ components:
         type: string
         format: uuid
       description: The Moov account identifier.
+    evidenceID:
+      name: evidenceID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
   securitySchemes:
     bearerAuth:
       type: http

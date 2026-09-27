@@ -215,30 +215,6 @@ paths:
       description: Moov production
 components:
   schemas:
-    Amount:
-      type: object
-      description: A monetary amount with currency denomination.
-      properties:
-        currency:
-          type: string
-          description: ISO 4217 three-letter currency code.
-          default: USD
-          minLength: 3
-          maxLength: 3
-        value:
-          type: integer
-          description: Amount in the smallest currency unit (e.g., cents for USD).
-          minimum: 0
-    Error:
-      type: object
-      description: Standard error response returned by the Moov API.
-      properties:
-        error:
-          type: string
-          description: Human-readable description of the error.
-        code:
-          type: string
-          description: Machine-readable error code.
     UpdateWalletRequest:
       type: object
       description: Request body for updating a Moov wallet.
@@ -246,24 +222,6 @@ components:
         name:
           type: string
           description: Display name for the wallet.
-    Wallet:
-      type: object
-      description: A Moov digital wallet that holds funds on the platform for an account. Wallets serve as intermediate stores of value for money movement.
-      properties:
-        walletID:
-          type: string
-          format: uuid
-          description: Unique identifier for the wallet.
-        availableBalance:
-          $ref: '#/components/schemas/Amount'
-        createdOn:
-          type: string
-          format: date-time
-          description: ISO 8601 timestamp when the wallet was created.
-        updatedOn:
-          type: string
-          format: date-time
-          description: ISO 8601 timestamp when the wallet was last updated.
     WalletTransaction:
       type: object
       description: A single credit or debit entry in the history of a Moov wallet.
@@ -314,7 +272,55 @@ components:
           description: ISO 8601 timestamp when the transaction was created.
         amount:
           $ref: '#/components/schemas/Amount'
+    Wallet:
+      type: object
+      description: A Moov digital wallet that holds funds on the platform for an account. Wallets serve as intermediate stores of value for money movement.
+      properties:
+        walletID:
+          type: string
+          format: uuid
+          description: Unique identifier for the wallet.
+        availableBalance:
+          $ref: '#/components/schemas/Amount'
+        createdOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the wallet was created.
+        updatedOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the wallet was last updated.
+    Amount:
+      type: object
+      description: A monetary amount with currency denomination.
+      properties:
+        currency:
+          type: string
+          description: ISO 4217 three-letter currency code.
+          default: USD
+          minLength: 3
+          maxLength: 3
+        value:
+          type: integer
+          description: Amount in the smallest currency unit (e.g., cents for USD).
+          minimum: 0
+    Error:
+      type: object
+      description: Standard error response returned by the Moov API.
+      properties:
+        error:
+          type: string
+          description: Human-readable description of the error.
+        code:
+          type: string
+          description: Machine-readable error code.
   responses:
+    BadRequest:
+      description: The request was malformed or contained invalid parameters.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
     NotFound:
       description: The requested resource was not found.
       content:
@@ -327,37 +333,7 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    BadRequest:
-      description: The request was malformed or contained invalid parameters.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   parameters:
-    SkipParam:
-      name: skip
-      in: query
-      description: Number of results to skip for pagination.
-      schema:
-        type: integer
-        minimum: 0
-        default: 0
-    AccountIDParam:
-      name: accountID
-      in: path
-      required: true
-      description: Unique identifier for the Moov account.
-      schema:
-        type: string
-        format: uuid
-    WalletIDParam:
-      name: walletID
-      in: path
-      required: true
-      description: Unique identifier for the wallet.
-      schema:
-        type: string
-        format: uuid
     CountParam:
       name: count
       in: query
@@ -367,6 +343,37 @@ components:
         minimum: 1
         maximum: 100
         default: 20
+    WalletIDParam:
+      name: walletID
+      in: path
+      required: true
+      description: Unique identifier for the wallet.
+      schema:
+        type: string
+        format: uuid
+    AccountIDParam:
+      name: accountID
+      in: path
+      required: true
+      description: Unique identifier for the Moov account.
+      schema:
+        type: string
+        format: uuid
+    SkipParam:
+      name: skip
+      in: query
+      description: Number of results to skip for pagination.
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+    walletID:
+      name: walletID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
     accountID:
       name: accountID
       in: path
@@ -375,13 +382,6 @@ components:
         type: string
         format: uuid
       description: The Moov account identifier.
-    walletID:
-      name: walletID
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
   securitySchemes:
     bearerAuth:
       type: http
