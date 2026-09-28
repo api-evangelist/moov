@@ -16,16 +16,28 @@ deployment:
 tools_count: 6
 tools:
 - name: search_moov_docs
-  description: ''
+  description: Search Moov documentation by keyword. Returns matching pages with title, path, section,
+    and excerpt. Start here when you don't know which doc to read, then call get_moov_doc with a path
+    from the results to read the full page.
 - name: get_moov_doc
-  description: ''
+  description: Get the full content of a specific Moov documentation page by its path (e.g. "/guides/accounts/create-accounts/").
+    Use a path returned by search_moov_docs or list_moov_sections.
 - name: list_moov_sections
-  description: ''
+  description: List all top-level sections of the Moov documentation with descriptions and page counts.
+    Use this when you need to orient yourself before searching.
 - name: get_api_operation
-  description: ''
+  description: Get an API endpoint with request schema, response shape, and SDK code samples (cURL, TypeScript,
+    PHP, Java, Python, Ruby, C#, Go) from the official OpenAPI spec. ALWAYS prefer this over get_code_sample
+    when the user wants code for a specifi
 - name: read_skill
-  description: ''
+  description: Read the Moov integration skill (instructions, patterns, gotchas) used by external MCP
+    clients to build correctly. EXPENSIVE in tokens — use only when the user asks about overall integration
+    strategy or an end-to-end flow, not for specific
 - name: get_code_sample
-  description: ''
+  description: 'Fallback: read a multi-step end-to-end recipe from the docs code-samples folder (e.g.
+    "check-webhook-signature", "e-to-e"). Prefer get_api_operation for single-endpoint code; only reach
+    for this when you specifically need a hand-written mul'
 tools_source: live tools/list via initialize handshake, 2026-09-11 (signals/audit_mcp_authorship.py --probe)
 authorship: provider
+descriptions_source: live tools/list (authorship probe or saved capture); filled by backfill-tools-from-authorship.py
+  --descriptions, 2026-09-28
