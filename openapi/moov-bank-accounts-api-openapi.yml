@@ -229,26 +229,96 @@ paths:
     - url: https://api.moov.io
       description: Production Server
 components:
-  responses:
-    BadRequest:
-      description: The request was malformed or contained invalid parameters.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   schemas:
+    CompleteVerificationRequest:
+      type: object
+      description: Request body for completing instant bank account verification.
+      properties:
+        code:
+          type: string
+          description: The verification code provided during the instant verification flow.
+    LinkBankAccountRequest:
+      type: object
+      description: Request body for linking a bank account to a Moov account.
+      properties:
+        account:
+          type: object
+          description: Bank account details for direct linking.
+          properties:
+            routingNumber:
+              type: string
+              description: ABA routing transit number.
+              pattern: ^\d{9}$
+            accountNumber:
+              type: string
+              description: Bank account number.
+            bankAccountType:
+              type: string
+              description: Type of bank account.
+              enum:
+              - checking
+              - savings
+            holderName:
+              type: string
+              description: Name of the account holder.
+            holderType:
+              type: string
+              description: Whether the account is held by an individual or business.
+              enum:
+              - individual
+              - business
+        plaid:
+          type: object
+          description: Link via Plaid public token for pre-verified accounts.
+          properties:
+            token:
+              type: string
+              description: Plaid public token from the Plaid Link flow.
+        mx:
+          type: object
+          description: Link via MX widget token for pre-verified accounts.
+          properties:
+            token:
+              type: string
+              description: MX widget token.
+    BankAccountVerification:
+      type: object
+      description: Status and details of a bank account verification attempt.
+      properties:
+        status:
+          type: string
+          description: Current status of the verification.
+          enum:
+          - pending
+          - completed
+          - failed
+        exceptionDetails:
+          type: string
+          description: Error details if the verification failed.
+    Error:
+      type: object
+      description: Standard error response returned by the Moov API.
+      properties:
+        error:
+          type: string
+          description: Human-readable description of the error.
+        code:
+          type: string
+          description: Machine-readable error code.
+    MicroDepositConfirmation:
+      type: object
+      description: Request body for confirming micro-deposit amounts.
+      required:
+      - amounts
+      properties:
+        amounts:
+          type: array
+          description: The two micro-deposit amounts in cents that were sent to the bank account.
+          items:
+            type: integer
+            minimum: 1
+          minItems: 2
+          maxItems: 2
     BankAccount:
       type: object
       description: A bank account linked to a Moov account as a funding source for ACH and RTP transfers.
@@ -301,109 +371,20 @@ components:
           type: string
           format: date-time
           description: ISO 8601 timestamp when the bank account was last updated.
-    LinkBankAccountRequest:
-      type: object
-      description: Request body for linking a bank account to a Moov account.
-      properties:
-        account:
-          type: object
-          description: Bank account details for direct linking.
-          properties:
-            routingNumber:
-              type: string
-              description: ABA routing transit number.
-              pattern: ^\d{9}$
-            accountNumber:
-              type: string
-              description: Bank account number.
-            bankAccountType:
-              type: string
-              description: Type of bank account.
-              enum:
-              - checking
-              - savings
-            holderName:
-              type: string
-              description: Name of the account holder.
-            holderType:
-              type: string
-              description: Whether the account is held by an individual or business.
-              enum:
-              - individual
-              - business
-        plaid:
-          type: object
-          description: Link via Plaid public token for pre-verified accounts.
-          properties:
-            token:
-              type: string
-              description: Plaid public token from the Plaid Link flow.
-        mx:
-          type: object
-          description: Link via MX widget token for pre-verified accounts.
-          properties:
-            token:
-              type: string
-              description: MX widget token.
-    MicroDepositConfirmation:
-      type: object
-      description: Request body for confirming micro-deposit amounts.
-      required:
-      - amounts
-      properties:
-        amounts:
-          type: array
-          description: The two micro-deposit amounts in cents that were sent to the bank account.
-          items:
-            type: integer
-            minimum: 1
-          minItems: 2
-          maxItems: 2
-    BankAccountVerification:
-      type: object
-      description: Status and details of a bank account verification attempt.
-      properties:
-        status:
-          type: string
-          description: Current status of the verification.
-          enum:
-          - pending
-          - completed
-          - failed
-        exceptionDetails:
-          type: string
-          description: Error details if the verification failed.
-    CompleteVerificationRequest:
-      type: object
-      description: Request body for completing instant bank account verification.
-      properties:
-        code:
-          type: string
-          description: The verification code provided during the instant verification flow.
-    Error:
-      type: object
-      description: Standard error response returned by the Moov API.
-      properties:
-        error:
-          type: string
-          description: Human-readable description of the error.
-        code:
-          type: string
-          description: Machine-readable error code.
   parameters:
-    AccountIDParam:
-      name: accountID
-      in: path
-      required: true
-      description: Unique identifier for the Moov account.
-      schema:
-        type: string
-        format: uuid
     BankAccountIDParam:
       name: bankAccountID
       in: path
       required: true
       description: Unique identifier for the bank account.
+      schema:
+        type: string
+        format: uuid
+    AccountIDParam:
+      name: accountID
+      in: path
+      required: true
+      description: Unique identifier for the Moov account.
       schema:
         type: string
         format: uuid
@@ -422,6 +403,25 @@ components:
         type: string
         format: uuid
       description: The Moov account identifier.
+  responses:
+    BadRequest:
+      description: The request was malformed or contained invalid parameters.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     bearerAuth:
       type: http

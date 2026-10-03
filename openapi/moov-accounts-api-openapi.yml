@@ -223,6 +223,147 @@ paths:
       description: Production Server
 components:
   schemas:
+    SsnOrItin:
+      type: object
+      description: Social Security Number or Individual Taxpayer Identification Number.
+      properties:
+        full:
+          type: string
+          description: Full 9-digit SSN or ITIN. Only provided on write; masked on read.
+          pattern: ^\d{9}$
+        lastFour:
+          type: string
+          description: Last four digits of the SSN or ITIN.
+          pattern: ^\d{4}$
+    Capability:
+      type: object
+      description: A feature or permission that enables specific financial operations on a Moov account, such as the ability to send or receive funds.
+      properties:
+        capability:
+          type: string
+          description: Identifier for the capability type (e.g., "transfers.push", "collect-funds").
+        accountID:
+          type: string
+          format: uuid
+          description: The account this capability belongs to.
+        status:
+          type: string
+          description: Current activation status of the capability.
+          enum:
+          - enabled
+          - disabled
+          - pending
+          - in-review
+        requirements:
+          type: array
+          description: List of requirements that must be fulfilled to activate this capability.
+          items:
+            $ref: '#/components/schemas/CapabilityRequirement'
+        disabledReason:
+          type: string
+          description: Explanation of why the capability is disabled, if applicable.
+        createdOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the capability was created.
+        updatedOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the capability was last updated.
+    IndustryCodes:
+      type: object
+      description: Industry classification codes for the business.
+      properties:
+        naics:
+          type: string
+          description: North American Industry Classification System code.
+        sic:
+          type: string
+          description: Standard Industrial Classification code.
+        mcc:
+          type: string
+          description: Merchant Category Code for card payment processing.
+    AccountVerification:
+      type: object
+      description: Identity verification status for a Moov account.
+      properties:
+        verificationStatus:
+          type: string
+          description: Current KYC/KYB verification status.
+          enum:
+          - unverified
+          - pending
+          - resubmit
+          - review
+          - verified
+          - failed
+    Error:
+      type: object
+      description: Standard error response returned by the Moov API.
+      properties:
+        error:
+          type: string
+          description: Human-readable description of the error.
+        code:
+          type: string
+          description: Machine-readable error code.
+    CreateAccountRequest:
+      type: object
+      description: Request body for creating a new Moov account.
+      required:
+      - accountType
+      - profile
+      properties:
+        accountType:
+          type: string
+          description: Whether the account is for an individual or a business.
+          enum:
+          - individual
+          - business
+        profile:
+          $ref: '#/components/schemas/AccountProfile'
+        metadata:
+          type: object
+          description: Custom key-value metadata to attach to the account.
+          additionalProperties:
+            type: string
+        termsOfService:
+          type: object
+          description: Terms of service acceptance details.
+          properties:
+            token:
+              type: string
+              description: Token obtained from the /tos-token endpoint.
+        foreignID:
+          type: string
+          description: External identifier from your system to associate with this account.
+    TosToken:
+      type: object
+      description: Short-lived token confirming acceptance of Moov's terms of service.
+      properties:
+        token:
+          type: string
+          description: The terms of service token to include when creating an account.
+        expiresOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the token expires.
+    Name:
+      type: object
+      description: Full name of an individual.
+      properties:
+        firstName:
+          type: string
+          description: Given name.
+        middleName:
+          type: string
+          description: Middle name or initial.
+        lastName:
+          type: string
+          description: Family name.
+        suffix:
+          type: string
+          description: Name suffix (e.g., Jr., Sr., III).
     AccountConnectionRequest:
       type: object
       description: Request to share an account connection with another Moov account.
@@ -231,6 +372,54 @@ components:
           type: string
           format: uuid
           description: The account ID of the partner to connect with.
+    GovernmentID:
+      type: object
+      description: Government-issued identification for KYC verification.
+      properties:
+        ssn:
+          $ref: '#/components/schemas/SsnOrItin'
+        itin:
+          $ref: '#/components/schemas/SsnOrItin'
+    BusinessProfile:
+      type: object
+      description: Profile data for a business Moov account.
+      properties:
+        legalBusinessName:
+          type: string
+          description: Registered legal name of the business.
+        businessType:
+          type: string
+          description: Type of business entity.
+          enum:
+          - soleProprietorship
+          - unincorporatedAssociation
+          - trust
+          - publicCorporation
+          - privateCorporation
+          - privateCorporation
+          - llc
+          - partnership
+          - unincorporatedNonProfit
+          - incorporatedNonProfit
+        address:
+          $ref: '#/components/schemas/Address'
+        phone:
+          $ref: '#/components/schemas/Phone'
+        email:
+          type: string
+          format: email
+          description: Primary business email address.
+        website:
+          type: string
+          format: uri
+          description: Business website URL.
+        description:
+          type: string
+          description: Brief description of the business and its products or services.
+        taxID:
+          $ref: '#/components/schemas/TaxID'
+        industryCodes:
+          $ref: '#/components/schemas/IndustryCodes'
     Account:
       type: object
       description: A Moov account representing a legal entity (individual or business) that can send, receive, and store funds on the platform.
@@ -276,6 +465,26 @@ components:
         countryCode:
           type: string
           description: International country calling code (e.g., "1" for US).
+    IndividualProfile:
+      type: object
+      description: Profile data for an individual Moov account.
+      properties:
+        name:
+          $ref: '#/components/schemas/Name'
+        email:
+          type: string
+          format: email
+          description: Email address of the individual.
+        phone:
+          $ref: '#/components/schemas/Phone'
+        address:
+          $ref: '#/components/schemas/Address'
+        birthDate:
+          type: string
+          format: date
+          description: Date of birth in ISO 8601 format (YYYY-MM-DD).
+        governmentID:
+          $ref: '#/components/schemas/GovernmentID'
     CapabilityRequirement:
       type: object
       description: A requirement that must be satisfied to activate a capability.
@@ -286,51 +495,36 @@ components:
         errorCode:
           type: string
           description: Error code providing more detail about why the requirement is unmet.
-    Capability:
+    AccountConnection:
       type: object
-      description: A feature or permission that enables specific financial operations on a Moov account, such as the ability to send or receive funds.
+      description: An established connection between two Moov accounts.
       properties:
-        capability:
-          type: string
-          description: Identifier for the capability type (e.g., "transfers.push", "collect-funds").
         accountID:
           type: string
           format: uuid
-          description: The account this capability belongs to.
-        status:
+          description: The account that initiated the connection.
+        partnerAccountID:
           type: string
-          description: Current activation status of the capability.
-          enum:
-          - enabled
-          - disabled
-          - pending
-          - in-review
-        requirements:
-          type: array
-          description: List of requirements that must be fulfilled to activate this capability.
-          items:
-            $ref: '#/components/schemas/CapabilityRequirement'
-        disabledReason:
-          type: string
-          description: Explanation of why the capability is disabled, if applicable.
+          format: uuid
+          description: The connected partner account.
         createdOn:
           type: string
           format: date-time
-          description: ISO 8601 timestamp when the capability was created.
-        updatedOn:
-          type: string
-          format: date-time
-          description: ISO 8601 timestamp when the capability was last updated.
-    Error:
+          description: ISO 8601 timestamp when the connection was created.
+    UpdateAccountRequest:
       type: object
-      description: Standard error response returned by the Moov API.
+      description: Request body for updating a Moov account. Only provided fields are updated.
       properties:
-        error:
+        profile:
+          $ref: '#/components/schemas/AccountProfile'
+        metadata:
+          type: object
+          description: Custom key-value metadata to attach to the account.
+          additionalProperties:
+            type: string
+        foreignID:
           type: string
-          description: Human-readable description of the error.
-        code:
-          type: string
-          description: Machine-readable error code.
+          description: External identifier from your system.
     Address:
       type: object
       description: Physical or mailing address.
@@ -355,6 +549,14 @@ components:
           type: string
           description: Two-letter ISO 3166-1 alpha-2 country code.
           maxLength: 2
+    AccountProfile:
+      type: object
+      description: Profile information for a Moov account.
+      properties:
+        individual:
+          $ref: '#/components/schemas/IndividualProfile'
+        business:
+          $ref: '#/components/schemas/BusinessProfile'
     TaxID:
       type: object
       description: Business tax identification number.
@@ -367,209 +569,15 @@ components:
               type: string
               description: Full EIN. Only provided on write; masked on read.
               pattern: ^\d{9}$
-    CreateAccountRequest:
-      type: object
-      description: Request body for creating a new Moov account.
-      required:
-      - accountType
-      - profile
-      properties:
-        accountType:
-          type: string
-          description: Whether the account is for an individual or a business.
-          enum:
-          - individual
-          - business
-        profile:
-          $ref: '#/components/schemas/AccountProfile'
-        metadata:
-          type: object
-          description: Custom key-value metadata to attach to the account.
-          additionalProperties:
-            type: string
-        termsOfService:
-          type: object
-          description: Terms of service acceptance details.
-          properties:
-            token:
-              type: string
-              description: Token obtained from the /tos-token endpoint.
-        foreignID:
-          type: string
-          description: External identifier from your system to associate with this account.
-    AccountConnection:
-      type: object
-      description: An established connection between two Moov accounts.
-      properties:
-        accountID:
-          type: string
-          format: uuid
-          description: The account that initiated the connection.
-        partnerAccountID:
-          type: string
-          format: uuid
-          description: The connected partner account.
-        createdOn:
-          type: string
-          format: date-time
-          description: ISO 8601 timestamp when the connection was created.
-    AccountVerification:
-      type: object
-      description: Identity verification status for a Moov account.
-      properties:
-        verificationStatus:
-          type: string
-          description: Current KYC/KYB verification status.
-          enum:
-          - unverified
-          - pending
-          - resubmit
-          - review
-          - verified
-          - failed
-    IndustryCodes:
-      type: object
-      description: Industry classification codes for the business.
-      properties:
-        naics:
-          type: string
-          description: North American Industry Classification System code.
-        sic:
-          type: string
-          description: Standard Industrial Classification code.
-        mcc:
-          type: string
-          description: Merchant Category Code for card payment processing.
-    IndividualProfile:
-      type: object
-      description: Profile data for an individual Moov account.
-      properties:
-        name:
-          $ref: '#/components/schemas/Name'
-        email:
-          type: string
-          format: email
-          description: Email address of the individual.
-        phone:
-          $ref: '#/components/schemas/Phone'
-        address:
-          $ref: '#/components/schemas/Address'
-        birthDate:
-          type: string
-          format: date
-          description: Date of birth in ISO 8601 format (YYYY-MM-DD).
-        governmentID:
-          $ref: '#/components/schemas/GovernmentID'
-    BusinessProfile:
-      type: object
-      description: Profile data for a business Moov account.
-      properties:
-        legalBusinessName:
-          type: string
-          description: Registered legal name of the business.
-        businessType:
-          type: string
-          description: Type of business entity.
-          enum:
-          - soleProprietorship
-          - unincorporatedAssociation
-          - trust
-          - publicCorporation
-          - privateCorporation
-          - privateCorporation
-          - llc
-          - partnership
-          - unincorporatedNonProfit
-          - incorporatedNonProfit
-        address:
-          $ref: '#/components/schemas/Address'
-        phone:
-          $ref: '#/components/schemas/Phone'
-        email:
-          type: string
-          format: email
-          description: Primary business email address.
-        website:
-          type: string
-          format: uri
-          description: Business website URL.
-        description:
-          type: string
-          description: Brief description of the business and its products or services.
-        taxID:
-          $ref: '#/components/schemas/TaxID'
-        industryCodes:
-          $ref: '#/components/schemas/IndustryCodes'
-    SsnOrItin:
-      type: object
-      description: Social Security Number or Individual Taxpayer Identification Number.
-      properties:
-        full:
-          type: string
-          description: Full 9-digit SSN or ITIN. Only provided on write; masked on read.
-          pattern: ^\d{9}$
-        lastFour:
-          type: string
-          description: Last four digits of the SSN or ITIN.
-          pattern: ^\d{4}$
-    UpdateAccountRequest:
-      type: object
-      description: Request body for updating a Moov account. Only provided fields are updated.
-      properties:
-        profile:
-          $ref: '#/components/schemas/AccountProfile'
-        metadata:
-          type: object
-          description: Custom key-value metadata to attach to the account.
-          additionalProperties:
-            type: string
-        foreignID:
-          type: string
-          description: External identifier from your system.
-    Name:
-      type: object
-      description: Full name of an individual.
-      properties:
-        firstName:
-          type: string
-          description: Given name.
-        middleName:
-          type: string
-          description: Middle name or initial.
-        lastName:
-          type: string
-          description: Family name.
-        suffix:
-          type: string
-          description: Name suffix (e.g., Jr., Sr., III).
-    AccountProfile:
-      type: object
-      description: Profile information for a Moov account.
-      properties:
-        individual:
-          $ref: '#/components/schemas/IndividualProfile'
-        business:
-          $ref: '#/components/schemas/BusinessProfile'
-    GovernmentID:
-      type: object
-      description: Government-issued identification for KYC verification.
-      properties:
-        ssn:
-          $ref: '#/components/schemas/SsnOrItin'
-        itin:
-          $ref: '#/components/schemas/SsnOrItin'
-    TosToken:
-      type: object
-      description: Short-lived token confirming acceptance of Moov's terms of service.
-      properties:
-        token:
-          type: string
-          description: The terms of service token to include when creating an account.
-        expiresOn:
-          type: string
-          format: date-time
-          description: ISO 8601 timestamp when the token expires.
   parameters:
+    SkipParam:
+      name: skip
+      in: query
+      description: Number of results to skip for pagination.
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
     CountParam:
       name: count
       in: query
@@ -587,14 +595,6 @@ components:
       schema:
         type: string
         format: uuid
-    SkipParam:
-      name: skip
-      in: query
-      description: Number of results to skip for pagination.
-      schema:
-        type: integer
-        minimum: 0
-        default: 0
     accountID:
       name: accountID
       in: path

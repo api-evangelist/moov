@@ -139,26 +139,103 @@ paths:
     - url: https://api.moov.io
       description: Production Server
 components:
-  responses:
-    BadRequest:
-      description: The request was malformed or contained invalid parameters.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   schemas:
+    CardExpiration:
+      type: object
+      description: Card expiration date.
+      properties:
+        month:
+          type: string
+          description: Two-digit expiration month.
+          pattern: ^(0[1-9]|1[0-2])$
+        year:
+          type: string
+          description: Two-digit expiration year.
+          pattern: ^\d{2}$
+    Address:
+      type: object
+      description: Physical or mailing address.
+      properties:
+        addressLine1:
+          type: string
+          description: Primary street address.
+        addressLine2:
+          type: string
+          description: Secondary address line (suite, apartment, etc.).
+        city:
+          type: string
+          description: City name.
+        stateOrProvince:
+          type: string
+          description: Two-letter state or province code.
+          maxLength: 2
+        postalCode:
+          type: string
+          description: Postal or ZIP code.
+        country:
+          type: string
+          description: Two-letter ISO 3166-1 alpha-2 country code.
+          maxLength: 2
+    UpdateCardRequest:
+      type: object
+      description: Request body for updating a linked card.
+      properties:
+        billingAddress:
+          $ref: '#/components/schemas/Address'
+        expiration:
+          $ref: '#/components/schemas/CardExpiration'
+        cardCvv:
+          type: string
+          description: Updated card security code.
+          minLength: 3
+          maxLength: 4
+    CardVerification:
+      type: object
+      description: Results of card verification checks.
+      properties:
+        cvv:
+          type: string
+          description: CVV verification result.
+          enum:
+          - match
+          - noMatch
+          - notChecked
+          - unavailable
+        addressLine1:
+          type: string
+          description: Address line 1 AVS verification result.
+          enum:
+          - match
+          - noMatch
+          - notChecked
+          - unavailable
+        postalCode:
+          type: string
+          description: Postal code AVS verification result.
+          enum:
+          - match
+          - noMatch
+          - notChecked
+          - unavailable
+    LinkCardRequest:
+      type: object
+      description: Request body for linking a card to a Moov account.
+      properties:
+        cardNumber:
+          type: string
+          description: Full card number. Must be submitted via Moov.js to remain PCI compliant.
+        expiration:
+          $ref: '#/components/schemas/CardExpiration'
+        cardCvv:
+          type: string
+          description: Card security code.
+          minLength: 3
+          maxLength: 4
+        holderName:
+          type: string
+          description: Name of the cardholder.
+        billingAddress:
+          $ref: '#/components/schemas/Address'
     Error:
       type: object
       description: Standard error response returned by the Moov API.
@@ -229,102 +306,25 @@ components:
           type: string
           format: date-time
           description: ISO 8601 timestamp when the card was last updated.
-    CardVerification:
-      type: object
-      description: Results of card verification checks.
-      properties:
-        cvv:
-          type: string
-          description: CVV verification result.
-          enum:
-          - match
-          - noMatch
-          - notChecked
-          - unavailable
-        addressLine1:
-          type: string
-          description: Address line 1 AVS verification result.
-          enum:
-          - match
-          - noMatch
-          - notChecked
-          - unavailable
-        postalCode:
-          type: string
-          description: Postal code AVS verification result.
-          enum:
-          - match
-          - noMatch
-          - notChecked
-          - unavailable
-    CardExpiration:
-      type: object
-      description: Card expiration date.
-      properties:
-        month:
-          type: string
-          description: Two-digit expiration month.
-          pattern: ^(0[1-9]|1[0-2])$
-        year:
-          type: string
-          description: Two-digit expiration year.
-          pattern: ^\d{2}$
-    LinkCardRequest:
-      type: object
-      description: Request body for linking a card to a Moov account.
-      properties:
-        cardNumber:
-          type: string
-          description: Full card number. Must be submitted via Moov.js to remain PCI compliant.
-        expiration:
-          $ref: '#/components/schemas/CardExpiration'
-        cardCvv:
-          type: string
-          description: Card security code.
-          minLength: 3
-          maxLength: 4
-        holderName:
-          type: string
-          description: Name of the cardholder.
-        billingAddress:
-          $ref: '#/components/schemas/Address'
-    UpdateCardRequest:
-      type: object
-      description: Request body for updating a linked card.
-      properties:
-        billingAddress:
-          $ref: '#/components/schemas/Address'
-        expiration:
-          $ref: '#/components/schemas/CardExpiration'
-        cardCvv:
-          type: string
-          description: Updated card security code.
-          minLength: 3
-          maxLength: 4
-    Address:
-      type: object
-      description: Physical or mailing address.
-      properties:
-        addressLine1:
-          type: string
-          description: Primary street address.
-        addressLine2:
-          type: string
-          description: Secondary address line (suite, apartment, etc.).
-        city:
-          type: string
-          description: City name.
-        stateOrProvince:
-          type: string
-          description: Two-letter state or province code.
-          maxLength: 2
-        postalCode:
-          type: string
-          description: Postal or ZIP code.
-        country:
-          type: string
-          description: Two-letter ISO 3166-1 alpha-2 country code.
-          maxLength: 2
+  responses:
+    BadRequest:
+      description: The request was malformed or contained invalid parameters.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   parameters:
     CardIDParam:
       name: cardID

@@ -62,20 +62,26 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
-  responses:
-    BadRequest:
-      description: The request was malformed or contained invalid parameters.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   schemas:
+    Error:
+      type: object
+      description: Standard error response returned by the Moov API.
+      properties:
+        error:
+          type: string
+          description: Human-readable description of the error.
+        code:
+          type: string
+          description: Machine-readable error code.
+    RevokeTokenRequest:
+      type: object
+      description: Request body for revoking an OAuth2 access token.
+      required:
+      - token
+      properties:
+        token:
+          type: string
+          description: The access token to revoke.
     TokenRequest:
       type: object
       description: Request body for creating an OAuth2 access token.
@@ -98,15 +104,6 @@ components:
         scope:
           type: string
           description: Space-separated list of permission scopes to request. Scopes follow the pattern /accounts/{accountID}/transfers.write for resource-specific access, or /accounts.write for platform-level access.
-    RevokeTokenRequest:
-      type: object
-      description: Request body for revoking an OAuth2 access token.
-      required:
-      - token
-      properties:
-        token:
-          type: string
-          description: The access token to revoke.
     AccessToken:
       type: object
       description: OAuth2 access token response from the Moov API.
@@ -125,16 +122,19 @@ components:
         scope:
           type: string
           description: Space-separated list of granted permission scopes.
-    Error:
-      type: object
-      description: Standard error response returned by the Moov API.
-      properties:
-        error:
-          type: string
-          description: Human-readable description of the error.
-        code:
-          type: string
-          description: Machine-readable error code.
+  responses:
+    BadRequest:
+      description: The request was malformed or contained invalid parameters.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     bearerAuth:
       type: http

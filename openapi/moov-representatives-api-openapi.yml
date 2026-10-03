@@ -136,6 +136,29 @@ paths:
       description: Production Server
 components:
   schemas:
+    SsnOrItin:
+      type: object
+      description: Social Security Number or Individual Taxpayer Identification Number.
+      properties:
+        full:
+          type: string
+          description: Full 9-digit SSN or ITIN. Only provided on write; masked on read.
+          pattern: ^\d{9}$
+        lastFour:
+          type: string
+          description: Last four digits of the SSN or ITIN.
+          pattern: ^\d{4}$
+    Phone:
+      type: object
+      description: Phone number with country code.
+      properties:
+        number:
+          type: string
+          description: Phone number digits without formatting.
+          pattern: ^\d{10,15}$
+        countryCode:
+          type: string
+          description: International country calling code (e.g., "1" for US).
     CreateRepresentativeRequest:
       type: object
       description: Request body for adding a business representative to an account.
@@ -160,24 +183,30 @@ components:
           $ref: '#/components/schemas/GovernmentID'
         responsibilities:
           $ref: '#/components/schemas/RepresentativeResponsibilities'
-    RepresentativeResponsibilities:
+    Address:
       type: object
-      description: Ownership and control responsibilities of a business representative.
+      description: Physical or mailing address.
       properties:
-        isController:
-          type: boolean
-          description: Whether this representative has significant control over the business.
-        isOwner:
-          type: boolean
-          description: Whether this representative owns 25% or more of the business.
-        ownershipPercentage:
-          type: number
-          description: Percentage of business ownership held by this representative.
-          minimum: 0
-          maximum: 100
-        jobTitle:
+        addressLine1:
           type: string
-          description: Representative's job title within the business.
+          description: Primary street address.
+        addressLine2:
+          type: string
+          description: Secondary address line (suite, apartment, etc.).
+        city:
+          type: string
+          description: City name.
+        stateOrProvince:
+          type: string
+          description: Two-letter state or province code.
+          maxLength: 2
+        postalCode:
+          type: string
+          description: Postal or ZIP code.
+        country:
+          type: string
+          description: Two-letter ISO 3166-1 alpha-2 country code.
+          maxLength: 2
     UpdateRepresentativeRequest:
       type: object
       description: Request body for updating a business representative. Only provided fields are updated.
@@ -200,6 +229,34 @@ components:
           $ref: '#/components/schemas/GovernmentID'
         responsibilities:
           $ref: '#/components/schemas/RepresentativeResponsibilities'
+    Error:
+      type: object
+      description: Standard error response returned by the Moov API.
+      properties:
+        error:
+          type: string
+          description: Human-readable description of the error.
+        code:
+          type: string
+          description: Machine-readable error code.
+    RepresentativeResponsibilities:
+      type: object
+      description: Ownership and control responsibilities of a business representative.
+      properties:
+        isController:
+          type: boolean
+          description: Whether this representative has significant control over the business.
+        isOwner:
+          type: boolean
+          description: Whether this representative owns 25% or more of the business.
+        ownershipPercentage:
+          type: number
+          description: Percentage of business ownership held by this representative.
+          minimum: 0
+          maximum: 100
+        jobTitle:
+          type: string
+          description: Representative's job title within the business.
     Name:
       type: object
       description: Full name of an individual.
@@ -216,14 +273,6 @@ components:
         suffix:
           type: string
           description: Name suffix (e.g., Jr., Sr., III).
-    GovernmentID:
-      type: object
-      description: Government-issued identification for KYC verification.
-      properties:
-        ssn:
-          $ref: '#/components/schemas/SsnOrItin'
-        itin:
-          $ref: '#/components/schemas/SsnOrItin'
     Representative:
       type: object
       description: A business representative with significant ownership or control over a Moov business account, required for KYB compliance.
@@ -262,63 +311,46 @@ components:
           type: string
           format: date-time
           description: ISO 8601 timestamp when the representative was disabled, if applicable.
-    Phone:
+    GovernmentID:
       type: object
-      description: Phone number with country code.
+      description: Government-issued identification for KYC verification.
       properties:
-        number:
-          type: string
-          description: Phone number digits without formatting.
-          pattern: ^\d{10,15}$
-        countryCode:
-          type: string
-          description: International country calling code (e.g., "1" for US).
-    SsnOrItin:
-      type: object
-      description: Social Security Number or Individual Taxpayer Identification Number.
-      properties:
-        full:
-          type: string
-          description: Full 9-digit SSN or ITIN. Only provided on write; masked on read.
-          pattern: ^\d{9}$
-        lastFour:
-          type: string
-          description: Last four digits of the SSN or ITIN.
-          pattern: ^\d{4}$
-    Error:
-      type: object
-      description: Standard error response returned by the Moov API.
-      properties:
-        error:
-          type: string
-          description: Human-readable description of the error.
-        code:
-          type: string
-          description: Machine-readable error code.
-    Address:
-      type: object
-      description: Physical or mailing address.
-      properties:
-        addressLine1:
-          type: string
-          description: Primary street address.
-        addressLine2:
-          type: string
-          description: Secondary address line (suite, apartment, etc.).
-        city:
-          type: string
-          description: City name.
-        stateOrProvince:
-          type: string
-          description: Two-letter state or province code.
-          maxLength: 2
-        postalCode:
-          type: string
-          description: Postal or ZIP code.
-        country:
-          type: string
-          description: Two-letter ISO 3166-1 alpha-2 country code.
-          maxLength: 2
+        ssn:
+          $ref: '#/components/schemas/SsnOrItin'
+        itin:
+          $ref: '#/components/schemas/SsnOrItin'
+  parameters:
+    RepresentativeIDParam:
+      name: representativeID
+      in: path
+      required: true
+      description: Unique identifier for the representative.
+      schema:
+        type: string
+        format: uuid
+    AccountIDParam:
+      name: accountID
+      in: path
+      required: true
+      description: Unique identifier for the Moov account.
+      schema:
+        type: string
+        format: uuid
+    representativeID:
+      name: representativeID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    accountID:
+      name: accountID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The Moov account identifier.
   responses:
     BadRequest:
       description: The request was malformed or contained invalid parameters.
@@ -338,38 +370,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-  parameters:
-    AccountIDParam:
-      name: accountID
-      in: path
-      required: true
-      description: Unique identifier for the Moov account.
-      schema:
-        type: string
-        format: uuid
-    RepresentativeIDParam:
-      name: representativeID
-      in: path
-      required: true
-      description: Unique identifier for the representative.
-      schema:
-        type: string
-        format: uuid
-    representativeID:
-      name: representativeID
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
-    accountID:
-      name: accountID
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
-      description: The Moov account identifier.
   securitySchemes:
     bearerAuth:
       type: http

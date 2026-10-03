@@ -117,39 +117,20 @@ paths:
     - url: https://api.moov.io
       description: Moov production
 components:
-  responses:
-    BadRequest:
-      description: The request was malformed or contained invalid parameters.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   parameters:
-    AccountIDParam:
-      name: accountID
-      in: path
-      required: true
-      description: Unique identifier for the Moov account.
-      schema:
-        type: string
-        format: uuid
     TransferIDParam:
       name: transferID
       in: path
       required: true
       description: Unique identifier for the transfer.
+      schema:
+        type: string
+        format: uuid
+    AccountIDParam:
+      name: accountID
+      in: path
+      required: true
+      description: Unique identifier for the Moov account.
       schema:
         type: string
         format: uuid
@@ -161,13 +142,6 @@ components:
       schema:
         type: string
         format: uuid
-    transferID:
-      name: transferID
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
     accountID:
       name: accountID
       in: path
@@ -176,7 +150,48 @@ components:
         type: string
         format: uuid
       description: The Moov account identifier.
+    transferID:
+      name: transferID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
   schemas:
+    Error:
+      type: object
+      description: Standard error response returned by the Moov API.
+      properties:
+        error:
+          type: string
+          description: Human-readable description of the error.
+        code:
+          type: string
+          description: Machine-readable error code.
+    CreateRefundRequest:
+      type: object
+      description: Request body for creating a refund on a card transfer.
+      required:
+      - amount
+      properties:
+        amount:
+          type: integer
+          description: Amount to refund in the smallest currency unit (e.g., cents). Must not exceed the original transfer amount.
+          minimum: 1
+    Amount:
+      type: object
+      description: A monetary amount with currency denomination.
+      properties:
+        currency:
+          type: string
+          description: ISO 4217 three-letter currency code.
+          default: USD
+          minLength: 3
+          maxLength: 3
+        value:
+          type: integer
+          description: Amount in the smallest currency unit (e.g., cents for USD).
+          minimum: 0
     Refund:
       type: object
       description: A refund issued against a completed card transfer.
@@ -203,40 +218,25 @@ components:
           type: string
           format: date-time
           description: ISO 8601 timestamp when the refund was last updated.
-    CreateRefundRequest:
-      type: object
-      description: Request body for creating a refund on a card transfer.
-      required:
-      - amount
-      properties:
-        amount:
-          type: integer
-          description: Amount to refund in the smallest currency unit (e.g., cents). Must not exceed the original transfer amount.
-          minimum: 1
-    Amount:
-      type: object
-      description: A monetary amount with currency denomination.
-      properties:
-        currency:
-          type: string
-          description: ISO 4217 three-letter currency code.
-          default: USD
-          minLength: 3
-          maxLength: 3
-        value:
-          type: integer
-          description: Amount in the smallest currency unit (e.g., cents for USD).
-          minimum: 0
-    Error:
-      type: object
-      description: Standard error response returned by the Moov API.
-      properties:
-        error:
-          type: string
-          description: Human-readable description of the error.
-        code:
-          type: string
-          description: Machine-readable error code.
+  responses:
+    BadRequest:
+      description: The request was malformed or contained invalid parameters.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     bearerAuth:
       type: http

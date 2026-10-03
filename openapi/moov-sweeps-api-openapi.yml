@@ -189,6 +189,46 @@ paths:
     - url: https://api.moov.io
       description: Production Server
 components:
+  parameters:
+    WalletIDParam:
+      name: walletID
+      in: path
+      required: true
+      description: Unique identifier for the wallet.
+      schema:
+        type: string
+        format: uuid
+    SweepConfigIDParam:
+      name: sweepConfigID
+      in: path
+      required: true
+      description: Unique identifier for the sweep configuration.
+      schema:
+        type: string
+        format: uuid
+    AccountIDParam:
+      name: accountID
+      in: path
+      required: true
+      description: Unique identifier for the Moov account.
+      schema:
+        type: string
+        format: uuid
+    walletID:
+      name: walletID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    accountID:
+      name: accountID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The Moov account identifier.
   schemas:
     UpdateSweepConfigRequest:
       type: object
@@ -206,6 +246,16 @@ components:
           maxLength: 10
         minimumBalance:
           $ref: '#/components/schemas/Amount'
+    Error:
+      type: object
+      description: Standard error response returned by the Moov API.
+      properties:
+        error:
+          type: string
+          description: Human-readable description of the error.
+        code:
+          type: string
+          description: Machine-readable error code.
     Sweep:
       type: object
       description: A single execution of a sweep transfer triggered by a sweep configuration.
@@ -240,20 +290,6 @@ components:
           type: string
           format: date-time
           description: ISO 8601 timestamp when the sweep was created.
-    Amount:
-      type: object
-      description: A monetary amount with currency denomination.
-      properties:
-        currency:
-          type: string
-          description: ISO 4217 three-letter currency code.
-          default: USD
-          minLength: 3
-          maxLength: 3
-        value:
-          type: integer
-          description: Amount in the smallest currency unit (e.g., cents for USD).
-          minimum: 0
     SweepConfig:
       type: object
       description: Configuration for automatic scheduled transfers from a Moov wallet to an external bank account. Sweeps execute daily based on the configured payment rail.
@@ -289,6 +325,20 @@ components:
           type: string
           format: date-time
           description: ISO 8601 timestamp when the sweep config was last updated.
+    Amount:
+      type: object
+      description: A monetary amount with currency denomination.
+      properties:
+        currency:
+          type: string
+          description: ISO 4217 three-letter currency code.
+          default: USD
+          minLength: 3
+          maxLength: 3
+        value:
+          type: integer
+          description: Amount in the smallest currency unit (e.g., cents for USD).
+          minimum: 0
     CreateSweepConfigRequest:
       type: object
       description: Request body for creating a sweep configuration.
@@ -310,16 +360,6 @@ components:
           maxLength: 10
         minimumBalance:
           $ref: '#/components/schemas/Amount'
-    Error:
-      type: object
-      description: Standard error response returned by the Moov API.
-      properties:
-        error:
-          type: string
-          description: Human-readable description of the error.
-        code:
-          type: string
-          description: Machine-readable error code.
   responses:
     BadRequest:
       description: The request was malformed or contained invalid parameters.
@@ -339,46 +379,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-  parameters:
-    WalletIDParam:
-      name: walletID
-      in: path
-      required: true
-      description: Unique identifier for the wallet.
-      schema:
-        type: string
-        format: uuid
-    AccountIDParam:
-      name: accountID
-      in: path
-      required: true
-      description: Unique identifier for the Moov account.
-      schema:
-        type: string
-        format: uuid
-    SweepConfigIDParam:
-      name: sweepConfigID
-      in: path
-      required: true
-      description: Unique identifier for the sweep configuration.
-      schema:
-        type: string
-        format: uuid
-    walletID:
-      name: walletID
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
-    accountID:
-      name: accountID
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
-      description: The Moov account identifier.
   securitySchemes:
     bearerAuth:
       type: http
