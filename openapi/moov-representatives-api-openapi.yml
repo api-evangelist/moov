@@ -136,53 +136,6 @@ paths:
       description: Production Server
 components:
   schemas:
-    SsnOrItin:
-      type: object
-      description: Social Security Number or Individual Taxpayer Identification Number.
-      properties:
-        full:
-          type: string
-          description: Full 9-digit SSN or ITIN. Only provided on write; masked on read.
-          pattern: ^\d{9}$
-        lastFour:
-          type: string
-          description: Last four digits of the SSN or ITIN.
-          pattern: ^\d{4}$
-    Phone:
-      type: object
-      description: Phone number with country code.
-      properties:
-        number:
-          type: string
-          description: Phone number digits without formatting.
-          pattern: ^\d{10,15}$
-        countryCode:
-          type: string
-          description: International country calling code (e.g., "1" for US).
-    CreateRepresentativeRequest:
-      type: object
-      description: Request body for adding a business representative to an account.
-      required:
-      - name
-      properties:
-        name:
-          $ref: '#/components/schemas/Name'
-        phone:
-          $ref: '#/components/schemas/Phone'
-        email:
-          type: string
-          format: email
-          description: Representative's email address.
-        address:
-          $ref: '#/components/schemas/Address'
-        birthDate:
-          type: string
-          format: date
-          description: Date of birth in ISO 8601 format (YYYY-MM-DD).
-        governmentID:
-          $ref: '#/components/schemas/GovernmentID'
-        responsibilities:
-          $ref: '#/components/schemas/RepresentativeResponsibilities'
     Address:
       type: object
       description: Physical or mailing address.
@@ -229,16 +182,6 @@ components:
           $ref: '#/components/schemas/GovernmentID'
         responsibilities:
           $ref: '#/components/schemas/RepresentativeResponsibilities'
-    Error:
-      type: object
-      description: Standard error response returned by the Moov API.
-      properties:
-        error:
-          type: string
-          description: Human-readable description of the error.
-        code:
-          type: string
-          description: Machine-readable error code.
     RepresentativeResponsibilities:
       type: object
       description: Ownership and control responsibilities of a business representative.
@@ -257,22 +200,6 @@ components:
         jobTitle:
           type: string
           description: Representative's job title within the business.
-    Name:
-      type: object
-      description: Full name of an individual.
-      properties:
-        firstName:
-          type: string
-          description: Given name.
-        middleName:
-          type: string
-          description: Middle name or initial.
-        lastName:
-          type: string
-          description: Family name.
-        suffix:
-          type: string
-          description: Name suffix (e.g., Jr., Sr., III).
     Representative:
       type: object
       description: A business representative with significant ownership or control over a Moov business account, required for KYB compliance.
@@ -311,6 +238,16 @@ components:
           type: string
           format: date-time
           description: ISO 8601 timestamp when the representative was disabled, if applicable.
+    Error:
+      type: object
+      description: Standard error response returned by the Moov API.
+      properties:
+        error:
+          type: string
+          description: Human-readable description of the error.
+        code:
+          type: string
+          description: Machine-readable error code.
     GovernmentID:
       type: object
       description: Government-issued identification for KYC verification.
@@ -319,15 +256,89 @@ components:
           $ref: '#/components/schemas/SsnOrItin'
         itin:
           $ref: '#/components/schemas/SsnOrItin'
+    CreateRepresentativeRequest:
+      type: object
+      description: Request body for adding a business representative to an account.
+      required:
+      - name
+      properties:
+        name:
+          $ref: '#/components/schemas/Name'
+        phone:
+          $ref: '#/components/schemas/Phone'
+        email:
+          type: string
+          format: email
+          description: Representative's email address.
+        address:
+          $ref: '#/components/schemas/Address'
+        birthDate:
+          type: string
+          format: date
+          description: Date of birth in ISO 8601 format (YYYY-MM-DD).
+        governmentID:
+          $ref: '#/components/schemas/GovernmentID'
+        responsibilities:
+          $ref: '#/components/schemas/RepresentativeResponsibilities'
+    Phone:
+      type: object
+      description: Phone number with country code.
+      properties:
+        number:
+          type: string
+          description: Phone number digits without formatting.
+          pattern: ^\d{10,15}$
+        countryCode:
+          type: string
+          description: International country calling code (e.g., "1" for US).
+    SsnOrItin:
+      type: object
+      description: Social Security Number or Individual Taxpayer Identification Number.
+      properties:
+        full:
+          type: string
+          description: Full 9-digit SSN or ITIN. Only provided on write; masked on read.
+          pattern: ^\d{9}$
+        lastFour:
+          type: string
+          description: Last four digits of the SSN or ITIN.
+          pattern: ^\d{4}$
+    Name:
+      type: object
+      description: Full name of an individual.
+      properties:
+        firstName:
+          type: string
+          description: Given name.
+        middleName:
+          type: string
+          description: Middle name or initial.
+        lastName:
+          type: string
+          description: Family name.
+        suffix:
+          type: string
+          description: Name suffix (e.g., Jr., Sr., III).
+  responses:
+    BadRequest:
+      description: The request was malformed or contained invalid parameters.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   parameters:
-    RepresentativeIDParam:
-      name: representativeID
-      in: path
-      required: true
-      description: Unique identifier for the representative.
-      schema:
-        type: string
-        format: uuid
     AccountIDParam:
       name: accountID
       in: path
@@ -336,10 +347,11 @@ components:
       schema:
         type: string
         format: uuid
-    representativeID:
+    RepresentativeIDParam:
       name: representativeID
       in: path
       required: true
+      description: Unique identifier for the representative.
       schema:
         type: string
         format: uuid
@@ -351,25 +363,13 @@ components:
         type: string
         format: uuid
       description: The Moov account identifier.
-  responses:
-    BadRequest:
-      description: The request was malformed or contained invalid parameters.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+    representativeID:
+      name: representativeID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
   securitySchemes:
     bearerAuth:
       type: http

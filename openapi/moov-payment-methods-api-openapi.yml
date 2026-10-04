@@ -71,61 +71,6 @@ paths:
       description: Production Server
 components:
   schemas:
-    CardExpiration:
-      type: object
-      description: Card expiration date.
-      properties:
-        month:
-          type: string
-          description: Two-digit expiration month.
-          pattern: ^(0[1-9]|1[0-2])$
-        year:
-          type: string
-          description: Two-digit expiration year.
-          pattern: ^\d{2}$
-    PaymentMethod:
-      type: object
-      description: A payment method on a Moov account, representing a bank account, card, or wallet that can be used as the source or destination of a transfer.
-      properties:
-        paymentMethodID:
-          type: string
-          format: uuid
-          description: Unique identifier for the payment method.
-        paymentMethodType:
-          type: string
-          description: The type of underlying payment instrument.
-          enum:
-          - moov-wallet
-          - ach-debit-fund
-          - ach-debit-collect
-          - ach-credit-standard
-          - ach-credit-same-day
-          - rtp-credit
-          - card-payment
-        wallet:
-          $ref: '#/components/schemas/Wallet'
-        bankAccount:
-          $ref: '#/components/schemas/BankAccount'
-        card:
-          $ref: '#/components/schemas/Card'
-    Wallet:
-      type: object
-      description: A Moov digital wallet that holds funds on the platform for an account. Wallets serve as intermediate stores of value for money movement.
-      properties:
-        walletID:
-          type: string
-          format: uuid
-          description: Unique identifier for the wallet.
-        availableBalance:
-          $ref: '#/components/schemas/Amount'
-        createdOn:
-          type: string
-          format: date-time
-          description: ISO 8601 timestamp when the wallet was created.
-        updatedOn:
-          type: string
-          format: date-time
-          description: ISO 8601 timestamp when the wallet was last updated.
     Address:
       type: object
       description: Physical or mailing address.
@@ -150,6 +95,48 @@ components:
           type: string
           description: Two-letter ISO 3166-1 alpha-2 country code.
           maxLength: 2
+    Wallet:
+      type: object
+      description: A Moov digital wallet that holds funds on the platform for an account. Wallets serve as intermediate stores of value for money movement.
+      properties:
+        walletID:
+          type: string
+          format: uuid
+          description: Unique identifier for the wallet.
+        availableBalance:
+          $ref: '#/components/schemas/Amount'
+        createdOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the wallet was created.
+        updatedOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the wallet was last updated.
+    Amount:
+      type: object
+      description: A monetary amount with currency denomination.
+      properties:
+        currency:
+          type: string
+          description: ISO 4217 three-letter currency code.
+          default: USD
+          minLength: 3
+          maxLength: 3
+        value:
+          type: integer
+          description: Amount in the smallest currency unit (e.g., cents for USD).
+          minimum: 0
+    Error:
+      type: object
+      description: Standard error response returned by the Moov API.
+      properties:
+        error:
+          type: string
+          description: Human-readable description of the error.
+        code:
+          type: string
+          description: Machine-readable error code.
     CardVerification:
       type: object
       description: Results of card verification checks.
@@ -178,16 +165,58 @@ components:
           - noMatch
           - notChecked
           - unavailable
-    Error:
+    BankAccount:
       type: object
-      description: Standard error response returned by the Moov API.
+      description: A bank account linked to a Moov account as a funding source for ACH and RTP transfers.
       properties:
-        error:
+        bankAccountID:
           type: string
-          description: Human-readable description of the error.
-        code:
+          format: uuid
+          description: Unique identifier for the bank account.
+        bankName:
           type: string
-          description: Machine-readable error code.
+          description: Name of the financial institution.
+        bankAccountType:
+          type: string
+          description: Type of bank account.
+          enum:
+          - checking
+          - savings
+          - loan
+        routingNumber:
+          type: string
+          description: ABA routing transit number for the bank.
+          pattern: ^\d{9}$
+        lastFourAccountNumber:
+          type: string
+          description: Last four digits of the bank account number.
+          pattern: ^\d{4}$
+        status:
+          type: string
+          description: Verification and usability status of the bank account.
+          enum:
+          - new
+          - unverified
+          - pending
+          - verified
+          - errored
+        verificationStatus:
+          type: string
+          description: Current state of the bank account verification process.
+          enum:
+          - unverified
+          - pending
+          - verificationFailed
+          - verified
+          - mxVerified
+        createdOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the bank account was linked.
+        updatedOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the bank account was last updated.
     Card:
       type: object
       description: A credit or debit card linked to a Moov account as a payment source.
@@ -248,86 +277,70 @@ components:
           type: string
           format: date-time
           description: ISO 8601 timestamp when the card was last updated.
-    Amount:
+    PaymentMethod:
       type: object
-      description: A monetary amount with currency denomination.
+      description: A payment method on a Moov account, representing a bank account, card, or wallet that can be used as the source or destination of a transfer.
       properties:
-        currency:
-          type: string
-          description: ISO 4217 three-letter currency code.
-          default: USD
-          minLength: 3
-          maxLength: 3
-        value:
-          type: integer
-          description: Amount in the smallest currency unit (e.g., cents for USD).
-          minimum: 0
-    BankAccount:
-      type: object
-      description: A bank account linked to a Moov account as a funding source for ACH and RTP transfers.
-      properties:
-        bankAccountID:
+        paymentMethodID:
           type: string
           format: uuid
-          description: Unique identifier for the bank account.
-        bankName:
+          description: Unique identifier for the payment method.
+        paymentMethodType:
           type: string
-          description: Name of the financial institution.
-        bankAccountType:
-          type: string
-          description: Type of bank account.
+          description: The type of underlying payment instrument.
           enum:
-          - checking
-          - savings
-          - loan
-        routingNumber:
+          - moov-wallet
+          - ach-debit-fund
+          - ach-debit-collect
+          - ach-credit-standard
+          - ach-credit-same-day
+          - rtp-credit
+          - card-payment
+        wallet:
+          $ref: '#/components/schemas/Wallet'
+        bankAccount:
+          $ref: '#/components/schemas/BankAccount'
+        card:
+          $ref: '#/components/schemas/Card'
+    CardExpiration:
+      type: object
+      description: Card expiration date.
+      properties:
+        month:
           type: string
-          description: ABA routing transit number for the bank.
-          pattern: ^\d{9}$
-        lastFourAccountNumber:
+          description: Two-digit expiration month.
+          pattern: ^(0[1-9]|1[0-2])$
+        year:
           type: string
-          description: Last four digits of the bank account number.
-          pattern: ^\d{4}$
-        status:
-          type: string
-          description: Verification and usability status of the bank account.
-          enum:
-          - new
-          - unverified
-          - pending
-          - verified
-          - errored
-        verificationStatus:
-          type: string
-          description: Current state of the bank account verification process.
-          enum:
-          - unverified
-          - pending
-          - verificationFailed
-          - verified
-          - mxVerified
-        createdOn:
-          type: string
-          format: date-time
-          description: ISO 8601 timestamp when the bank account was linked.
-        updatedOn:
-          type: string
-          format: date-time
-          description: ISO 8601 timestamp when the bank account was last updated.
+          description: Two-digit expiration year.
+          pattern: ^\d{2}$
+  responses:
+    Unauthorized:
+      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   parameters:
-    PaymentMethodIDParam:
-      name: paymentMethodID
-      in: path
-      required: true
-      description: Unique identifier for the payment method.
-      schema:
-        type: string
-        format: uuid
     AccountIDParam:
       name: accountID
       in: path
       required: true
       description: Unique identifier for the Moov account.
+      schema:
+        type: string
+        format: uuid
+    PaymentMethodIDParam:
+      name: paymentMethodID
+      in: path
+      required: true
+      description: Unique identifier for the payment method.
       schema:
         type: string
         format: uuid
@@ -339,19 +352,6 @@ components:
         type: string
         format: uuid
       description: The Moov account identifier.
-  responses:
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   securitySchemes:
     bearerAuth:
       type: http

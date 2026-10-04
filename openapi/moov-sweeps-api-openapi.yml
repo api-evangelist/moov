@@ -189,63 +189,21 @@ paths:
     - url: https://api.moov.io
       description: Production Server
 components:
-  parameters:
-    WalletIDParam:
-      name: walletID
-      in: path
-      required: true
-      description: Unique identifier for the wallet.
-      schema:
-        type: string
-        format: uuid
-    SweepConfigIDParam:
-      name: sweepConfigID
-      in: path
-      required: true
-      description: Unique identifier for the sweep configuration.
-      schema:
-        type: string
-        format: uuid
-    AccountIDParam:
-      name: accountID
-      in: path
-      required: true
-      description: Unique identifier for the Moov account.
-      schema:
-        type: string
-        format: uuid
-    walletID:
-      name: walletID
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
-    accountID:
-      name: accountID
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
-      description: The Moov account identifier.
   schemas:
-    UpdateSweepConfigRequest:
+    Amount:
       type: object
-      description: Request body for updating a sweep configuration.
+      description: A monetary amount with currency denomination.
       properties:
-        status:
+        currency:
           type: string
-          description: Enable or disable the sweep configuration.
-          enum:
-          - enabled
-          - disabled
-        statementDescriptor:
-          type: string
-          description: Updated statement descriptor for sweep transfers.
-          maxLength: 10
-        minimumBalance:
-          $ref: '#/components/schemas/Amount'
+          description: ISO 4217 three-letter currency code.
+          default: USD
+          minLength: 3
+          maxLength: 3
+        value:
+          type: integer
+          description: Amount in the smallest currency unit (e.g., cents for USD).
+          minimum: 0
     Error:
       type: object
       description: Standard error response returned by the Moov API.
@@ -256,40 +214,6 @@ components:
         code:
           type: string
           description: Machine-readable error code.
-    Sweep:
-      type: object
-      description: A single execution of a sweep transfer triggered by a sweep configuration.
-      properties:
-        sweepID:
-          type: string
-          format: uuid
-          description: Unique identifier for this sweep execution.
-        sweepConfigID:
-          type: string
-          format: uuid
-          description: The sweep configuration that triggered this sweep.
-        walletID:
-          type: string
-          format: uuid
-          description: The wallet from which funds were swept.
-        transferID:
-          type: string
-          format: uuid
-          description: The transfer created to move the swept funds.
-        status:
-          type: string
-          description: Execution status of the sweep.
-          enum:
-          - scheduled
-          - pending
-          - completed
-          - failed
-        amount:
-          $ref: '#/components/schemas/Amount'
-        createdOn:
-          type: string
-          format: date-time
-          description: ISO 8601 timestamp when the sweep was created.
     SweepConfig:
       type: object
       description: Configuration for automatic scheduled transfers from a Moov wallet to an external bank account. Sweeps execute daily based on the configured payment rail.
@@ -325,20 +249,6 @@ components:
           type: string
           format: date-time
           description: ISO 8601 timestamp when the sweep config was last updated.
-    Amount:
-      type: object
-      description: A monetary amount with currency denomination.
-      properties:
-        currency:
-          type: string
-          description: ISO 4217 three-letter currency code.
-          default: USD
-          minLength: 3
-          maxLength: 3
-        value:
-          type: integer
-          description: Amount in the smallest currency unit (e.g., cents for USD).
-          minimum: 0
     CreateSweepConfigRequest:
       type: object
       description: Request body for creating a sweep configuration.
@@ -360,15 +270,59 @@ components:
           maxLength: 10
         minimumBalance:
           $ref: '#/components/schemas/Amount'
+    UpdateSweepConfigRequest:
+      type: object
+      description: Request body for updating a sweep configuration.
+      properties:
+        status:
+          type: string
+          description: Enable or disable the sweep configuration.
+          enum:
+          - enabled
+          - disabled
+        statementDescriptor:
+          type: string
+          description: Updated statement descriptor for sweep transfers.
+          maxLength: 10
+        minimumBalance:
+          $ref: '#/components/schemas/Amount'
+    Sweep:
+      type: object
+      description: A single execution of a sweep transfer triggered by a sweep configuration.
+      properties:
+        sweepID:
+          type: string
+          format: uuid
+          description: Unique identifier for this sweep execution.
+        sweepConfigID:
+          type: string
+          format: uuid
+          description: The sweep configuration that triggered this sweep.
+        walletID:
+          type: string
+          format: uuid
+          description: The wallet from which funds were swept.
+        transferID:
+          type: string
+          format: uuid
+          description: The transfer created to move the swept funds.
+        status:
+          type: string
+          description: Execution status of the sweep.
+          enum:
+          - scheduled
+          - pending
+          - completed
+          - failed
+        amount:
+          $ref: '#/components/schemas/Amount'
+        createdOn:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the sweep was created.
   responses:
     BadRequest:
       description: The request was malformed or contained invalid parameters.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: The requested resource was not found.
       content:
         application/json:
           schema:
@@ -379,6 +333,52 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  parameters:
+    SweepConfigIDParam:
+      name: sweepConfigID
+      in: path
+      required: true
+      description: Unique identifier for the sweep configuration.
+      schema:
+        type: string
+        format: uuid
+    AccountIDParam:
+      name: accountID
+      in: path
+      required: true
+      description: Unique identifier for the Moov account.
+      schema:
+        type: string
+        format: uuid
+    WalletIDParam:
+      name: walletID
+      in: path
+      required: true
+      description: Unique identifier for the wallet.
+      schema:
+        type: string
+        format: uuid
+    walletID:
+      name: walletID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    accountID:
+      name: accountID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The Moov account identifier.
   securitySchemes:
     bearerAuth:
       type: http

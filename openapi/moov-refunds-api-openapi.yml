@@ -118,11 +118,11 @@ paths:
       description: Moov production
 components:
   parameters:
-    TransferIDParam:
-      name: transferID
+    RefundIDParam:
+      name: refundID
       in: path
       required: true
-      description: Unique identifier for the transfer.
+      description: Unique identifier for the refund.
       schema:
         type: string
         format: uuid
@@ -134,11 +134,18 @@ components:
       schema:
         type: string
         format: uuid
-    RefundIDParam:
-      name: refundID
+    TransferIDParam:
+      name: transferID
       in: path
       required: true
-      description: Unique identifier for the refund.
+      description: Unique identifier for the transfer.
+      schema:
+        type: string
+        format: uuid
+    transferID:
+      name: transferID
+      in: path
+      required: true
       schema:
         type: string
         format: uuid
@@ -150,34 +157,7 @@ components:
         type: string
         format: uuid
       description: The Moov account identifier.
-    transferID:
-      name: transferID
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
   schemas:
-    Error:
-      type: object
-      description: Standard error response returned by the Moov API.
-      properties:
-        error:
-          type: string
-          description: Human-readable description of the error.
-        code:
-          type: string
-          description: Machine-readable error code.
-    CreateRefundRequest:
-      type: object
-      description: Request body for creating a refund on a card transfer.
-      required:
-      - amount
-      properties:
-        amount:
-          type: integer
-          description: Amount to refund in the smallest currency unit (e.g., cents). Must not exceed the original transfer amount.
-          minimum: 1
     Amount:
       type: object
       description: A monetary amount with currency denomination.
@@ -192,6 +172,16 @@ components:
           type: integer
           description: Amount in the smallest currency unit (e.g., cents for USD).
           minimum: 0
+    Error:
+      type: object
+      description: Standard error response returned by the Moov API.
+      properties:
+        error:
+          type: string
+          description: Human-readable description of the error.
+        code:
+          type: string
+          description: Machine-readable error code.
     Refund:
       type: object
       description: A refund issued against a completed card transfer.
@@ -218,6 +208,16 @@ components:
           type: string
           format: date-time
           description: ISO 8601 timestamp when the refund was last updated.
+    CreateRefundRequest:
+      type: object
+      description: Request body for creating a refund on a card transfer.
+      required:
+      - amount
+      properties:
+        amount:
+          type: integer
+          description: Amount to refund in the smallest currency unit (e.g., cents). Must not exceed the original transfer amount.
+          minimum: 1
   responses:
     BadRequest:
       description: The request was malformed or contained invalid parameters.
@@ -225,14 +225,14 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    NotFound:
-      description: The requested resource was not found.
+    Unauthorized:
+      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
+    NotFound:
+      description: The requested resource was not found.
       content:
         application/json:
           schema:

@@ -150,22 +150,30 @@ paths:
           $ref: '#/components/responses/NotFound'
 components:
   schemas:
-    CreatePaymentLinkRequest:
+    Amount:
       type: object
-      description: Request body for creating a payment link.
-      required:
-      - amount
+      description: A monetary amount with currency denomination.
       properties:
-        amount:
-          $ref: '#/components/schemas/Amount'
-        description:
+        currency:
           type: string
-          description: Description of the payment that will be shown to the payer.
-          maxLength: 250
-        expiresOn:
+          description: ISO 4217 three-letter currency code.
+          default: USD
+          minLength: 3
+          maxLength: 3
+        value:
+          type: integer
+          description: Amount in the smallest currency unit (e.g., cents for USD).
+          minimum: 0
+    Error:
+      type: object
+      description: Standard error response returned by the Moov API.
+      properties:
+        error:
           type: string
-          format: date-time
-          description: ISO 8601 timestamp when this payment link should expire.
+          description: Human-readable description of the error.
+        code:
+          type: string
+          description: Machine-readable error code.
     UpdatePaymentLinkRequest:
       type: object
       description: Request body for updating a payment link.
@@ -186,16 +194,22 @@ components:
           type: string
           format: date-time
           description: Updated expiration timestamp for the payment link.
-    Error:
+    CreatePaymentLinkRequest:
       type: object
-      description: Standard error response returned by the Moov API.
+      description: Request body for creating a payment link.
+      required:
+      - amount
       properties:
-        error:
+        amount:
+          $ref: '#/components/schemas/Amount'
+        description:
           type: string
-          description: Human-readable description of the error.
-        code:
+          description: Description of the payment that will be shown to the payer.
+          maxLength: 250
+        expiresOn:
           type: string
-          description: Machine-readable error code.
+          format: date-time
+          description: ISO 8601 timestamp when this payment link should expire.
     PaymentLink:
       type: object
       description: A shareable link that allows customers to make payments via card or bank account without requiring custom frontend development.
@@ -239,20 +253,6 @@ components:
           type: string
           format: date-time
           description: ISO 8601 timestamp when the payment link was last updated.
-    Amount:
-      type: object
-      description: A monetary amount with currency denomination.
-      properties:
-        currency:
-          type: string
-          description: ISO 4217 three-letter currency code.
-          default: USD
-          minLength: 3
-          maxLength: 3
-        value:
-          type: integer
-          description: Amount in the smallest currency unit (e.g., cents for USD).
-          minimum: 0
   responses:
     BadRequest:
       description: The request was malformed or contained invalid parameters.
@@ -260,14 +260,14 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    NotFound:
-      description: The requested resource was not found.
+    Unauthorized:
+      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
+    NotFound:
+      description: The requested resource was not found.
       content:
         application/json:
           schema:
