@@ -19,8 +19,8 @@
   type: contract
   evidence: https://spec.speakeasy.com/moov/moov/api-v2026.01.00
   source: edge
-  status: pending-generation
-  arazzo: null
+  arazzo: moov-mx-technologies-link-bank-account.yml
+  status: arazzo
 - slug: moov-apple-pay
   label: Apple Pay
   partner: apple

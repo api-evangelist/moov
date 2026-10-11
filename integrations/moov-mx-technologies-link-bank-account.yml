@@ -1,0 +1,58 @@
+arazzo: 1.0.1
+info:
+  title: Link an MX-verified bank account to a Moov account
+  version: 1.0.0
+  description: Request an MX processor authorization code scoped to a verified member account, then pass it to Moov's linkBankAccount, which accepts an MX authorization code as the bank account payload.
+x-integration:
+  partner: mx-technologies
+  template: null
+  edge_evidence: https://spec.speakeasy.com/moov/moov/api-v2026.01.00
+  edge_type: contract
+  method: generated
+  generated: '2026-10-12'
+  generator: pipeline step 25b (payments-integration-arazzo)
+sourceDescriptions:
+- name: mx
+  url: https://raw.githubusercontent.com/api-evangelist/mx-technologies/refs/heads/main/openapi/mx-technologies-processor-token-api-openapi.yml
+  type: openapi
+- name: moov
+  url: https://raw.githubusercontent.com/api-evangelist/moov/refs/heads/main/openapi/moov-openapi.yml
+  type: openapi
+workflows:
+- workflowId: mx-authorization-code-to-moov-bank-account
+  summary: MX processor authorization code -> Moov linked bank account
+  inputs:
+    type: object
+    required: [mxScope, moovAccountID]
+    properties:
+      mxScope:
+        type: string
+        description: MX scope string, e.g. "user-guid:USR-... member-guid:MBR-... account-guid:ACT-... read-protected"
+      moovAccountID: {type: string}
+  steps:
+  - stepId: requestAuthorizationCode
+    operationId: $sourceDescriptions.mx.requestAuthorizationCode
+    requestBody:
+      payload:
+        authorization_code:
+          scope: $inputs.mxScope
+    successCriteria:
+    - condition: $statusCode == 200
+    outputs:
+      authorizationCode: $response.body#/authorization_code/code
+  - stepId: linkToMoov
+    operationId: $sourceDescriptions.moov.linkBankAccount
+    parameters:
+    - name: accountID
+      in: path
+      value: $inputs.moovAccountID
+    requestBody:
+      payload:
+        mx:
+          authorizationCode: $steps.requestAuthorizationCode.outputs.authorizationCode
+    successCriteria:
+    - condition: $statusCode == 200
+    outputs:
+      bankAccountID: $response.body#/bankAccountID
+  outputs:
+    bankAccountID: $steps.linkToMoov.outputs.bankAccountID
