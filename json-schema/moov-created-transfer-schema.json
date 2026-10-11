@@ -1,0 +1,1586 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/moov/main/json-schema/moov-created-transfer-schema.json",
+  "title": "CreatedTransfer",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/moov-openapi.yml#/components/schemas/CreatedTransfer",
+  "type": "object",
+  "required": [
+    "transferID",
+    "createdOn"
+  ],
+  "properties": {
+    "transferID": {
+      "type": "string"
+    },
+    "createdOn": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "source": {
+      "$ref": "#/$defs/TransferSource"
+    },
+    "destination": {
+      "$ref": "#/$defs/TransferDestination"
+    },
+    "completedOn": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "$ref": "#/$defs/TransferStatus"
+    },
+    "failureReason": {
+      "$ref": "#/$defs/TransferFailureReason"
+    },
+    "amount": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/Amount"
+        }
+      ],
+      "description": "Amount associated with this transfer.\nIn v2026.10 and later, an auth-capture `card-payment` transfer reports the approved authorization amount until a final capture is created.\nFor these transfers, when a final capture is created, this is updated to the cumulative captured amount.\nFor other transfer types, this is the transfer amount."
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 128,
+      "description": "An optional description of the transfer that is used on receipts and for your own internal use."
+    },
+    "metadata": {
+      "$ref": "#/$defs/Metadata"
+    },
+    "facilitatorFee": {
+      "$ref": "#/$defs/FacilitatorFee"
+    },
+    "moovFee": {
+      "type": "integer",
+      "format": "int64",
+      "description": "Fees charged to your platform account for transfers."
+    },
+    "moovFeeDecimal": {
+      "type": "string",
+      "description": "Same as `moovFee`, but a decimal-formatted numerical string that represents up to 9 decimal place precision."
+    },
+    "moovFeeDetails": {
+      "$ref": "#/$defs/MoovFeeDetails"
+    },
+    "groupID": {
+      "type": "string"
+    },
+    "cancellations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Cancellation"
+      }
+    },
+    "refundedAmount": {
+      "$ref": "#/$defs/Amount"
+    },
+    "refunds": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/CardAcquiringRefund"
+      }
+    },
+    "disputedAmount": {
+      "$ref": "#/$defs/Amount"
+    },
+    "disputes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/CardAcquiringDispute"
+      }
+    },
+    "sweepID": {
+      "type": "string"
+    },
+    "scheduleID": {
+      "type": "string"
+    },
+    "occurrenceID": {
+      "type": "string"
+    },
+    "paymentLinkCode": {
+      "type": "string"
+    },
+    "salesTaxAmount": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/Amount"
+        }
+      ],
+      "description": "Optional sales tax amount."
+    },
+    "foreignID": {
+      "type": "string",
+      "description": "Optional alias from a foreign/external system which can be used to reference this resource."
+    },
+    "lineItems": {
+      "$ref": "#/$defs/TransferLineItems"
+    },
+    "capture": {
+      "$ref": "#/$defs/TransferCapture"
+    }
+  },
+  "$defs": {
+    "ACHCompanyEntryDescription": {
+      "type": "string",
+      "minLength": 4,
+      "maxLength": 10,
+      "description": "An optional override of the default NACHA company entry description for a transfer."
+    },
+    "ACHException": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "ACHOriginatingCompanyName": {
+      "type": "string",
+      "minLength": 4,
+      "maxLength": 16,
+      "description": "An optional override of the default NACHA company name for a transfer."
+    },
+    "ACHTransactionDetails": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "$ref": "#/$defs/ACHTransactionStatus"
+        },
+        "traceNumber": {
+          "type": "string",
+          "maxLength": 15
+        },
+        "return": {
+          "$ref": "#/$defs/ACHException"
+        },
+        "correction": {
+          "$ref": "#/$defs/ACHException"
+        },
+        "companyEntryDescription": {
+          "$ref": "#/$defs/ACHCompanyEntryDescription"
+        },
+        "originatingCompanyName": {
+          "$ref": "#/$defs/ACHOriginatingCompanyName"
+        },
+        "secCode": {
+          "$ref": "#/$defs/SECCode"
+        },
+        "canceledOn": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "initiatedOn": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "originatedOn": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "correctedOn": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "returnedOn": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "failedOn": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "completedOn": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "debitHoldPeriod": {
+          "$ref": "#/$defs/DebitHoldPeriod"
+        },
+        "addenda": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TransferACHAddendaRecord"
+          }
+        }
+      },
+      "description": "ACH specific details about the transaction."
+    },
+    "ACHTransactionStatus": {
+      "type": "string",
+      "enum": [
+        "",
+        "initiated",
+        "originated",
+        "corrected",
+        "returned",
+        "completed",
+        "canceled"
+      ],
+      "description": "Status of a transaction within the ACH lifecycle."
+    },
+    "AccountNameVerification": {
+      "type": "object",
+      "properties": {
+        "firstName": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/CardVerificationResult"
+            }
+          ],
+          "description": "Verification result of the cardholder's first name."
+        },
+        "lastName": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/CardVerificationResult"
+            }
+          ],
+          "description": "Verification result of the cardholder's last name."
+        },
+        "middleName": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/CardVerificationResult"
+            }
+          ],
+          "description": "Verification result of the cardholder's middle name."
+        },
+        "fullName": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/CardVerificationResult"
+            }
+          ],
+          "description": "Verification result of the cardholder's full name."
+        }
+      },
+      "description": "The results of submitting cardholder name to a card network for verification."
+    },
+    "Amount": {
+      "type": "object",
+      "required": [
+        "currency",
+        "value"
+      ],
+      "properties": {
+        "currency": {
+          "$ref": "#/$defs/Currency"
+        },
+        "value": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Quantity in the smallest unit of the specified currency. \n\nIn USD this is cents, for example, $12.04 is 1204 and $0.99 is 99."
+        }
+      }
+    },
+    "AmountDecimal": {
+      "type": "object",
+      "required": [
+        "currency",
+        "valueDecimal"
+      ],
+      "properties": {
+        "currency": {
+          "$ref": "#/$defs/Currency"
+        },
+        "valueDecimal": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d{1,9}$",
+          "description": "A decimal-formatted numerical string that represents up to 9 decimal place precision. \n\nFor example, $12.987654321 is '12.987654321'."
+        }
+      }
+    },
+    "ApplePayResponse": {
+      "type": "object",
+      "required": [
+        "brand",
+        "cardType",
+        "cardDisplayName",
+        "fingerprint",
+        "expiration",
+        "dynamicLastFour"
+      ],
+      "properties": {
+        "brand": {
+          "$ref": "#/$defs/CardBrand"
+        },
+        "cardType": {
+          "$ref": "#/$defs/CardType"
+        },
+        "cardDisplayName": {
+          "type": "string",
+          "description": "  User-friendly name of the tokenized card returned by Apple.\n  \n  It usually contains the brand and the last four digits of the underlying card.\n  There is no standard format."
+        },
+        "fingerprint": {
+          "$ref": "#/$defs/CardFingerprint"
+        },
+        "expiration": {
+          "$ref": "#/$defs/CardExpiration"
+        },
+        "dynamicLastFour": {
+          "type": "string",
+          "description": "The last four digits of the Apple Pay token, which may differ from the tokenized card's last four digits."
+        },
+        "issuerCountry": {
+          "type": "string",
+          "description": "Country where the underlying card was issued."
+        }
+      },
+      "description": "Describes an Apple Pay token on a Moov account."
+    },
+    "BankAccountHolderType": {
+      "type": "string",
+      "enum": [
+        "individual",
+        "business",
+        "guest"
+      ],
+      "description": "The type of holder on a funding source."
+    },
+    "BankAccountStatus": {
+      "type": "string",
+      "enum": [
+        "new",
+        "verified",
+        "verificationFailed",
+        "pending",
+        "errored"
+      ]
+    },
+    "BankAccountType": {
+      "type": "string",
+      "enum": [
+        "checking",
+        "savings",
+        "general-ledger",
+        "loan"
+      ],
+      "description": "The bank account type."
+    },
+    "Cancellation": {
+      "type": "object",
+      "required": [
+        "cancellationID",
+        "status",
+        "createdOn"
+      ],
+      "properties": {
+        "cancellationID": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/CancellationStatus"
+        },
+        "createdOn": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "description": "Cancellation of a transfer."
+    },
+    "CancellationStatus": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "completed",
+        "failed"
+      ]
+    },
+    "CardAccountUpdater": {
+      "type": "object",
+      "properties": {
+        "updatedOn": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp from the card network indicating when the card update was processed."
+        },
+        "updateType": {
+          "$ref": "#/$defs/CardUpdateReason"
+        }
+      },
+      "description": "The results of the most recent card update request."
+    },
+    "CardAcquiringDispute": {
+      "type": "object",
+      "required": [
+        "disputeID",
+        "createdOn",
+        "amount"
+      ],
+      "properties": {
+        "disputeID": {
+          "type": "string"
+        },
+        "createdOn": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "amount": {
+          "$ref": "#/$defs/Amount"
+        }
+      },
+      "description": "Details of a card dispute."
+    },
+    "CardAcquiringRefund": {
+      "type": "object",
+      "required": [
+        "refundID",
+        "createdOn",
+        "updatedOn",
+        "status",
+        "amount"
+      ],
+      "properties": {
+        "refundID": {
+          "type": "string",
+          "description": "Identifier for the refund."
+        },
+        "createdOn": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedOn": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status": {
+          "$ref": "#/$defs/RefundStatus"
+        },
+        "amount": {
+          "$ref": "#/$defs/Amount"
+        },
+        "cardDetails": {
+          "$ref": "#/$defs/RefundCardDetails"
+        }
+      },
+      "description": "Details of a card refund.",
+      "title": "Sync"
+    },
+    "CardAddress": {
+      "type": "object",
+      "required": [
+        "postalCode"
+      ],
+      "properties": {
+        "addressLine1": {
+          "type": "string",
+          "maxLength": 60,
+          "description": "Street address line 1."
+        },
+        "addressLine2": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Street address line 2 (e.g., apartment or suite number)."
+        },
+        "city": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "City name."
+        },
+        "stateOrProvince": {
+          "type": "string",
+          "maxLength": 2,
+          "description": "Two-letter state or province code."
+        },
+        "postalCode": {
+          "type": "string",
+          "maxLength": 10,
+          "description": "Postal or ZIP code."
+        },
+        "country": {
+          "type": "string",
+          "maxLength": 2,
+          "description": "Two-letter ISO 3166-1 country code."
+        }
+      }
+    },
+    "CardBrand": {
+      "type": "string",
+      "enum": [
+        "American Express",
+        "Discover",
+        "Mastercard",
+        "Visa",
+        "Unknown"
+      ],
+      "description": "The card brand."
+    },
+    "CardDynamicDescriptor": {
+      "type": "string",
+      "minLength": 4,
+      "maxLength": 22,
+      "description": "An optional override of the default card statement descriptor for a transfer. Accounts must be enabled by Moov to set this field."
+    },
+    "CardExpiration": {
+      "type": "object",
+      "required": [
+        "month",
+        "year"
+      ],
+      "properties": {
+        "month": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 2,
+          "description": "Two-digit month the card expires."
+        },
+        "year": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 2,
+          "description": "Two-digit year the card expires."
+        }
+      },
+      "description": "The expiration date of the card or token."
+    },
+    "CardFingerprint": {
+      "type": "string",
+      "maxLength": 100,
+      "description": "Uniquely identifies a linked payment card or token.\nFor Apple Pay, the fingerprint is based on the tokenized card number and may vary based on the user's device.\nThis field can be used to identify specific payment methods across multiple accounts on your platform."
+    },
+    "CardID": {
+      "type": "string",
+      "description": "ID of the card."
+    },
+    "CardTransactionDetails": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "$ref": "#/$defs/CardTransactionStatus"
+        },
+        "failureCode": {
+          "$ref": "#/$defs/CardTransactionFailureCode"
+        },
+        "dynamicDescriptor": {
+          "$ref": "#/$defs/CardDynamicDescriptor"
+        },
+        "transactionSource": {
+          "$ref": "#/$defs/TransactionSource"
+        },
+        "initiatedOn": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "confirmedOn": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "settledOn": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "failedOn": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "canceledOn": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "completedOn": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "interchangeQualification": {
+          "type": "string",
+          "description": "The program assigned by the card network that determines the interchange rate for the transfer.",
+          "deprecated": true
+        },
+        "feeProgram": {
+          "type": "string",
+          "description": "The program assigned by the card network that determines the interchange rate for the transfer."
+        },
+        "authorizationCode": {
+          "type": "string",
+          "description": "An alphanumeric code generated by the card network to demonstrate approval for the transaction."
+        }
+      },
+      "description": "Card-specific details about the transaction."
+    },
+    "CardTransactionFailureCode": {
+      "type": "string",
+      "enum": [
+        "call-issuer",
+        "do-not-honor",
+        "processing-error",
+        "invalid-transaction",
+        "invalid-amount",
+        "no-such-issuer",
+        "reenter-transaction",
+        "cvv-mismatch",
+        "lost-or-stolen",
+        "insufficient-funds",
+        "invalid-card-number",
+        "invalid-merchant",
+        "expired-card",
+        "incorrect-pin",
+        "transaction-not-allowed",
+        "suspected-fraud",
+        "amount-limit-exceeded",
+        "velocity-limit-exceeded",
+        "revocation-of-authorization",
+        "card-not-activated",
+        "issuer-not-available",
+        "could-not-route",
+        "cardholder-account-closed",
+        "unknown-issue",
+        "duplicate-transaction"
+      ]
+    },
+    "CardTransactionStatus": {
+      "type": "string",
+      "enum": [
+        "initiated",
+        "confirmed",
+        "canceled",
+        "settled",
+        "failed",
+        "completed",
+        "cleared-externally"
+      ],
+      "description": "Status of a transaction within the card payment lifecycle."
+    },
+    "CardType": {
+      "type": "string",
+      "enum": [
+        "debit",
+        "credit",
+        "prepaid",
+        "unknown"
+      ],
+      "description": "The type of the card."
+    },
+    "CardUpdateReason": {
+      "type": "string",
+      "enum": [
+        "unspecified",
+        "account-closed",
+        "contact-cardholder",
+        "expiration-update",
+        "no-change",
+        "no-match",
+        "number-update"
+      ],
+      "description": "The results of the card update request."
+    },
+    "CardVerification": {
+      "type": "object",
+      "required": [
+        "cvv",
+        "addressLine1",
+        "postalCode"
+      ],
+      "properties": {
+        "cvv": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/CardVerificationResult"
+            }
+          ],
+          "description": "Verification result of the card's CVV."
+        },
+        "addressLine1": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/CardVerificationResult"
+            }
+          ],
+          "description": "Verification result of the billing address line 1.\nDerived from the same AVS code as `postalCode`; the card network returns a single code covering both address fields."
+        },
+        "postalCode": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/CardVerificationResult"
+            }
+          ],
+          "description": "Verification result of the billing address postal code.\nDerived from the same AVS code as `addressLine1`; the card network returns a single code covering both address fields."
+        },
+        "accountName": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/AccountNameVerification"
+            }
+          ],
+          "description": "Verification results of the cardholder's name, broken down by name component."
+        }
+      },
+      "description": "The results of submitting cardholder data to a card network for verification."
+    },
+    "CardVerificationResult": {
+      "type": "string",
+      "enum": [
+        "noMatch",
+        "match",
+        "notChecked",
+        "unavailable",
+        "partialMatch"
+      ],
+      "description": "The result of a card verification check."
+    },
+    "Currency": {
+      "type": "string",
+      "pattern": "^[A-Za-z]{3}$",
+      "description": "A 3-letter ISO 4217 currency code."
+    },
+    "DebitHoldPeriod": {
+      "type": "string",
+      "enum": [
+        "no-hold",
+        "1-day",
+        "2-days"
+      ],
+      "description": "An optional override of your default ACH hold period in banking days. The hold period must be longer than or equal to your default setting."
+    },
+    "DomesticPullFromCard": {
+      "type": "string",
+      "enum": [
+        "not-supported",
+        "supported",
+        "unknown"
+      ],
+      "description": "Indicates if the card supports domestic pull-from-card transfer."
+    },
+    "DomesticPushToCard": {
+      "type": "string",
+      "enum": [
+        "not-supported",
+        "standard",
+        "fast-funds",
+        "unknown"
+      ],
+      "description": "Indicates which level of domestic push-to-card transfer is supported by the card, if any."
+    },
+    "FacilitatorFee": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Total facilitator fee."
+        },
+        "totalDecimal": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d{1,9}$",
+          "description": "Same as `total`, but a decimal-formatted numerical string that represents up to 9 decimal place precision.\n\nOnly either `total` or `totalDecimal` can be set. Set this field if you expect the fee to be in fractions of a cent."
+        },
+        "markup": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Markup facilitator fee."
+        },
+        "markupDecimal": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d{1,9}$",
+          "description": "Same as `markup`, but a decimal-formatted numerical string that represents up to 9 decimal place precision.\nOnly either `markup` or `markupDecimal` can be set. Set this field if you expect the fee to be in fractions of a cent."
+        }
+      },
+      "description": "Total or markup fee."
+    },
+    "ImageID": {
+      "type": "string",
+      "description": "Unique identifier for a image resource."
+    },
+    "ImagePublicID": {
+      "type": "string",
+      "pattern": "[A-Za-z0-9_-]{21}",
+      "description": "A unique identifier for an image, used in public image links."
+    },
+    "InstantBankFailureCode": {
+      "type": "string",
+      "enum": [
+        "processing-error",
+        "invalid-account",
+        "account-closed",
+        "account-blocked",
+        "invalid-field",
+        "transaction-not-supported",
+        "limit-exceeded",
+        "invalid-amount",
+        "customer-deceased",
+        "participant-not-available",
+        "other"
+      ],
+      "description": "Status codes for instant-bank failures."
+    },
+    "InstantBankNetwork": {
+      "type": "string",
+      "enum": [
+        "fednow",
+        "rtp"
+      ],
+      "description": "The network that the transaction was processed on."
+    },
+    "InstantBankTransactionDetails": {
+      "type": "object",
+      "required": [
+        "network",
+        "status"
+      ],
+      "properties": {
+        "network": {
+          "$ref": "#/$defs/InstantBankNetwork"
+        },
+        "status": {
+          "$ref": "#/$defs/InstantBankTransactionStatus"
+        },
+        "networkResponseCode": {
+          "type": "string",
+          "description": "Response code returned by network on failure."
+        },
+        "failureCode": {
+          "$ref": "#/$defs/InstantBankFailureCode"
+        },
+        "endToEndID": {
+          "type": "string"
+        },
+        "initiatedOn": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "completedOn": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "failedOn": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "acceptedWithoutPostingOn": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "description": "Instant-bank specific details about the transaction."
+    },
+    "InstantBankTransactionStatus": {
+      "type": "string",
+      "enum": [
+        "initiated",
+        "completed",
+        "failed",
+        "accepted-without-posting"
+      ],
+      "description": "Status of a transaction within the instant-bank lifecycle."
+    },
+    "Metadata": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Free-form key-value pair list. Useful for storing information that is not captured elsewhere."
+    },
+    "MoovFeeDetails": {
+      "type": "object",
+      "required": [
+        "moovProcessing"
+      ],
+      "properties": {
+        "cardScheme": {
+          "type": "string",
+          "description": "Card scheme fees accrued during authorization and settlement. String type represents dollars with up to 9 decimal place precision."
+        },
+        "interchange": {
+          "type": "string",
+          "description": "Network interchange fee for Visa, Mastercard, or Discover. String type represents dollars with up to 9 decimal place precision."
+        },
+        "discount": {
+          "type": "string",
+          "description": "Network discount fee for American Express. String type represents dollars with up to 9 decimal place precision."
+        },
+        "moovProcessing": {
+          "type": "string",
+          "description": "Moov processing fee. String type represents dollars with up to 9 decimal place precision."
+        }
+      },
+      "description": "Processing and pass-through costs that add up to the moovFee."
+    },
+    "RTPFailureCode": {
+      "type": "string",
+      "enum": [
+        "processing-error",
+        "invalid-account",
+        "account-closed",
+        "account-blocked",
+        "invalid-field",
+        "transaction-not-supported",
+        "limit-exceeded",
+        "invalid-amount",
+        "customer-deceased",
+        "other"
+      ],
+      "description": "Status codes for RTP failures."
+    },
+    "RTPTransactionDetails": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "$ref": "#/$defs/RTPTransactionStatus"
+        },
+        "networkResponseCode": {
+          "type": "string",
+          "description": "Response code returned by network on failure."
+        },
+        "failureCode": {
+          "$ref": "#/$defs/RTPFailureCode"
+        },
+        "initiatedOn": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "completedOn": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "failedOn": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "acceptedWithoutPostingOn": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "description": "DEPRECATED: use `InstantBankTransactionDetails` instead (v2026.04.00 or later). RTP specific details about the transaction.",
+      "deprecated": true
+    },
+    "RTPTransactionStatus": {
+      "type": "string",
+      "enum": [
+        "initiated",
+        "completed",
+        "failed",
+        "accepted-without-posting"
+      ],
+      "description": "Status of a transaction within the RTP lifecycle."
+    },
+    "RefundCardDetails": {
+      "type": "object",
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "$ref": "#/$defs/RefundCardStatus"
+        },
+        "failureCode": {
+          "$ref": "#/$defs/CardTransactionFailureCode"
+        },
+        "initiatedOn": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "confirmedOn": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "settledOn": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "failedOn": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "completedOn": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "RefundCardStatus": {
+      "type": "string",
+      "enum": [
+        "initiated",
+        "confirmed",
+        "settled",
+        "failed",
+        "completed",
+        "cleared-externally"
+      ]
+    },
+    "RefundStatus": {
+      "type": "string",
+      "enum": [
+        "created",
+        "pending",
+        "completed",
+        "failed"
+      ]
+    },
+    "SECCode": {
+      "type": "string",
+      "enum": [
+        "WEB",
+        "PPD",
+        "CCD",
+        "TEL"
+      ],
+      "description": "Code used to identify the ACH authorization method."
+    },
+    "TransactionSource": {
+      "type": "string",
+      "enum": [
+        "first-recurring",
+        "recurring",
+        "unscheduled"
+      ],
+      "description": "Specifies the nature and initiator of a transaction. \n\nCrucial for recurring and merchant-initiated transactions as per card scheme rules. \nOmit for customer-initiated e-commerce transactions."
+    },
+    "TransferACHAddendaRecord": {
+      "type": "object",
+      "required": [
+        "record",
+        "isMasked"
+      ],
+      "properties": {
+        "record": {
+          "type": "string",
+          "maxLength": 80,
+          "description": "The ACH addenda record, which may have masked PII"
+        },
+        "isMasked": {
+          "type": "boolean",
+          "description": "Flag indicating whether or not this record has been masked"
+        }
+      },
+      "description": "An addenda record which was added to an ACH transfer"
+    },
+    "TransferAccount": {
+      "type": "object",
+      "required": [
+        "accountID",
+        "email",
+        "displayName"
+      ],
+      "properties": {
+        "accountID": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "displayName": {
+          "type": "string"
+        }
+      }
+    },
+    "TransferCapture": {
+      "type": "object",
+      "required": [
+        "authorizationID",
+        "captureID"
+      ],
+      "properties": {
+        "authorizationID": {
+          "type": "string",
+          "description": "ID of the card authorization associated with this transfer."
+        },
+        "captureID": {
+          "type": "string",
+          "description": "ID of the card capture associated with this transfer."
+        }
+      },
+      "description": "The card authorization and capture IDs associated with a transfer."
+    },
+    "TransferDestination": {
+      "type": "object",
+      "required": [
+        "paymentMethodID",
+        "paymentMethodType",
+        "account"
+      ],
+      "properties": {
+        "paymentMethodID": {
+          "type": "string"
+        },
+        "paymentMethodType": {
+          "$ref": "#/$defs/TransferPaymentMethodType"
+        },
+        "account": {
+          "$ref": "#/$defs/TransferAccount"
+        },
+        "bankAccount": {
+          "$ref": "#/$defs/TransferPaymentMethodsBankAccount"
+        },
+        "wallet": {
+          "$ref": "#/$defs/TransferPaymentMethodsWallet"
+        },
+        "card": {
+          "$ref": "#/$defs/TransferPaymentMethodsCard"
+        },
+        "achDetails": {
+          "$ref": "#/$defs/ACHTransactionDetails"
+        },
+        "applePay": {
+          "$ref": "#/$defs/ApplePayResponse"
+        },
+        "cardDetails": {
+          "$ref": "#/$defs/CardTransactionDetails"
+        },
+        "rtpDetails": {
+          "$ref": "#/$defs/RTPTransactionDetails"
+        },
+        "instantBankDetails": {
+          "$ref": "#/$defs/InstantBankTransactionDetails"
+        }
+      }
+    },
+    "TransferEntryMode": {
+      "type": "string",
+      "enum": [
+        "contactless"
+      ],
+      "description": "How the card information was entered into the point of sale terminal."
+    },
+    "TransferFailureReason": {
+      "type": "string",
+      "enum": [
+        "source-payment-error",
+        "destination-payment-error",
+        "wallet-insufficient-funds",
+        "rejected-high-risk",
+        "processing-error"
+      ],
+      "description": "Reason for a transfer's failure."
+    },
+    "TransferLineItem": {
+      "type": "object",
+      "required": [
+        "name",
+        "basePrice",
+        "quantity"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 150,
+          "description": "The name of the item."
+        },
+        "basePrice": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/AmountDecimal"
+            }
+          ],
+          "description": "The base price of the item before applying option modifiers."
+        },
+        "quantity": {
+          "type": "integer",
+          "format": "int32",
+          "minimum": 1,
+          "description": "The quantity of this item."
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TransferLineItemOption"
+          },
+          "description": "Optional list of modifiers applied to this item (e.g., toppings, upgrades, customizations)."
+        },
+        "images": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TransferLineItemImageMetadata"
+          },
+          "description": "Optional list of images associated with this line item."
+        },
+        "productID": {
+          "type": "string",
+          "description": "Optional unique identifier associating the line item with a product."
+        }
+      },
+      "description": "Represents a single item in a transfer, including optional modifiers and quantity."
+    },
+    "TransferLineItemImageMetadata": {
+      "type": "object",
+      "required": [
+        "imageID",
+        "link",
+        "publicID"
+      ],
+      "properties": {
+        "imageID": {
+          "$ref": "#/$defs/ImageID"
+        },
+        "altText": {
+          "type": "string",
+          "maxLength": 125,
+          "description": "Alternative text for the image."
+        },
+        "link": {
+          "type": "string",
+          "format": "uri",
+          "description": "The image's public URL."
+        },
+        "publicID": {
+          "$ref": "#/$defs/ImagePublicID"
+        }
+      }
+    },
+    "TransferLineItemOption": {
+      "type": "object",
+      "required": [
+        "name",
+        "quantity"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 150,
+          "description": "The name of the option or modifier."
+        },
+        "quantity": {
+          "type": "integer",
+          "format": "int32",
+          "minimum": 1,
+          "description": "The quantity of this option."
+        },
+        "priceModifier": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/AmountDecimal"
+            }
+          ],
+          "description": "Optional price modification applied by this option. Can be positive, negative, or zero."
+        },
+        "images": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TransferLineItemImageMetadata"
+          },
+          "description": "Optional list of images associated with this line item option."
+        },
+        "group": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Optional group identifier to categorize related options (e.g., 'toppings')."
+        }
+      },
+      "description": "Represents a modifier or option applied to a line item."
+    },
+    "TransferLineItems": {
+      "type": "object",
+      "required": [
+        "items"
+      ],
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TransferLineItem"
+          },
+          "minItems": 1,
+          "description": "The list of line items."
+        }
+      },
+      "description": "An optional collection of line items for a transfer.\nWhen line items are provided, their total plus tax must equal the transfer amount."
+    },
+    "TransferPaymentMethodType": {
+      "type": "string",
+      "enum": [
+        "moov-wallet",
+        "ach-debit-fund",
+        "ach-debit-collect",
+        "ach-credit-standard",
+        "ach-credit-same-day",
+        "rtp-credit",
+        "card-payment",
+        "push-to-card",
+        "pull-from-card",
+        "apple-pay",
+        "card-present-payment",
+        "instant-bank-credit"
+      ],
+      "description": "The payment method type that represents a payment rail and directionality"
+    },
+    "TransferPaymentMethodsBankAccount": {
+      "type": "object",
+      "required": [
+        "bankAccountID",
+        "fingerprint",
+        "status",
+        "holderName",
+        "holderType",
+        "bankName",
+        "bankAccountType",
+        "routingNumber",
+        "lastFourAccountNumber",
+        "updatedOn"
+      ],
+      "properties": {
+        "bankAccountID": {
+          "type": "string"
+        },
+        "fingerprint": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Once the bank account is linked, we don't reveal the full bank account number.\n\nThe fingerprint acts as a way to identify whether two linked bank accounts are the same."
+        },
+        "status": {
+          "$ref": "#/$defs/BankAccountStatus"
+        },
+        "holderName": {
+          "type": "string"
+        },
+        "holderType": {
+          "$ref": "#/$defs/BankAccountHolderType"
+        },
+        "bankName": {
+          "type": "string"
+        },
+        "bankAccountType": {
+          "$ref": "#/$defs/BankAccountType"
+        },
+        "routingNumber": {
+          "type": "string"
+        },
+        "lastFourAccountNumber": {
+          "type": "string"
+        },
+        "updatedOn": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "description": "A bank account as contained within a payment method."
+    },
+    "TransferPaymentMethodsCard": {
+      "type": "object",
+      "required": [
+        "cardID",
+        "fingerprint",
+        "brand",
+        "cardType",
+        "lastFourCardNumber",
+        "bin",
+        "expiration",
+        "billingAddress",
+        "cardVerification"
+      ],
+      "properties": {
+        "cardID": {
+          "$ref": "#/$defs/CardID"
+        },
+        "fingerprint": {
+          "$ref": "#/$defs/CardFingerprint"
+        },
+        "brand": {
+          "$ref": "#/$defs/CardBrand"
+        },
+        "cardType": {
+          "$ref": "#/$defs/CardType"
+        },
+        "lastFourCardNumber": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 4,
+          "description": "Last four digits of the card number"
+        },
+        "bin": {
+          "type": "string",
+          "minLength": 6,
+          "maxLength": 8,
+          "description": "The first six to eight digits of the card number, which identifies the financial institution that issued the card."
+        },
+        "expiration": {
+          "$ref": "#/$defs/CardExpiration"
+        },
+        "holderName": {
+          "type": "string",
+          "description": "The name of the cardholder as it appears on the card."
+        },
+        "billingAddress": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/CardAddress"
+            }
+          ],
+          "description": "The billing address associated with the card."
+        },
+        "cardVerification": {
+          "$ref": "#/$defs/CardVerification"
+        },
+        "issuer": {
+          "type": "string",
+          "description": "Financial institution that issued the card."
+        },
+        "issuerCountry": {
+          "type": "string",
+          "description": "Country where the card was issued."
+        },
+        "cardOnFile": {
+          "type": "boolean",
+          "description": "Indicates cardholder has authorized card to be stored for future payments."
+        },
+        "merchantAccountID": {
+          "type": "string",
+          "description": "Merchant account whose details (statement descriptor, address, etc.) are used for the card verification authorization.\nIf omitted, the partner account's details are used instead."
+        },
+        "cardAccountUpdater": {
+          "$ref": "#/$defs/CardAccountUpdater"
+        },
+        "domesticPushToCard": {
+          "$ref": "#/$defs/DomesticPushToCard"
+        },
+        "domesticPullFromCard": {
+          "$ref": "#/$defs/DomesticPullFromCard"
+        }
+      },
+      "description": "A card as contained within a payment method."
+    },
+    "TransferPaymentMethodsWallet": {
+      "type": "object",
+      "required": [
+        "walletID",
+        "partnerAccountID",
+        "walletType"
+      ],
+      "properties": {
+        "walletID": {
+          "$ref": "#/$defs/WalletID"
+        },
+        "partnerAccountID": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "walletType": {
+          "$ref": "#/$defs/WalletType"
+        }
+      }
+    },
+    "TransferSource": {
+      "type": "object",
+      "required": [
+        "paymentMethodID",
+        "paymentMethodType",
+        "account"
+      ],
+      "properties": {
+        "transferID": {
+          "type": "string",
+          "description": "String present only if the transfer is part of a transfer group."
+        },
+        "paymentMethodID": {
+          "type": "string"
+        },
+        "paymentMethodType": {
+          "$ref": "#/$defs/TransferPaymentMethodType"
+        },
+        "account": {
+          "$ref": "#/$defs/TransferAccount"
+        },
+        "bankAccount": {
+          "$ref": "#/$defs/TransferPaymentMethodsBankAccount"
+        },
+        "wallet": {
+          "$ref": "#/$defs/TransferPaymentMethodsWallet"
+        },
+        "card": {
+          "$ref": "#/$defs/TransferPaymentMethodsCard"
+        },
+        "applePay": {
+          "$ref": "#/$defs/ApplePayResponse"
+        },
+        "terminalCard": {
+          "$ref": "#/$defs/TransferTerminalCard"
+        },
+        "cardDetails": {
+          "$ref": "#/$defs/CardTransactionDetails"
+        },
+        "achDetails": {
+          "$ref": "#/$defs/ACHTransactionDetails"
+        }
+      }
+    },
+    "TransferStatus": {
+      "type": "string",
+      "enum": [
+        "created",
+        "pending",
+        "completed",
+        "failed",
+        "reversed",
+        "queued",
+        "canceled"
+      ],
+      "description": "Status of a transfer."
+    },
+    "TransferTerminalCard": {
+      "type": "object",
+      "properties": {
+        "entryMode": {
+          "$ref": "#/$defs/TransferEntryMode"
+        },
+        "brand": {
+          "$ref": "#/$defs/CardBrand"
+        },
+        "bin": {
+          "type": "string",
+          "minLength": 6,
+          "maxLength": 8
+        },
+        "cardType": {
+          "$ref": "#/$defs/CardType"
+        },
+        "expiration": {
+          "$ref": "#/$defs/CardExpiration"
+        },
+        "fingerprint": {
+          "$ref": "#/$defs/CardFingerprint"
+        },
+        "holderName": {
+          "type": "string",
+          "description": "The name of the cardholder as it appears on the card."
+        },
+        "issuer": {
+          "type": "string",
+          "description": "Financial institution that issued the card."
+        },
+        "issuerCountry": {
+          "type": "string",
+          "description": "Country where the card was issued."
+        },
+        "lastFourCardNumber": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 4,
+          "description": "Last four digits of the card number"
+        },
+        "applicationID": {
+          "type": "string",
+          "description": "Identifier for the point of sale terminal application."
+        },
+        "applicationName": {
+          "type": "string",
+          "description": "Name label for the point of sale terminal application."
+        }
+      },
+      "description": "Describes payment card details captured with tap or in-person payment."
+    },
+    "WalletID": {
+      "type": "string"
+    },
+    "WalletType": {
+      "type": "string",
+      "enum": [
+        "default",
+        "general",
+        "card-issuing"
+      ],
+      "description": "Type of a wallet.\n  - `default`: The system-generated wallet automatically created when an account is granted the wallet capability.\n  - `general`: An additional, user-defined wallet created via API or Dashboard.\n  - `card-issuing`: The system-generated wallet automatically created when an account is granted the card-issuing capability."
+    }
+  }
+}

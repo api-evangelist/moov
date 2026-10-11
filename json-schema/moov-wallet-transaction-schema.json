@@ -1,0 +1,189 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/moov/main/json-schema/moov-wallet-transaction-schema.json",
+  "title": "WalletTransaction",
+  "description": "A transaction that funds or deducts from the wallet.",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/moov-openapi.yml#/components/schemas/WalletTransaction",
+  "type": "object",
+  "required": [
+    "walletID",
+    "transactionID",
+    "transactionType",
+    "sourceType",
+    "sourceID",
+    "status",
+    "memo",
+    "createdOn",
+    "currency",
+    "grossAmount",
+    "grossAmountDecimal",
+    "fee",
+    "feeDecimal",
+    "netAmount",
+    "netAmountDecimal"
+  ],
+  "properties": {
+    "walletID": {
+      "$ref": "#/$defs/WalletID"
+    },
+    "transactionID": {
+      "$ref": "#/$defs/WalletTransactionID"
+    },
+    "transactionType": {
+      "$ref": "#/$defs/WalletTransactionType"
+    },
+    "sourceType": {
+      "$ref": "#/$defs/WalletTransactionSourceType"
+    },
+    "sourceID": {
+      "type": "string",
+      "description": "The ID of the Moov object to which this transaction is related."
+    },
+    "status": {
+      "$ref": "#/$defs/WalletTransactionStatus"
+    },
+    "memo": {
+      "type": "string",
+      "description": "Detailed description of the transaction."
+    },
+    "createdOn": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completedOn": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "currency": {
+      "$ref": "#/$defs/Currency"
+    },
+    "grossAmount": {
+      "type": "integer",
+      "format": "int64",
+      "description": "The total transaction amount. The amount is in the smallest unit of the specified currency. In USD this is cents, for example, $12.04 is 1204 and $0.99 is 99."
+    },
+    "grossAmountDecimal": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d{1,9}$",
+      "description": "The total transaction amount. Same as `grossAmount`, but a decimal-formatted numerical string that represents up to 9 decimal place precision. In USD for example, 12.987654321 is $12.987654321 and 0.9987634521 is $0.9987634521."
+    },
+    "fee": {
+      "type": "integer",
+      "format": "int64",
+      "description": "Total fees paid for the transaction. The value is in the smallest unit of the specified currency. In USD this is cents, for example, $12.04 is 1204 and $0.99 is 99."
+    },
+    "feeIDs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "The IDs of the fees paid for the transaction."
+    },
+    "feeDecimal": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d{1,9}$",
+      "description": "Total fees paid for the transaction. Same as `fee`, but a decimal-formatted numerical string that represents up to 9 decimal place precision. In USD for example, 12.987654321 is $12.987654321 and 0.9987634521 is $0.9987634521."
+    },
+    "netAmount": {
+      "type": "integer",
+      "format": "int64",
+      "description": "Net amount is the gross amount less fees paid, and the amount that affects the wallet's balance. The amount is in the smallest unit of the specified currency. In USD this is cents, for example, $12.04 is 1204 and $0.99 is 99."
+    },
+    "netAmountDecimal": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d{1,9}$",
+      "description": "Net amount is the gross amount less fees paid, and the amount that affects the wallet's balance. Same as `netAmount`, but a decimal-formatted numerical string that represents up to 9 decimal place precision. In USD for example, 12.987654321 is $12.987654321 and 0.9987634521 is $0.9987634521."
+    },
+    "availableBalance": {
+      "type": "integer",
+      "format": "int64",
+      "description": "The wallet's total available balance after recording a completed transaction. The value is in the smallest unit of the specified currency. In USD this is cents, for example, $12.04 is 1204 and $0.99 is 99."
+    },
+    "availableBalanceDecimal": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d{1,9}$",
+      "description": "The wallet's total available balance after recording a completed transaction. Same as `availableBalance`, but a decimal-formatted numerical string that represents up to 9 decimal place precision. In USD for example, 12.987654321 is $12.987654321 and 0.9987634521 is $0.9987634521."
+    },
+    "sweepID": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/SweepID"
+        }
+      ],
+      "description": "ID of the sweep this transaction accrued in."
+    }
+  },
+  "$defs": {
+    "Currency": {
+      "type": "string",
+      "pattern": "^[A-Za-z]{3}$",
+      "description": "A 3-letter ISO 4217 currency code."
+    },
+    "SweepID": {
+      "type": "string"
+    },
+    "WalletID": {
+      "type": "string"
+    },
+    "WalletTransactionID": {
+      "type": "string"
+    },
+    "WalletTransactionSourceType": {
+      "type": "string",
+      "enum": [
+        "transfer",
+        "dispute",
+        "issuing-card-transaction",
+        "issuing-authorization",
+        "sweep",
+        "adjustment",
+        "fee",
+        "residual"
+      ]
+    },
+    "WalletTransactionStatus": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "completed",
+        "canceled",
+        "failed"
+      ]
+    },
+    "WalletTransactionType": {
+      "type": "string",
+      "enum": [
+        "account-funding",
+        "ach-reversal",
+        "auto-sweep",
+        "card-payment",
+        "card-decline",
+        "card-reversal",
+        "cash-out",
+        "dispute",
+        "dispute-reversal",
+        "facilitator-fee",
+        "issuing-refund",
+        "issuing-transaction",
+        "issuing-transaction-adjustment",
+        "issuing-auth-hold",
+        "issuing-auth-release",
+        "issuing-decline",
+        "moov-fee",
+        "payment",
+        "payout",
+        "refund",
+        "refund-failure",
+        "rtp-failure",
+        "top-up",
+        "wallet-transfer",
+        "adjustment",
+        "fee-revenue",
+        "residual"
+      ]
+    }
+  }
+}

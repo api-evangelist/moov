@@ -1,0 +1,139 @@
+generated: '2026-10-12'
+method: searched
+source: https://docs.moov.io/guides/money-movement/accept-payments/card-acceptance/declines/
+envelope: failureCode on the card transfer
+decline_codes:
+- code: account-closed
+  meaning: The account is closed
+  action: Do not re-attempt with the same information - there will be a fee assessed. Re-submit with different credentials
+    or contact issuer
+- code: account-not-activated
+  meaning: The card or account has not been activated
+  action: Ask the cardholder to activate the card or account with their issuer, then re-attempt
+- code: amount-limit-exceeded
+  meaning: The amount entered exceeds issuer or approved amount
+  action: Re-attempt with a lesser amount or at a later date so the limit resets. Contact issuer to discuss adjusting
+    limits
+- code: authentication-failed
+  meaning: Cardholder authentication (for example, 3-D Secure) was attempted, but failed verification
+  action: Ask the cardholder to retry authentication with their issuer, or verify authentication details before
+    re-attempting
+- code: authentication-required
+  meaning: The transaction requires additional cardholder authentication (such as 3-D Secure) before it can be approved
+  action: Prompt the cardholder to complete the required authentication step, then re-attempt
+- code: call-issuer
+  meaning: An issue occurred which must be handled by the card issuer
+  action: Contact card issuer for decline reason
+- code: card-not-activated
+  meaning: The card has not been properly unblocked
+  action: Please contact the bank for support or use a different card
+- code: cardholder-account-closed
+  meaning: The account is closed
+  action: Do not re-attempt with the same information - there will be a fee assessed. Re-submit with different credentials
+    or contact issuer
+- code: cardholder-action-required
+  meaning: Before the transaction can proceed, the cardholder must take an action, such as contacting the issuer
+    or confirming details
+  action: Ask the cardholder to contact the issuer, or complete the required verification, then re-attempt
+- code: could-not-route
+  meaning: The financial institution cannot be found for routing (receiving institution ID is invalid)
+  action: Please verify the routing information and re-attempt with updated details
+- code: cvv-mismatch
+  meaning: The CVV verification failed
+  action: Please verify the CVV and re-attempt with updated details. Monitor for potential fraud
+- code: do-not-honor
+  meaning: The issuer will not allow the transaction
+  action: Re-attempt with different credentials or at a later time. Contact issuer for additional support
+- code: duplicate-transaction
+  meaning: The transaction is a duplicate of one already submitted
+  action: Do not re-attempt with the same information. Confirm whether the original transaction succeeded before
+    resubmitting.
+- code: expired-card
+  meaning: The card has expired or expiration date is missing
+  action: Please verify the expiration and re-attempt with updated details. Monitor for potential fraud
+- code: format-error
+  meaning: The transaction message contains an invalid or malformed field
+  action: Do not re-attempt without correcting the request. Review transaction fields for formatting issues or contact
+    support
+- code: incorrect-pin
+  meaning: The PIN is incorrect or missing when required
+  action: Please re-attempt with an updated PIN
+- code: insufficient-funds
+  meaning: This card has insufficient funds to complete the transaction
+  action: Please re-attempt with a lesser amount or at a later time
+- code: invalid-amount
+  meaning: The amount entered is invalid
+  action: Please re-attempt with a different amount
+- code: invalid-card-number
+  meaning: The card number is incorrect
+  action: Do not re-attempt with the same information - there will be a fee assessed. Verify card information and
+    re-submit with different credentials
+- code: invalid-merchant
+  meaning: The card is not allowed at this merchant or MCC
+  action: Re-attempt once the cardholder has confirmed the restriction has been removed
+- code: invalid-pin
+  meaning: The PIN provided is invalid
+  action: Please re-attempt with a valid PIN
+- code: invalid-transaction
+  meaning: The transaction is invalid
+  action: Do not re-attempt - there will be a fee assessed. Evaluate potential fraud or technical issues
+- code: issuer-not-available
+  meaning: The Issuer was unavailable for the transaction and STIP is not applicable or not available for this transaction
+  action: Can re-attempt the same day. Contact Issuer for additional support
+- code: lost-or-stolen
+  meaning: The card was reported as lost or stolen
+  action: Do not re-attempt with the same information - there will be a fee assessed. Re-submit with different credentials
+    or contact Issuer
+- code: no-such-issuer
+  meaning: The issuer is invalid
+  action: Do not re-attempt - there will be a fee assessed. Evaluate potential fraud or technical issues
+- code: offline-approved
+  meaning: The transaction was approved offline by the card's chip without online issuer authorization
+  action: No action required. These transactions settle through normal offline-authorization processing.
+- code: offline-declined
+  meaning: The transaction was declined offline by the card's chip without online issuer authorization
+  action: Ask the cardholder to try a different card or payment method
+- code: partial-approval
+  meaning: Only part of the requested amount was approved, typically due to a balance limit on a prepaid or gift
+    card
+  action: Confirm the approved amount with the cardholder and collect the remaining balance through another payment
+    method
+- code: payment-stopped
+  meaning: The cardholder has requested that the payment (for example, a recurring payment) be stopped
+  action: Do not re-attempt with the same information. Contact the cardholder to confirm whether the payment should
+    be canceled.
+- code: pin-required
+  meaning: A PIN is required to complete the transaction but was not provided
+  action: Re-attempt the transaction with a PIN
+- code: processing-error
+  meaning: The transaction could not be processed due to processing error
+  action: Ensure payment details are valid or contact issuer for more information
+- code: record-not-found
+  meaning: The original transaction record referenced could not be found
+  action: Verify the original transaction details before re-attempting
+- code: reenter-transaction
+  meaning: The transaction could not be processed due to an error in message structure or field format
+  action: Review Address Verification Result or contact acquirer to evaluate possible format errors
+- code: revocation-of-authorization
+  meaning: Revocation of authorization order
+  action: Do not re-attempt with the same information - there will be a fee assessed. Contact cardholder about the
+    recurring payment cancellation
+- code: surcharge-not-permitted
+  meaning: A surcharge was applied, but surcharging is not permitted for this card or region
+  action: Remove the surcharge and re-attempt the transaction
+- code: suspected-fraud
+  meaning: The transaction was declined because of suspected fraud
+  action: Cardholder should contact issuer and should only re-attempt after receiving confirmation of legitimacy
+- code: transaction-not-allowed
+  meaning: The transaction was not allowed
+  action: Do not re-attempt with the same information - there will be a fee assessed. Re-submit with different credentials
+    or contact issuer
+- code: transaction-reversed
+  meaning: The original transaction has been reversed
+  action: Typically, no further action is required. Confirm the reversal with the cardholder or issuer if unexpected.
+- code: velocity-limit-exceeded
+  meaning: The transaction exceeds the card or account’s withdrawal frequency limit
+  action: Re-attempt at a later date so the limit resets. Contact issuer to discuss adjusting limits
+- code: verification-failed
+  meaning: Card or account verification failed
+  action: Please verify the card details and re-attempt with updated information

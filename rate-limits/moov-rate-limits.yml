@@ -2,6 +2,7 @@
 generated: '2026-09-20'
 method: searched
 source: https://docs.moov.io/api/rate-limits/
+name: Moov API Rate Limits
 sources:
 - https://docs.moov.io/api/rate-limits/
 provenance:

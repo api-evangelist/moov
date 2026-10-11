@@ -1,0 +1,47 @@
+generated: '2026-10-12'
+method: searched
+source: https://docs.moov.io/llms.txt
+note: Versions read from registry metadata endpoints on 2026-10-12. The docs list Go, TypeScript, Python, PHP, Ruby, Java and .NET SDKs; Ruby,
+  Java and .NET packages were not resolved in a registry under a name we could confirm.
+packages:
+- name: '@moovio/sdk'
+  registry: npm
+  url: https://www.npmjs.com/package/@moovio/sdk
+  language: TypeScript
+  official: true
+  version: 25.7.0
+  published: '2026-02-04'
+  note: npm dist-tag latest; the docs page shows the moov-typescript repo at v26.7.7. The same package ships the local MCP server (npx -y --package
+    @moovio/sdk -- mcp start).
+  ownership_audit: metadata names moov.io
+- name: '@moovio/moov-js'
+  registry: npm
+  url: https://www.npmjs.com/package/@moovio/moov-js
+  language: JavaScript
+  official: true
+  version: 0.0.21
+  published: '2026-02-23'
+  ownership_audit: metadata names moov.io
+- name: moovio_sdk
+  registry: pypi
+  url: https://pypi.org/project/moovio_sdk/
+  language: Python
+  official: true
+  version: 26.8.5
+  published: '2026-10-02'
+  ownership_audit: metadata names moov.io
+- name: github.com/moovfinancial/moov-go
+  registry: go
+  url: https://pkg.go.dev/github.com/moovfinancial/moov-go
+  language: Go
+  official: true
+  version: v0.53.0
+  published: '2026-10-08'
+- name: moov/moov-php
+  registry: packagist
+  url: https://packagist.org/packages/moov/moov-php
+  language: PHP
+  official: false
+  version: v26.10.0-beta.8
+  published: '2026-10-02'
+  ownership_audit: 'registry metadata names neither the provider''s domain nor its GitHub org: official downgraded (harvest-packages.py --audit)'

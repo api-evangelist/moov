@@ -1,6 +1,10 @@
-generated: '2026-07-11'
+generated: '2026-10-12'
 method: derived
-source: openapi/moov-api-openapi.yml
+source: openapi/moov-accounts-api-openapi.yml, openapi/moov-authentication-api-openapi.yml,
+  openapi/moov-bank-accounts-api-openapi.yml, openapi/moov-capabilities-api-openapi.yml, openapi/moov-card-issuing-api-openapi.yml,
+  openapi/moov-cards-api-openapi.yml, openapi/moov-disputes-api-openapi.yml, openapi/moov-institutions-api-openapi.yml,
+  openapi/moov-openapi.yml, openapi/moov-payment-links-api-openapi.yml, openapi/moov-payment-methods-api-openapi.yml,
+  openapi/moov-refunds-api-openapi.yml ...
 summary:
   types:
   - http
@@ -11,4 +15,24 @@ schemes:
   description: OAuth2 bearer token obtained from the /oauth2/token endpoint. Include in the
     Authorization header as "Bearer {token}".
   sources:
-  - openapi/moov-api-openapi.yml
+  - openapi/moov-accounts-api-openapi.yml
+  - openapi/moov-authentication-api-openapi.yml
+  - openapi/moov-bank-accounts-api-openapi.yml
+  - openapi/moov-capabilities-api-openapi.yml
+  - openapi/moov-card-issuing-api-openapi.yml
+  - openapi/moov-cards-api-openapi.yml
+  - openapi/moov-disputes-api-openapi.yml
+  - openapi/moov-institutions-api-openapi.yml
+  - openapi/moov-payment-links-api-openapi.yml
+  - openapi/moov-payment-methods-api-openapi.yml
+  - openapi/moov-refunds-api-openapi.yml
+  - openapi/moov-representatives-api-openapi.yml
+  - openapi/moov-sweeps-api-openapi.yml
+  - openapi/moov-transfers-api-openapi.yml
+  - openapi/moov-underwriting-api-openapi.yml
+  - openapi/moov-wallets-api-openapi.yml
+- name: BasicAuth
+  type: http
+  scheme: Basic
+  sources:
+  - openapi/moov-openapi.yml

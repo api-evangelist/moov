@@ -1,0 +1,90 @@
+generated: '2026-10-12'
+method: searched
+source: https://docs.moov.io/changelog/
+scheme: dated API versions (vYYYY.MM.00) selected with the X-Moov-Version header; product changelog posted by date
+current_version: v2026.07.00 (v2026.10.00 in preview)
+note: The page shows month and day only; the year 2026 is inferred from the page order (newest first, no year boundary
+  crossed).
+entries:
+- date: '2026-10-09'
+  date_text: Oct 9
+  title: Spending card activity & more
+  version: null
+  breaking: false
+  highlights:
+  - Get spending card activity
+  - Query transfers by invoiceID
+  - Webhook updates
+  - Bug fixes
+- date: '2026-09-25'
+  date_text: Sep 25
+  title: Self-serve ACH returns & more
+  version: null
+  breaking: false
+  highlights:
+  - Self-serve ACH returns
+  - Product catalog isTaxable
+  - UI updates in the API
+- date: '2026-09-18'
+  date_text: Sep 18
+  title: Bug fixes
+  version: null
+  breaking: false
+  highlights:
+  - Bug fixes
+- date: '2026-08-28'
+  date_text: Aug 28
+  title: Dashboard payout fees & partner onboarding
+  version: null
+  breaking: false
+  highlights:
+  - Payout fees in the Dashboard
+  - Streamlined partner onboarding in the Dashboard
+  - Bug fixes
+- date: '2026-08-21'
+  date_text: Aug 21
+  title: Payout fees & fee plan reassignment
+  version: null
+  breaking: false
+  highlights:
+  - Payout fees
+  - Update fee plan agreements
+  - Bug fixes
+- date: '2026-08-13'
+  date_text: Aug 13
+  title: Duplicate images update & bug fixes
+  version: null
+  breaking: false
+  highlights:
+  - Duplicate images in the library
+  - Bug fixes
+  - General update
+- date: '2026-07-28'
+  date_text: Jul 28
+  title: FedNow support, feePlanID in onboarding Drop & API v2026.10.00 preview
+  version: v2026.10.00
+  breaking: false
+  highlights:
+  - FedNow support
+  - feePlanID
+  - API v2026.10.00 preview
+  - Bug fixes
+- date: '2026-07-14'
+  date_text: Jul 14
+  title: Onboarding Drop editing, customizable Dashboard roles, invoice URL sharing & API v2026.07.00
+  version: v2026.07.00
+  breaking: false
+  highlights:
+  - Resume account creation & edit Drop
+  - Customizable Dashboard roles
+  - Invoice URL sharing
+  - API v2026.07.00
+  - Bug fixes
+- date: '2026-07-02'
+  date_text: Jul 2
+  title: Surcharging in test mode & bug fixes
+  version: null
+  breaking: false
+  highlights:
+  - Surcharging in test mode
+  - Bug fixes

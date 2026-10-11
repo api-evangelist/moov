@@ -1,0 +1,119 @@
+generated: '2026-10-12'
+method: searched
+source: https://docs.moov.io/api/errors/
+format: application/json
+envelope: JSON body with an error message; status-code tables per resource area
+problems:
+- status: 201
+  title: Created
+  area: Transfers
+  description: Transfer was successfully created but an error occurred while getting the synchronous response. The
+    asynchronous response object will be returned.
+  remediation: Moov's internal services are in a degraded state and are unable to return the full transfer object
+    as a response. The transfer was created but we aren't able to generate a synchronous response, so we return
+    the async response here. You can attempt GET the transfer using the ID that's returned. Note that if Moov's
+    services are still degraded, you will not be able to get the response if you attempted to use the transfer `GET`
+    [endpoint](/api/money-movement/transfers/get/) right after creating the transfer.
+- status: 202
+  title: Accepted
+  area: Transfers
+  description: A transfer or refund was successfully created but a timeout occurred while waiting for a synchronous
+    response. Rail-specific details may be missing from the response object.
+  remediation: A timeout occurred with the payment network. To retrieve full rail-specific details at a later time,
+    use the transfer GET endpoint.
+- status: 400
+  title: Bad request
+  area: Transfers
+  description: Invalid request, an error message will be available in the response body.
+  remediation: There was a problem with the request payload. The error message will provide specific details on
+    what needs to be fixed.
+- status: 409
+  title: Conflict
+  area: Transfers
+  description: Attempted to create a transfer using duplicate X-Idempotency-Key header
+  remediation: Retry the request with a different X-Idempotency-Key header.
+- status: 422
+  title: Unprocessable content
+  area: Transfers
+  description: The request body could not be processed
+  remediation: The error message will let you know how long to wait (in milliseconds) before you can retry
+- status: 429
+  title: Too many requests
+  area: Transfers
+  description: Request was refused due to rate limiting
+  remediation: The error message will let you know how long to wait (in milliseconds) before you can retry
+- status: 404
+  title: Not found
+  area: Accounts
+  description: No account with the specified account ID was found
+  remediation: Double check the account ID and retry
+- status: 422
+  title: Unprocessable content
+  area: Accounts
+  description: The request body could not be processed
+  remediation: There was a problem with the request payload. Check for required headers, whether or not you're using
+    a duplicate ID, and that you're using a valid account type. The error message will provide specific details
+    on what needs to be fixed.
+- status: 429
+  title: Too many requests
+  area: Accounts
+  description: Request was refused due to rate limiting
+  remediation: The error message will let you know how long to wait (in milliseconds) before you can retry
+- status: 404
+  title: Not found
+  area: Capabilities
+  description: No account with the specified account ID was found
+  remediation: Double check the account ID and retry.
+- status: 409
+  title: Conflict
+  area: Capabilities
+  description: The request could not be completed due to a state conflict with the target resource
+  remediation: There are [capability requirements](/guides/accounts/capabilities/requirements/) that have not yet
+    been met or incomplete KYC [verification](/guides/accounts/requirements/identity-verification/). The error message
+    will provide specific details about which requirements have not yet been met.
+- status: 429
+  title: Too many requests
+  area: Capabilities
+  description: Request was refused due to rate limiting
+  remediation: The error message will let you know how long to wait (in milliseconds) before you can retry.
+- status: 404
+  title: Not found
+  area: Card acceptance
+  description: No account with the specified account ID was found
+  remediation: Double check the account ID and retry
+- status: 409
+  title: Conflict
+  area: Card acceptance
+  description: Attempted to link card that already exists on the account
+  remediation: Double check the card number you were trying to link
+- status: 422
+  title: Unprocessable content
+  area: Card acceptance
+  description: The supplied card appeared invalid or was declined by the issuer
+  remediation: Double check the card number you were trying to link or get in contact with the card issuer
+- status: 429
+  title: Too many requests
+  area: Card acceptance
+  description: Request was refused due to rate limiting
+  remediation: The error message will let you know how long to wait (in milliseconds) before you can retry
+- status: 404
+  title: Not found
+  area: Bank accounts
+  description: No account with the specified account ID was found
+  remediation: Double check the account ID and retry
+- status: 409
+  title: Conflict
+  area: Bank accounts
+  description: Unable to get bank name for routing number or duplicate bank account
+  remediation: Double check the routing number provided
+- status: 422
+  title: Unprocessable content
+  area: Bank accounts
+  description: The request body could not be processed
+  remediation: There was a problem with the request payload. The error message will provide specific details on
+    what needs to be fixed
+- status: 429
+  title: Too many requests
+  area: Bank accounts
+  description: Request was refused due to rate limiting
+  remediation: The error message will let you know how long to wait (in milliseconds) before you can retry

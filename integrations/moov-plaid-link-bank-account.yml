@@ -1,0 +1,57 @@
+arazzo: 1.0.1
+info:
+  title: Link a Plaid-connected bank account to a Moov account
+  version: 1.0.0
+  description: Create a Plaid processor token for a linked Item account and pass it to Moov's linkBankAccount, which accepts a Plaid processor token as the bank account payload.
+x-integration:
+  partner: plaid
+  edge_evidence: https://spec.speakeasy.com/moov/moov/api-v2026.01.00
+  edge_type: contract
+  method: generated
+  generated: '2026-10-12'
+  generator: enrichment local-v5 (Claude)
+sourceDescriptions:
+- name: plaid
+  url: https://raw.githubusercontent.com/api-evangelist/plaid/refs/heads/main/openapi/plaid-plaid-api-openapi.yml
+  type: openapi
+- name: moov
+  url: https://raw.githubusercontent.com/api-evangelist/moov/refs/heads/main/openapi/moov-openapi.yml
+  type: openapi
+workflows:
+- workflowId: plaid-processor-token-to-moov-bank-account
+  summary: Plaid processor token -> Moov linked bank account
+  inputs:
+    type: object
+    required: [plaidAccessToken, plaidAccountId, moovAccountID]
+    properties:
+      plaidAccessToken: {type: string}
+      plaidAccountId: {type: string}
+      moovAccountID: {type: string}
+  steps:
+  - stepId: createProcessorToken
+    operationId: $sourceDescriptions.plaid.processorTokenCreate
+    requestBody:
+      payload:
+        access_token: $inputs.plaidAccessToken
+        account_id: $inputs.plaidAccountId
+        processor: moov
+    successCriteria:
+    - condition: $statusCode == 200
+    outputs:
+      processorToken: $response.body#/processor_token
+  - stepId: linkToMoov
+    operationId: $sourceDescriptions.moov.linkBankAccount
+    parameters:
+    - name: accountID
+      in: path
+      value: $inputs.moovAccountID
+    requestBody:
+      payload:
+        plaid:
+          token: $steps.createProcessorToken.outputs.processorToken
+    successCriteria:
+    - condition: $statusCode == 200
+    outputs:
+      bankAccountID: $response.body#/bankAccountID
+  outputs:
+    bankAccountID: $steps.linkToMoov.outputs.bankAccountID

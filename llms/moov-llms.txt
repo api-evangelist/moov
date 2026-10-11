@@ -1,134 +1,225 @@
-# Moov
+# Moov Documentation
 
-> Moov is the payments platform powering choice. Whether you're accepting, storing, sending, or spending money, Moov gives technical teams the APIs, SDKs, and prebuilt UI components to embed modern payments into any product. Built on direct rails to the card networks, ACH, RTP, and FedNow, Moov delivers a unified money-movement experience without the legacy stack.
+> Moov is a payments platform that enables developers to integrate money movement capabilities into their applications.
 
-## Platform overview
+- Full docs: https://docs.moov.io/llms-full.txt
+- OpenAPI spec (source of truth): https://spec.speakeasy.com/moov/moov/api-v2026.01.00
+- API reference: https://docs.moov.io/api/
+- Docs MCP server: https://docs.moov.io/mcp
+- AI integration guide: https://docs.moov.io/guides/developer-tools/mcp-ai/ai-integration/
 
-- [Moov platform](https://moov.io/platform): One interface to transfer funds between any two sources, using any payment options
-- [Feature list](https://moov.io/platform/features): An exhaustive list of everything the Moov platform can do—growing daily
-- [Product roadmap](https://moov.io/platform/roadmap): Moov's tactical plan to continuously deliver new ways to build payment experiences
-- [Pricing](https://moov.io/pricing): Transparent, usage-based pricing for the Moov platform
+## AI Integration Tools
 
-## Accept payments
+- **Docs MCP server** (`https://docs.moov.io/mcp`): Search and read Moov docs from any AI coding tool. Install in Claude Code: `claude mcp add --transport http moov-docs https://docs.moov.io/mcp`
+- **Moov SDK MCP server**: Live API operations via the TypeScript SDK. See https://docs.moov.io/guides/developer-tools/mcp-ai/mcp/
+- **Claude Code skill**: Offline integration patterns at https://github.com/moovfinancial/docs/tree/main/skills/moov-api
+- **llms-full.txt**: Complete documentation at https://docs.moov.io/llms-full.txt
+- **OpenAPI spec**: Machine-readable API definition (source of truth for endpoints, schemas, fields). Download: https://spec.speakeasy.com/moov/moov/api-v2026.01.00
 
-- [Accept payments](https://moov.io/platform/accept): Accept card payments or pay by bank, with everything you need to support multiple payment options
-- [Card payments documentation](https://docs.moov.io/guides/money-movement/accept-payments/card-acceptance/): Card acceptance integration guide
-- [Apple Pay](https://moov.io/platform/apple-pay): Accept Apple Pay across web and in-app experiences
-- [Tap to Pay on iPhone](https://moov.io/platform/tap-to-pay-on-iphone): Accept in-person contactless payments using only an iPhone
-- [Tap to Pay iOS SDK](https://docs.moov.io/guides/money-movement/accept-payments/card-acceptance/tap-to-pay-iphone/): Integration guide for Tap to Pay on iPhone
-- [Tap to Pay Android SDK](https://docs.moov.io/guides/money-movement/accept-payments/card-acceptance/tap-to-pay-android/): Integration guide for Tap to Pay on Android
+## Best Practices for Integrating Moov
 
-## Send money
+### Getting Started
+1. **Create a Moov Account**: Sign up at https://dashboard.moov.io and obtain API keys
+2. **Choose Your Integration Path**:
+   - Use the REST API for maximum flexibility
+   - Use backend SDKs (Go, Node.js, Python, .NET, Ruby) for type-safe server integration
+   - Use Moov.js for secure client-side data collection
+   - Use Moov Drops for pre-built, drop-in UI components
+   - Use hosted onboarding for merchant account creation
+   - Use payment links for a hosted checkout flow
 
-- [Send money](https://moov.io/platform/send): Push funds to bank accounts and cards with a single, unified API
-- [Money movement overview](https://docs.moov.io/guides/money-movement/overview/): Transfer funds between any two sources using any payment options
+### Authentication
+- Always use API keys securely on the server-side
+- Never expose secret keys in client-side code
+- Use OAuth scopes to limit access permissions
 
-## ACH transfers
+### Money Movement
+1. **Create Accounts**: Start by creating Moov accounts for your users
+2. **Verify Identity**: Complete KYC/KYB verification before enabling money movement
+3. **Add Payment Methods**: Link bank accounts, cards, or wallets
+4. **Create Transfers**: Initiate payments between accounts
+5. **Monitor Status**: Use webhooks to track transfer lifecycle events
 
-- [ACH transfers](https://moov.io/platform/ach): Move money across the ACH network with same-day and standard settlement options
-- [ACH library on GitHub](https://github.com/moov-io/ach): Open-source ACH file creation and parsing library used in production
+### Payment Methods
+- **ACH**: Best for bank-to-bank transfers, takes 1-3 business days
+- **RTP (Real-Time Payments)**: Instant transfers, available 24/7
+- **Cards**: For card payments with faster settlement
+- **Wallets**: Use Moov wallets for holding funds
 
-## RTP and FedNow
+### Security Best Practices
+- Implement webhook signature verification
+- Use HTTPS for all API requests
+- Store sensitive data encrypted
+- Follow PCI compliance guidelines for card data
+- Implement rate limiting and monitoring
 
-- [RTP and real-time payments](https://moov.io/platform/rtp): Send and receive funds in seconds, 24/7/365, over The Clearing House's RTP network and FedNow
-- [RTP demo](https://moov.io/rtp-demo): See real-time payments in action
+### Error Handling
+- Always handle API errors gracefully
+- Implement retry logic with exponential backoff
+- Log errors for debugging and monitoring
+- Provide user-friendly error messages
 
-## Wallets
+### Testing
+- Use sandbox mode for development
+- Test all payment flows before going live
+- Verify webhook handling
+- Test error scenarios
 
-- [Wallets](https://moov.io/platform/wallets): Store funds for users, businesses, and platforms with built-in ledger and money-movement primitives
+## Key Resources
 
-## Card issuing
+### Quick Start
+- [Dashboard quick start](https://docs.moov.io/guides/quick-start/dashboard/index.md): This quick start guide brings you through the process of signing up for Moov and creating user accounts within the Moov Dashboard.
+- [API & Drops quick start](https://docs.moov.io/guides/quick-start/api/index.md): This quick start guide brings you through the process of signing up for Moov and creating user accounts with Moov's API and Moov.js Drops.
 
-- [Issue virtual cards](https://moov.io/platform/card-issuing): Issue and manage virtual cards for disbursements, spend, and embedded card programs
+### Essential Guides- [Account types](https://docs.moov.io/guides/accounts/account-types/index.md): Learn about the different types of Moov accounts and the basic requirements to start moving money.- [All accounts](https://docs.moov.io/guides/dashboard/accounts/all-accounts/index.md): View account information and manage accounts you've created.- [Dashboard quick start](https://docs.moov.io/guides/quick-start/dashboard/index.md): This quick start guide brings you through the process of signing up for Moov and creating user accounts within the Moov Dashboard.- [Declines](https://docs.moov.io/guides/money-movement/accept-payments/card-acceptance/declines/index.md): Understand why certain card payments are declined and how Moov categorizes different types of declines.- [Fund a wallet](https://docs.moov.io/guides/money-movement/wallets/funding/index.md): Learn how to fund a Moov wallet.- [Instant payments with RTP & FedNow](https://docs.moov.io/guides/money-movement/send-payments/instant-payments/index.md): Instantly send funds from a Moov wallet to a bank account with RTP or FedNow.- [Multiple wallets](https://docs.moov.io/guides/sources/wallets/multiple-wallets/index.md): Learn how to create and manage multiple wallets to organize funds across different business functions within a single Moov account.- [ACH overview](https://docs.moov.io/guides/money-movement/accept-payments/ach/ach-overview/index.md): Create payments that directly involve external bank accounts using the Automated Clearing House (ACH) network.- [Transfers overview](https://docs.moov.io/guides/money-movement/overview/index.md): Learn about the flow of transfers and the options for sources and destinations.- [ACH processing speed](https://docs.moov.io/guides/money-movement/accept-payments/ach/ach-processing-speeds/index.md): Learn how ACH payments are processed in batches and uploaded to Moov's partner financial institutions before certain cutoff times.- [Capabilities reference](https://docs.moov.io/guides/accounts/capabilities/reference/index.md): Explore available capabilities, what they enable, and common use cases.- [Sweeps](https://docs.moov.io/guides/money-movement/wallets/sweeps/index.md): Automate daily balance settlements to your user's verified bank accounts by setting up sweeps.- [Verification](https://docs.moov.io/guides/accounts/requirements/identity-verification/index.md): Learn about individual and business verification requirements and what data Moov needs for each capability.- [Webhook events](https://docs.moov.io/guides/webhooks/webhook-events/index.md): Moov generates events when something happens in our system. We record the relevant data and make it available to you.- [API & Drops quick start](https://docs.moov.io/guides/quick-start/api/index.md): This quick start guide brings you through the process of signing up for Moov and creating user accounts with Moov's API and Moov.js Drops.- [Wallet balance](https://docs.moov.io/guides/sources/wallets/balance/index.md): Learn how to find details about a wallet's available funds.- [Business representatives](https://docs.moov.io/guides/accounts/requirements/business-representatives/index.md): Learn about control officers and beneficial owners, the two types of business representatives required for KYB verification.- [ACH details & statuses](https://docs.moov.io/guides/money-movement/accept-payments/ach/ach-details/index.md): View possible statuses and details for your ACH transfers.- [Disputes](https://docs.moov.io/guides/money-movement/accept-payments/card-acceptance/disputes/index.md): Understand how Moov handles disputes, and the type of information you can receive about them.- [Enable capabilities](https://docs.moov.io/guides/accounts/capabilities/enablement/index.md): Request capabilities for accounts, fulfill requirements, and track the enablement lifecycle.- [Hosted onboarding](https://docs.moov.io/guides/accounts/hosted-onboarding/index.md): Create an onboarding link to a co-branded form through our secure hosted onboarding process.- [How to set up webhooks](https://docs.moov.io/guides/webhooks/set-up-webhooks/index.md): Configure and optimize webhooks for your integration.- [Idempotency](https://docs.moov.io/guides/money-movement/idempotency/index.md): Learn how use idempotency keys to prevent unintentional duplicate API requests.- [Onboarding links](https://docs.moov.io/guides/dashboard/accounts/onboarding-links/index.md): Create, send, and view account onboarding links in the Dashboard.- [Payment methods](https://docs.moov.io/guides/money-movement/payment-methods/index.md): Learn about payment methods and how accounts move funds on Moov.- [Push to card](https://docs.moov.io/guides/money-movement/send-payments/push-to-card/index.md): Provide faster access to funds for your customers by pushing funds to cards.- [Resolution links](https://docs.moov.io/guides/dashboard/accounts/resolution-links/index.md): Use the Dashboard to send businesses temporary, secure links to resolve requirement errors surfaced during verification.- [Cash out a wallet](https://docs.moov.io/guides/money-movement/wallets/cash-out/index.md): Learn how cash out funds from a Moov wallet.- [Check webhook signatures](https://docs.moov.io/guides/webhooks/check-webhook-signatures/index.md): Learn how to confirm that webhook events were sent by Moov.- [Payment methods](https://docs.moov.io/guides/dashboard/settings/payment-methods/index.md): View and manage payment methods associated with your account.- [Resolution links](https://docs.moov.io/guides/accounts/resolution-links/index.md): Resolution links are temporary, secure links sent to businesses to resolve verification issues after initial data has been submitted.- [ACH returns & exception handling](https://docs.moov.io/guides/money-movement/accept-payments/ach/returns/index.md): Different ACH return scenarios and how to troubleshoot various errors.- [Reversals](https://docs.moov.io/guides/money-movement/accept-payments/card-acceptance/reversals/index.md): Learn how to reverse or refund transfers using a more flexible reversals endpoint.- [Surcharges](https://docs.moov.io/guides/money-movement/accept-payments/card-acceptance/surcharges/index.md): Enable surcharging to recoup credit card processing costs from cardholders.- [Tap to Pay on Android](https://docs.moov.io/guides/money-movement/accept-payments/card-acceptance/tap-to-pay-android/index.md): Use Moov's SDKs Android to handle payment authorization and processing for tap to pay transactions.- [Tap to Pay on iPhone](https://docs.moov.io/guides/money-movement/accept-payments/card-acceptance/tap-to-pay-iphone/index.md): To process transactions with Tap to Pay on iPhone, integrate Moov's iOS SDK, MoovKit.- [Wallet transactions](https://docs.moov.io/guides/sources/wallets/transactions/index.md): Wallet transactions provide insight into funds that move in and out of an account’s wallet.- [Troubleshoot capabilities](https://docs.moov.io/guides/accounts/capabilities/troubleshoot/index.md): Learn about capability requirement errors, what they mean, and how to address them in the Moov API or Dashboard.- [Underwriting](https://docs.moov.io/guides/accounts/requirements/underwriting/index.md): Learn when Moov requires underwriting and how to submit the information we ask for.- [Create accounts](https://docs.moov.io/guides/accounts/create-accounts/index.md): Follow this step by step guide to create accounts with our API, SDKs, and Moov.js.- [Disputes](https://docs.moov.io/guides/dashboard/transfers/disputes/index.md): Learn how to view and manage disputes from the Dashboard.- [Payout fees](https://docs.moov.io/guides/money-movement/send-payments/payout-fees/index.md): Provide customers and payout recipients multiple options to receive funds.- [Platform terms of service agreement](https://docs.moov.io/guides/accounts/requirements/platform-agreement/index.md): Learn how to implement Moov's platform terms of service agreement with our API or Moov.js.- [Pull from card](https://docs.moov.io/guides/money-movement/accept-payments/pull-from-card/index.md): Instantly access money from your customers by pulling funds from their cards.- [Self-serve ACH return (R29 error)](https://docs.moov.io/guides/dashboard/accounts/ach-r29/index.md): Self-serve ACH R29 bank account errors.- [Send funds tutorial](https://docs.moov.io/guides/money-movement/send-payments/send-funds/index.md): Follow this step by step guide to send payouts via payment links or transfers.- [Cancellations](https://docs.moov.io/guides/money-movement/accept-payments/ach/cancellations/index.md): Cancel an ACH transfer.- [Update accounts](https://docs.moov.io/guides/accounts/updating-accounts/index.md): Learn how and when to update certain information in Moov accounts.- [Debt repayment](https://docs.moov.io/guides/money-movement/accept-payments/card-acceptance/debt-repayment/index.md): Compliantly process debt repayment transactions and take advantage of interchange incentive programs with lower fees.- [Accept HSA, FSA & HRA cards](https://docs.moov.io/guides/money-movement/accept-payments/card-acceptance/hsa-fsa-hra-cards/index.md): Learn how to use Moov as a healthcare MCC or 90% rule merchant to accept HSA, FSA, and HRA card payments.- [Payment links](https://docs.moov.io/guides/money-movement/payment-links/index.md): Create payment links with Moov to send or collect from cards, bank accounts, or Apple Pay.- [Invoices](https://docs.moov.io/guides/money-movement/invoices/index.md): Generate an invoice to send to customers, accept payments, and track invoice status.- [Card settlement timing](https://docs.moov.io/guides/money-movement/accept-payments/card-acceptance/timing/index.md): Understand how Moov takes advantage of the last settlement cutoff available for each card network.- [Tipping](https://docs.moov.io/guides/money-movement/tipping/index.md): Enable tipping with preset configurations and free-form tipping amounts during the checkout process.- [Account connections](https://docs.moov.io/guides/accounts/connections/index.md): Create, search, and manage connected accounts on Moov's platform through scope sharing.- [Receipts](https://docs.moov.io/guides/money-movement/receipts/index.md): Send branded receipts to payers for each transfer.- [Recurring payments](https://docs.moov.io/guides/money-movement/accept-payments/card-acceptance/recurring-payments/index.md): Learn about card schemes and how to implement recurring payments.- [Statement descriptors](https://docs.moov.io/guides/money-movement/accept-payments/card-acceptance/statement-descriptors/index.md): Customize statement descriptors on card payments to reduce disputes and improve the user experience by providing context.- [Scheduled transfers](https://docs.moov.io/guides/money-movement/scheduling/index.md): Automate money movement on a recurring basis. Define a recurring schedule with a transfer amount, source, and destination.- [Events & statuses](https://docs.moov.io/guides/money-movement/events-and-statuses/index.md): See different transfer failure scenarios and how Moov handles them.- [Refunds](https://docs.moov.io/guides/money-movement/accept-payments/card-acceptance/refunds/index.md): Our traditional refund method. See the reversal method for a more flexible option.- [Transfer groups](https://docs.moov.io/guides/money-movement/transfer-groups/index.md): Transfer groups eliminate delays and create a seamless payment experience for multiple parties involved in a single transaction payment flow.
 
-## Payment Links
+### Money Movement & Transfers
+- [Transfers](https://docs.moov.io/guides/dashboard/transfers/all-transfers/index.md)
+- [Declines](https://docs.moov.io/guides/money-movement/accept-payments/card-acceptance/declines/index.md)
+- [Fund a wallet](https://docs.moov.io/guides/money-movement/wallets/funding/index.md)
+- [Instant payments with RTP & FedNow](https://docs.moov.io/guides/money-movement/send-payments/instant-payments/index.md)
+- [ACH overview](https://docs.moov.io/guides/money-movement/accept-payments/ach/ach-overview/index.md)
+- [Transfers overview](https://docs.moov.io/guides/money-movement/overview/index.md)
+- [ACH processing speed](https://docs.moov.io/guides/money-movement/accept-payments/ach/ach-processing-speeds/index.md)
+- [Sweeps](https://docs.moov.io/guides/money-movement/wallets/sweeps/index.md)
+- [ACH details & statuses](https://docs.moov.io/guides/money-movement/accept-payments/ach/ach-details/index.md)
+- [Disputes](https://docs.moov.io/guides/money-movement/accept-payments/card-acceptance/disputes/index.md)
+- [Idempotency](https://docs.moov.io/guides/money-movement/idempotency/index.md)
+- [Payment methods](https://docs.moov.io/guides/money-movement/payment-methods/index.md)
+- [Push to card](https://docs.moov.io/guides/money-movement/send-payments/push-to-card/index.md)
+- [Cash out a wallet](https://docs.moov.io/guides/money-movement/wallets/cash-out/index.md)
+- [ACH returns & exception handling](https://docs.moov.io/guides/money-movement/accept-payments/ach/returns/index.md)
+- [Reversals](https://docs.moov.io/guides/money-movement/accept-payments/card-acceptance/reversals/index.md)
+- [Schedules](https://docs.moov.io/guides/dashboard/transfers/schedules/index.md)
+- [Surcharges](https://docs.moov.io/guides/money-movement/accept-payments/card-acceptance/surcharges/index.md)
+- [Tap to Pay on Android](https://docs.moov.io/guides/money-movement/accept-payments/card-acceptance/tap-to-pay-android/index.md)
+- [Tap to Pay on iPhone](https://docs.moov.io/guides/money-movement/accept-payments/card-acceptance/tap-to-pay-iphone/index.md)
+- [Disputes](https://docs.moov.io/guides/dashboard/transfers/disputes/index.md)
+- [Payout fees](https://docs.moov.io/guides/money-movement/send-payments/payout-fees/index.md)
+- [Pull from card](https://docs.moov.io/guides/money-movement/accept-payments/pull-from-card/index.md)
+- [Send funds tutorial](https://docs.moov.io/guides/money-movement/send-payments/send-funds/index.md)
+- [Cancellations](https://docs.moov.io/guides/money-movement/accept-payments/ach/cancellations/index.md)
+- [Debt repayment](https://docs.moov.io/guides/money-movement/accept-payments/card-acceptance/debt-repayment/index.md)
+- [Accept HSA, FSA & HRA cards](https://docs.moov.io/guides/money-movement/accept-payments/card-acceptance/hsa-fsa-hra-cards/index.md)
+- [Payment links](https://docs.moov.io/guides/money-movement/payment-links/index.md)
+- [Invoices](https://docs.moov.io/guides/money-movement/invoices/index.md)
+- [Card settlement timing](https://docs.moov.io/guides/money-movement/accept-payments/card-acceptance/timing/index.md)
+- [Tipping](https://docs.moov.io/guides/money-movement/tipping/index.md)
+- [Receipts](https://docs.moov.io/guides/money-movement/receipts/index.md)
+- [Recurring payments](https://docs.moov.io/guides/money-movement/accept-payments/card-acceptance/recurring-payments/index.md)
+- [Statement descriptors](https://docs.moov.io/guides/money-movement/accept-payments/card-acceptance/statement-descriptors/index.md)
+- [Scheduled transfers](https://docs.moov.io/guides/money-movement/scheduling/index.md)
+- [Events & statuses](https://docs.moov.io/guides/money-movement/events-and-statuses/index.md)
+- [Refunds](https://docs.moov.io/guides/money-movement/accept-payments/card-acceptance/refunds/index.md)
+- [Transfer groups](https://docs.moov.io/guides/money-movement/transfer-groups/index.md)
 
-- [Payment links](https://moov.io/platform/payment-links): Accept payments or send payouts with a simple link, no integration needed on the other end
-- [Payment links documentation](https://docs.moov.io/guides/money-movement/payment-links): Build and customize hosted payment links
+### API Reference
+- [API Documentation](https://docs.moov.io/api/index.md): Complete REST API reference
+- [Accounts API](https://docs.moov.io/api/#tag--Accounts)
+- [Capabilities API](https://docs.moov.io/api/#tag--Capabilities)
+- [Cards API](https://docs.moov.io/api/#tag--Cards)
+- [Bank Accounts API](https://docs.moov.io/api/#tag--Bank-accounts)
+- [Transfers API](https://docs.moov.io/api/#tag--Transfers)
+- [Wallets API](https://docs.moov.io/api/#tag--Wallets)
+- [Payment Methods API](https://docs.moov.io/api/#tag--Payment-methods)
 
-## Invoicing
+### SDKs & Client Libraries
+- [.NET SDK](https://docs.moov.io/sdks/dotnet/index.md)
+- [Go SDK](https://docs.moov.io/sdks/go/index.md)
+- [Hosted onboarding](https://docs.moov.io/sdks/hosted-onboarding/index.md)
+- [Java SDK](https://docs.moov.io/sdks/java/index.md)
+- [Moov Drops](https://docs.moov.io/sdks/drops/index.md)
+- [Moov.js](https://docs.moov.io/sdks/moovjs/index.md)
+- [Payment links](https://docs.moov.io/sdks/payment-links/index.md)
+- [PHP SDK](https://docs.moov.io/sdks/php/index.md)
+- [Python SDK](https://docs.moov.io/sdks/python/index.md)
+- [Resolution links](https://docs.moov.io/sdks/resolution-links/index.md)
+- [Ruby SDK](https://docs.moov.io/sdks/ruby/index.md)
+- [Tap to Pay on Android SDK](https://docs.moov.io/sdks/tap-to-pay-android/index.md)
+- [Tap to Pay on iPhone SDK](https://docs.moov.io/sdks/tap-to-pay-iphone/index.md)
+- [TypeScript SDK](https://docs.moov.io/sdks/typescript/index.md)
 
-- [Invoicing](https://moov.io/platform/invoicing): Create and send professional invoices with a built-in payment link, PDF, and QR code
-- [Invoicing documentation](https://docs.moov.io/guides/money-movement/invoices/): Generate and manage invoices via the Moov API
+### Moov.js (Client SDK)
+- [Account](https://docs.moov.io/moovjs/accounts/accounts/index.md)
+- [Drops 101](https://docs.moov.io/moovjs/drops/drops-101/index.md)
+- [Install & authenticate](https://docs.moov.io/moovjs/installation/index.md)
+- [Moov form Drop](https://docs.moov.io/moovjs/drops/composable-drops/moov-form/index.md)
+- [Payment methods](https://docs.moov.io/moovjs/sources/payment-methods/index.md)
+- [Representatives](https://docs.moov.io/moovjs/accounts/representatives/index.md)
+- [Text input Drop](https://docs.moov.io/moovjs/drops/composable-drops/text-input/index.md)
+- [Capabilities](https://docs.moov.io/moovjs/accounts/capabilities/index.md)
+- [Card acceptance](https://docs.moov.io/moovjs/sources/cards/index.md)
+- [Card number input Drop](https://docs.moov.io/moovjs/drops/composable-drops/card-number-input/index.md)
 
-## Onboarding
+### Use Cases & Examples
+- [Construction](https://docs.moov.io/use-cases/construction/index.md): Moov is your single vendor for payment process efficiency, faster cash access, and simplified compliance.
+- [Digital banking](https://docs.moov.io/use-cases/digital-banking/index.md): Moov is your single vendor for digital banking with easy payments, real-time insights, and tools to grow deposits.
+- [Fundraising platforms](https://docs.moov.io/use-cases/fundraising/index.md): Moov is your single vendor for fundraising with flexible payment options and easy funds management.
+- [Loan servicing](https://docs.moov.io/use-cases/loan-servicing/index.md): Moov is your single vendor for loan disbursement, payment management, automated compliance, and real-time insights.
+- [Small business](https://docs.moov.io/use-cases/small-business/index.md): Moov is your single vendor for running and managing a modern payment solution that will reduce costs for your small business.
+- [Subscriptions](https://docs.moov.io/use-cases/subscriptions/index.md): Moov is your single vendor for running and managing a modern subscription solution.
+- [Tip based industries](https://docs.moov.io/use-cases/tip-industries/index.md): Moov supports percentage based and dollar amount tipping.
+- [Transportation & logistics](https://docs.moov.io/use-cases/transportation/index.md): Moov is your single vendor to simplify complex payment processes, view real-time cash flow visibility, and reduce operational costs.
 
-- [Merchant onboarding](https://moov.io/platform/onboarding): Quickly onboard users with hassle-free and secure links generated in a few clicks
-- [Hosted onboarding documentation](https://docs.moov.io/guides/accounts/hosted-onboarding/): Drop-in flows for KYC, KYB, and account creation
+### Webhooks & Events
+- [Webhook events](https://docs.moov.io/guides/webhooks/webhook-events/index.md)
+- [How to set up webhooks](https://docs.moov.io/guides/webhooks/set-up-webhooks/index.md)
+- [Check webhook signatures](https://docs.moov.io/guides/webhooks/check-webhook-signatures/index.md)
+- [Events & statuses](https://docs.moov.io/guides/money-movement/events-and-statuses/index.md)
 
-## Dashboard
+## Common Integration Patterns
 
-- [Moov Dashboard](https://moov.io/platform/dashboard): Monitor transfers, manage users, and operate your payments business
-- [Dashboard demo](https://moov.io/dashboard-demo): Watch a 10-minute video tour of the Moov Dashboard
+### Pattern 1: Marketplace/Platform
+For platforms facilitating payments between users:
+1. Create accounts for each user (buyers and sellers)
+2. Implement KYC verification for sellers
+3. Link payment methods for buyers
+4. Create transfers from buyer to seller
+5. Optionally use wallets for fund holding
+6. Implement fee collection via fee plans
 
-## Drops
+### Pattern 2: Payouts/Disbursements
+For businesses paying vendors, contractors, or users:
+1. Create Moov accounts for recipients
+2. Collect and verify payout methods (bank accounts)
+3. Batch or individual transfer creation
+4. Track transfer status via webhooks
+5. Handle failed transfers with retry logic
 
-- [Drops](https://moov.io/platform/drops): Prebuilt UI components for beautiful payment experiences, secure by default and fast to ship
-- [Drops theming documentation](https://docs.moov.io/moovjs/drops/theming/): Customize the look and feel of Drops
-- [Moov.js installation](https://docs.moov.io/moovjs/installation/): Import Moov.js into your JavaScript project from NPM
+### Pattern 3: Bill Pay/Invoicing
+For collecting payments from customers:
+1. Create customer accounts
+2. Link payment methods (cards or bank accounts)
+3. Create transfers to your business account
+4. Send payment confirmations
+5. Handle recurring payments with saved payment methods
 
-## Data Sync
+### Pattern 4: Embedded Finance
+For white-label financial products:
+1. Use Moov Drops for pre-built UIs
+2. Implement Moov.js for custom flows
+3. Create wallets for users to hold funds
+4. Enable money movement between wallets and external accounts
+5. Provide transaction history and statements
 
-- [Data Sync](https://moov.io/platform/data-sync): Stream transactions and account data to your warehouse, ERP, or BI tooling
+## Support & Resources
 
-## Use cases
+- Documentation: https://docs.moov.io
+- API Reference: https://docs.moov.io/api/index.md
+- Dashboard: https://dashboard.moov.io
+- Status Page: https://status.moov.io
 
-- [Construction software](https://moov.io/use-cases/construction): Automated billing, multi-party transactions, and real-time cash flow for construction tech
-- [Digital banking](https://moov.io/use-cases/digital-banking): Real-time transfers, instant funding, and in-app payments for banks and credit unions
-- [Fundraising platforms](https://moov.io/use-cases/fundraising): Fast donor onboarding, flexible payment options, and secure fund management
-- [Loan servicing](https://moov.io/use-cases/loan-servicing): Flexible repayment options, compliance automation, and disbursement rails
-- [Small business](https://moov.io/use-cases/small-business): Quick merchant onboarding, diverse payment methods, and reliable fund management
-- [Transportation & logistics](https://moov.io/use-cases/transportation): Payment tools, financial tracking, and operational savings for fleets and freight
+## Default Rate Limits
 
-## Documentation
+- Production API: 100 requests per second per account
+- Sandbox API: 50 requests per second
+- Rate limits can be increased by contacting help@moov.io
 
-- [Documentation home](https://docs.moov.io): Guides, API references, and SDKs for building on Moov
-- [Quick start](https://docs.moov.io/guides/quick-start): Get up and running with the Moov API in minutes
-- [Guides](https://docs.moov.io/guides): End-to-end tutorials for common money-movement flows
-- [API reference](https://docs.moov.io/api): Complete reference for the Moov REST API
-- [Changelog](https://docs.moov.io/changelog): Recent changes, new features, and breaking-change notices
-- [Developer docs llms.txt](https://docs.moov.io/llms.txt): Machine-readable index of Moov developer documentation
-- [End-to-end encryption](https://docs.moov.io/api/authentication/e2ee/): Encrypt sensitive cardholder and bank data in transit
+## Common Pitfalls to Avoid
 
-## Resources
-
-- [Blog](https://moov.io/blog): Payments education for developers, product updates, culture stories, and company news
-- [Fintech dictionary](https://moov.io/resources): A complete dictionary of fintech and payments terms
-- [Fintech glossary](https://moov.io/resources/glossary): Glossary of fintech and payments acronyms and concepts
-- [Community](https://moov.io/community): Events, meetups, and developer community programs
-- [News & press](https://moov.io/news): What others are saying about Moov
-- [5-minute demo](https://moov.io/demo): A quick video overview of the Moov platform
-
-## Company
-
-- [About Moov](https://moov.io/company): Our mission, our team, and why every company will become a fintech company
-- [Careers](https://moov.io/careers): Open roles and what it's like to build at Moov
-- [Contact](https://moov.io/contact): Get in touch with sales, support, or partnerships
-- [Media resources](https://moov.io/media-resources): Logos, brand assets, and press materials
-- [Moov on GitHub](https://github.com/moov-io): Open-source libraries for ACH, wire, ISO 8583, image processing, and more
-
-## Get started
-
-- [Sign up](https://dashboard.moov.io/signup): Create a Moov account and start building
-- [Log in](https://dashboard.moov.io): Sign in to the Moov Dashboard
-
-## Legal
-
-- [Privacy policy](https://moov.io/legal/privacy-policy): How Moov collects, uses, and protects personal information
-- [Website terms of use](https://moov.io/legal/website-terms-of-use): Terms governing use of moov.io
-- [Cookies policy](https://moov.io/legal/cookies-policy): How Moov uses cookies and similar technologies
-- [ESIGN disclosure](https://moov.io/legal/esign-disclosure): Consent to receive electronic communications
-- [Beta test terms](https://moov.io/legal/beta-test-terms): Terms for participation in Moov beta programs
-- [Platform Agreement](https://moov.io/legal/platform-agreement): The Moov Platform Agreement for users
-- [Platform Integration Agreement](https://moov.io/legal/platform-integration-agreement): Terms for integrators building on Moov
-- [Commercial user terms](https://moov.io/legal/platform-agreement/commercial-user-terms): Terms for commercial users of the Moov platform
-- [Consumer user terms](https://moov.io/legal/platform-agreement/consumer-user-terms): Terms for consumer users of the Moov platform
-- [Merchant processing services terms](https://moov.io/legal/platform-agreement/merchant-processing-services-terms): Terms for merchant processing services
-- [ACH transfer services terms](https://moov.io/legal/platform-agreement/ach-transfer-services-terms): Terms for ACH transfer services
-- [RTP transfer services terms](https://moov.io/legal/platform-agreement/rtp-transfer-services-terms): Terms for RTP transfer services
-- [FedNow transfer services terms](https://moov.io/legal/platform-agreement/fednow-transfer-services-terms): Terms for FedNow transfer services
-- [Card issuing services terms](https://moov.io/legal/platform-agreement/card-issuing-services-terms): Terms for card issuing services
-- [Card network disbursement services](https://moov.io/legal/platform-agreement/card-network-disbursement-services): Terms for push-to-card disbursements
-- [Financial institution card funding & disbursement terms](https://moov.io/legal/platform-agreement/financial-institution-card-funding-and-disbursement-terms): Terms for FI card funding and disbursement
-- [Consent to electronic delivery of IRS form](https://moov.io/legal/platform-agreement/consent-to-electronic-delivery-of-irs-form): Consent to electronic delivery of tax forms
-- [Prohibited & restricted businesses](https://moov.io/legal/platform-agreement/prohibited-restricted-businesses): Business types ineligible for Moov services
+1. **Not handling async operations**: Transfers are asynchronous; use webhooks or the `x-wait-for` header
+2. **Hardcoding in production**: Use environment variables for API keys
+3. **Ignoring errors**: Always implement comprehensive error handling
+4. **Not testing webhooks**: Verify webhook signature validation
+5. **Not using idempotency keys**: Prevent duplicate transfers
+6. **Skipping sandbox testing**: Always test in sandbox before production

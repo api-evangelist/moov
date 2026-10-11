@@ -1,0 +1,52 @@
+generated: '2026-10-12'
+method: searched
+source: https://docs.moov.io/guides/money-movement/idempotency/
+auth:
+  style: HTTP Basic (public/secret API key) or OAuth2 access tokens with scopes
+  docs: https://docs.moov.io/api/authentication/scopes/
+  see: authentication/moov-authentication.yml
+idempotency:
+  coverage: partial
+  header: X-Idempotency-Key
+  scope:
+  - createTransfer
+  - initiateRefund
+  - createReversal
+  retention: An idempotency key will not expire.
+  replay: A second request with the same key returns 409 Conflict.
+  max_length: up to 36 characters, or a UUID (Moov supports UUID v5)
+  docs: https://docs.moov.io/guides/money-movement/idempotency/
+versioning:
+  header: X-Moov-Version
+  current: v2026.01.00
+  see: lifecycle/moov-lifecycle.yml
+async:
+  header: x-wait-for
+  note: Transfers are asynchronous; use webhooks or the x-wait-for header (docs.moov.io/llms.txt).
+errors:
+  see: errors/moov-problem-types.yml
+  retry_hint: 429/422 error message states how long to wait (in milliseconds) before retrying
+rate_limit_signaling:
+  status: 429
+  see: rate-limits/moov-rate-limits.yml
+reversibility:
+  surfaces:
+  - surface: card transfers
+    operation: createReversal
+    kind: reverse/cancel/refund
+    window: null
+    grade: documented
+    docs: https://docs.moov.io/guides/money-movement/accept-payments/card-acceptance/reversals/
+  - surface: card transfers
+    operation: initiateRefund
+    kind: refund
+    window: null
+    grade: documented
+    docs: https://docs.moov.io/guides/money-movement/accept-payments/card-acceptance/refunds/
+  - surface: ACH transfers
+    operation: createCancellation
+    kind: cancel
+    window: Cancellations must occur within a specific time frame (shown as a diagram; no numeric window stated
+      in text).
+    grade: documented
+    docs: https://docs.moov.io/guides/money-movement/accept-payments/ach/cancellations/

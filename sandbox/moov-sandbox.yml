@@ -1,0 +1,104 @@
+generated: '2026-10-12'
+method: searched
+source: https://docs.moov.io/guides/get-started/test-mode/
+docs: https://docs.moov.io/guides/get-started/test-mode/
+description: Moov test mode simulates account and transfer scenarios without moving real money. A test account needs
+  its own API key; localhost, ngrok, Netlify or Vercel domains are allowed for these keys. Wallet-to-wallet transfers
+  complete almost instantly; weekday ACH transfers in test mode complete in about an hour.
+modes:
+- name: test
+  description: Test account in Dashboard test mode with its own API key; no real money moves
+- name: production
+  description: Live account
+rate_limit: Test accounts are limited to 10 requests per second per account ID
+test_cards_declined:
+- brand: Visa
+  number: '4000020000000000'
+  cvv: Any 3 numbers
+- brand: Mastercard
+  number: '5555000022220022'
+  cvv: Any 3 numbers
+- brand: Discover
+  number: '6011000022220002'
+  cvv: Any 3 numbers
+- brand: American Express
+  number: '3711000022220002'
+  cvv: Any 4 numbers
+ach_return_triggers:
+- amount: $55.01
+  return_code: R01
+  description: Insufficient Funds
+  stage: Debit originated, not completed
+- amount: $55.02
+  return_code: R02
+  description: Account Closed
+  stage: Debit originated, not completed
+- amount: $55.03
+  return_code: R03
+  description: No Account / Unable to Locate
+  stage: Credit completed
+- amount: $55.04
+  return_code: R04
+  description: Invalid Account Number Structure
+  stage: Credit completed
+- amount: $55.07
+  return_code: R07
+  description: Authorization Revoked by Customer
+  stage: Debit completed
+- amount: $55.08
+  return_code: R08
+  description: Payment Stopped
+  stage: Debit completed
+- amount: $55.09
+  return_code: R09
+  description: Uncollected Funds
+  stage: Debit originated, not completed
+- amount: $55.10
+  return_code: R10
+  description: Customer Not Authorized
+  stage: Debit completed
+- amount: $55.11
+  return_code: R11
+  description: Entry Not in Accordance with Terms
+  stage: Debit originated, not completed
+- amount: $55.15
+  return_code: R15
+  description: Account Holder Deceased
+  stage: Debit originated, not completed
+- amount: $55.16
+  return_code: R16
+  description: Account Frozen
+  stage: Debit originated, not completed
+- amount: $55.20
+  return_code: R20
+  description: Non-Transaction Account
+  stage: Debit originated, not completed
+- amount: $55.24
+  return_code: R24
+  description: Duplicate Entry
+  stage: Debit originated, not completed
+- amount: $55.29
+  return_code: R29
+  description: Corporate Customer Not Authorized
+  stage: Debit originated, not completed
+plaid: 'To test linking bank accounts with Plaid, pass env: "sandbox" into the Moov.js initialization payload.'
+sections:
+- Switch to test mode
+- Invite team members
+- API keys
+- Transfers
+- Test mode data
+- Link cards & card acceptance
+- Name verification
+- Postal code verification
+- CVV verification
+- Push & pull from card
+- Tap to Pay
+- Declined card transfers
+- RTP
+- Surcharge fees
+- ACH returns
+- Disputes
+- Dispute evidence
+- Bank accounts
+- Plaid

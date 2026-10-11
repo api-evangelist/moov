@@ -1,0 +1,22 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements to the Moov API
+  version: 1.0.0
+extends: openapi/moov-openapi.yml
+actions:
+- target: $.info
+  update:
+    x-apievangelist-source: https://spec.speakeasy.com/moov/moov/api-v2026.01.00
+    x-apievangelist-generated: '2026-10-12'
+- target: $.paths['/accounts/{accountID}/transfers'].post
+  update:
+    x-idempotency:
+      header: X-Idempotency-Key
+      expires: never
+      docs: https://docs.moov.io/guides/money-movement/idempotency/
+- target: $.paths['/accounts/{accountID}/transfers/{transferID}/reversals'].post
+  update:
+    x-reversal-of: createTransfer
+- target: $.paths['/accounts/{accountID}/transfers/{transferID}/cancellations'].post
+  update:
+    x-reversal-of: createTransfer

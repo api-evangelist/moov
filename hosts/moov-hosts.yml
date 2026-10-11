@@ -1,0 +1,128 @@
+generated: '2026-10-12'
+method: derived
+source: the pre-flight dossier, apis.yml pointers, spec servers, well-known, vendors -- nothing fetched here
+generator: derive-hosts.py
+summary:
+  hosts: 9
+  own: 7
+  other_domain: 0
+  platform: 2
+  roles:
+  - api
+  - docs
+  - identity
+  - other
+  - source
+  - status
+  - support
+  - website
+hosts:
+- host: api.moov.io
+  found_by:
+  - apis[]
+  types: []
+  serves:
+  - api
+  registrable_domain: moov.io
+  role: api
+  relation: own
+- host: dashboard.moov.io
+  found_by:
+  - pointer
+  types:
+  - Login
+  serves: []
+  registrable_domain: moov.io
+  role: identity
+  relation: own
+- host: docs.moov.io
+  found_by:
+  - pointer
+  - apis[]
+  - vendor-detect
+  types:
+  - Webhooks
+  - ChangeLog
+  - GettingStarted
+  - Portal
+  - Documentation
+  - LlmsText
+  serves:
+  - docs
+  - hosting
+  vendor: netlify
+  registrable_domain: moov.io
+  role: docs
+  relation: own
+- host: github.com
+  found_by:
+  - pointer
+  types:
+  - GitHubOrganization
+  serves: []
+  registrable_domain: github.com
+  role: source
+  relation: platform
+- host: moov.io
+  found_by:
+  - pointer
+  - vendor-detect
+  types:
+  - Newsroom
+  - Pricing
+  - Roadmap
+  - PrivacyPolicy
+  - TermsOfService
+  - Website
+  - Blog
+  serves:
+  - cdn
+  vendor: cloudflare
+  registrable_domain: moov.io
+  role: website
+  relation: own
+- host: status.moov.io
+  found_by:
+  - pointer
+  - vendor-detect
+  types:
+  - StatusPage
+  serves:
+  - hosting
+  - status-page
+  vendor: vercel
+  registrable_domain: moov.io
+  role: status
+  relation: own
+- host: support.moov.io
+  found_by:
+  - pointer
+  - vendor-detect
+  types:
+  - Support
+  serves:
+  - cdn
+  vendor: cloudfront
+  registrable_domain: moov.io
+  role: support
+  relation: own
+- host: trust.moov.io
+  found_by:
+  - pointer
+  - well-known
+  types:
+  - Compliance
+  serves: []
+  platform: app.safebase.io
+  registrable_domain: moov.io
+  role: other
+  relation: own
+- host: www.linkedin.com
+  found_by:
+  - pointer
+  types:
+  - LinkedIn
+  serves: []
+  registrable_domain: linkedin.com
+  role: other
+  relation: platform

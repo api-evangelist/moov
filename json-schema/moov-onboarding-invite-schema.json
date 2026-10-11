@@ -1,0 +1,644 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/moov/main/json-schema/moov-onboarding-invite-schema.json",
+  "title": "OnboardingInvite",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/moov-openapi.yml#/components/schemas/OnboardingInvite",
+  "type": "object",
+  "required": [
+    "code",
+    "link",
+    "scopes",
+    "capabilities",
+    "feePlanCodes",
+    "createdOn"
+  ],
+  "properties": {
+    "code": {
+      "$ref": "#/$defs/OnboardingInviteCode"
+    },
+    "link": {
+      "type": "string",
+      "format": "uri",
+      "description": "A unique URL, including the invite code, that the recipient can follow to redeem the invitation."
+    },
+    "returnURL": {
+      "type": "string",
+      "description": "Optional URL to redirect the user to after they complete the onboarding process."
+    },
+    "termsOfServiceURL": {
+      "type": "string",
+      "description": "The terms of service URL set by the inviter."
+    },
+    "scopes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ApplicationScope"
+      },
+      "minItems": 1,
+      "description": "List of [scopes](https://docs.moov.io/api/authentication/scopes/) you request to use on this\naccount. These values are used to determine what can be done with the account onboarded."
+    },
+    "grantScopes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ApplicationScope"
+      },
+      "minItems": 0,
+      "description": "  List of [scopes](https://docs.moov.io/api/authentication/scopes/) you grant to allow being used \n  by the new account on yourself. These values are used to determine what the account onboarded can do."
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/CapabilityID"
+      },
+      "minItems": 1,
+      "description": "  List of [capabilities](https://docs.moov.io/guides/accounts/capabilities/reference/) you intend to request for this\n  account. These values are used to determine what information to collect from the user during onboarding."
+    },
+    "feePlanCodes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "description": "List of fee plan codes to assign the account created by the invitee."
+    },
+    "redeemedAccountID": {
+      "type": "string",
+      "description": "The account ID of the account that redeemed the invite."
+    },
+    "prefill": {
+      "$ref": "#/$defs/CreateAccount"
+    },
+    "partner": {
+      "$ref": "#/$defs/OnboardingPartnerAccount"
+    },
+    "createdOn": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "revokedOn": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "redeemedOn": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "$defs": {
+    "ACHPaymentSettings": {
+      "type": "object",
+      "required": [
+        "companyName"
+      ],
+      "properties": {
+        "companyName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 16,
+          "pattern": "[a-zA-Z0-9- ]+",
+          "description": "The description that shows up on ACH transactions. This will default to the account's display name on account creation."
+        }
+      }
+    },
+    "Address": {
+      "type": "object",
+      "required": [
+        "addressLine1",
+        "city",
+        "stateOrProvince",
+        "postalCode",
+        "country"
+      ],
+      "properties": {
+        "addressLine1": {
+          "type": "string",
+          "maxLength": 60,
+          "pattern": "[a-zA-Z0-9,.\\/?:'\"|~!@#$%^&*()+_= -]+"
+        },
+        "addressLine2": {
+          "type": "string",
+          "maxLength": 32,
+          "pattern": "[a-zA-Z0-9,.\\/?:'\"|~!@#$%^&*()+_= -]+"
+        },
+        "city": {
+          "type": "string",
+          "maxLength": 32,
+          "pattern": "[a-zA-Z0-9,.\\/?:'\"|~!@#$%^&*()+_= -]+"
+        },
+        "stateOrProvince": {
+          "type": "string",
+          "maxLength": 2
+        },
+        "postalCode": {
+          "type": "string",
+          "maxLength": 5
+        },
+        "country": {
+          "type": "string",
+          "maxLength": 2
+        }
+      }
+    },
+    "ApplicationScope": {
+      "type": "string",
+      "enum": [
+        "accounts.read",
+        "accounts.write",
+        "analytics.read",
+        "apple-pay-merchant.read",
+        "apple-pay-merchant.write",
+        "apple-pay.read",
+        "apple-pay.write",
+        "bank-accounts.read",
+        "bank-accounts.write",
+        "capabilities.read",
+        "capabilities.write",
+        "cards.read",
+        "cards.write",
+        "documents.read",
+        "documents.write",
+        "fed.read",
+        "files.read",
+        "files.write",
+        "issued-cards.read",
+        "issued-cards.write",
+        "issued-cards.read-private",
+        "payment-methods.read",
+        "ping.read",
+        "profile-enrichment.read",
+        "profile.read",
+        "profile.write",
+        "profile.disconnect",
+        "representatives.read",
+        "representatives.write",
+        "transfers.read",
+        "transfers.write",
+        "wallets.read"
+      ],
+      "description": "A permission that the application requests on another account."
+    },
+    "BirthDate": {
+      "type": "object",
+      "required": [
+        "day",
+        "month",
+        "year"
+      ],
+      "properties": {
+        "day": {
+          "type": "integer"
+        },
+        "month": {
+          "type": "integer"
+        },
+        "year": {
+          "type": "integer"
+        }
+      }
+    },
+    "BusinessType": {
+      "type": "string",
+      "enum": [
+        "soleProprietorship",
+        "unincorporatedAssociation",
+        "trust",
+        "publicCorporation",
+        "privateCorporation",
+        "llc",
+        "partnership",
+        "unincorporatedNonProfit",
+        "incorporatedNonProfit",
+        "governmentEntity"
+      ],
+      "description": "The type of entity represented by this business."
+    },
+    "CapabilityID": {
+      "type": "string",
+      "enum": [
+        "transfers",
+        "send-funds",
+        "send-funds.push-to-card",
+        "money-transfer.push-to-card",
+        "send-funds.ach",
+        "send-funds.rtp",
+        "send-funds.instant-bank",
+        "collect-funds",
+        "collect-funds.card-payments",
+        "money-transfer.pull-from-card",
+        "collect-funds.ach",
+        "wallet",
+        "wallet.balance",
+        "card-issuing",
+        "issuing.cardholder",
+        "production-app",
+        "platform.production-app",
+        "platform.wallet-transfers"
+      ],
+      "description": "Moov account capabilities.\n\n**Deprecated capabilities**\n\nThe `send-funds`, `collect-funds`, and `wallet` capability IDs are deprecated. Request granular capabilities instead (for example, `send-funds.ach`, `collect-funds.card-payments`, or `wallet.balance`). Deprecated values will be removed in a future API version.\n\nRead our [capabilities reference](https://docs.moov.io/guides/accounts/capabilities/reference/) to choose the right capabilities for your integration.\n\nThe `production-app`, `platform.production-app`, and / or `platform.wallet-transfers` capabilities might appear in the list for your Partner account. These are read-only capabilities that Moov requests. These capabilities remain active with your account and require no additional action."
+    },
+    "CardPaymentSettings": {
+      "type": "object",
+      "properties": {
+        "statementDescriptor": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 22,
+          "pattern": "[a-zA-Z0-9.!*-+_ ]+",
+          "description": "The description that shows up on credit card transactions. This will default to the accounts display name on account creation."
+        }
+      },
+      "description": "User provided settings to manage card payments. This data is only allowed on a business account."
+    },
+    "CreateAccount": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "profile"
+      ],
+      "properties": {
+        "accountType": {
+          "$ref": "#/$defs/CreateAccountType"
+        },
+        "profile": {
+          "$ref": "#/$defs/CreateProfile"
+        },
+        "metadata": {
+          "$ref": "#/$defs/Metadata"
+        },
+        "termsOfService": {
+          "$ref": "#/$defs/TermsOfServicePayload"
+        },
+        "foreignID": {
+          "type": "string",
+          "maxLength": 64,
+          "pattern": "[a-zA-Z0-9,.\\/?:'\"|~!@#$%^&*()+_= -]+",
+          "description": "Optional alias from a foreign/external system which can be used to reference this resource."
+        },
+        "customerSupport": {
+          "$ref": "#/$defs/CustomerSupport"
+        },
+        "settings": {
+          "$ref": "#/$defs/Settings"
+        },
+        "capabilities": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CapabilityID"
+          },
+          "description": "Capabilities to request when the account is created. Request granular capability IDs that match your use case.\n\nRead our [capabilities reference](https://docs.moov.io/guides/accounts/capabilities/reference/) to choose the right capabilities for your integration.\n\nThe `send-funds`, `collect-funds`, and `wallet` capability IDs are deprecated. Use granular values such as `send-funds.ach`, `collect-funds.card-payments`, or `wallet.balance` instead."
+        },
+        "mode": {
+          "$ref": "#/$defs/Mode"
+        }
+      }
+    },
+    "CreateAccountType": {
+      "type": "string",
+      "enum": [
+        "individual",
+        "business"
+      ]
+    },
+    "CreateBusinessProfile": {
+      "type": "object",
+      "required": [
+        "legalBusinessName"
+      ],
+      "properties": {
+        "legalBusinessName": {
+          "type": "string",
+          "maxLength": 64,
+          "pattern": "[À-ÖØ-öø-ÿ\"'(),.0-9A-Za-z~ &!+:/-]*",
+          "description": "The legal name under which the entity is registered."
+        },
+        "doingBusinessAs": {
+          "type": "string",
+          "maxLength": 64,
+          "pattern": "[À-ÖØ-öø-ÿ\"'(),.0-9A-Za-z~ &!+:/-]*",
+          "description": "A registered trade name under which the business operates, if different from its legal name."
+        },
+        "businessType": {
+          "$ref": "#/$defs/BusinessType"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        },
+        "phone": {
+          "$ref": "#/$defs/PhoneNumber"
+        },
+        "email": {
+          "$ref": "#/$defs/Email"
+        },
+        "website": {
+          "type": "string",
+          "format": "uri",
+          "maxLength": 100
+        },
+        "description": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 100,
+          "pattern": "[a-zA-Z0-9,.\\/?:'\"|~!@#$%^&*()+_= -]+"
+        },
+        "taxID": {
+          "$ref": "#/$defs/TaxID"
+        },
+        "industryCodes": {
+          "$ref": "#/$defs/IndustryCodes"
+        },
+        "industry": {
+          "type": "string",
+          "description": "Classification identifier for the industry. Use the [GET industries](https://docs.moov.io/api/enrichment/form-shortening/industries/get/) endpoint to retrieve an array of valid industry details for a merchant, inducing all industry field values."
+        },
+        "primaryRegulator": {
+          "$ref": "#/$defs/PrimaryRegulator"
+        }
+      }
+    },
+    "CreateIndividualProfile": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/IndividualName"
+        },
+        "phone": {
+          "$ref": "#/$defs/PhoneNumber"
+        },
+        "email": {
+          "$ref": "#/$defs/Email"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        },
+        "birthDate": {
+          "$ref": "#/$defs/BirthDate"
+        },
+        "governmentID": {
+          "$ref": "#/$defs/GovernmentID"
+        }
+      }
+    },
+    "CreateProfile": {
+      "type": "object",
+      "properties": {
+        "individual": {
+          "$ref": "#/$defs/CreateIndividualProfile"
+        },
+        "business": {
+          "$ref": "#/$defs/CreateBusinessProfile"
+        }
+      }
+    },
+    "CustomerSupport": {
+      "type": "object",
+      "properties": {
+        "phone": {
+          "$ref": "#/$defs/PhoneNumber"
+        },
+        "email": {
+          "$ref": "#/$defs/Email"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        },
+        "website": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "description": "User-provided information that can be displayed on credit card transactions for customers to use when\ncontacting a customer support team. This data is only allowed on a business account."
+    },
+    "Email": {
+      "type": "string",
+      "maxLength": 255,
+      "format": "email"
+    },
+    "GovernmentID": {
+      "type": "object",
+      "properties": {
+        "ssn": {
+          "type": "object",
+          "properties": {
+            "full": {
+              "type": "string",
+              "pattern": "^\\d{3}[-]?\\d{2}[-]?\\d{4}$"
+            },
+            "lastFour": {
+              "type": "string"
+            }
+          }
+        },
+        "itin": {
+          "type": "object",
+          "properties": {
+            "full": {
+              "type": "string",
+              "pattern": "^\\d{3}[-]?\\d{2}[-]?\\d{4}$"
+            },
+            "lastFour": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "IndividualName": {
+      "type": "object",
+      "required": [
+        "firstName",
+        "lastName"
+      ],
+      "properties": {
+        "firstName": {
+          "type": "string",
+          "maxLength": 64,
+          "pattern": "[À-ÖØ-öø-ÿ\"'(),.0-9A-Za-z~ &!-]*",
+          "description": "The individual's first given name."
+        },
+        "middleName": {
+          "type": "string",
+          "maxLength": 64,
+          "pattern": "[À-ÖØ-öø-ÿ\"'(),.0-9A-Za-z~ &!-]*",
+          "description": "The individual's second given name, if any."
+        },
+        "lastName": {
+          "type": "string",
+          "maxLength": 64,
+          "pattern": "[À-ÖØ-öø-ÿ\"'(),.0-9A-Za-z~ &!-]*",
+          "description": "The individual's family name."
+        },
+        "suffix": {
+          "type": "string",
+          "maxLength": 20,
+          "pattern": "[À-ÖØ-öø-ÿ\"'(),.0-9A-Za-z~ &!-]*",
+          "description": "Suffix of a given name."
+        }
+      }
+    },
+    "IndustryCodes": {
+      "type": "object",
+      "properties": {
+        "naics": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 6
+        },
+        "sic": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 4
+        },
+        "mcc": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 4
+        }
+      }
+    },
+    "ManualTermsOfService": {
+      "type": "object",
+      "required": [
+        "acceptedDate",
+        "acceptedIP",
+        "acceptedUserAgent",
+        "acceptedDomain"
+      ],
+      "properties": {
+        "acceptedDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The date and time the terms of service were accepted."
+        },
+        "acceptedIP": {
+          "type": "string",
+          "description": "The IP address (IPv4 or IPv6) from which the terms of service were accepted."
+        },
+        "acceptedUserAgent": {
+          "type": "string",
+          "maxLength": 255,
+          "description": "The user-agent of the user making the request."
+        },
+        "acceptedDomain": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "description": "Describes the acceptance of the Terms of Service. All data is required, and must be from the user.",
+      "title": "Manual"
+    },
+    "Metadata": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Free-form key-value pair list. Useful for storing information that is not captured elsewhere."
+    },
+    "Mode": {
+      "type": "string",
+      "enum": [
+        "sandbox",
+        "production"
+      ],
+      "description": "The operating mode for an account."
+    },
+    "OnboardingInviteCode": {
+      "type": "string",
+      "description": "A unique code that identifies an onboarding invite."
+    },
+    "OnboardingPartnerAccount": {
+      "type": "object",
+      "required": [
+        "accountID",
+        "accountMode",
+        "displayName"
+      ],
+      "properties": {
+        "accountID": {
+          "type": "string",
+          "description": "The account ID of the partner that created the invite."
+        },
+        "accountMode": {
+          "$ref": "#/$defs/Mode"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "The name of the Moov account used to create the onboarding invite."
+        }
+      },
+      "description": "The account that created the onboarding invite."
+    },
+    "PhoneNumber": {
+      "type": "object",
+      "properties": {
+        "number": {
+          "type": "string",
+          "maxLength": 10
+        },
+        "countryCode": {
+          "type": "string",
+          "maxLength": 1
+        }
+      }
+    },
+    "PrimaryRegulator": {
+      "type": "string",
+      "enum": [
+        "OCC",
+        "FDIC",
+        "NCUA",
+        "FRB",
+        "state-cu-regulator"
+      ],
+      "description": "If the business is a financial institution, this field describes its primary regulator."
+    },
+    "Settings": {
+      "type": "object",
+      "properties": {
+        "cardPayment": {
+          "$ref": "#/$defs/CardPaymentSettings"
+        },
+        "achPayment": {
+          "$ref": "#/$defs/ACHPaymentSettings"
+        }
+      },
+      "description": "User provided settings to manage an account."
+    },
+    "TaxID": {
+      "type": "object",
+      "required": [
+        "ein"
+      ],
+      "properties": {
+        "ein": {
+          "type": "object",
+          "properties": {
+            "number": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "number"
+          ]
+        }
+      },
+      "description": "An EIN (employer identification number) for the business. For sole proprietors, an SSN can be used as the EIN."
+    },
+    "TermsOfServicePayload": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string"
+        },
+        "manual": {
+          "$ref": "#/$defs/ManualTermsOfService"
+        }
+      }
+    }
+  }
+}

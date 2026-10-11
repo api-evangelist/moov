@@ -1,0 +1,61 @@
+generated: '2026-10-12'
+method: searched
+source: https://docs.moov.io/api/authentication/scopes/
+docs: https://docs.moov.io/api/authentication/scopes/
+note: Moov follows the OAuth2 flow; access tokens are requested with these scopes (the OpenAPI declares only BasicAuth).
+scopes:
+- name: /accounts.write
+  description: Allows a new Moov account to be created, and view all connected user accounts
+- name: /accounts.read
+  description: Allows a new Moov account to be created, and view all connected user accounts
+- name: /accounts/{accountID}/bank-accounts.read
+  description: Access to view or add a linked bank account to a Moov account
+- name: /accounts/{accountID}/bank-accounts.write
+  description: Access to view or add a linked bank account to a Moov account
+- name: /accounts/{accountID}/cards.read
+  description: Access to view or add a linked card to a Moov account
+- name: /accounts/{accountID}/cards.write
+  description: Access to view or add a linked card to a Moov account
+- name: /accounts/{accountID}/capabilities.read
+  description: Access to request or view capabilities, determining what actions the account can do
+- name: /accounts/{accountID}/capabilities.write
+  description: Access to request or view capabilities, determining what actions the account can do
+- name: /accounts/{accountID}/documents.read
+  description: Access to view or upload documents (like I-9s, W-4s) associated with a Moov account
+- name: /accounts/{accountID}/documents.write
+  description: Access to view or upload documents (like I-9s, W-4s) associated with a Moov account
+- name: /accounts/{accountID}/files.read
+  description: Access to view or upload files associated with a Moov account
+- name: /accounts/{accountID}/files.write
+  description: Access to view or upload files associated with a Moov account
+- name: /accounts/{accountID}/payment-methods.read
+  description: Access to view payment methods for the account specified
+- name: /accounts/{accountID}/profile-enrichment.read
+  description: Access to view a Moov account's profile image
+- name: /accounts/{accountID}/profile.read
+  description: Access to view or edit details associated with a Moov account
+- name: /accounts/{accountID}/profile.write
+  description: Access to view or edit details associated with a Moov account
+- name: /accounts/{accountID}/representatives.read
+  description: Access to view or add details on business representatives for a Moov account
+- name: /accounts/{accountID}/representatives.write
+  description: Access to view or add details on business representatives for a Moov account
+- name: /accounts/{accountID}/transfers.write
+  description: Access to move money by creating transfers
+- name: /accounts/{accountID}/transfers.read
+  description: Access to move money by creating transfers
+- name: /accounts/{accountID}/wallets.read
+  description: Access to view the balance on an account's Moov wallet
+- name: /accounts/{accountID}/wallets.write
+  description: Access to manage an account's Moov wallet
+- name: /accounts/{accountID}/apple-pay.write
+  description: Allows a developer to add or remove an Apple Pay domain
+- name: /accounts/{accountID}/apple-pay.read
+  description: Allows a developer to retrieve registered Apple Pay domains
+- name: /card-metadata.read
+  description: Allows look up of card metadata without linking it to a Moov account. Requires Moov PCI attestation
+    of compliance to use.
+- name: /fed.read
+  description: Allows a developer to use the institutions lookup service to look up a bank name by routing number
+- name: /ping.read
+  description: Allows a developer to test and confirm they are able to hit one of Moov's services

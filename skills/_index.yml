@@ -1,0 +1,12 @@
+generated: '2026-10-12'
+method: generated
+source: Packaged Agent Skills generated from Moov's published OpenAPI (openapi/moov-openapi.yml, v2026.01.00); every operationId verified verbatim in that file. No provider-published skill was reachable (github.com/moovfinancial/docs returned 404 to the API on 2026-10-12, although docs.moov.io/llms.txt references a skills/moov-api folder there).
+skills:
+- file: moov-onboard-and-link-bank.md
+  name: moov-onboard-and-link-bank
+  api: openapi/moov-openapi.yml
+  operations: [createAccessToken, createAccount, requestCapabilities, linkBankAccount, initiateMicroDeposits, completeMicroDeposits, listPaymentMethods]
+- file: moov-move-money.md
+  name: moov-move-money
+  api: openapi/moov-openapi.yml
+  operations: [createTransferOptions, createTransfer, getTransfer, createCancellation, initiateRefund, createReversal]

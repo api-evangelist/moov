@@ -1,0 +1,15 @@
+generated: '2026-10-12'
+method: searched
+source: https://spec.speakeasy.com/moov/moov/api-v2026.01.00
+versioning:
+  scheme: dated header version
+  header: X-Moov-Version
+  current: v2026.01.00
+  default_when_omitted: v2024.01.00
+  evidence: Set this header to v2026.01.00 to use the API described in this specification. When omitted, the server
+    defaults to v2024.01.00, the earliest supported version
+deprecation:
+  policy: null
+  note: No published deprecation policy or Sunset/Deprecation headers found.
+status_page: https://status.moov.io
+changelog: https://docs.moov.io/changelog

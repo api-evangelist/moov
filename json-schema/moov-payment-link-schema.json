@@ -1,0 +1,540 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/moov/main/json-schema/moov-payment-link-schema.json",
+  "title": "PaymentLink",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/moov-openapi.yml#/components/schemas/PaymentLink",
+  "type": "object",
+  "required": [
+    "code",
+    "paymentLinkType",
+    "mode",
+    "status",
+    "partnerAccountID",
+    "merchantAccountID",
+    "ownerAccountID",
+    "merchantPaymentMethodID",
+    "link",
+    "amount",
+    "uses",
+    "display",
+    "customer",
+    "createdOn",
+    "updatedOn"
+  ],
+  "properties": {
+    "code": {
+      "$ref": "#/$defs/PaymentLinkCode"
+    },
+    "paymentLinkType": {
+      "$ref": "#/$defs/PaymentLinkType"
+    },
+    "mode": {
+      "$ref": "#/$defs/Mode"
+    },
+    "status": {
+      "$ref": "#/$defs/PaymentLinkStatus"
+    },
+    "partnerAccountID": {
+      "type": "string",
+      "description": "The partner's Moov account ID."
+    },
+    "merchantAccountID": {
+      "type": "string",
+      "description": "The merchant's Moov account ID."
+    },
+    "ownerAccountID": {
+      "type": "string",
+      "description": "The payment link's owner's Moov account ID."
+    },
+    "merchantPaymentMethodID": {
+      "type": "string",
+      "description": "The merchant's preferred payment method ID. Must be a wallet payment method."
+    },
+    "link": {
+      "type": "string",
+      "format": "uri",
+      "description": "Link to the payment landing page for this payment link."
+    },
+    "amount": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/Amount"
+        }
+      ],
+      "description": "The fixed amount of the payment link.\n\nIn API versions before `2026.07.00`, this was a required field.\n\nIn API version `2026.07.00` and beyond, this field is present for `payment` and `payout` links and omitted\nfor `customAmountPayment` links, where the payor chooses the amount."
+    },
+    "salesTaxAmount": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/Amount"
+        }
+      ],
+      "description": "Optional sales tax amount."
+    },
+    "uses": {
+      "type": "integer",
+      "format": "int64",
+      "description": "The number of times this payment link has been used."
+    },
+    "maxUses": {
+      "type": "integer",
+      "format": "int64",
+      "description": "An optional limit on the number of times this payment link can be used.\n\n**For payouts, `maxUses` is always 1.**"
+    },
+    "lastUsedOn": {
+      "type": "string",
+      "format": "date-time",
+      "description": "The timestamp when this payment link was last used."
+    },
+    "expiresOn": {
+      "type": "string",
+      "format": "date-time",
+      "description": "An optional expiration date for this payment link."
+    },
+    "display": {
+      "$ref": "#/$defs/PaymentLinkDisplayOptions"
+    },
+    "customer": {
+      "$ref": "#/$defs/PaymentLinkCustomerOptions"
+    },
+    "payment": {
+      "$ref": "#/$defs/PaymentLinkPaymentDetails"
+    },
+    "payout": {
+      "$ref": "#/$defs/PaymentLinkPayoutDetails"
+    },
+    "lineItems": {
+      "$ref": "#/$defs/PaymentLinkLineItems"
+    },
+    "createdOn": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updatedOn": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "disabledOn": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "$defs": {
+    "ACHCompanyEntryDescription": {
+      "type": "string",
+      "minLength": 4,
+      "maxLength": 10,
+      "description": "An optional override of the default NACHA company entry description for a transfer."
+    },
+    "ACHOriginatingCompanyName": {
+      "type": "string",
+      "minLength": 4,
+      "maxLength": 16,
+      "description": "An optional override of the default NACHA company name for a transfer."
+    },
+    "ACHPaymentDetails": {
+      "type": "object",
+      "properties": {
+        "companyEntryDescription": {
+          "$ref": "#/$defs/ACHCompanyEntryDescription"
+        },
+        "originatingCompanyName": {
+          "$ref": "#/$defs/ACHOriginatingCompanyName"
+        }
+      },
+      "description": "Options for payment links used to collect an ACH payment."
+    },
+    "Amount": {
+      "type": "object",
+      "required": [
+        "currency",
+        "value"
+      ],
+      "properties": {
+        "currency": {
+          "$ref": "#/$defs/Currency"
+        },
+        "value": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Quantity in the smallest unit of the specified currency. \n\nIn USD this is cents, for example, $12.04 is 1204 and $0.99 is 99."
+        }
+      }
+    },
+    "AmountDecimal": {
+      "type": "object",
+      "required": [
+        "currency",
+        "valueDecimal"
+      ],
+      "properties": {
+        "currency": {
+          "$ref": "#/$defs/Currency"
+        },
+        "valueDecimal": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d{1,9}$",
+          "description": "A decimal-formatted numerical string that represents up to 9 decimal place precision. \n\nFor example, $12.987654321 is '12.987654321'."
+        }
+      }
+    },
+    "CallToAction": {
+      "type": "string",
+      "enum": [
+        "pay",
+        "book",
+        "subscribe",
+        "donate",
+        "confirm",
+        "auto"
+      ],
+      "description": "The text to be displayed on web form's submit button.\n\nIf set to \"auto\" the UI will automatically select between \n\"pay\" and \"confirm\" for payments and payouts respectively."
+    },
+    "CardDynamicDescriptor": {
+      "type": "string",
+      "minLength": 4,
+      "maxLength": 22,
+      "description": "An optional override of the default card statement descriptor for a transfer. Accounts must be enabled by Moov to set this field."
+    },
+    "CardPaymentDetails": {
+      "type": "object",
+      "properties": {
+        "dynamicDescriptor": {
+          "$ref": "#/$defs/CardDynamicDescriptor"
+        }
+      },
+      "description": "Options for payment links used to collect a card payment."
+    },
+    "CollectionPaymentMethodType": {
+      "type": "string",
+      "enum": [
+        "apple-pay",
+        "card-payment",
+        "ach-debit-collect"
+      ],
+      "description": "Payment methods allowed for collecting a payment."
+    },
+    "Currency": {
+      "type": "string",
+      "pattern": "^[A-Za-z]{3}$",
+      "description": "A 3-letter ISO 4217 currency code."
+    },
+    "DisbursementPaymentMethodType": {
+      "type": "string",
+      "enum": [
+        "push-to-card",
+        "rtp-credit",
+        "ach-credit-same-day",
+        "ach-credit-standard",
+        "push-to-apple-pay",
+        "push-to-google-pay"
+      ],
+      "description": "Payment methods allowed for disbursing funds."
+    },
+    "Email": {
+      "type": "string",
+      "maxLength": 255,
+      "format": "email"
+    },
+    "ImageID": {
+      "type": "string",
+      "description": "Unique identifier for a image resource."
+    },
+    "ImagePublicID": {
+      "type": "string",
+      "pattern": "[A-Za-z0-9_-]{21}",
+      "description": "A unique identifier for an image, used in public image links."
+    },
+    "Mode": {
+      "type": "string",
+      "enum": [
+        "sandbox",
+        "production"
+      ],
+      "description": "The operating mode for an account."
+    },
+    "PaymentLinkCode": {
+      "type": "string",
+      "description": "Unique code identifying this payment link."
+    },
+    "PaymentLinkCustomerOptions": {
+      "type": "object",
+      "properties": {
+        "requireAddress": {
+          "type": "boolean",
+          "description": "If true, a billing address is required when completing the payment form."
+        },
+        "requirePhone": {
+          "type": "boolean",
+          "description": "If true, a phone number is required when completing the payment form."
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Optional free-form metadata for the Moov account that will represent this customer."
+        }
+      }
+    },
+    "PaymentLinkDisplayOptions": {
+      "type": "object",
+      "required": [
+        "title",
+        "description",
+        "callToAction"
+      ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "The payment page title displayed to the user."
+        },
+        "description": {
+          "type": "string",
+          "description": "A payment description displayed to the user."
+        },
+        "callToAction": {
+          "$ref": "#/$defs/CallToAction"
+        }
+      },
+      "description": "Customizable display options for a payment link."
+    },
+    "PaymentLinkLineItem": {
+      "type": "object",
+      "required": [
+        "name",
+        "basePrice",
+        "quantity"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 150,
+          "description": "The name of the item."
+        },
+        "basePrice": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/AmountDecimal"
+            }
+          ],
+          "description": "The base price of the item before applying option modifiers."
+        },
+        "quantity": {
+          "type": "integer",
+          "format": "int32",
+          "minimum": 1,
+          "description": "The quantity of this item."
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PaymentLinkLineItemOption"
+          },
+          "description": "Optional list of modifiers applied to this item (e.g., toppings, upgrades, customizations)."
+        },
+        "images": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PaymentLinkLineItemImageMetadata"
+          },
+          "description": "Optional list of images associated with this line item."
+        },
+        "productID": {
+          "type": "string",
+          "description": "Optional unique identifier associating the line item with a product."
+        }
+      },
+      "description": "Represents a single line item in a payment link, including optional modifiers and quantity."
+    },
+    "PaymentLinkLineItemImageMetadata": {
+      "type": "object",
+      "required": [
+        "imageID",
+        "link",
+        "publicID"
+      ],
+      "properties": {
+        "imageID": {
+          "$ref": "#/$defs/ImageID"
+        },
+        "altText": {
+          "type": "string",
+          "maxLength": 125,
+          "description": "Alternative text for the image."
+        },
+        "link": {
+          "type": "string",
+          "format": "uri",
+          "description": "The image's public URL."
+        },
+        "publicID": {
+          "$ref": "#/$defs/ImagePublicID"
+        }
+      }
+    },
+    "PaymentLinkLineItemOption": {
+      "type": "object",
+      "required": [
+        "name",
+        "quantity"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 150,
+          "description": "The name of the option or modifier."
+        },
+        "quantity": {
+          "type": "integer",
+          "format": "int32",
+          "minimum": 1,
+          "description": "The quantity of this option."
+        },
+        "priceModifier": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/AmountDecimal"
+            }
+          ],
+          "description": "Optional price modification applied by this option. Can be positive, negative, or zero."
+        },
+        "images": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PaymentLinkLineItemImageMetadata"
+          },
+          "description": "Optional list of images associated with this line item option."
+        },
+        "group": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Optional group identifier to categorize related options (e.g., 'toppings')."
+        }
+      },
+      "description": "Represents a modifier or option applied to a line item."
+    },
+    "PaymentLinkLineItems": {
+      "type": "object",
+      "required": [
+        "items"
+      ],
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PaymentLinkLineItem"
+          },
+          "minItems": 1,
+          "description": "The list of line items."
+        }
+      },
+      "description": "An optional collection of line items for a payment link.\nWhen line items are provided, their total plus tax must equal the payment link amount."
+    },
+    "PaymentLinkPaymentDetails": {
+      "type": "object",
+      "required": [
+        "allowedMethods"
+      ],
+      "properties": {
+        "allowedMethods": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CollectionPaymentMethodType"
+          },
+          "minItems": 1,
+          "description": "A list of payment methods that should be supported for this payment link."
+        },
+        "cardDetails": {
+          "$ref": "#/$defs/CardPaymentDetails"
+        },
+        "achDetails": {
+          "$ref": "#/$defs/ACHPaymentDetails"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Optional free-form metadata for the transfer."
+        }
+      },
+      "description": "Options for payment links used to collect payment."
+    },
+    "PaymentLinkPayoutDetails": {
+      "type": "object",
+      "required": [
+        "allowedMethods",
+        "recipient"
+      ],
+      "properties": {
+        "allowedMethods": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DisbursementPaymentMethodType"
+          },
+          "minItems": 1,
+          "description": "A list of payment methods that should be supported for this payment link."
+        },
+        "recipient": {
+          "$ref": "#/$defs/PayoutRecipient"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Optional free-form metadata for the transfer."
+        }
+      },
+      "description": "Options for payout links used to send a payout."
+    },
+    "PaymentLinkStatus": {
+      "type": "string",
+      "enum": [
+        "active",
+        "used",
+        "disabled",
+        "expired"
+      ]
+    },
+    "PaymentLinkType": {
+      "type": "string",
+      "enum": [
+        "payment",
+        "payout",
+        "invoice-payment"
+      ]
+    },
+    "PayoutRecipient": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "$ref": "#/$defs/Email"
+        },
+        "phone": {
+          "$ref": "#/$defs/PhoneNumber"
+        }
+      },
+      "description": "Specify the intended recipient of the payout.\nEither `email` or `phone` must be specified, but not both.\n\nThis information will be used to authenticate the end user when they follow the payment link."
+    },
+    "PhoneNumber": {
+      "type": "object",
+      "properties": {
+        "number": {
+          "type": "string",
+          "maxLength": 10
+        },
+        "countryCode": {
+          "type": "string",
+          "maxLength": 1
+        }
+      }
+    }
+  }
+}

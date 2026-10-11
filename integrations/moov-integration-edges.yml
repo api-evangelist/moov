@@ -1,5 +1,5 @@
 generated: '2026-10-12'
-method: none
+method: searched
 source:
 - https://zapier.com/apps/moov/integrations
 - https://n8n.io/integrations/moov/
@@ -7,10 +7,47 @@ source:
 - https://monid.ai/tools/moov
 checked:
 - https://composio.dev/toolkits/moov
+- https://docs.moov.io/guides/get-started/test-mode/
 - https://monid.ai/tools/moov
+- https://moov.io/integrations/
+- https://moov.io/partners/
 - https://n8n.io/integrations/moov/
+- https://spec.speakeasy.com/moov/moov/api-v2026.01.00
 - https://zapier.com/apps/moov/integrations
-summary: null
+summary: 'No marketplace listings (Zapier, n8n, Composio, Monid all checked) and no partner page on moov.io (404);
+  three provider-built edges declared in the Moov API contract: Plaid and MX bank linking, Apple Pay.'
 marketplace_apps: []
-edges: []
+edges:
+- partner_name: Plaid
+  partner: plaid
+  partner_match: domain
+  type: contract
+  direction: provider-built
+  operations:
+  - linkBankAccount
+  evidence: https://spec.speakeasy.com/moov/moov/api-v2026.01.00
+  note: 'linkBankAccount accepts a Plaid processor token (PlaidPayload / PlaidLinkPayload: "Describes the account
+    to link to the Moov account using a Plaid processor token"); test mode documents Plaid sandbox linking.'
+- partner_name: MX
+  partner: mx-technologies
+  partner_match: domain
+  type: contract
+  direction: provider-built
+  operations:
+  - linkBankAccount
+  evidence: https://spec.speakeasy.com/moov/moov/api-v2026.01.00
+  note: linkBankAccount accepts an MX authorization code (MxPayload / MXAuthorizationCode).
+- partner_name: Apple Pay
+  partner: apple
+  partner_match: name-exact
+  type: contract
+  direction: provider-built
+  operations:
+  - createApplePaySession
+  - getApplePayMerchantDomains
+  - linkApplePayToken
+  - registerApplePayMerchantDomains
+  - updateApplePayMerchantDomains
+  evidence: https://spec.speakeasy.com/moov/moov/api-v2026.01.00
+  note: Apple Pay merchant domain registration, sessions and token linking under /accounts/{accountID}/apple-pay.
 templates: []
