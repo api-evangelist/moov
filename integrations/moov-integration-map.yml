@@ -1,0 +1,87 @@
+# DERIVED by derive-integration-map.py (roadmap#949): each integration workflow, step by step,
+# resolved to spec file -> tag -> business capability (Turbo EA, CC BY 4.0) and the operation's
+# phrasing intent. Read from our own files; an unmapped link says why.
+slug: moov
+workflows:
+- file: moov-mx-technologies-link-bank-account.yml
+  title: Link an MX-verified bank account to a Moov account
+  partner: mx-technologies
+  template: null
+  repos:
+  - mx-technologies
+  - moov
+  steps:
+  - step: requestAuthorizationCode
+    repo: mx-technologies
+    spec_file: mx-technologies-processor-token-api-openapi.yml
+    operationId: requestAuthorizationCode
+    tag: processor token
+    capability_id: null
+    capability: null
+    capability_l1: null
+    intent: Request an authorization code for a processor
+    effect: write
+    unmapped: no capability edge for this spec file
+  - step: linkToMoov
+    repo: moov
+    spec_file: moov-openapi.yml
+    operationId: linkBankAccount
+    tag: Bank accounts
+    capability_id: null
+    capability: null
+    capability_l1: null
+    intent: null
+    effect: null
+    unmapped: no capability edge for this spec file
+  connects:
+    mx-technologies:
+      capabilities: []
+      tags:
+      - processor token
+    moov:
+      capabilities: []
+      tags:
+      - Bank accounts
+  intents:
+  - Request an authorization code for a processor
+- file: moov-plaid-link-bank-account.yml
+  title: Link a Plaid-connected bank account to a Moov account
+  partner: plaid
+  template: null
+  repos:
+  - plaid
+  - moov
+  steps:
+  - step: createProcessorToken
+    repo: plaid
+    spec_file: plaid-plaid-api-openapi.yml
+    operationId: processorTokenCreate
+    tag: Plaid
+    capability_id: null
+    capability: null
+    capability_l1: null
+    intent: Create a processor token for a partner
+    effect: write
+    unmapped: no capability edge for this spec file
+  - step: linkToMoov
+    repo: moov
+    spec_file: moov-openapi.yml
+    operationId: linkBankAccount
+    tag: Bank accounts
+    capability_id: null
+    capability: null
+    capability_l1: null
+    intent: null
+    effect: null
+    unmapped: no capability edge for this spec file
+  connects:
+    plaid:
+      capabilities: []
+      tags:
+      - Plaid
+    moov:
+      capabilities: []
+      tags:
+      - Bank accounts
+  intents:
+  - Create a processor token for a partner
