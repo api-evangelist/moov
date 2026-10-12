@@ -50,19 +50,19 @@ edges:
   - updateApplePayMerchantDomains
   evidence: https://spec.speakeasy.com/moov/moov/api-v2026.01.00
   note: Apple Pay merchant domain registration, sessions and token linking under /accounts/{accountID}/apple-pay.
-- partner_name: aza-finance
-  partner: aza-finance
+- partner_name: plaid
+  partner: plaid
   partner_match: domain
   type: contract
   channel: partner-built
   relationship: processor-connection
   direction: partner-built
-  evidence: https://github.com/api-evangelist/aza-finance/blob/main/openapi/aza-finance-transactions-api-openapi.yml
+  evidence: https://github.com/api-evangelist/plaid/blob/main/openapi/plaid-plaid-api-openapi.yml
   contract_reference:
-    repo: aza-finance
-    spec_file: aza-finance-transactions-api-openapi.yml
+    repo: plaid
+    spec_file: plaid-plaid-api-openapi.yml
     value: moov
-    property: schemas.PayoutMethodMobileProviderEnum
+    property: schemas.ProcessorTokenCreateRequest.processor
     detected_by: detect-payment-method-edges.py
     detected: '2026-10-12'
 templates: []

@@ -30,21 +30,21 @@
   source: edge
   status: pending-generation
   arazzo: null
-- slug: moov-aza-finance
-  label: aza-finance
-  partner: aza-finance
-  partner_name: aza-finance
+- slug: moov-plaid
+  label: plaid
+  partner: plaid
+  partner_name: plaid
   type: contract
   channel: partner-built
-  evidence: https://github.com/api-evangelist/aza-finance/blob/main/openapi/aza-finance-transactions-api-openapi.yml
+  evidence: https://github.com/api-evangelist/plaid/blob/main/openapi/plaid-plaid-api-openapi.yml
   source: edge
   relationship: processor-connection
   contract_reference:
-    repo: aza-finance
-    spec_file: aza-finance-transactions-api-openapi.yml
+    repo: plaid
+    spec_file: plaid-plaid-api-openapi.yml
     value: moov
-    property: schemas.PayoutMethodMobileProviderEnum
+    property: schemas.ProcessorTokenCreateRequest.processor
     detected_by: detect-payment-method-edges.py
     detected: '2026-10-12'
-  status: not-a-workflow
-  arazzo: null
+  arazzo: moov-plaid-link-bank-account.yml
+  status: arazzo
