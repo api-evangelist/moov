@@ -66,3 +66,9 @@ edges:
     detected_by: detect-payment-method-edges.py
     detected: '2026-10-12'
 templates: []
+skips:
+- label: Apple Pay
+  cause: catalog
+  why: The apple repo only has App Store Connect specs (apps, beta-testers, builds). There is no Apple Pay operation,
+    so the partner end has nothing to call. Moov's own Apple Pay operations (createApplePaySession, linkApplePayToken)
+    are Moov-only and don't make a two-sided workflow.
