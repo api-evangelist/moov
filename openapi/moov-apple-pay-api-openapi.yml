@@ -1,0 +1,965 @@
+openapi: 3.2.0
+info:
+  title: Moov Apple pay API
+  version: v2026.01.00
+  contact:
+    name: Moov Developer Support
+    email: help@moov.io
+    url: https://moov.io
+  license:
+    name: Unlicensed
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  description: 'Operations tagged Apple pay across 2 of this provider''s published API definitions: moov-api-v2026.01.00-openapi.yml, moov-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moov.io
+  description: Production API host
+  variables: {}
+security:
+- BasicAuth: []
+tags:
+- name: Apple pay
+paths:
+  /accounts/{accountID}/apple-pay/domains:
+    post:
+      operationId: registerApplePayMerchantDomains
+      description: 'Add domains to be registered with Apple Pay.
+
+
+        Any domains that will be used to accept payments must first be verified
+
+        with Apple.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/apple-pay.write` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        description: ID of the Moov account representing the merchant.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplePayMerchantDomains'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: Apple Pay domains are already registered for this account.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '417':
+          description: The requested domains were not verified.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Apple pay
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterApplePayMerchantDomains'
+      x-speakeasy-name-override: registerMerchantDomains
+      summary: Register apple pay merchant domains
+      x-summary-source: derived
+    patch:
+      operationId: updateApplePayMerchantDomains
+      description: 'Add or remove domains to be registered with Apple Pay.
+
+
+        Any domains that will be used to accept payments must first be verified
+
+        with Apple.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/apple-pay.write` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        description: ID of the Moov account representing the merchant.
+        schema:
+          type: string
+      responses:
+        '204':
+          description: The request completed successfully, but there is no content to return.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: Apple Pay domains are already registered for this account.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '417':
+          description: The requested domains were not verified.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Apple pay
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateApplePayMerchantDomains'
+      x-speakeasy-name-override: updateMerchantDomains
+      summary: Update apple pay merchant domains
+      x-summary-source: derived
+    get:
+      operationId: getApplePayMerchantDomains
+      description: 'Get domains registered with Apple Pay.
+
+
+        Read our Apple Pay tutorial to learn more.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/apple-pay.read` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        description: ID of the Moov account representing the merchant.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplePayMerchantDomains'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Apple pay
+      x-speakeasy-name-override: getMerchantDomains
+      summary: Get apple pay merchant domains
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+  /accounts/{accountID}/apple-pay/sessions:
+    post:
+      operationId: createApplePaySession
+      description: 'Create a session with Apple Pay to facilitate a payment.
+
+
+        Read our Apple Pay tutorial to learn more.
+
+        A successful response from this endpoint should be passed through to Apple Pay unchanged.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/apple-pay.write` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        description: ID of the Moov account representing the merchant.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplePaySession'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '422':
+          description: The request was well-formed, but the contents failed validation. Check the request for missing or invalid fields.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Apple pay
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateApplePaySession'
+      x-speakeasy-name-override: createSession
+      summary: Create apple pay session
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+  /accounts/{accountID}/apple-pay/tokens:
+    post:
+      operationId: linkApplePayToken
+      description: 'Connect an Apple Pay token to the specified account.
+
+
+        Read our Apple Pay tutorial to learn more.
+
+        The `token` data is defined by Apple Pay and should be passed through from Apple Pay''s response unmodified.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/cards.write` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        description: ID of the Moov account representing the cardholder.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinkedApplePayPaymentMethod'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '422':
+          description: The request was well-formed, but the contents failed validation. Check the request for missing or invalid fields.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinkApplePayError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Apple pay
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LinkApplePay'
+      x-speakeasy-name-override: linkToken
+      summary: Link apple pay token
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+components:
+  schemas:
+    LinkApplePay:
+      type: object
+      required:
+      - token
+      properties:
+        token:
+          $ref: '#/components/schemas/LinkApplePayToken'
+        billingContact:
+          $ref: '#/components/schemas/AppleBillingContact'
+      description: "  The JSON structure returned from Apple Pay when authorizing a payment session.\n\n  Refer to [Apple's documentation](https://developer.apple.com/documentation/apple_pay_on_the_web/applepaypayment) \n  for more information."
+    LinkApplePaymentMethod:
+      type: object
+      required:
+      - displayName
+      - network
+      - type
+      properties:
+        displayName:
+          type: string
+          description: A display-friendly discription of the card.
+          example: Visa 1234
+        network:
+          type: string
+          description: The card's payment network.
+          example: Visa
+        type:
+          type: string
+          description: The type of card.
+          example: debit
+      description: "  Provides information about the underlying card.\n\n  Refer to [Apple's documentation](https://developer.apple.com/documentation/apple_pay_on_the_web/applepaypaymenttoken/1916113-paymentmethod) \n  for more information."
+    ApplePaySession:
+      type: string
+      description: 'Stringified session object returned from Apple Pay.
+
+
+        The string value should be deserialized as a JSON object before passing to Apple.'
+      example: '{"epochTimestamp":1733783167685,"expiresAt":1733786767685...}'
+    CardExpiration:
+      type: object
+      required:
+      - month
+      - year
+      properties:
+        month:
+          type: string
+          minLength: 2
+          maxLength: 2
+          description: Two-digit month the card expires.
+        year:
+          type: string
+          minLength: 2
+          maxLength: 2
+          description: Two-digit year the card expires.
+      description: The expiration date of the card or token.
+      example:
+        month: '01'
+        year: '21'
+    PaymentMethodType:
+      type: string
+      enum:
+      - moov-wallet
+      - ach-debit-fund
+      - ach-debit-collect
+      - ach-credit-standard
+      - ach-credit-same-day
+      - rtp-credit
+      - card-payment
+      - push-to-card
+      - pull-from-card
+      - apple-pay
+      - card-present-payment
+      - instant-bank-credit
+      description: The payment method type that represents a payment rail and directionality
+    DomainDisplayName:
+      type: string
+      maxLength: 64
+      description: A UTF-8 string to display in the Buy button.
+    CardBrand:
+      type: string
+      enum:
+      - American Express
+      - Discover
+      - Mastercard
+      - Visa
+      - Unknown
+      description: The card brand.
+      example: Visa
+    ApplePayHeader:
+      type: object
+      required:
+      - publicKeyHash
+      - transactionId
+      properties:
+        ephemeralPublicKey:
+          type: string
+          description: Base64-encoded ephemeral public key, used for ECC-encrypted payment data.
+          example: MFkwEK...Md==
+        publicKeyHash:
+          type: string
+          description: A base64-encoded, SHA-256 hash of the merchant's public key.
+          example: l0CnXdMv...D1I=
+        transactionId:
+          type: string
+          description: A device-generated identifier for the transaction.
+          example: 32b...4f3
+      description: "Information needed to decrypt Apple Pay payment data.\n\nRefer to [Apple's documentation](https://developer.apple.com/documentation/passkit/payment-token-format-reference#Header-keys-and-values) \nfor more information."
+    ApplePayMerchantDomains:
+      type: object
+      required:
+      - accountID
+      - displayName
+      - domains
+      - createdOn
+      - updatedOn
+      properties:
+        accountID:
+          type: string
+        displayName:
+          $ref: '#/components/schemas/DomainDisplayName'
+        domains:
+          type: array
+          items:
+            type: string
+          description: A unique list of fully-qualified, top-level or sub-domain names where you will accept Apple Pay.
+          example:
+          - checkout.classbooker.dev
+        createdOn:
+          type: string
+          format: date-time
+        updatedOn:
+          type: string
+          format: date-time
+    LinkApplePaymentData:
+      type: object
+      required:
+      - version
+      - data
+      - signature
+      - header
+      properties:
+        version:
+          type: string
+          description: Specifies the encryption used for the payment token ("EC_v1" or "RSA_v1").
+          example: EC_v1
+        data:
+          type: string
+          description: The encrypted, base64-encoded payment data.
+          example: 3+f4oOTwPa6f1UZ6tG...CE=
+        signature:
+          type: string
+          description: A base64 encoded signature of the payment and header data.
+          example: MIAGCSqGSIb3DQ.AAAA==
+        header:
+          $ref: '#/components/schemas/ApplePayHeader'
+      description: "  Contains the encrypted payment data.\n\n  Refer to [Apple's documentation](https://developer.apple.com/documentation/apple_pay_on_the_web/applepaypaymenttoken/1916115-paymentdata) \n  for more information."
+    ApplePayResponse:
+      type: object
+      required:
+      - brand
+      - cardType
+      - cardDisplayName
+      - fingerprint
+      - expiration
+      - dynamicLastFour
+      properties:
+        brand:
+          $ref: '#/components/schemas/CardBrand'
+        cardType:
+          $ref: '#/components/schemas/CardType'
+        cardDisplayName:
+          type: string
+          description: "  User-friendly name of the tokenized card returned by Apple.\n  \n  It usually contains the brand and the last four digits of the underlying card.\n  There is no standard format."
+          example: Visa 1256
+        fingerprint:
+          $ref: '#/components/schemas/CardFingerprint'
+        expiration:
+          $ref: '#/components/schemas/CardExpiration'
+        dynamicLastFour:
+          type: string
+          description: The last four digits of the Apple Pay token, which may differ from the tokenized card's last four digits.
+        issuerCountry:
+          type: string
+          description: Country where the underlying card was issued.
+          example: US
+      description: Describes an Apple Pay token on a Moov account.
+    CardFingerprint:
+      type: string
+      maxLength: 100
+      description: 'Uniquely identifies a linked payment card or token.
+
+        For Apple Pay, the fingerprint is based on the tokenized card number and may vary based on the user''s device.
+
+        This field can be used to identify specific payment methods across multiple accounts on your platform.'
+      example: 9948962d92a1ce40c9f918cd9ece3a22bde62fb325a2f1fe2e833969de672ba3
+    LinkApplePayToken:
+      type: object
+      required:
+      - paymentData
+      - paymentMethod
+      - transactionIdentifier
+      properties:
+        paymentData:
+          $ref: '#/components/schemas/LinkApplePaymentData'
+        paymentMethod:
+          $ref: '#/components/schemas/LinkApplePaymentMethod'
+        transactionIdentifier:
+          type: string
+          description: A unique identifier provided by Apple Pay for this payment.
+          example: 32b...4f3
+      description: "  Contains the user's payment information as returned from Apple Pay.\n\n  Refer to [Apple's documentation](https://developer.apple.com/documentation/apple_pay_on_the_web/applepaypaymenttoken) \n  for more information."
+    CardType:
+      type: string
+      enum:
+      - debit
+      - credit
+      - prepaid
+      - unknown
+      description: The type of the card.
+      example: credit
+    GenericError:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    LinkApplePayError:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Describes an error that wasn't attributable to a single request field.
+        paymentData:
+          type: string
+          description: Describes an error within the `token.paymentData` request field.
+        paymentMethod:
+          type: string
+          description: Describes an error within the `token.paymentMethod` request field.
+        transactionIdentifier:
+          type: string
+          description: Describes an error within the `token.transactionIdentifier` request field.
+    UpdateApplePayMerchantDomains:
+      type: object
+      properties:
+        addDomains:
+          type: array
+          items:
+            type: string
+          description: A unique list of fully-qualified, top-level or sub-domain names to add.
+          example:
+          - pay.classbooker.dev
+        removeDomains:
+          type: array
+          items:
+            type: string
+          description: A unique list of fully-qualified, top-level or sub-domain names to remove.
+          example:
+          - checkout.classbooker.dev
+    CreateApplePaySession:
+      type: object
+      required:
+      - domain
+      - displayName
+      properties:
+        domain:
+          type: string
+          description: A fully qualified top-level or sub-domain name where you will accept Apple Pay. Should not include "https".
+          example: checkout.classbooker.dev
+        displayName:
+          $ref: '#/components/schemas/DomainDisplayName'
+    RegisterApplePayMerchantDomains:
+      type: object
+      properties:
+        displayName:
+          $ref: '#/components/schemas/DomainDisplayName'
+        domains:
+          type: array
+          items:
+            type: string
+          description: A unique list of fully-qualified, top-level or sub-domain names where you will accept Apple Pay.
+          example:
+          - checkout.classbooker.dev
+    LinkedApplePayPaymentMethod:
+      type: object
+      required:
+      - paymentMethodID
+      - paymentMethodType
+      - applePay
+      properties:
+        paymentMethodID:
+          type: string
+          description: The new payment method's ID.
+        paymentMethodType:
+          $ref: '#/components/schemas/PaymentMethodType'
+        applePay:
+          $ref: '#/components/schemas/ApplePayResponse'
+    AppleBillingContact:
+      type: object
+      properties:
+        addressLines:
+          type: array
+          items:
+            type: string
+          description: Address lines 1 and 2 for the contact.
+          example:
+          - 123 Sesame Street
+        locality:
+          type: string
+          description: The contact's city.
+          example: Phoenix
+        postalCode:
+          type: string
+          description: The contact's postal code.
+          example: '30345'
+        administrativeArea:
+          type: string
+          description: The contact's two-letter state code.
+          example: AZ
+        countryCode:
+          type: string
+          description: The contact's two-letter ISO 3166
+          example: US
+      description: "  Billing contact information as returned from Apple Pay.\n  \n  Refer to [Apple's documentation](https://developer.apple.com/documentation/apple_pay_on_the_web/applepaypaymentcontact) \n  for more information."
+  parameters:
+    VersionHeader:
+      name: X-Moov-Version
+      in: header
+      required: false
+      description: 'Set this header to v2026.01.00 to use the API described in this specification.
+
+        When omitted, the server defaults to v2024.01.00, the earliest supported version, which may not match the behavior documented here.
+
+        An unrecognized well-formed version uses the latest supported version that is not newer than the requested version, when one exists.
+
+        For example, `v2026.08.00` uses `v2026.07.00`.
+
+        A malformed value, such as `2022`, returns a `404` response.'
+      schema:
+        type: string
+        enum:
+        - v2026.01.00
+        example: v2026.01.00
+        x-speakeasy-ignore: true
+      x-speakeasy-ignore: true
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: Basic
+externalDocs:
+  url: https://docs.moov.io/
+  description: Moov Guides and API Documentation
+x-refined-from:
+- moov-api-v2026.01.00-openapi.yml
+- moov-openapi.yml

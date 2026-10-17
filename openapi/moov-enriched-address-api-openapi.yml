@@ -1,0 +1,277 @@
+openapi: 3.2.0
+info:
+  title: Moov Enriched address API
+  version: v2026.01.00
+  contact:
+    name: Moov Developer Support
+    email: help@moov.io
+    url: https://moov.io
+  license:
+    name: Unlicensed
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  description: 'Operations tagged Enriched address across 2 of this provider''s published API definitions: moov-api-v2026.01.00-openapi.yml, moov-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moov.io
+  description: Production API host
+  variables: {}
+security:
+- BasicAuth: []
+tags:
+- name: Enriched address
+paths:
+  /enrichment/address:
+    get:
+      operationId: getEnrichmentAddress
+      description: 'Fetch enriched address suggestions. Requires a partial address.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/profile-enrichment.read` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - $ref: '#/components/parameters/EnrichedAddressFilters.search'
+      - $ref: '#/components/parameters/EnrichedAddressFilters.maxResults'
+      - $ref: '#/components/parameters/EnrichedAddressFilters.includeCities'
+      - $ref: '#/components/parameters/EnrichedAddressFilters.includeStates'
+      - $ref: '#/components/parameters/EnrichedAddressFilters.includeZipcodes'
+      - $ref: '#/components/parameters/EnrichedAddressFilters.excludeStates'
+      - $ref: '#/components/parameters/EnrichedAddressFilters.preferCities'
+      - $ref: '#/components/parameters/EnrichedAddressFilters.preferStates'
+      - $ref: '#/components/parameters/EnrichedAddressFilters.preferZipcodes'
+      - $ref: '#/components/parameters/EnrichedAddressFilters.preferRatio'
+      - $ref: '#/components/parameters/EnrichedAddressFilters.preferGeolocation'
+      - $ref: '#/components/parameters/EnrichedAddressFilters.selected'
+      - $ref: '#/components/parameters/EnrichedAddressFilters.source'
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnrichedAddressResponse'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Enriched address
+      x-speakeasy-name-override: get
+      summary: Get enrichment address
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+components:
+  schemas:
+    AddressSuggestion:
+      type: object
+      properties:
+        addressLine1:
+          type: string
+        addressLine2:
+          type: string
+        city:
+          type: string
+        entries:
+          type: integer
+          description: The number of units at an address. For example the number of apartments or businesses in a building.
+        postalCode:
+          type: string
+        stateOrProvince:
+          type: string
+    EnrichedAddressResponse:
+      type: object
+      required:
+      - suggestions
+      properties:
+        suggestions:
+          type: array
+          items:
+            $ref: '#/components/schemas/AddressSuggestion'
+  parameters:
+    EnrichedAddressFilters.selected:
+      name: selected
+      in: query
+      required: false
+      description: Useful for narrowing results with `addressLine2` suggestions such as `Apt` (denotes an apartment building with multiple residences).
+      schema:
+        type: string
+      explode: false
+    EnrichedAddressFilters.preferGeolocation:
+      name: preferGeolocation
+      in: query
+      required: false
+      description: "  If omitted or set to `city`, it uses the sender's IP address to determine location, then automatically adds the city and state \n  to the preferCities value. This parameter takes precedence over other `include` or `exclude` parameters meaning that if it is \n  not set to `none`, you may see addresses from areas you do not wish to see."
+      schema:
+        type: string
+      explode: false
+    EnrichedAddressFilters.preferCities:
+      name: preferCities
+      in: query
+      required: false
+      description: Display results with the listed cities at the top.
+      schema:
+        type: string
+      explode: false
+    EnrichedAddressFilters.maxResults:
+      name: maxResults
+      in: query
+      required: false
+      description: Maximum number of results to return.
+      schema:
+        type: integer
+      explode: false
+    EnrichedAddressFilters.excludeStates:
+      name: excludeStates
+      in: query
+      required: false
+      description: Exclude list of states from results. No `include` pararmeters may be used with this parameter.
+      schema:
+        type: string
+      explode: false
+    EnrichedAddressFilters.search:
+      name: search
+      in: query
+      required: true
+      description: Partial or complete address to search.
+      schema:
+        type: string
+      explode: false
+    EnrichedAddressFilters.preferStates:
+      name: preferStates
+      in: query
+      required: false
+      description: Display results with the listed states at the top.
+      schema:
+        type: string
+      explode: false
+    EnrichedAddressFilters.includeZipcodes:
+      name: includeZipcodes
+      in: query
+      required: false
+      description: Limits results to a list of given zipcodes.
+      schema:
+        type: string
+      explode: false
+    EnrichedAddressFilters.includeStates:
+      name: includeStates
+      in: query
+      required: false
+      description: Limits results to a list of given states.
+      schema:
+        type: string
+      explode: false
+    EnrichedAddressFilters.source:
+      name: source
+      in: query
+      required: false
+      description: Include results from alternate data sources. Allowed values are `all` (non-postal addresses), or `postal` (postal addresses only).
+      schema:
+        type: string
+      explode: false
+    EnrichedAddressFilters.preferZipcodes:
+      name: preferZipcodes
+      in: query
+      required: false
+      description: Display results with the listed zipcodes at the top.
+      schema:
+        type: string
+      explode: false
+    EnrichedAddressFilters.preferRatio:
+      name: preferRatio
+      in: query
+      required: false
+      description: Specifies the percentage of address suggestions that should be preferred and will appear at the top of the results.
+      schema:
+        type: integer
+      explode: false
+    EnrichedAddressFilters.includeCities:
+      name: includeCities
+      in: query
+      required: false
+      description: Limits results to a list of given cities.
+      schema:
+        type: string
+      explode: false
+    VersionHeader:
+      name: X-Moov-Version
+      in: header
+      required: false
+      description: 'Set this header to v2026.01.00 to use the API described in this specification.
+
+        When omitted, the server defaults to v2024.01.00, the earliest supported version, which may not match the behavior documented here.
+
+        An unrecognized well-formed version uses the latest supported version that is not newer than the requested version, when one exists.
+
+        For example, `v2026.08.00` uses `v2026.07.00`.
+
+        A malformed value, such as `2022`, returns a `404` response.'
+      schema:
+        type: string
+        enum:
+        - v2026.01.00
+        example: v2026.01.00
+        x-speakeasy-ignore: true
+      x-speakeasy-ignore: true
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: Basic
+externalDocs:
+  url: https://docs.moov.io/
+  description: Moov Guides and API Documentation
+x-refined-from:
+- moov-api-v2026.01.00-openapi.yml
+- moov-openapi.yml

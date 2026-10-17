@@ -1,431 +1,1721 @@
 openapi: 3.2.0
 info:
   title: Moov Disputes API
-  termsOfService: https://moov.io/legal/platform-agreement/
   version: '1.0'
-  description: 'Operations tagged Disputes across 2 of this provider''s published API definitions: moov-api-openapi.yml, moov-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: 'Operations tagged Disputes across 3 of this provider''s published API definitions: moov-api-v2026.01.00-openapi.yml, moov-openapi.yml, moov-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.moov.io
-  description: Production Server
-security:
-- bearerAuth: []
+  description: Production API host
+  variables: {}
 tags:
 - name: Disputes
-  description: Manage card payment disputes including evidence submission, acceptance, and lifecycle tracking for chargeback resolution.
 paths:
   /accounts/{accountID}/disputes:
     get:
       operationId: listDisputes
-      summary: List disputes
-      description: Retrieve all card payment disputes for a Moov account, including their status, disputed amount, and reason codes.
-      tags:
-      - Disputes
+      description: 'Returns the list of disputes.
+
+
+        Read our disputes guide to learn more.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/transfers.read` scope.'
       parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
-      - $ref: '#/components/parameters/CountParam'
-      - $ref: '#/components/parameters/SkipParam'
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/Pagination.skip'
+      - $ref: '#/components/parameters/Pagination.count'
+      - $ref: '#/components/parameters/DisputeListFilters.startDateTime'
+      - $ref: '#/components/parameters/DisputeListFilters.endDateTime'
+      - $ref: '#/components/parameters/DisputeListFilters.respondStartDateTime'
+      - $ref: '#/components/parameters/DisputeListFilters.respondEndDateTime'
+      - $ref: '#/components/parameters/DisputeListFilters.status'
+      - $ref: '#/components/parameters/DisputeListFilters.merchantAccountID'
+      - $ref: '#/components/parameters/DisputeListFilters.cardholderAccountID'
+      - $ref: '#/components/parameters/DisputeListFilters.disputeIDs'
+      - $ref: '#/components/parameters/DisputeListFilters.transferIDs'
+      - $ref: '#/components/parameters/DisputeListFilters.orderBy'
       responses:
         '200':
-          description: Disputes returned successfully.
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Dispute'
+              example:
+              - disputeID: 6e356108-fdfa-4910-bbe4-1e3c8abf5520
+                merchantAccountID: 34233b72-780c-4e0e-8b08-cbbe1bc878f8
+                createdOn: '2024-12-23T17:55:00Z'
+                amount:
+                  currency: USD
+                  value: 257753
+                networkReasonCode: '10.4'
+                transfer:
+                  transferID: ecac148a-917e-4ee0-b46a-c51408939fff
+                respondBy: '2024-12-23T18:55:00Z'
+                status: response-needed
+                phase: chargeback
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Disputes
+      x-speakeasy-name-override: list
+      security:
+      - BasicAuth: []
+      summary: List disputes
+      x-summary-source: derived
     parameters:
     - $ref: '#/components/parameters/accountID'
     servers:
     - url: https://api.moov.io
-      description: Production Server
+      description: Production API host
+      variables: {}
   /accounts/{accountID}/disputes/{disputeID}:
     get:
       operationId: getDispute
-      summary: Retrieve a dispute
-      description: Fetch the full details of a specific card dispute, including reason codes, amounts, deadlines for evidence submission, and current status.
-      tags:
-      - Disputes
+      description: 'Get a dispute by ID.
+
+
+        Read our disputes guide to learn more.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/transfers.read` scope.'
       parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
-      - $ref: '#/components/parameters/DisputeIDParam'
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: disputeID
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
         '200':
-          description: Dispute details returned successfully.
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Dispute'
+              example:
+                disputeID: 6e356108-fdfa-4910-bbe4-1e3c8abf5520
+                merchantAccountID: 34233b72-780c-4e0e-8b08-cbbe1bc878f8
+                createdOn: '2024-12-23T17:55:00Z'
+                amount:
+                  currency: USD
+                  value: 257753
+                networkReasonCode: '10.4'
+                transfer:
+                  transferID: ecac148a-917e-4ee0-b46a-c51408939fff
+                respondBy: '2024-12-23T18:55:00Z'
+                status: response-needed
+                phase: chargeback
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
         '404':
-          $ref: '#/components/responses/NotFound'
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Disputes
+      x-speakeasy-name-override: get
+      security:
+      - BasicAuth: []
+      summary: Get dispute
+      x-summary-source: derived
     parameters:
     - $ref: '#/components/parameters/accountID'
     - $ref: '#/components/parameters/disputeID'
     servers:
     - url: https://api.moov.io
-      description: Production Server
+      description: Production API host
+      variables: {}
   /accounts/{accountID}/disputes/{disputeID}/accept:
     post:
       operationId: acceptDispute
-      summary: Accept a dispute
-      description: Accept a card dispute without contesting it. Use this when the dispute is valid and you wish to return the funds to the cardholder without going through the evidence submission process.
-      tags:
-      - Disputes
+      description: 'Accepts liability for a dispute.
+
+
+        Read our disputes guide to learn more.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/transfers.read` scope.'
       parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
-      - $ref: '#/components/parameters/DisputeIDParam'
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: disputeID
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
         '200':
-          description: Dispute accepted.
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Dispute'
+              example:
+                disputeID: 6e356108-fdfa-4910-bbe4-1e3c8abf5520
+                merchantAccountID: 34233b72-780c-4e0e-8b08-cbbe1bc878f8
+                createdOn: '2024-12-23T17:55:00Z'
+                amount:
+                  currency: USD
+                  value: 257753
+                networkReasonCode: '10.4'
+                transfer:
+                  transferID: ecac148a-917e-4ee0-b46a-c51408939fff
+                respondBy: '2024-12-23T18:55:00Z'
+                status: accepted
+                phase: chargeback
         '400':
-          $ref: '#/components/responses/BadRequest'
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
         '404':
-          $ref: '#/components/responses/NotFound'
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Disputes
+      x-speakeasy-name-override: accept
+      security:
+      - BasicAuth: []
+      summary: Accept dispute
+      x-summary-source: derived
     parameters:
     - $ref: '#/components/parameters/accountID'
     - $ref: '#/components/parameters/disputeID'
     servers:
     - url: https://api.moov.io
-      description: Production Server
+      description: Production API host
+      variables: {}
+  /accounts/{accountID}/disputes/{disputeID}/evidence:
+    get:
+      operationId: listDisputeEvidence
+      description: 'Returns a dispute''s public evidence by its ID.
+
+
+        Read our disputes guide to learn more.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/transfers.read` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: disputeID
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DisputeEvidenceResponse'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Disputes
+      x-speakeasy-name-override: listEvidence
+      security:
+      - BasicAuth: []
+      summary: List dispute evidence
+      x-summary-source: derived
+    parameters:
+    - $ref: '#/components/parameters/accountID'
+    - $ref: '#/components/parameters/disputeID'
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
   /accounts/{accountID}/disputes/{disputeID}/evidence-file:
     post:
       operationId: uploadDisputeEvidenceFile
-      summary: Upload evidence file
-      description: Upload a file as evidence for contesting a card dispute. Accepted file types include images and PDFs of receipts, correspondence, and other relevant documentation.
+      description: 'Uploads a file as evidence for a dispute.
+
+
+        Read our disputes guide to learn more.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/transfers.write` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: disputeID
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: The resource was successfully created.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidenceUploadResponse'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '422':
+          description: The request was well-formed, but the contents failed validation. Check the request for missing or invalid fields.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileUploadValidationError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
       tags:
       - Disputes
-      parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
-      - $ref: '#/components/parameters/DisputeIDParam'
       requestBody:
         required: true
         content:
           multipart/form-data:
             schema:
-              type: object
-              properties:
-                file:
-                  type: string
-                  format: binary
-                  description: The evidence file to upload.
-                evidenceType:
-                  type: string
-                  description: Classification of the evidence type.
-      responses:
-        '200':
-          description: Evidence file uploaded successfully.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DisputeEvidence'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+              $ref: '#/components/schemas/CreateEvidenceFileMultiPart'
+            encoding:
+              file:
+                contentType: application/pdf, image/jpeg, image/tiff
+              evidenceType:
+                contentType: text/plain
+      x-speakeasy-name-override: uploadEvidenceFile
+      security:
+      - BasicAuth: []
+      summary: Upload dispute evidence file
+      x-summary-source: derived
     parameters:
     - $ref: '#/components/parameters/accountID'
     - $ref: '#/components/parameters/disputeID'
     servers:
     - url: https://api.moov.io
-      description: Production Server
+      description: Production API host
+      variables: {}
   /accounts/{accountID}/disputes/{disputeID}/evidence-text:
     post:
       operationId: uploadDisputeEvidenceText
-      summary: Upload evidence text
-      description: Submit a text-based statement as evidence when contesting a card dispute. Use this for written explanations that supplement file-based evidence.
+      description: 'Uploads text as evidence for a dispute.
+
+
+        Read our disputes guide to learn more.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/transfers.write` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: disputeID
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: The resource was successfully created.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidenceTextResponse'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
       tags:
       - Disputes
-      parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
-      - $ref: '#/components/parameters/DisputeIDParam'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DisputeEvidenceText'
-      responses:
-        '200':
-          description: Evidence text uploaded successfully.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DisputeEvidence'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+              $ref: '#/components/schemas/CreateEvidenceText'
+      x-speakeasy-name-override: uploadEvidenceText
+      security:
+      - BasicAuth: []
+      summary: Upload dispute evidence text
+      x-summary-source: derived
     parameters:
     - $ref: '#/components/parameters/accountID'
     - $ref: '#/components/parameters/disputeID'
     servers:
     - url: https://api.moov.io
-      description: Production Server
+      description: Production API host
+      variables: {}
   /accounts/{accountID}/disputes/{disputeID}/evidence/submit:
     post:
       operationId: submitDisputeEvidence
-      summary: Submit dispute evidence
-      description: Finalize and submit all uploaded evidence for a dispute to the card network for review. Once submitted, no additional evidence can be added.
-      tags:
-      - Disputes
+      description: 'Submit the evidence associated with a dispute.
+
+
+        Evidence items must be uploaded using the appropriate endpoint(s) prior to calling this endpoint to submit it. **Evidence can only
+
+        be submitted once per dispute.**
+
+
+        Read our disputes guide to learn more.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/transfers.write` scope.'
       parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
-      - $ref: '#/components/parameters/DisputeIDParam'
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: disputeID
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
         '200':
-          description: Evidence submitted for dispute review.
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Dispute'
         '400':
-          $ref: '#/components/responses/BadRequest'
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
         '401':
-          $ref: '#/components/responses/Unauthorized'
-    parameters:
-    - $ref: '#/components/parameters/accountID'
-    - $ref: '#/components/parameters/disputeID'
-    servers:
-    - url: https://api.moov.io
-      description: Production Server
-  /accounts/{accountID}/disputes/{disputeID}/evidence:
-    parameters:
-    - $ref: '#/components/parameters/accountID'
-    - $ref: '#/components/parameters/disputeID'
-    get:
-      operationId: listDisputeEvidence
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
       tags:
       - Disputes
-      summary: List dispute evidence
-      responses:
-        '200':
-          description: A list of evidence.
-    servers:
-    - url: https://api.moov.io
-      description: Moov production
-  /accounts/{accountID}/disputes/{disputeID}/evidence/{evidenceID}:
+      x-speakeasy-name-override: submitEvidence
+      security:
+      - BasicAuth: []
+      summary: Submit dispute evidence
+      x-summary-source: derived
     parameters:
     - $ref: '#/components/parameters/accountID'
     - $ref: '#/components/parameters/disputeID'
-    - $ref: '#/components/parameters/evidenceID'
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+  /accounts/{accountID}/disputes/{disputeID}/evidence/{evidenceID}:
     get:
       operationId: getDisputeEvidence
-      tags:
-      - Disputes
-      summary: Retrieve dispute evidence
+      description: 'Get dispute evidence by ID.
+
+
+        Read our disputes guide to learn more.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/transfers.read` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: disputeID
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: evidenceID
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
         '200':
-          description: The evidence.
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DisputeEvidenceResponse'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Disputes
+      x-speakeasy-name-override: getEvidence
+      security:
+      - BasicAuth: []
+      summary: Get dispute evidence
+      x-summary-source: derived
     patch:
       operationId: updateDisputeEvidence
-      tags:
-      - Disputes
-      summary: Update dispute evidence
+      description: 'Updates dispute evidence by ID.
+
+
+        Read our disputes guide to learn more.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/transfers.write` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: disputeID
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: evidenceID
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
         '200':
-          description: The updated evidence.
-    delete:
-      operationId: deleteDisputeEvidence
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DisputeEvidenceResponse'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
       tags:
       - Disputes
-      summary: Delete dispute evidence
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateEvidence'
+      x-speakeasy-name-override: updateEvidence
+      security:
+      - BasicAuth: []
+      summary: Update dispute evidence
+      x-summary-source: derived
+    delete:
+      operationId: deleteDisputeEvidenceFile
+      description: 'Deletes dispute evidence by ID.
+
+
+        Read our disputes guide to learn more.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/transfers.write` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: disputeID
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: evidenceID
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
         '204':
-          description: Evidence deleted.
-    servers:
-    - url: https://api.moov.io
-      description: Moov production
-  /accounts/{accountID}/disputes/{disputeID}/evidence/{evidenceID}/data:
+          description: The request completed successfully, but there is no content to return.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Disputes
+      x-speakeasy-name-override: deleteEvidence
+      security:
+      - BasicAuth: []
+      summary: Delete dispute evidence file
+      x-summary-source: derived
     parameters:
     - $ref: '#/components/parameters/accountID'
     - $ref: '#/components/parameters/disputeID'
     - $ref: '#/components/parameters/evidenceID'
-    get:
-      operationId: getDisputeEvidenceData
-      tags:
-      - Disputes
-      summary: Retrieve dispute evidence data
-      responses:
-        '200':
-          description: The evidence file data.
     servers:
     - url: https://api.moov.io
-      description: Moov production
+      description: Production API host
+      variables: {}
+  /accounts/{accountID}/disputes/{disputeID}/evidence/{evidenceID}/data:
+    get:
+      operationId: getDisputeEvidenceData
+      description: 'Downloads dispute evidence data by ID.
+
+
+        Read our disputes guide to learn more.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/transfers.read` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: disputeID
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: evidenceID
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+            image/tiff:
+              schema:
+                type: string
+                format: binary
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Disputes
+      x-speakeasy-name-override: getEvidenceData
+      security:
+      - BasicAuth: []
+      summary: Get dispute evidence data
+      x-summary-source: derived
+    parameters:
+    - $ref: '#/components/parameters/accountID'
+    - $ref: '#/components/parameters/disputeID'
+    - $ref: '#/components/parameters/evidenceID'
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
 components:
   schemas:
-    Amount:
+    Count:
+      type: integer
+      format: int64
+      description: Limits the maximum number of results returned, or determines the page size when used with `skip` or `cursor` for pagination.
+      example: 20
+    DisputeEvidenceResponse:
       type: object
-      description: A monetary amount with currency denomination.
+      required:
+      - evidenceID
+      - disputeID
+      - evidenceType
+      - createdOn
+      - updatedOn
       properties:
-        currency:
+        evidenceID:
           type: string
-          description: ISO 4217 three-letter currency code.
-          default: USD
-          minLength: 3
-          maxLength: 3
-        value:
-          type: integer
-          description: Amount in the smallest currency unit (e.g., cents for USD).
-          minimum: 0
-    Error:
-      type: object
-      description: Standard error response returned by the Moov API.
-      properties:
-        error:
-          type: string
-          description: Human-readable description of the error.
-        code:
-          type: string
-          description: Machine-readable error code.
-    Dispute:
-      type: object
-      description: A card payment dispute (chargeback) initiated by a cardholder through their card issuer. Disputes require evidence submission or acceptance.
-      properties:
         disputeID:
           type: string
-          format: uuid
-          description: Unique identifier for the dispute.
-        transferID:
+        evidenceType:
+          $ref: '#/components/schemas/EvidenceType'
+        text:
           type: string
-          format: uuid
-          description: The transfer associated with this dispute.
-        phase:
+          description: For text evidence, the text submitted as evidence.
+        mimeType:
           type: string
-          description: Current phase of the dispute lifecycle.
-          enum:
-          - new
-          - pre-arbitration
-          - arbitration
-          - won
-          - lost
-        status:
+          description: For file evidence, the MIME type of the file.
+        filename:
           type: string
-          description: Current status of the dispute.
-          enum:
-          - new
-          - responded
-          - under-review
-          - waiting-for-customer
-          - closed
-        amount:
-          $ref: '#/components/schemas/Amount'
-        reason:
-          type: string
-          description: Card network reason code for the dispute.
-        networkReasonCode:
-          type: string
-          description: Specific reason code from the card network.
-        respondBy:
-          type: string
-          format: date-time
-          description: ISO 8601 deadline for submitting evidence to contest the dispute.
+          description: For file evidence, the name of the file.
+        size:
+          type: integer
+          format: int64
+          description: For file evidence, the size of the file.
         createdOn:
           type: string
           format: date-time
-          description: ISO 8601 timestamp when the dispute was created.
         updatedOn:
           type: string
           format: date-time
-          description: ISO 8601 timestamp when the dispute was last updated.
-    DisputeEvidenceText:
+        submittedOn:
+          type: string
+          format: date-time
+          description: When the evidence was submitted for review.
+    Currency:
+      type: string
+      pattern: ^[A-Za-z]{3}$
+      description: A 3-letter ISO 4217 currency code.
+      example: USD
+    Dispute:
       type: object
-      description: Request body for submitting text-based dispute evidence.
+      required:
+      - disputeID
+      - merchantAccountID
+      - amount
+      - networkReasonCode
+      - transfer
+      - respondBy
+      - status
+      - phase
+      - createdOn
+      properties:
+        disputeID:
+          type: string
+        merchantAccountID:
+          type: string
+        amount:
+          $ref: '#/components/schemas/Amount'
+        networkReasonCode:
+          type: string
+          description: "Indicates the card network's category for the dispute. \n\nThese codes may differ between card brands. You can find more information on the code from the networkReasonDescription field."
+        networkReasonDescription:
+          type: string
+          description: Provides detail on the card network's categorization of the dispute.
+        transfer:
+          $ref: '#/components/schemas/DisputeTransferDetails'
+        respondBy:
+          type: string
+          format: date-time
+        status:
+          $ref: '#/components/schemas/DisputeStatus'
+        phase:
+          $ref: '#/components/schemas/DisputePhase'
+        createdOn:
+          type: string
+          format: date-time
+        submittedOn:
+          type: string
+          format: date-time
+      description: Details of a card transaction dispute.
+      example:
+        disputeID: 6e356108-fdfa-4910-bbe4-1e3c8abf5520
+        merchantAccountID: 34233b72-780c-4e0e-8b08-cbbe1bc878f8
+        createdOn: '2024-12-23T17:55:00Z'
+        amount:
+          currency: USD
+          value: 257753
+        networkReasonCode: '10.4'
+        transfer:
+          transferID: ecac148a-917e-4ee0-b46a-c51408939fff
+        respondBy: '2024-12-23T18:55:00Z'
+        status: response-needed
+        phase: chargeback
+    EvidenceTextResponse:
+      type: object
+      required:
+      - evidenceID
+      - disputeID
+      - evidenceType
+      - text
+      - createdOn
+      properties:
+        evidenceID:
+          type: string
+        disputeID:
+          type: string
+        evidenceType:
+          $ref: '#/components/schemas/EvidenceType'
+        text:
+          type: string
+        createdOn:
+          type: string
+          format: date-time
+    DisputePhase:
+      type: string
+      enum:
+      - pre-dispute
+      - inquiry
+      - chargeback
+      - unknown
+      description: The phase of a dispute within the dispute lifecycle.
+    Skip:
+      type: integer
+      format: int64
+      description: The number of entries to skip when paginating a large result set.
+      example: 60
+    EvidenceUploadResponse:
+      type: object
+      required:
+      - evidenceID
+      - disputeID
+      - filename
+      - mimeType
+      - size
+      - evidenceType
+      - createdOn
+      properties:
+        evidenceID:
+          type: string
+          description: The ID of the evidence.
+        disputeID:
+          type: string
+          description: The ID of the dispute the evidence is associated with.
+        filename:
+          type: string
+          description: The name of the evidence file.
+        mimeType:
+          type: string
+          description: The MIME type of the evidence file.
+        size:
+          type: integer
+          format: int64
+          description: The size of the evidence file.
+        evidenceType:
+          $ref: '#/components/schemas/EvidenceType'
+        createdOn:
+          type: string
+          format: date-time
+          description: The date and time the evidence was uploaded.
+      description: Details of a successfully uploaded evidence file.
+    DisputeTransferDetails:
+      type: object
+      required:
+      - transferID
+      properties:
+        transferID:
+          type: string
+          description: The disputed transfer's ID.
+    CreateEvidenceFileMultiPart:
+      type: object
+      properties:
+        file:
+          type: string
+          format: binary
+          description: "The file to upload as evidence. Valid types are [jpeg, tiff, pdf] with a limit of 4MB per file.\n\n    The `Content-Type` header for this form part must be one of the following:\n  - `image/jpeg`\n  - `image/tiff`\n  - `application/pdf`"
+        evidenceType:
+          $ref: '#/components/schemas/EvidenceType'
+      required:
+      - file
+      - evidenceType
+    DisputeStatus:
+      type: string
+      enum:
+      - response-needed
+      - resolved
+      - under-review
+      - closed
+      - accepted
+      - expired
+      - won
+      - lost
+      description: "The status of a particular dispute. \n\nRead our [disputes guide](https://docs.moov.io/guides/money-movement/accept-payments/card-acceptance/disputes/#dispute-statuses) to learn what each status means."
+    GenericError:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    Amount:
+      type: object
+      required:
+      - currency
+      - value
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        value:
+          type: integer
+          format: int64
+          description: "Quantity in the smallest unit of the specified currency. \n\nIn USD this is cents, for example, $12.04 is 1204 and $0.99 is 99."
+          example: 1204
+    UpdateEvidence:
+      type: object
+      properties:
+        evidenceType:
+          $ref: '#/components/schemas/EvidenceType'
+        text:
+          type: string
+          description: If updating text evidence, the new text to associate with the dispute.
+    EvidenceType:
+      type: string
+      enum:
+      - receipt
+      - proof-of-delivery
+      - cancelation-policy
+      - terms-of-service
+      - customer-communication
+      - generic-evidence
+      - cover-letter
+      - other
+    FileUploadValidationError:
+      type: object
+      properties:
+        evidenceType:
+          type: string
+        file:
+          type: object
+          properties:
+            filename:
+              type: string
+            mimeType:
+              type: string
+    CreateEvidenceText:
+      type: object
       required:
       - text
       - evidenceType
       properties:
         text:
           type: string
-          description: The written statement or explanation for contesting the dispute.
+          maxLength: 750
+          description: The text to associate with the dispute as evidence.
         evidenceType:
-          type: string
-          description: Classification of the text evidence.
-          enum:
-          - customer-communication
-          - refund-policy
-          - service-documentation
-          - other
-    DisputeEvidence:
-      type: object
-      description: A piece of evidence submitted in response to a card dispute.
-      properties:
-        evidenceID:
-          type: string
-          format: uuid
-          description: Unique identifier for the evidence item.
-        disputeID:
-          type: string
-          format: uuid
-          description: The dispute this evidence is associated with.
-        evidenceType:
-          type: string
-          description: Classification of the evidence type.
-          enum:
-          - customer-communication
-          - customer-signature
-          - receipt
-          - refund-policy
-          - service-documentation
-          - shipping-documentation
-          - shipping-tracking
-          - other
-        text:
-          type: string
-          description: Text content for text-based evidence submissions.
-        createdOn:
-          type: string
-          format: date-time
-          description: ISO 8601 timestamp when the evidence was submitted.
+          $ref: '#/components/schemas/EvidenceType'
   parameters:
-    SkipParam:
+    Pagination.skip:
       name: skip
       in: query
-      description: Number of results to skip for pagination.
+      required: false
       schema:
-        type: integer
-        minimum: 0
-        default: 0
-    AccountIDParam:
-      name: accountID
-      in: path
-      required: true
-      description: Unique identifier for the Moov account.
-      schema:
-        type: string
-        format: uuid
-    DisputeIDParam:
-      name: disputeID
-      in: path
-      required: true
-      description: Unique identifier for the dispute.
+        $ref: '#/components/schemas/Skip'
+      explode: false
+    DisputeListFilters.respondEndDateTime:
+      name: respondEndDateTime
+      in: query
+      required: false
+      description: Optional date-time which exclusively filters all disputes with respond by before this date-time.
       schema:
         type: string
-        format: uuid
-    CountParam:
+        format: date-time
+      explode: false
+    DisputeListFilters.orderBy:
+      name: orderBy
+      in: query
+      required: false
+      schema:
+        type: string
+      explode: false
+    DisputeListFilters.disputeIDs:
+      name: disputeIDs
+      in: query
+      required: false
+      description: Optional parameter to filter by a comma separated list of dispute IDs.
+      schema:
+        type: array
+        items:
+          type: string
+      explode: false
+    DisputeListFilters.merchantAccountID:
+      name: merchantAccountID
+      in: query
+      required: false
+      description: Optional parameter to filter by merchant account ID.
+      schema:
+        type: string
+      explode: false
+    DisputeListFilters.cardholderAccountID:
+      name: cardholderAccountID
+      in: query
+      required: false
+      description: Optional parameter to filter by cardholder account ID.
+      schema:
+        type: string
+      explode: false
+    DisputeListFilters.status:
+      name: status
+      in: query
+      required: false
+      description: Optional dispute status by which to filter the disputes.
+      schema:
+        $ref: '#/components/schemas/DisputeStatus'
+      explode: false
+    DisputeListFilters.respondStartDateTime:
+      name: respondStartDateTime
+      in: query
+      required: false
+      description: Optional date-time which exclusively filters all disputes with respond by before this date-time.
+      schema:
+        type: string
+        format: date-time
+      explode: false
+    DisputeListFilters.startDateTime:
+      name: startDateTime
+      in: query
+      required: false
+      description: Optional date-time parameter to filter all disputes created on and after the provided date and time.
+      schema:
+        type: string
+        format: date-time
+      explode: false
+    VersionHeader:
+      name: X-Moov-Version
+      in: header
+      required: false
+      description: 'Set this header to v2026.01.00 to use the API described in this specification.
+
+        When omitted, the server defaults to v2024.01.00, the earliest supported version, which may not match the behavior documented here.
+
+        An unrecognized well-formed version uses the latest supported version that is not newer than the requested version, when one exists.
+
+        For example, `v2026.08.00` uses `v2026.07.00`.
+
+        A malformed value, such as `2022`, returns a `404` response.'
+      schema:
+        type: string
+        enum:
+        - v2026.01.00
+        example: v2026.01.00
+        x-speakeasy-ignore: true
+      x-speakeasy-ignore: true
+    DisputeListFilters.endDateTime:
+      name: endDateTime
+      in: query
+      required: false
+      description: Optional date-time parameter to filter all disputes created on and before the provided date and time.
+      schema:
+        type: string
+        format: date-time
+      explode: false
+    Pagination.count:
       name: count
       in: query
-      description: Maximum number of results to return per page.
+      required: false
+      description: Page size. When omitted, the server defaults to `200`.
       schema:
-        type: integer
-        minimum: 1
-        maximum: 100
-        default: 20
-    evidenceID:
-      name: evidenceID
-      in: path
-      required: true
+        $ref: '#/components/schemas/Count'
+      explode: false
+    DisputeListFilters.transferIDs:
+      name: transferIDs
+      in: query
+      required: false
+      description: Optional parameter to filter by a comma separated list of transfer IDs.
       schema:
-        type: string
-        format: uuid
+        type: array
+        items:
+          type: string
+      explode: false
     disputeID:
       name: disputeID
       in: path
@@ -441,30 +1731,23 @@ components:
         type: string
         format: uuid
       description: The Moov account identifier.
-  responses:
-    BadRequest:
-      description: The request was malformed or contained invalid parameters.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+    evidenceID:
+      name: evidenceID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
   securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: Basic
     bearerAuth:
       type: http
       scheme: bearer
-      description: OAuth2 bearer token obtained from the /oauth2/token endpoint. Include in the Authorization header as "Bearer {token}".
+      bearerFormat: JWT
+      description: OAuth 2.0 access token passed as a Bearer token.
 x-refined-from:
-- moov-api-openapi.yml
+- moov-api-v2026.01.00-openapi.yml
+- moov-openapi.yml
 - moov-openapi.yml

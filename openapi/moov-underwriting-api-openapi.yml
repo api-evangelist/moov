@@ -1,42 +1,920 @@
 openapi: 3.2.0
 info:
   title: Moov Underwriting API
-  description: The Moov API lets software platforms accept, store, send, and spend money through a single REST API.
-  version: v2026.04.00
-  contact:
-    name: Moov
-    url: https://moov.io
-  termsOfService: https://moov.io/legal/platform-agreement/
+  version: '1.0'
+  description: 'Operations tagged Underwriting across 3 of this provider''s published API definitions: moov-api-v2026.01.00-openapi.yml, moov-openapi.yml, moov-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.moov.io
-  description: Moov production
-security:
-- bearerAuth: []
+  description: Production API host
+  variables: {}
 tags:
 - name: Underwriting
-  description: Underwriting details used to enable card acquiring and higher-risk activity.
 paths:
   /accounts/{accountID}/underwriting:
-    parameters:
-    - $ref: '#/components/parameters/accountID'
     get:
       operationId: getUnderwriting
-      tags:
-      - Underwriting
-      summary: Retrieve underwriting details
+      description: 'Retrieve underwriting associated with a given Moov account.
+
+
+        Read our underwriting guide to learn more.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/profile.read` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
         '200':
-          description: The underwriting details.
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Underwriting'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Underwriting
+      x-speakeasy-name-override: get
+      security:
+      - BasicAuth: []
+      summary: Get underwriting
+      x-summary-source: derived
+    post:
+      operationId: saveUnderwriting
+      description: 'Create or update the account''s underwriting.
+
+
+        Read our underwriting guide to learn more.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/profile.write` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Underwriting'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '422':
+          description: The request was well-formed, but the contents failed validation. Check the request for missing or invalid fields.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpsertUnderwritingError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Underwriting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpsertUnderwriting'
+      x-speakeasy-name-override: save
+      security:
+      - BasicAuth: []
+      summary: Save underwriting
+      x-summary-source: derived
     put:
       operationId: upsertUnderwriting
-      tags:
-      - Underwriting
-      summary: Create or update underwriting details
+      description: 'Create or update the account''s underwriting.
+
+
+        Read our underwriting guide to learn more.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/profile.write` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
         '200':
-          description: The updated underwriting details.
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Underwriting'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '422':
+          description: The request was well-formed, but the contents failed validation. Check the request for missing or invalid fields.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateUnderwritingError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Underwriting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUnderwriting'
+      x-speakeasy-name-override: upsert
+      security:
+      - BasicAuth: []
+      summary: Upsert underwriting
+      x-summary-source: derived
+    parameters:
+    - $ref: '#/components/parameters/accountID'
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
 components:
+  schemas:
+    MoneyTransferPushToCardError:
+      type: object
+      properties:
+        estimatedActivity:
+          $ref: '#/components/schemas/EstimatedActivityError'
+    SendFunds:
+      type: object
+      properties:
+        ach:
+          $ref: '#/components/schemas/SendFundsAch'
+        pushToCard:
+          $ref: '#/components/schemas/SendFundsPushToCard'
+        rtp:
+          $ref: '#/components/schemas/SendFundsRtp'
+        instantBank:
+          $ref: '#/components/schemas/SendFundsInstantBank'
+    PendingLitigation:
+      type: string
+      enum:
+      - bankruptcy-or-insolvency
+      - consumer-protection-or-class-action
+      - data-breach-or-privacy
+      - employment-or-workplace-disputes
+      - fraud-or-financial-crime
+      - government-enforcement-or-investigation
+      - intellectual-property
+      - none
+      - other
+      - personal-injury-or-medical
+    SendFundsPushToCardError:
+      type: object
+      properties:
+        estimatedActivity:
+          $ref: '#/components/schemas/EstimatedActivityError'
+    FulfillmentError:
+      type: object
+      properties:
+        method:
+          type: string
+        timeframe:
+          type: string
+    BusinessPresence:
+      type: string
+      enum:
+      - commercial-office
+      - home-based
+      - mixed-presence
+      - mobile-business
+      - online-only
+      - retail-storefront
+    CardVolumeDistribution:
+      type: object
+      required:
+      - ecommercePercentage
+      - cardPresentPercentage
+      - mailOrPhonePercentage
+      - debtRepaymentPercentage
+      properties:
+        ecommercePercentage:
+          type: integer
+          format: int32
+        cardPresentPercentage:
+          type: integer
+          format: int32
+        mailOrPhonePercentage:
+          type: integer
+          format: int32
+        debtRepaymentPercentage:
+          type: integer
+          format: int32
+    UpsertUnderwriting:
+      type: object
+      properties:
+        geographicReach:
+          $ref: '#/components/schemas/GeographicReach'
+        businessPresence:
+          $ref: '#/components/schemas/BusinessPresence'
+        pendingLitigation:
+          $ref: '#/components/schemas/PendingLitigation'
+        volumeShareByCustomerType:
+          $ref: '#/components/schemas/VolumeShareByCustomerType'
+        collectFunds:
+          $ref: '#/components/schemas/CollectFunds'
+        moneyTransfer:
+          $ref: '#/components/schemas/MoneyTransfer'
+        sendFunds:
+          $ref: '#/components/schemas/SendFunds'
+        submissionIntent:
+          $ref: '#/components/schemas/SubmissionIntent'
+    CardAcceptanceMethodsError:
+      type: object
+      properties:
+        inPersonPercentage:
+          type: string
+        mailOrPhonePercentage:
+          type: string
+        onlinePercentage:
+          type: string
+    Underwriting:
+      type: object
+      properties:
+        averageTransactionSize:
+          type: integer
+          format: int64
+        maxTransactionSize:
+          type: integer
+          format: int64
+        averageMonthlyTransactionVolume:
+          type: integer
+          format: int64
+        status:
+          $ref: '#/components/schemas/UnderwritingStatus'
+        volumeByCustomerType:
+          $ref: '#/components/schemas/VolumeByCustomerType'
+        cardVolumeDistribution:
+          $ref: '#/components/schemas/CardVolumeDistribution'
+        fulfillment:
+          $ref: '#/components/schemas/FulfillmentDetails'
+        geographicReach:
+          $ref: '#/components/schemas/GeographicReach'
+        businessPresence:
+          $ref: '#/components/schemas/BusinessPresence'
+        pendingLitigation:
+          $ref: '#/components/schemas/PendingLitigation'
+        volumeShareByCustomerType:
+          $ref: '#/components/schemas/VolumeShareByCustomerType'
+        collectFunds:
+          $ref: '#/components/schemas/CollectFunds'
+        moneyTransfer:
+          $ref: '#/components/schemas/MoneyTransfer'
+        sendFunds:
+          $ref: '#/components/schemas/SendFunds'
+      description: Describes underwriting values (in USD) used for card payment acceptance.
+    CollectFundsError:
+      type: object
+      properties:
+        ach:
+          $ref: '#/components/schemas/CollectFundsAchError'
+        cardPayments:
+          $ref: '#/components/schemas/CollectFundsCardPaymentsError'
+    VolumeShareByCustomerTypeError:
+      type: object
+      properties:
+        business:
+          type: string
+        consumer:
+          type: string
+        p2p:
+          type: string
+    MoneyTransferPullFromCardError:
+      type: object
+      properties:
+        estimatedActivity:
+          $ref: '#/components/schemas/EstimatedActivityError'
+    UpdateUnderwritingError:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: object
+          properties:
+            averageMonthlyTransactionVolume:
+              type: string
+            averageTransactionSize:
+              type: string
+            maxTransactionSize:
+              type: string
+            volumeByCustomerType:
+              $ref: '#/components/schemas/VolumeByCustomerTypeError'
+            cardVolumeDistribution:
+              $ref: '#/components/schemas/CardVolumeDistributionError'
+            fulfillment:
+              $ref: '#/components/schemas/FulfillmentDetailsError'
+    SendFundsError:
+      type: object
+      properties:
+        ach:
+          $ref: '#/components/schemas/SendFundsAchError'
+        pushToCard:
+          $ref: '#/components/schemas/SendFundsPushToCardError'
+        rtp:
+          $ref: '#/components/schemas/SendFundsRtpError'
+        instantBank:
+          $ref: '#/components/schemas/SendFundsInstantBankError'
+    MoneyTransferError:
+      type: object
+      properties:
+        pullFromCard:
+          $ref: '#/components/schemas/MoneyTransferPullFromCardError'
+        pushToCard:
+          $ref: '#/components/schemas/MoneyTransferPushToCardError'
+    MoneyTransferPushToCard:
+      type: object
+      properties:
+        estimatedActivity:
+          $ref: '#/components/schemas/EstimatedActivity'
+    FulfillmentDetails:
+      type: object
+      required:
+      - hasPhysicalGoods
+      - isShippingProduct
+      - shipmentDurationDays
+      - returnPolicy
+      properties:
+        hasPhysicalGoods:
+          type: boolean
+        isShippingProduct:
+          type: boolean
+        shipmentDurationDays:
+          type: integer
+          format: int64
+        returnPolicy:
+          $ref: '#/components/schemas/ReturnPolicyType'
+    FulfillmentTimeframe:
+      type: string
+      enum:
+      - immediate
+      - other
+      - over-30-days
+      - pre-order
+      - recurring-schedule
+      - scheduled-event
+      - within-30-days
+      - within-7-days
+    VolumeShareByCustomerType:
+      type: object
+      properties:
+        business:
+          type: integer
+          format: int32
+        consumer:
+          type: integer
+          format: int32
+        p2p:
+          type: integer
+          format: int32
+    UnderwritingStatus:
+      type: string
+      enum:
+      - approved
+      - rejected
+      - pendingReview
+      - pending
+      - notRequested
+      deprecated: true
+    Fulfillment:
+      type: object
+      properties:
+        method:
+          $ref: '#/components/schemas/FulfillmentMethod'
+        timeframe:
+          $ref: '#/components/schemas/FulfillmentTimeframe'
+    SendFundsAchError:
+      type: object
+      properties:
+        estimatedActivity:
+          $ref: '#/components/schemas/EstimatedActivityError'
+    FulfillmentMethod:
+      type: string
+      enum:
+      - bill-or-debt-payment
+      - digital-content
+      - donation
+      - in-person-service
+      - local-pickup-or-delivery
+      - other
+      - remote-service
+      - shipped-physical-goods
+      - subscription-or-membership
+    SendFundsInstantBank:
+      type: object
+      properties:
+        estimatedActivity:
+          $ref: '#/components/schemas/EstimatedActivity'
+    GeographicReach:
+      type: string
+      enum:
+      - international-only
+      - us-and-international
+      - us-only
+    UpsertUnderwritingError:
+      type: object
+      properties:
+        geographicReach:
+          type: string
+        businessPresence:
+          type: string
+        pendingLitigation:
+          type: string
+        volumeShareByCustomerType:
+          $ref: '#/components/schemas/VolumeShareByCustomerTypeError'
+        collectFunds:
+          $ref: '#/components/schemas/CollectFundsError'
+        moneyTransfer:
+          $ref: '#/components/schemas/MoneyTransferError'
+        sendFunds:
+          $ref: '#/components/schemas/SendFundsError'
+        averageMonthlyTransactionVolume:
+          type: string
+        error:
+          type: string
+        averageTransactionSize:
+          type: string
+        maxTransactionSize:
+          type: string
+        volumeByCustomerType:
+          $ref: '#/components/schemas/VolumeByCustomerTypeError'
+        cardVolumeDistribution:
+          $ref: '#/components/schemas/CardVolumeDistributionError'
+        fulfillment:
+          $ref: '#/components/schemas/FulfillmentDetailsError'
+    SubmissionIntent:
+      type: string
+      enum:
+      - wait
+      - submit
+    CardAcceptanceMethods:
+      type: object
+      properties:
+        inPersonPercentage:
+          type: integer
+          format: int32
+          description: Percentage of card transactions that are in-person payments. Minimum value is 0, maximum is 100.
+        mailOrPhonePercentage:
+          type: integer
+          format: int32
+          description: Percentage of card transactions that are mail or phone payments. Minimum value is 0, maximum is 100.
+        onlinePercentage:
+          type: integer
+          format: int32
+          description: Percentage of card transactions that are online payments. Minimum value is 0, maximum is 100.
+      description: Describes the distribution of card transactions by payment method.
+    UpdateUnderwriting:
+      type: object
+      required:
+      - averageTransactionSize
+      - maxTransactionSize
+      - averageMonthlyTransactionVolume
+      - volumeByCustomerType
+      - cardVolumeDistribution
+      - fulfillment
+      properties:
+        averageTransactionSize:
+          type: integer
+          format: int64
+        maxTransactionSize:
+          type: integer
+          format: int64
+        averageMonthlyTransactionVolume:
+          type: integer
+          format: int64
+        volumeByCustomerType:
+          $ref: '#/components/schemas/VolumeByCustomerType'
+        cardVolumeDistribution:
+          $ref: '#/components/schemas/CardVolumeDistribution'
+        fulfillment:
+          $ref: '#/components/schemas/FulfillmentDetails'
+    CollectFundsCardPayments:
+      type: object
+      properties:
+        cardAcceptanceMethods:
+          $ref: '#/components/schemas/CardAcceptanceMethods'
+        currentlyAcceptsCards:
+          type: boolean
+        estimatedActivity:
+          $ref: '#/components/schemas/EstimatedActivity'
+        fulfillment:
+          $ref: '#/components/schemas/Fulfillment'
+        refundPolicy:
+          $ref: '#/components/schemas/RefundPolicy'
+    SendFundsPushToCard:
+      type: object
+      properties:
+        estimatedActivity:
+          $ref: '#/components/schemas/EstimatedActivity'
+    EstimatedActivityError:
+      type: object
+      properties:
+        averageTransactionAmount:
+          type: string
+        maximumTransactionAmount:
+          type: string
+        monthlyVolumeRange:
+          type: string
+    SendFundsInstantBankError:
+      type: object
+      properties:
+        estimatedActivity:
+          $ref: '#/components/schemas/EstimatedActivityError'
+    SendFundsRtp:
+      type: object
+      properties:
+        estimatedActivity:
+          $ref: '#/components/schemas/EstimatedActivity'
+    EstimatedActivity:
+      type: object
+      properties:
+        averageTransactionAmount:
+          type: integer
+          format: int64
+        maximumTransactionAmount:
+          type: integer
+          format: int64
+        monthlyVolumeRange:
+          $ref: '#/components/schemas/MonthlyVolumeRange'
+    CollectFunds:
+      type: object
+      properties:
+        ach:
+          $ref: '#/components/schemas/CollectFundsAch'
+        cardPayments:
+          $ref: '#/components/schemas/CollectFundsCardPayments'
+    VolumeByCustomerTypeError:
+      type: object
+      properties:
+        businessToBusinessPercentage:
+          type: string
+        consumerToBusinessPercentage:
+          type: string
+    MoneyTransferPullFromCard:
+      type: object
+      properties:
+        estimatedActivity:
+          $ref: '#/components/schemas/EstimatedActivity'
+    RefundPolicy:
+      type: string
+      enum:
+      - conditional-refund
+      - custom-policy
+      - event-based-policy
+      - full-refund-extended-window
+      - full-refund-within-30-days
+      - no-refunds
+      - partial-refund
+      - prorated-refund
+      - store-credit-only
+    CardVolumeDistributionError:
+      type: object
+      properties:
+        ecommercePercentage:
+          type: string
+        cardPresentPercentage:
+          type: string
+        mailOrPhonePercentage:
+          type: string
+        debtRepaymentPercentage:
+          type: string
+    ReturnPolicyType:
+      type: string
+      enum:
+      - none
+      - exchangeOnly
+      - withinThirtyDays
+      - other
+    GenericError:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    MonthlyVolumeRange:
+      type: string
+      enum:
+      - under-10k
+      - 10k-50k
+      - 50k-100k
+      - 100k-250k
+      - 250k-500k
+      - 500k-1m
+      - 1m-5m
+      - over-5m
+      description: The low value in each range is included. The high value in each range is excluded.
+    SendFundsAch:
+      type: object
+      properties:
+        estimatedActivity:
+          $ref: '#/components/schemas/EstimatedActivity'
+    FulfillmentDetailsError:
+      type: object
+      properties:
+        shipmentDurationDays:
+          type: string
+        returnPolicy:
+          type: string
+    CollectFundsAchError:
+      type: object
+      properties:
+        estimatedActivity:
+          $ref: '#/components/schemas/EstimatedActivityError'
+    CollectFundsAch:
+      type: object
+      properties:
+        estimatedActivity:
+          $ref: '#/components/schemas/EstimatedActivity'
+    VolumeByCustomerType:
+      type: object
+      required:
+      - businessToBusinessPercentage
+      - consumerToBusinessPercentage
+      properties:
+        businessToBusinessPercentage:
+          type: integer
+          format: int32
+        consumerToBusinessPercentage:
+          type: integer
+          format: int32
+    CollectFundsCardPaymentsError:
+      type: object
+      properties:
+        cardAcceptanceMethods:
+          $ref: '#/components/schemas/CardAcceptanceMethodsError'
+        currentlyAcceptsCards:
+          type: string
+        estimatedActivity:
+          $ref: '#/components/schemas/EstimatedActivityError'
+        fulfillment:
+          $ref: '#/components/schemas/FulfillmentError'
+        refundPolicy:
+          type: string
+    MoneyTransfer:
+      type: object
+      properties:
+        pullFromCard:
+          $ref: '#/components/schemas/MoneyTransferPullFromCard'
+        pushToCard:
+          $ref: '#/components/schemas/MoneyTransferPushToCard'
+    SendFundsRtpError:
+      type: object
+      properties:
+        estimatedActivity:
+          $ref: '#/components/schemas/EstimatedActivityError'
   parameters:
+    VersionHeader:
+      name: X-Moov-Version
+      in: header
+      required: false
+      description: 'Set this header to v2026.01.00 to use the API described in this specification.
+
+        When omitted, the server defaults to v2024.01.00, the earliest supported version, which may not match the behavior documented here.
+
+        An unrecognized well-formed version uses the latest supported version that is not newer than the requested version, when one exists.
+
+        For example, `v2026.08.00` uses `v2026.07.00`.
+
+        A malformed value, such as `2022`, returns a `404` response.'
+      schema:
+        type: string
+        enum:
+        - v2026.01.00
+        example: v2026.01.00
+        x-speakeasy-ignore: true
+      x-speakeasy-ignore: true
     accountID:
       name: accountID
       in: path
@@ -46,11 +924,15 @@ components:
         format: uuid
       description: The Moov account identifier.
   securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: Basic
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
       description: OAuth 2.0 access token passed as a Bearer token.
-externalDocs:
-  description: Moov API reference and canonical OpenAPI spec
-  url: https://docs.moov.io/api/
+x-refined-from:
+- moov-api-v2026.01.00-openapi.yml
+- moov-openapi.yml
+- moov-openapi.yml

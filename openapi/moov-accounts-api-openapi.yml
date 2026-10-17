@@ -1,42 +1,138 @@
 openapi: 3.2.0
 info:
   title: Moov Accounts API
-  termsOfService: https://moov.io/legal/platform-agreement/
   version: '1.0'
-  description: 'Operations tagged Accounts across 2 of this provider''s published API definitions: moov-api-openapi.yml, moov-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: 'Operations tagged Accounts across 3 of this provider''s published API definitions: moov-api-v2026.01.00-openapi.yml, moov-openapi.yml, moov-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.moov.io
-  description: Production Server
-security:
-- bearerAuth: []
+  description: Production API host
+  variables: {}
 tags:
 - name: Accounts
-  description: Create and manage Moov accounts representing individual or business legal entities. Accounts are the foundation for all money movement operations.
 paths:
-  /tos-token:
-    get:
-      operationId: generateTosToken
-      summary: Generate a terms of service token
-      description: Retrieve a short-lived terms of service token required when creating new Moov accounts on behalf of users. The token confirms acceptance of Moov's platform agreement.
-      tags:
-      - Accounts
-      responses:
-        '200':
-          description: Terms of service token generated.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TosToken'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-    servers:
-    - url: https://api.moov.io
-      description: Production Server
   /accounts:
     post:
       operationId: createAccount
-      summary: Create an account
-      description: Create a new Moov account representing an individual or business legal entity. Accounts are required before linking payment methods or initiating transfers. Include a terms of service token from the /tos-token endpoint.
+      description: 'You can create business or individual accounts for your users (i.e., customers, merchants) by passing the required information to Moov. Requirements differ per account type and requested capabilities.
+
+
+        The `transfers` capability is automatically requested for every account. If you request any capability beyond `transfers` (for example, `send-funds.ach`, `collect-funds.card-payments`), you''ll need to:
+
+        + Send Moov the user''s platform terms of service agreement acceptance. This can be done at account creation, or by patching the account using the `termsOfService` field.
+
+        + Fulfill the verification and underwriting requirements for each requested capability. A capability isn''t enabled until its requirements pass — check the capability''s status to see what''s still outstanding.
+
+
+        If you''re creating a business account, depending on the business type, you''ll also need to:
+
+        + Provide business representatives after creating the account.
+
+        + Patch the account to indicate that business representative ownership information is complete.
+
+
+        Visit our documentation to read more about creating accounts and verification requirements. Note that the `mode` field (for production or sandbox) is only required when creating a Partner account. All other account requests will ignore the mode field and be set to the calling Partner account''s mode.
+
+
+        To access this endpoint using an access token you''ll need to specify the `/accounts.write` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '422':
+          description: The request was well-formed, but the contents failed validation. Check the request for missing or invalid fields.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateAccountError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
       tags:
       - Accounts
       requestBody:
@@ -44,49 +140,47 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateAccountRequest'
-      responses:
-        '200':
-          description: Account created successfully.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Account'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+              $ref: '#/components/schemas/CreateAccount'
+      x-speakeasy-name-override: create
+      security:
+      - BasicAuth: []
+      summary: Create account
+      x-summary-source: derived
     get:
       operationId: listAccounts
-      summary: List accounts
-      description: Retrieve a list of accounts connected to your platform. Supports filtering by name, email, and type to locate specific accounts.
-      tags:
-      - Accounts
+      description: 'List or search accounts to which the caller is connected.
+
+
+        All supported query parameters are optional. If none are provided the response will include all connected accounts.
+
+        Pagination is supported via the `skip` and `count` query parameters. Searching by name and email will overlap and
+
+        return results based on relevance. Accounts with AccountType `guest` will not be included in the response.
+
+
+        To access this endpoint using an access token you''ll need
+
+        to specify the `/accounts.read` scope.'
       parameters:
-      - $ref: '#/components/parameters/CountParam'
-      - $ref: '#/components/parameters/SkipParam'
-      - name: name
-        in: query
-        description: Filter accounts by display name.
-        schema:
-          type: string
-      - name: email
-        in: query
-        description: Filter accounts by email address.
-        schema:
-          type: string
-          format: email
-      - name: type
-        in: query
-        description: Filter by account type (individual or business).
-        schema:
-          type: string
-          enum:
-          - individual
-          - business
+      - $ref: '#/components/parameters/VersionHeader'
+      - $ref: '#/components/parameters/AccountsQuery.name'
+      - $ref: '#/components/parameters/AccountsQuery.email'
+      - $ref: '#/components/parameters/AccountsQuery.type'
+      - $ref: '#/components/parameters/AccountsQuery.foreignID'
+      - $ref: '#/components/parameters/AccountsQuery.includeDisconnected'
+      - $ref: '#/components/parameters/AccountsQuery.capability'
+      - $ref: '#/components/parameters/AccountsQuery.capabilityStatus'
+      - $ref: '#/components/parameters/Pagination.skip'
+      - $ref: '#/components/parameters/Pagination.count'
       responses:
         '200':
-          description: List of accounts returned successfully.
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -94,120 +188,433 @@ paths:
                 items:
                   $ref: '#/components/schemas/Account'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Accounts
+      x-speakeasy-name-override: list
+      security:
+      - BasicAuth: []
+      summary: List accounts
+      x-summary-source: derived
     servers:
     - url: https://api.moov.io
-      description: Production Server
+      description: Production API host
+      variables: {}
   /accounts/{accountID}:
     get:
       operationId: getAccount
-      summary: Retrieve an account
-      description: Fetch the full details of a specific Moov account by its unique identifier, including profile information, verification status, and capabilities.
-      tags:
-      - Accounts
+      description: 'Retrieves details for the account with the specified ID.
+
+
+        To access this endpoint using an access token you''ll need
+
+        to specify the `/accounts/{accountID}/profile.read` scope.'
       parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
         '200':
-          description: Account details returned successfully.
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Account'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
         '404':
-          $ref: '#/components/responses/NotFound'
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Accounts
+      x-speakeasy-name-override: get
+      security:
+      - BasicAuth: []
+      summary: Get account
+      x-summary-source: derived
     patch:
       operationId: updateAccount
-      summary: Update an account
-      description: Modify the profile and settings of an existing Moov account. Only the fields provided in the request body will be updated; omitted fields remain unchanged.
-      tags:
-      - Accounts
+      description: 'When **can** profile data be updated:
+
+        + For unverified accounts, all profile data can be edited.
+
+        + During the verification process, missing or incomplete profile data can be edited.
+
+        + Verified accounts can only add missing profile data.
+
+
+        When **can''t** profile data be updated:
+
+        + Verified accounts cannot change any existing profile data.
+
+
+        If you need to update information in a locked state, please contact Moov support.
+
+
+        To access this endpoint using an access token you''ll need
+
+        to specify the `/accounts/{accountID}/profile.write` scope.'
       parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
-      requestBody:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
         required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateAccountRequest'
+        schema:
+          type: string
       responses:
         '200':
-          description: Account updated successfully.
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Account'
         '400':
-          $ref: '#/components/responses/BadRequest'
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
         '404':
-          $ref: '#/components/responses/NotFound'
-    delete:
-      operationId: deleteAccount
-      summary: Delete an account
-      description: Remove a Moov account and all associated data. This operation is irreversible. Ensure all funds have been disbursed before deleting an account.
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '422':
+          description: The request was well-formed, but the contents failed validation. Check the request for missing or invalid fields.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatchAccountError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
       tags:
       - Accounts
-      parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
-      responses:
-        '204':
-          description: Account deleted successfully.
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
-    parameters:
-    - $ref: '#/components/parameters/accountID'
-    servers:
-    - url: https://api.moov.io
-      description: Production Server
-  /accounts/{accountID}/connections:
-    post:
-      operationId: shareAccountConnection
-      summary: Share an account connection
-      description: Establish a connection between two Moov accounts, enabling the platform account to act on behalf of the connected account for money movement and management operations.
-      tags:
-      - Accounts
-      parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AccountConnectionRequest'
+              $ref: '#/components/schemas/PatchAccount'
+      x-speakeasy-name-override: update
+      security:
+      - BasicAuth: []
+      summary: Update account
+      x-summary-source: derived
+    delete:
+      operationId: disconnectAccount
+      description: 'This will sever the connection between you and the account specified and it will no longer be listed as
+
+        active in the list of accounts. This also means you''ll only have read-only access to the account going
+
+        forward for reporting purposes.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/profile.disconnect` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
-        '200':
-          description: Account connection established.
+        '204':
+          description: The request completed successfully, but there is no content to return.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AccountConnection'
-        '400':
-          $ref: '#/components/responses/BadRequest'
+                $ref: '#/components/schemas/GenericError'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Accounts
+      x-speakeasy-name-override: disconnect
+      security:
+      - BasicAuth: []
+      summary: Disconnect account
+      x-summary-source: derived
     parameters:
     - $ref: '#/components/parameters/accountID'
     servers:
     - url: https://api.moov.io
-      description: Production Server
+      description: Production API host
+      variables: {}
   /accounts/{accountID}/connected-accounts:
     get:
-      operationId: listConnectedAccounts
-      summary: List connected accounts
-      description: Retrieve all accounts that have been connected to the specified account. Used by platform accounts to enumerate their linked user accounts.
-      tags:
-      - Accounts
+      operationId: listConnectedAccountsForAccount
+      description: 'List or search accounts to which the caller is connected.
+
+
+        All supported query parameters are optional. If none are provided the response will include all connected accounts.
+
+        Pagination is supported via the `skip` and `count` query parameters. Searching by name and email will overlap and
+
+        return results based on relevance. Accounts with AccountType `guest` will not be included in the response.
+
+
+        To access this endpoint using an access token you''ll need
+
+        to specify the `/accounts.read` scope.'
       parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/VersionHeader'
+      - $ref: '#/components/parameters/AccountsQuery.name'
+      - $ref: '#/components/parameters/AccountsQuery.email'
+      - $ref: '#/components/parameters/AccountsQuery.type'
+      - $ref: '#/components/parameters/AccountsQuery.foreignID'
+      - $ref: '#/components/parameters/AccountsQuery.includeDisconnected'
+      - $ref: '#/components/parameters/AccountsQuery.capability'
+      - $ref: '#/components/parameters/AccountsQuery.capabilityStatus'
+      - $ref: '#/components/parameters/Pagination.skip'
+      - $ref: '#/components/parameters/Pagination.count'
       responses:
         '200':
-          description: Connected accounts returned successfully.
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -215,386 +622,1986 @@ paths:
                 items:
                   $ref: '#/components/schemas/Account'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Accounts
+      x-speakeasy-name-override: listConnected
+      security:
+      - BasicAuth: []
+      summary: List connected accounts for account
+      x-summary-source: derived
     parameters:
     - $ref: '#/components/parameters/accountID'
     servers:
     - url: https://api.moov.io
-      description: Production Server
+      description: Production API host
+      variables: {}
+  /accounts/{accountID}/connections:
+    post:
+      operationId: connectAccount
+      description: 'Shares access scopes from the account specified to the caller, establishing a connection
+
+        between the two accounts with the specified permissions.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: The resource was successfully created.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '422':
+          description: The request was well-formed, but the contents failed validation. Check the request for missing or invalid fields.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectAccountRequestValidationError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Accounts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShareScopes'
+      x-speakeasy-name-override: connect
+      security:
+      - BasicAuth: []
+      summary: Connect account
+      x-summary-source: derived
+    parameters:
+    - $ref: '#/components/parameters/accountID'
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+  /accounts/{accountID}/countries:
+    get:
+      operationId: getAccountCountries
+      description: 'Retrieve the specified countries of operation for an account.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/profile.read` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountCountries'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Accounts
+      x-speakeasy-name-override: getCountries
+      security:
+      - BasicAuth: []
+      summary: Get account countries
+      x-summary-source: derived
+    put:
+      operationId: assignAccountCountries
+      description: 'Assign the countries of operation for an account.
+
+
+        This endpoint will always overwrite the previously assigned values.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/profile.write` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountCountries'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '422':
+          description: The request was well-formed, but the contents failed validation. Check the request for missing or invalid fields.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssignCountriesError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Accounts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountCountries'
+      x-speakeasy-name-override: assignCountries
+      security:
+      - BasicAuth: []
+      summary: Assign account countries
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+  /accounts/{accountID}/merchant-agreement:
+    get:
+      operationId: getMerchantProcessingAgreement
+      description: 'Retrieve a merchant account''s processing agreement.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/profile.read` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Accounts
+      security:
+      - BasicAuth: []
+      summary: Get merchant processing agreement
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+  /tos-token:
+    get:
+      operationId: getTermsOfServiceToken
+      description: 'Generates a non-expiring token that can then be used to accept Moov''s terms of service.
+
+
+        This token can only be generated via API. Any Moov account requesting the collect funds, send funds, wallet,
+
+        or card issuing capabilities must accept Moov''s terms of service, then have the generated terms of service
+
+        token patched to the account. Read more in our documentation.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: origin
+        in: header
+        required: false
+        description: Indicates the domain from which the request originated. Required if referer header is not present.
+        schema:
+          type: string
+      - name: referer
+        in: header
+        required: false
+        description: Specifies the URL of the resource from which the request originated. Required if origin header is not present.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TermsOfServiceToken'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Accounts
+      security:
+      - BasicAuth: []
+      summary: Get terms of service token
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
 components:
   schemas:
-    CreateAccountRequest:
+    TermsOfServicePayloadUpdate:
       type: object
-      description: Request body for creating a new Moov account.
-      required:
-      - accountType
-      - profile
-      properties:
-        accountType:
-          type: string
-          description: Whether the account is for an individual or a business.
-          enum:
-          - individual
-          - business
-        profile:
-          $ref: '#/components/schemas/AccountProfile'
-        metadata:
-          type: object
-          description: Custom key-value metadata to attach to the account.
-          additionalProperties:
-            type: string
-        termsOfService:
-          type: object
-          description: Terms of service acceptance details.
-          properties:
-            token:
-              type: string
-              description: Token obtained from the /tos-token endpoint.
-        foreignID:
-          type: string
-          description: External identifier from your system to associate with this account.
-    UpdateAccountRequest:
-      type: object
-      description: Request body for updating a Moov account. Only provided fields are updated.
-      properties:
-        profile:
-          $ref: '#/components/schemas/AccountProfile'
-        metadata:
-          type: object
-          description: Custom key-value metadata to attach to the account.
-          additionalProperties:
-            type: string
-        foreignID:
-          type: string
-          description: External identifier from your system.
-    TosToken:
-      type: object
-      description: Short-lived token confirming acceptance of Moov's terms of service.
       properties:
         token:
           type: string
-          description: The terms of service token to include when creating an account.
-        expiresOn:
-          type: string
-          format: date-time
-          description: ISO 8601 timestamp when the token expires.
-    AccountConnectionRequest:
+        manual:
+          $ref: '#/components/schemas/ManualTermsOfServiceUpdate'
+    VerificationStatus:
+      type: string
+      enum:
+      - unverified
+      - pending
+      - verified
+      - errored
+      description: Possible states an account verification can be in.
+      deprecated: true
+    PatchAccountError:
       type: object
-      description: Request to share an account connection with another Moov account.
       properties:
-        partnerAccountID:
+        profile:
+          $ref: '#/components/schemas/CreateProfileError'
+        metadata:
           type: string
-          format: uuid
-          description: The account ID of the partner to connect with.
-    Name:
+        termsOfService:
+          $ref: '#/components/schemas/TermsOfServiceError'
+        foreignID:
+          type: string
+        customerSupport:
+          $ref: '#/components/schemas/CustomerSupportError'
+        settings:
+          $ref: '#/components/schemas/CreateAccountSettings'
+        error:
+          type: string
+    CustomerSupport:
       type: object
-      description: Full name of an individual.
+      properties:
+        phone:
+          $ref: '#/components/schemas/PhoneNumber'
+        email:
+          $ref: '#/components/schemas/Email'
+        address:
+          $ref: '#/components/schemas/Address'
+        website:
+          type: string
+          format: uri
+      description: 'User-provided information that can be displayed on credit card transactions for customers to use when
+
+        contacting a customer support team. This data is only allowed on a business account.'
+    AddressError:
+      type: object
+      properties:
+        addressLine1:
+          type: string
+        addressLine2:
+          type: string
+        city:
+          type: string
+        stateOrProvince:
+          type: string
+        postalCode:
+          type: string
+        country:
+          type: string
+    IndividualName:
+      type: object
+      required:
+      - firstName
+      - lastName
       properties:
         firstName:
           type: string
-          description: Given name.
+          maxLength: 64
+          pattern: '[À-ÖØ-öø-ÿ"''(),.0-9A-Za-z~ &!-]*'
+          description: The individual's first given name.
+          example: Jordan
         middleName:
           type: string
-          description: Middle name or initial.
+          maxLength: 64
+          pattern: '[À-ÖØ-öø-ÿ"''(),.0-9A-Za-z~ &!-]*'
+          description: The individual's second given name, if any.
+          example: Reese
         lastName:
           type: string
-          description: Family name.
+          maxLength: 64
+          pattern: '[À-ÖØ-öø-ÿ"''(),.0-9A-Za-z~ &!-]*'
+          description: The individual's family name.
+          example: Lee
         suffix:
           type: string
-          description: Name suffix (e.g., Jr., Sr., III).
-    Error:
+          maxLength: 20
+          pattern: '[À-ÖØ-öø-ÿ"''(),.0-9A-Za-z~ &!-]*'
+          description: Suffix of a given name.
+          example: Jr
+    OperatingCountry:
+      type: string
+      maxLength: 64
+      example: United States
+    AccountCapability:
       type: object
-      description: Standard error response returned by the Moov API.
+      required:
+      - capability
+      - status
       properties:
-        error:
+        capability:
           type: string
-          description: Human-readable description of the error.
-        code:
+        status:
           type: string
-          description: Machine-readable error code.
-    CapabilityRequirement:
+      description: Describes an action or set of actions that an account is permitted to perform.
+    Settings:
       type: object
-      description: A requirement that must be satisfied to activate a capability.
       properties:
-        requirement:
-          type: string
-          description: Machine-readable identifier for the requirement type.
-        errorCode:
-          type: string
-          description: Error code providing more detail about why the requirement is unmet.
-    TaxID:
+        cardPayment:
+          $ref: '#/components/schemas/CardPaymentSettings'
+        achPayment:
+          $ref: '#/components/schemas/ACHPaymentSettings'
+      description: User provided settings to manage an account.
+    CreateProfileError:
       type: object
-      description: Business tax identification number.
+      properties:
+        individual:
+          $ref: '#/components/schemas/CreateIndividualError'
+        business:
+          $ref: '#/components/schemas/CreateBusinessError'
+    AccountVerificationStatus:
+      type: string
+      enum:
+      - unverified
+      - pending
+      - resubmit
+      - review
+      - verified
+      - failed
+      description: Possible states an account verification can be in.
+      deprecated: true
+    DocumentType:
+      type: string
+      enum:
+      - driversLicense
+      - passport
+      - utilityBill
+      - bankStatement
+      description: Types of documents that can be uploaded.
+      example: bankStatement
+    CreateBusinessError:
+      type: object
+      properties:
+        legalBusinessName:
+          type: string
+        doingBusinessAs:
+          type: string
+        businessType:
+          type: string
+        address:
+          $ref: '#/components/schemas/AddressError'
+        phone:
+          $ref: '#/components/schemas/PhoneNumberError'
+        email:
+          type: string
+        website:
+          type: string
+        description:
+          type: string
+        taxID:
+          type: object
+          properties:
+            ein:
+              type: object
+              properties:
+                number:
+                  type: string
+        industryCodes:
+          type: object
+          properties:
+            naics:
+              type: string
+            sic:
+              type: string
+            mcc:
+              type: string
+        industry:
+          type: string
+          description: Classification identifier for the industry. Use the [GET industries](https://docs.moov.io/api/enrichment/form-shortening/industries/get/) endpoint to retrieve an array of valid industry details for a merchant, inducing all industry field values.
+          example: electronics-appliances
+        primaryRegulator:
+          type: string
+    CreateIndividualProfile:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          $ref: '#/components/schemas/IndividualName'
+        phone:
+          $ref: '#/components/schemas/PhoneNumber'
+        email:
+          $ref: '#/components/schemas/Email'
+        address:
+          $ref: '#/components/schemas/Address'
+        birthDate:
+          $ref: '#/components/schemas/BirthDate'
+        governmentID:
+          $ref: '#/components/schemas/GovernmentID'
+    ManualTermsOfService:
+      type: object
+      required:
+      - acceptedDate
+      - acceptedIP
+      - acceptedUserAgent
+      - acceptedDomain
+      properties:
+        acceptedDate:
+          type: string
+          format: date-time
+          description: The date and time the terms of service were accepted.
+        acceptedIP:
+          type: string
+          description: The IP address (IPv4 or IPv6) from which the terms of service were accepted.
+          example: 2001:db8::1
+        acceptedUserAgent:
+          type: string
+          maxLength: 255
+          description: The user-agent of the user making the request.
+          example: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.71 Safari/537.36
+        acceptedDomain:
+          type: string
+          format: uri
+      description: Describes the acceptance of the Terms of Service. All data is required, and must be from the user.
+      title: Manual
+    Metadata:
+      type: object
+      additionalProperties:
+        type: string
+      description: Free-form key-value pair list. Useful for storing information that is not captured elsewhere.
+      example:
+        optional: metadata
+    TaxIDUpdate:
+      type: object
       properties:
         ein:
           type: object
-          description: Employer Identification Number for US businesses.
           properties:
             number:
               type: string
-              description: Full EIN. Only provided on write; masked on read.
-              pattern: ^\d{9}$
-    AccountVerification:
+              example: 12-3456789
+      description: An EIN (employer identification number) for the business. For sole proprietors, an SSN can be used as the EIN.
+    ShareScopes:
       type: object
-      description: Identity verification status for a Moov account.
+      required:
+      - principalAccountID
+      properties:
+        principalAccountID:
+          type: string
+          description: The account ID that will receive access to the scopes.
+          example: c520f1b9-0ba7-42f5-b977-248cdbe41c69
+        allowScopes:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApplicationScope'
+          description: The list of scopes to share with the principal account. If none are provided, all intersecting scopes are added.
+          example:
+          - transfers.write
+          - payment-methods.read
+      description: Describes the scopes being shared from a subject account to a principal account.
+    ACHPaymentSettings:
+      type: object
+      required:
+      - companyName
+      properties:
+        companyName:
+          type: string
+          minLength: 1
+          maxLength: 16
+          pattern: '[a-zA-Z0-9- ]+'
+          description: The description that shows up on ACH transactions. This will default to the account's display name on account creation.
+          example: WholeBodyFitness
+    ManualTermsOfServiceUpdate:
+      type: object
+      properties:
+        acceptedDate:
+          type: string
+          format: date-time
+          description: The date and time the terms of service were accepted.
+        acceptedIP:
+          type: string
+          description: The IP address (IPv4 or IPv6) from which the terms of service were accepted.
+          example: 2001:db8::1
+        acceptedUserAgent:
+          type: string
+          maxLength: 255
+          description: The user-agent of the user making the request.
+          example: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.71 Safari/537.36
+        acceptedDomain:
+          type: string
+          format: uri
+      description: Describes the acceptance of the Terms of Service. All data is required, and must be from the user.
+      title: Manual
+    CardPaymentSettings:
+      type: object
+      properties:
+        statementDescriptor:
+          type: string
+          minLength: 4
+          maxLength: 22
+          pattern: '[a-zA-Z0-9.!*-+_ ]+'
+          description: The description that shows up on credit card transactions. This will default to the accounts display name on account creation.
+          example: Whole Body Fitness
+      description: User provided settings to manage card payments. This data is only allowed on a business account.
+    ArrayValidationError:
+      type: object
+      additionalProperties:
+        type: string
+      example:
+        '0': first element failed validation...
+    PatchProfile:
+      type: object
+      properties:
+        individual:
+          $ref: '#/components/schemas/PatchIndividual'
+        business:
+          $ref: '#/components/schemas/PatchBusiness'
+      description: 'Describes the fields available when patching a profile.
+
+        Each object can be patched independent of patching the other fields.'
+    CreateProfile:
+      type: object
+      properties:
+        individual:
+          $ref: '#/components/schemas/CreateIndividualProfile'
+        business:
+          $ref: '#/components/schemas/CreateBusinessProfile'
+    Representative:
+      type: object
+      required:
+      - representativeID
+      - name
+      - createdOn
+      - updatedOn
+      properties:
+        representativeID:
+          type: string
+          description: Unique identifier for this representative.
+        name:
+          $ref: '#/components/schemas/IndividualName'
+        phone:
+          $ref: '#/components/schemas/PhoneNumber'
+        email:
+          $ref: '#/components/schemas/Email'
+        address:
+          $ref: '#/components/schemas/Address'
+        birthDateProvided:
+          type: boolean
+          description: Indicates whether this representative's birth date has been provided.
+        governmentIDProvided:
+          type: boolean
+          description: Indicates whether a government ID (SSN, ITIN, etc.) has been provided for this representative.
+        responsibilities:
+          $ref: '#/components/schemas/RepresentativeResponsibilities'
+        createdOn:
+          type: string
+          format: date-time
+        updatedOn:
+          type: string
+          format: date-time
+        disabledOn:
+          type: string
+          format: date-time
+      description: Describes a business representative.
+    BirthDateError:
+      type: object
+      properties:
+        day:
+          type: string
+        month:
+          type: string
+        year:
+          type: string
+    PrimaryRegulator:
+      type: string
+      enum:
+      - OCC
+      - FDIC
+      - NCUA
+      - FRB
+      - state-cu-regulator
+      description: If the business is a financial institution, this field describes its primary regulator.
+    CustomerSupportError:
+      type: object
+      properties:
+        phone:
+          $ref: '#/components/schemas/PhoneNumberError'
+        email:
+          type: string
+        address:
+          $ref: '#/components/schemas/AddressError'
+        website:
+          type: string
+    Verification:
+      type: object
+      required:
+      - status
       properties:
         verificationStatus:
-          type: string
-          description: Current KYC/KYB verification status.
-          enum:
-          - unverified
-          - pending
-          - resubmit
-          - review
-          - verified
-          - failed
-    SsnOrItin:
+          $ref: '#/components/schemas/AccountVerificationStatus'
+        status:
+          $ref: '#/components/schemas/VerificationStatus'
+        details:
+          $ref: '#/components/schemas/VerificationStatusDetail'
+        documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/Document'
+      description: Describes identity verification status and relevant identity verification documents.
+    TermsOfServicePayload:
       type: object
-      description: Social Security Number or Individual Taxpayer Identification Number.
       properties:
-        full:
+        token:
           type: string
-          description: Full 9-digit SSN or ITIN. Only provided on write; masked on read.
-          pattern: ^\d{9}$
-        lastFour:
-          type: string
-          description: Last four digits of the SSN or ITIN.
-          pattern: ^\d{4}$
-    IndustryCodes:
+        manual:
+          $ref: '#/components/schemas/ManualTermsOfService'
+    BusinessProfile:
       type: object
-      description: Industry classification codes for the business.
+      required:
+      - legalBusinessName
+      - ownersProvided
       properties:
-        naics:
+        legalBusinessName:
           type: string
-          description: North American Industry Classification System code.
-        sic:
+          maxLength: 64
+          pattern: '[À-ÖØ-öø-ÿ"''(),.0-9A-Za-z~ &!+:/-]*'
+          description: The legal name under which the entity is registered.
+          example: Classbooker, LLC
+        doingBusinessAs:
           type: string
-          description: Standard Industrial Classification code.
-        mcc:
+          maxLength: 64
+          pattern: '[À-ÖØ-öø-ÿ"''(),.0-9A-Za-z~ &!+:/-]*'
+          description: A registered trade name under which the business operates, if different from its legal name.
+        businessType:
+          $ref: '#/components/schemas/BusinessType'
+        address:
+          $ref: '#/components/schemas/Address'
+        phone:
+          $ref: '#/components/schemas/PhoneNumber'
+        email:
+          $ref: '#/components/schemas/Email'
+        website:
           type: string
-          description: Merchant Category Code for card payment processing.
-    AccountProfile:
+          format: uri
+          maxLength: 100
+        description:
+          type: string
+          minLength: 10
+          maxLength: 100
+          pattern: '[a-zA-Z0-9,.\/?:''"|~!@#$%^&*()+_= -]+'
+          example: Local fitness gym paying out instructors
+        taxIDProvided:
+          type: boolean
+          description: Indicates whether a tax ID has been provided for this business.
+        representatives:
+          type: array
+          items:
+            $ref: '#/components/schemas/Representative'
+        ownersProvided:
+          type: boolean
+        industryCodes:
+          $ref: '#/components/schemas/IndustryCodes'
+        industry:
+          type: string
+          description: Classification identifier for the industry. Use the [GET industries](https://docs.moov.io/api/enrichment/form-shortening/industries/get/) endpoint to retrieve an array of valid industry details for a merchant, inducing all industry field values.
+          example: electronics-appliances
+        primaryRegulator:
+          $ref: '#/components/schemas/PrimaryRegulator'
+      description: Describes a business.
+    TaxID:
       type: object
-      description: Profile information for a Moov account.
+      required:
+      - ein
+      properties:
+        ein:
+          type: object
+          properties:
+            number:
+              type: string
+              example: 12-3456789
+          required:
+          - number
+      description: An EIN (employer identification number) for the business. For sole proprietors, an SSN can be used as the EIN.
+    CreateAccountError:
+      type: object
+      properties:
+        accountType:
+          type: string
+        profile:
+          $ref: '#/components/schemas/CreateProfileError'
+        metadata:
+          type: string
+        termsOfService:
+          $ref: '#/components/schemas/TermsOfServiceError'
+        foreignID:
+          type: string
+        customerSupport:
+          $ref: '#/components/schemas/CustomerSupportError'
+        settings:
+          $ref: '#/components/schemas/CreateAccountSettings'
+        capabilities:
+          $ref: '#/components/schemas/ArrayValidationError'
+    AccountCountries:
+      type: object
+      required:
+      - countries
+      properties:
+        countries:
+          type: array
+          items:
+            $ref: '#/components/schemas/OperatingCountry'
+      description: The countries in which an account operates.
+    TermsOfServiceToken:
+      type: object
+      required:
+      - token
+      properties:
+        token:
+          type: string
+          example: kgT1uxoMAk7QKuyJcmQE8nqW_HjpyuXBabiXPi6T83fUQoxsyWYPcYzuHQTqrt7YRp4gCwyDQvb6U5REM9Pgl2EloCe35t-eiMAbUWGo3Kerxme6aqNcKrP_6-v0MTXViOEJ96IBxPFTvMV7EROI2dq3u4e-x4BbGSCedAX-ViAQND6hcreCDXwrO6sHuzh5Xi2IzSqZHxaovnWEboaxuZKRJkA3dsFID6fzitMpm2qrOh4
+      description: An encrypted value used to record acceptance of Moov's Terms of Service.
+      title: Token
+    Count:
+      type: integer
+      format: int64
+      description: Limits the maximum number of results returned, or determines the page size when used with `skip` or `cursor` for pagination.
+      example: 20
+    TermsOfService:
+      type: object
+      required:
+      - acceptedDate
+      - acceptedIP
+      properties:
+        acceptedDate:
+          type: string
+          format: date-time
+          description: The date and time the terms of service were accepted.
+        acceptedIP:
+          type: string
+          description: The IP address (IPv4 or IPv6) from which the terms of service were accepted.
+          example: 2001:db8::1
+      description: Describes the acceptance of the Terms of Service.
+    PhoneNumberError:
+      type: object
+      properties:
+        number:
+          type: string
+        countryCode:
+          type: string
+    CapabilityID:
+      type: string
+      enum:
+      - transfers
+      - send-funds
+      - send-funds.push-to-card
+      - money-transfer.push-to-card
+      - send-funds.ach
+      - send-funds.rtp
+      - send-funds.instant-bank
+      - collect-funds
+      - collect-funds.card-payments
+      - money-transfer.pull-from-card
+      - collect-funds.ach
+      - wallet
+      - wallet.balance
+      - card-issuing
+      - issuing.cardholder
+      - production-app
+      - platform.production-app
+      - platform.wallet-transfers
+      description: 'Moov account capabilities.
+
+
+        **Deprecated capabilities**
+
+
+        The `send-funds`, `collect-funds`, and `wallet` capability IDs are deprecated. Request granular capabilities instead (for example, `send-funds.ach`, `collect-funds.card-payments`, or `wallet.balance`). Deprecated values will be removed in a future API version.
+
+
+        Read our [capabilities reference](https://docs.moov.io/guides/accounts/capabilities/reference/) to choose the right capabilities for your integration.
+
+
+        The `production-app`, `platform.production-app`, and / or `platform.wallet-transfers` capabilities might appear in the list for your Partner account. These are read-only capabilities that Moov requests. These capabilities remain active with your account and require no additional action.'
+    BusinessType:
+      type: string
+      enum:
+      - soleProprietorship
+      - unincorporatedAssociation
+      - trust
+      - publicCorporation
+      - privateCorporation
+      - llc
+      - partnership
+      - unincorporatedNonProfit
+      - incorporatedNonProfit
+      - governmentEntity
+      description: The type of entity represented by this business.
+      example: llc
+    Email:
+      type: string
+      maxLength: 255
+      format: email
+      example: jordan.lee@classbooker.dev
+    ApplicationScope:
+      type: string
+      enum:
+      - accounts.read
+      - accounts.write
+      - analytics.read
+      - apple-pay-merchant.read
+      - apple-pay-merchant.write
+      - apple-pay.read
+      - apple-pay.write
+      - bank-accounts.read
+      - bank-accounts.write
+      - capabilities.read
+      - capabilities.write
+      - cards.read
+      - cards.write
+      - documents.read
+      - documents.write
+      - fed.read
+      - files.read
+      - files.write
+      - issued-cards.read
+      - issued-cards.write
+      - issued-cards.read-private
+      - payment-methods.read
+      - ping.read
+      - profile-enrichment.read
+      - profile.read
+      - profile.write
+      - profile.disconnect
+      - representatives.read
+      - representatives.write
+      - transfers.read
+      - transfers.write
+      - wallets.read
+      description: A permission that the application requests on another account.
+    BirthDateUpdate:
+      type: object
+      properties:
+        day:
+          type: integer
+          example: 9
+        month:
+          type: integer
+          example: 11
+        year:
+          type: integer
+          example: 1989
+    IndividualNameUpdate:
+      type: object
+      properties:
+        firstName:
+          type: string
+          maxLength: 64
+          pattern: '[À-ÖØ-öø-ÿ"''(),.0-9A-Za-z~ &!-]*'
+          description: The individual's first given name.
+          example: Jordan
+        middleName:
+          type: string
+          maxLength: 64
+          pattern: '[À-ÖØ-öø-ÿ"''(),.0-9A-Za-z~ &!-]*'
+          description: The individual's second given name, if any.
+          example: Reese
+        lastName:
+          type: string
+          maxLength: 64
+          pattern: '[À-ÖØ-öø-ÿ"''(),.0-9A-Za-z~ &!-]*'
+          description: The individual's family name.
+          example: Lee
+        suffix:
+          type: string
+          maxLength: 20
+          pattern: '[À-ÖØ-öø-ÿ"''(),.0-9A-Za-z~ &!-]*'
+          description: Suffix of a given name.
+          example: Jr
+    Skip:
+      type: integer
+      format: int64
+      description: The number of entries to skip when paginating a large result set.
+      example: 60
+    CreateAccountType:
+      type: string
+      enum:
+      - individual
+      - business
+    GovernmentID:
+      type: object
+      properties:
+        ssn:
+          type: object
+          properties:
+            full:
+              type: string
+              pattern: ^\d{3}[-]?\d{2}[-]?\d{4}$
+            lastFour:
+              type: string
+        itin:
+          type: object
+          properties:
+            full:
+              type: string
+              pattern: ^\d{3}[-]?\d{2}[-]?\d{4}$
+            lastFour:
+              type: string
+    CreateIndividualError:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/IndividualNameError'
+        phone:
+          $ref: '#/components/schemas/PhoneNumberError'
+        email:
+          type: string
+        address:
+          $ref: '#/components/schemas/AddressError'
+        birthDate:
+          $ref: '#/components/schemas/BirthDateError'
+        governmentID:
+          type: object
+          properties:
+            ssn:
+              type: object
+              properties:
+                full:
+                  type: string
+                lastFour:
+                  type: string
+            itin:
+              type: object
+              properties:
+                full:
+                  type: string
+                lastFour:
+                  type: string
+    AccountType:
+      type: string
+      enum:
+      - individual
+      - business
+      - guest
+      description: The type of entity represented by this account.
+      example: business
+    IndividualNameError:
+      type: object
+      properties:
+        firstName:
+          type: string
+        middleName:
+          type: string
+        lastName:
+          type: string
+        suffix:
+          type: string
+    PatchAccount:
+      type: object
+      properties:
+        profile:
+          $ref: '#/components/schemas/PatchProfile'
+        metadata:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/Metadata'
+        termsOfService:
+          $ref: '#/components/schemas/TermsOfServicePayloadUpdate'
+        foreignID:
+          type: string
+        customerSupport:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/CustomerSupportUpdate'
+        settings:
+          $ref: '#/components/schemas/CreateAccountSettings'
+      description: Describes the fields available when patching a Moov account.
+    CustomerSupportUpdate:
+      type: object
+      properties:
+        phone:
+          $ref: '#/components/schemas/PhoneNumber'
+        email:
+          $ref: '#/components/schemas/Email'
+        address:
+          $ref: '#/components/schemas/AddressUpdate'
+        website:
+          type: string
+          format: uri
+      description: 'User-provided information that can be displayed on credit card transactions for customers to use when
+
+        contacting a customer support team. This data is only allowed on a business account.'
+    AddressUpdate:
+      type: object
+      properties:
+        addressLine1:
+          type: string
+          maxLength: 60
+          pattern: '[a-zA-Z0-9,.\/?:''"|~!@#$%^&*()+_= -]+'
+          example: 123 Main Street
+        addressLine2:
+          type: string
+          maxLength: 32
+          pattern: '[a-zA-Z0-9,.\/?:''"|~!@#$%^&*()+_= -]+'
+          example: Apt 302
+        city:
+          type: string
+          maxLength: 32
+          pattern: '[a-zA-Z0-9,.\/?:''"|~!@#$%^&*()+_= -]+'
+          example: Boulder
+        stateOrProvince:
+          type: string
+          maxLength: 2
+          example: CO
+        postalCode:
+          type: string
+          maxLength: 5
+          example: '80301'
+        country:
+          type: string
+          maxLength: 2
+          example: US
+    Mode:
+      type: string
+      enum:
+      - sandbox
+      - production
+      description: The operating mode for an account.
+      example: production
+    CreateAccountSettings:
+      type: object
+      properties:
+        cardPayment:
+          type: object
+          properties:
+            statementDescriptor:
+              type: string
+        achPayment:
+          type: object
+          properties:
+            companyName:
+              type: string
+    Profile:
+      type: object
       properties:
         individual:
           $ref: '#/components/schemas/IndividualProfile'
         business:
           $ref: '#/components/schemas/BusinessProfile'
-    AccountConnection:
+        guest:
+          $ref: '#/components/schemas/GuestProfile'
+      description: Describes a Moov account profile. A profile will have a business, individual, or guest depending on the account's type.
+    IndustryCodes:
       type: object
-      description: An established connection between two Moov accounts.
       properties:
-        accountID:
+        naics:
           type: string
-          format: uuid
-          description: The account that initiated the connection.
-        partnerAccountID:
+          minLength: 2
+          maxLength: 6
+          example: '713940'
+        sic:
           type: string
-          format: uuid
-          description: The connected partner account.
-        createdOn:
+          minLength: 4
+          maxLength: 4
+          example: '7991'
+        mcc:
           type: string
-          format: date-time
-          description: ISO 8601 timestamp when the connection was created.
-    Address:
+          minLength: 4
+          maxLength: 4
+          example: '7997'
+    CreateBusinessProfile:
       type: object
-      description: Physical or mailing address.
-      properties:
-        addressLine1:
-          type: string
-          description: Primary street address.
-        addressLine2:
-          type: string
-          description: Secondary address line (suite, apartment, etc.).
-        city:
-          type: string
-          description: City name.
-        stateOrProvince:
-          type: string
-          description: Two-letter state or province code.
-          maxLength: 2
-        postalCode:
-          type: string
-          description: Postal or ZIP code.
-        country:
-          type: string
-          description: Two-letter ISO 3166-1 alpha-2 country code.
-          maxLength: 2
-    IndividualProfile:
-      type: object
-      description: Profile data for an individual Moov account.
-      properties:
-        name:
-          $ref: '#/components/schemas/Name'
-        email:
-          type: string
-          format: email
-          description: Email address of the individual.
-        phone:
-          $ref: '#/components/schemas/Phone'
-        address:
-          $ref: '#/components/schemas/Address'
-        birthDate:
-          type: string
-          format: date
-          description: Date of birth in ISO 8601 format (YYYY-MM-DD).
-        governmentID:
-          $ref: '#/components/schemas/GovernmentID'
-    Account:
-      type: object
-      description: A Moov account representing a legal entity (individual or business) that can send, receive, and store funds on the platform.
-      properties:
-        accountID:
-          type: string
-          format: uuid
-          description: Unique identifier for the account.
-        accountType:
-          type: string
-          description: Whether the account belongs to an individual or a business.
-          enum:
-          - individual
-          - business
-        displayName:
-          type: string
-          description: Human-readable name for the account.
-        profile:
-          $ref: '#/components/schemas/AccountProfile'
-        capabilities:
-          type: array
-          description: List of capabilities enabled on this account.
-          items:
-            $ref: '#/components/schemas/Capability'
-        verification:
-          $ref: '#/components/schemas/AccountVerification'
-        createdOn:
-          type: string
-          format: date-time
-          description: ISO 8601 timestamp when the account was created.
-        updatedOn:
-          type: string
-          format: date-time
-          description: ISO 8601 timestamp when the account was last updated.
-    BusinessProfile:
-      type: object
-      description: Profile data for a business Moov account.
+      required:
+      - legalBusinessName
       properties:
         legalBusinessName:
           type: string
-          description: Registered legal name of the business.
-        businessType:
+          maxLength: 64
+          pattern: '[À-ÖØ-öø-ÿ"''(),.0-9A-Za-z~ &!+:/-]*'
+          description: The legal name under which the entity is registered.
+          example: Classbooker, LLC
+        doingBusinessAs:
           type: string
-          description: Type of business entity.
-          enum:
-          - soleProprietorship
-          - unincorporatedAssociation
-          - trust
-          - publicCorporation
-          - privateCorporation
-          - privateCorporation
-          - llc
-          - partnership
-          - unincorporatedNonProfit
-          - incorporatedNonProfit
+          maxLength: 64
+          pattern: '[À-ÖØ-öø-ÿ"''(),.0-9A-Za-z~ &!+:/-]*'
+          description: A registered trade name under which the business operates, if different from its legal name.
+        businessType:
+          $ref: '#/components/schemas/BusinessType'
         address:
           $ref: '#/components/schemas/Address'
         phone:
-          $ref: '#/components/schemas/Phone'
+          $ref: '#/components/schemas/PhoneNumber'
         email:
-          type: string
-          format: email
-          description: Primary business email address.
+          $ref: '#/components/schemas/Email'
         website:
           type: string
           format: uri
-          description: Business website URL.
+          maxLength: 100
         description:
           type: string
-          description: Brief description of the business and its products or services.
+          minLength: 10
+          maxLength: 100
+          pattern: '[a-zA-Z0-9,.\/?:''"|~!@#$%^&*()+_= -]+'
+          example: Local fitness gym paying out instructors
         taxID:
           $ref: '#/components/schemas/TaxID'
         industryCodes:
           $ref: '#/components/schemas/IndustryCodes'
-    GovernmentID:
-      type: object
-      description: Government-issued identification for KYC verification.
-      properties:
-        ssn:
-          $ref: '#/components/schemas/SsnOrItin'
-        itin:
-          $ref: '#/components/schemas/SsnOrItin'
-    Phone:
-      type: object
-      description: Phone number with country code.
-      properties:
-        number:
+        industry:
           type: string
-          description: Phone number digits without formatting.
-          pattern: ^\d{10,15}$
-        countryCode:
-          type: string
-          description: International country calling code (e.g., "1" for US).
-    Capability:
+          description: Classification identifier for the industry. Use the [GET industries](https://docs.moov.io/api/enrichment/form-shortening/industries/get/) endpoint to retrieve an array of valid industry details for a merchant, inducing all industry field values.
+          example: electronics-appliances
+        primaryRegulator:
+          $ref: '#/components/schemas/PrimaryRegulator'
+    Address:
       type: object
-      description: A feature or permission that enables specific financial operations on a Moov account, such as the ability to send or receive funds.
+      required:
+      - addressLine1
+      - city
+      - stateOrProvince
+      - postalCode
+      - country
       properties:
-        capability:
+        addressLine1:
           type: string
-          description: Identifier for the capability type (e.g., "transfers.push", "collect-funds").
+          maxLength: 60
+          pattern: '[a-zA-Z0-9,.\/?:''"|~!@#$%^&*()+_= -]+'
+          example: 123 Main Street
+        addressLine2:
+          type: string
+          maxLength: 32
+          pattern: '[a-zA-Z0-9,.\/?:''"|~!@#$%^&*()+_= -]+'
+          example: Apt 302
+        city:
+          type: string
+          maxLength: 32
+          pattern: '[a-zA-Z0-9,.\/?:''"|~!@#$%^&*()+_= -]+'
+          example: Boulder
+        stateOrProvince:
+          type: string
+          maxLength: 2
+          example: CO
+        postalCode:
+          type: string
+          maxLength: 5
+          example: '80301'
+        country:
+          type: string
+          maxLength: 2
+          example: US
+    Account:
+      type: object
+      required:
+      - accountID
+      - mode
+      - accountType
+      - displayName
+      - profile
+      - verification
+      - createdOn
+      - updatedOn
+      properties:
         accountID:
           type: string
-          format: uuid
-          description: The account this capability belongs to.
-        status:
+          description: Unique identifier for this account.
+          example: c520f1b9-0ba7-42f5-b977-248cdbe41c69
+        mode:
+          $ref: '#/components/schemas/Mode'
+        accountType:
+          $ref: '#/components/schemas/AccountType'
+        displayName:
           type: string
-          description: Current activation status of the capability.
-          enum:
-          - enabled
-          - disabled
-          - pending
-          - in-review
-        requirements:
+          maxLength: 64
+          example: Whole Body Fitness
+        profile:
+          $ref: '#/components/schemas/Profile'
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+        termsOfService:
+          $ref: '#/components/schemas/TermsOfService'
+        capabilities:
           type: array
-          description: List of requirements that must be fulfilled to activate this capability.
           items:
-            $ref: '#/components/schemas/CapabilityRequirement'
-        disabledReason:
+            $ref: '#/components/schemas/AccountCapability'
+        verification:
+          $ref: '#/components/schemas/Verification'
+        foreignID:
           type: string
-          description: Explanation of why the capability is disabled, if applicable.
+          maxLength: 64
+          pattern: '[a-zA-Z0-9,.\/?:''"|~!@#$%^&*()+_= -]+'
+          description: Optional alias from a foreign/external system which can be used to reference this resource.
+        customerSupport:
+          $ref: '#/components/schemas/CustomerSupport'
+        settings:
+          $ref: '#/components/schemas/Settings'
         createdOn:
           type: string
           format: date-time
-          description: ISO 8601 timestamp when the capability was created.
+          example: '2024-05-06T12:20:38.184Z'
         updatedOn:
           type: string
           format: date-time
-          description: ISO 8601 timestamp when the capability was last updated.
+          example: '2024-05-06T12:20:38.184Z'
+        disconnectedOn:
+          type: string
+          format: date-time
+          example: '2024-05-06T12:20:38.184Z'
+      example:
+        mode: sandbox
+        accountID: 53ca67ea-6fd3-423f-9544-ce2404159d33
+        accountType: business
+        displayName: Whole Body Fitness LLC
+        profile:
+          business:
+            legalBusinessName: Whole Body Fitness LLC
+            ownersProvided: false
+        verification:
+          verificationStatus: unverified
+          status: unverified
+        settings:
+          cardPayment:
+            statementDescriptor: Whole Body Fitness LLC
+          achPayment:
+            companyName: Whole Body Fitne
+        createdOn: '2024-12-16T17:55:20.557151867Z'
+        updatedOn: '2024-12-16T17:55:20.557151867Z'
+    TermsOfServiceError:
+      type: object
+      properties:
+        token:
+          type: string
+        manual:
+          type: object
+          properties:
+            acceptedDate:
+              type: string
+            acceptedDomain:
+              type: string
+            acceptedIP:
+              type: string
+            acceptedUserAgent:
+              type: string
+    ConnectAccountRequestValidationError:
+      type: object
+      properties:
+        principalAccountID:
+          type: string
+        allowScopes:
+          $ref: '#/components/schemas/ArrayValidationError'
+    PhoneNumber:
+      type: object
+      properties:
+        number:
+          type: string
+          maxLength: 10
+          example: '8185551212'
+        countryCode:
+          type: string
+          maxLength: 1
+          example: '1'
+    PatchBusiness:
+      type: object
+      properties:
+        legalBusinessName:
+          type: string
+          maxLength: 64
+          pattern: '[À-ÖØ-öø-ÿ"''(),.0-9A-Za-z~ &!+:/-]*'
+        doingBusinessAs:
+          type: string
+          maxLength: 64
+          pattern: '[À-ÖØ-öø-ÿ"''(),.0-9A-Za-z~ &!+:/-]*'
+        businessType:
+          $ref: '#/components/schemas/BusinessType'
+        address:
+          $ref: '#/components/schemas/AddressUpdate'
+        phone:
+          $ref: '#/components/schemas/PhoneNumber'
+        email:
+          $ref: '#/components/schemas/Email'
+        website:
+          type: string
+          maxLength: 100
+        description:
+          type: string
+          minLength: 10
+          maxLength: 100
+          pattern: '[a-zA-Z0-9,.\/?:''"|~!@#$%^&*()+_= -]+'
+        taxID:
+          $ref: '#/components/schemas/TaxIDUpdate'
+        ownersProvided:
+          type: boolean
+        industryCodes:
+          $ref: '#/components/schemas/IndustryCodes'
+        industry:
+          type: string
+          description: Classification identifier for the industry. Use the [GET industries](https://docs.moov.io/api/enrichment/form-shortening/industries/get/) endpoint to retrieve an array of valid industry details for a merchant, inducing all industry field values.
+          example: electronics-appliances
+        primaryRegulator:
+          $ref: '#/components/schemas/PrimaryRegulator'
+    VerificationStatusDetail:
+      type: string
+      enum:
+      - failedAutoVerify
+      - docDobMismatch
+      - docNameMismatch
+      - docAddressMismatch
+      - docNumberMismatch
+      - docIncomplete
+      - docFailedRisk
+      - potentialAccountSanctionsMatch
+      - potentialRepresentativeSanctionsMatch
+      - failedOther
+      description: Additional detail for a verification status.
+      deprecated: true
+    CreateAccount:
+      type: object
+      required:
+      - accountType
+      - profile
+      properties:
+        accountType:
+          $ref: '#/components/schemas/CreateAccountType'
+        profile:
+          $ref: '#/components/schemas/CreateProfile'
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+        termsOfService:
+          $ref: '#/components/schemas/TermsOfServicePayload'
+        foreignID:
+          type: string
+          maxLength: 64
+          pattern: '[a-zA-Z0-9,.\/?:''"|~!@#$%^&*()+_= -]+'
+          description: Optional alias from a foreign/external system which can be used to reference this resource.
+        customerSupport:
+          $ref: '#/components/schemas/CustomerSupport'
+        settings:
+          $ref: '#/components/schemas/Settings'
+        capabilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/CapabilityID'
+          description: 'Capabilities to request when the account is created. Request granular capability IDs that match your use case.
+
+
+            Read our [capabilities reference](https://docs.moov.io/guides/accounts/capabilities/reference/) to choose the right capabilities for your integration.
+
+
+            The `send-funds`, `collect-funds`, and `wallet` capability IDs are deprecated. Use granular values such as `send-funds.ach`, `collect-funds.card-payments`, or `wallet.balance` instead.'
+          example:
+          - collect-funds.card-payments
+          - send-funds.ach
+        mode:
+          $ref: '#/components/schemas/Mode'
+      example:
+        accountType: business
+        profile:
+          business:
+            legalBusinessName: Whole Body Fitness LLC
+    PatchIndividual:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/IndividualNameUpdate'
+        phone:
+          $ref: '#/components/schemas/PhoneNumber'
+        email:
+          $ref: '#/components/schemas/Email'
+        address:
+          $ref: '#/components/schemas/AddressUpdate'
+        birthDate:
+          $ref: '#/components/schemas/BirthDateUpdate'
+        governmentID:
+          $ref: '#/components/schemas/GovernmentID'
+      description: Describes the fields available when patching an individual.
+    BirthDate:
+      type: object
+      required:
+      - day
+      - month
+      - year
+      properties:
+        day:
+          type: integer
+          example: 9
+        month:
+          type: integer
+          example: 11
+        year:
+          type: integer
+          example: 1989
+    IndividualProfile:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          $ref: '#/components/schemas/IndividualName'
+        phone:
+          $ref: '#/components/schemas/PhoneNumber'
+        email:
+          $ref: '#/components/schemas/Email'
+        address:
+          $ref: '#/components/schemas/Address'
+        birthDateProvided:
+          type: boolean
+          description: Indicates whether this individual's birth date has been provided.
+        governmentIDProvided:
+          type: boolean
+          description: Indicates whether a government ID (SSN, ITIN, etc.) has been provided for this individual.
+      description: Describes an individual.
+    GuestProfile:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+          maxLength: 64
+          pattern: '[À-ÖØ-öø-ÿ"''(),.0-9A-Za-z~ &!-]*'
+          description: 'The name associated with the guest account.
+
+            This will default to "Guest {accountIDfirst8}" if no other name is provided.'
+          example: Guest 75e5fbb8
+        phone:
+          $ref: '#/components/schemas/PhoneNumber'
+        email:
+          $ref: '#/components/schemas/Email'
+      description: Describes a guest account profile.
+    Document:
+      type: object
+      required:
+      - documentID
+      - type
+      - contentType
+      - uploadedAt
+      properties:
+        documentID:
+          type: string
+          example: e07e83e8-9429-4e99-ac99-c941f719eb39
+        type:
+          $ref: '#/components/schemas/DocumentType'
+        contentType:
+          type: string
+          description: The document's MIME type.
+          example: application/pdf
+        parseErrors:
+          type: array
+          items:
+            type: string
+          description: Optional array of errors encountered during automated parsing.
+        uploadedAt:
+          type: string
+          format: date-time
+          example: '2024-05-06T12:20:38.184Z'
+    CapabilityStatus:
+      type: string
+      enum:
+      - enabled
+      - disabled
+      - pending
+      - in-review
+      description: The status of the capability requested for an account.
+    GenericError:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    AssignCountriesError:
+      type: object
+      required:
+      - countries
+      properties:
+        countries:
+          type: object
+          additionalProperties:
+            type: string
+    RepresentativeResponsibilities:
+      type: object
+      properties:
+        isController:
+          type: boolean
+          description: Indicates whether this individual has significant management responsibilities within the business.
+        isOwner:
+          type: boolean
+          description: 'If `true`, this field indicates that the individual has a business ownership stake of at least 25% in the
+
+            business. If the representative does not own at least 25% of the business, this field should be `false`.'
+        ownershipPercentage:
+          type: integer
+          description: The percentage of ownership this individual has in the business (required if `isOwner` is `true`).
+          example: 38
+        jobTitle:
+          type: string
+          maxLength: 64
+          pattern: '[a-zA-Z0-9,.\/?:''"|~!@#$%^&*()+_= -]+'
+          example: CEO
+      description: Describes the job responsibilities of a business representative.
   parameters:
-    SkipParam:
-      name: skip
+    AccountsQuery.capability:
+      name: capability
       in: query
-      description: Number of results to skip for pagination.
+      required: false
+      description: '  Filter connected accounts by the capability.'
       schema:
-        type: integer
-        minimum: 0
-        default: 0
-    AccountIDParam:
-      name: accountID
-      in: path
-      required: true
-      description: Unique identifier for the Moov account.
-      schema:
-        type: string
-        format: uuid
-    CountParam:
+        $ref: '#/components/schemas/CapabilityID'
+      explode: false
+    Pagination.count:
       name: count
       in: query
-      description: Maximum number of results to return per page.
+      required: false
+      description: Page size. When omitted, the server defaults to `200`.
       schema:
-        type: integer
-        minimum: 1
-        maximum: 100
-        default: 20
+        $ref: '#/components/schemas/Count'
+      explode: false
+    VersionHeader:
+      name: X-Moov-Version
+      in: header
+      required: false
+      description: 'Set this header to v2026.01.00 to use the API described in this specification.
+
+        When omitted, the server defaults to v2024.01.00, the earliest supported version, which may not match the behavior documented here.
+
+        An unrecognized well-formed version uses the latest supported version that is not newer than the requested version, when one exists.
+
+        For example, `v2026.08.00` uses `v2026.07.00`.
+
+        A malformed value, such as `2022`, returns a `404` response.'
+      schema:
+        type: string
+        enum:
+        - v2026.01.00
+        example: v2026.01.00
+        x-speakeasy-ignore: true
+      x-speakeasy-ignore: true
+    AccountsQuery.capabilityStatus:
+      name: capabilityStatus
+      in: query
+      required: false
+      description: '  Filter connected accounts by the capability.'
+      schema:
+        $ref: '#/components/schemas/CapabilityStatus'
+      explode: false
+    AccountsQuery.email:
+      name: email
+      in: query
+      required: false
+      description: "  Filter connected accounts by email address.\n\n  Provide the full email address to filter by email."
+      schema:
+        type: string
+      explode: false
+    AccountsQuery.includeDisconnected:
+      name: includeDisconnected
+      in: query
+      required: false
+      description: 'Filter disconnected accounts.
+
+
+        If true, the response will include disconnected accounts.'
+      schema:
+        type: boolean
+      explode: false
+    Pagination.skip:
+      name: skip
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/Skip'
+      explode: false
+    AccountsQuery.type:
+      name: type
+      in: query
+      required: false
+      description: "  Filter connected accounts by AccountType.\n\n  If the `type` parameter is used in combination with `name`, only the corresponding type's name fields will\n  be searched. For example, if `type=business` and `name=moov`, the search will attempt to find matches against\n  the display name and Business Profile name fields (`legalBusinessName`, and `doingBusinessAs`).\n\n  Filtering by `type=guest` is not currently supported."
+      schema:
+        $ref: '#/components/schemas/CreateAccountType'
+      explode: false
+    AccountsQuery.foreignID:
+      name: foreignID
+      in: query
+      required: false
+      description: '  Serves as an optional alias from a foreign/external system which can be used to reference this resource.'
+      schema:
+        type: string
+        pattern: '[a-zA-Z0-9,.\/?:''"|~!@#$%^&*()+_= -]+'
+      explode: false
+    AccountsQuery.name:
+      name: name
+      in: query
+      required: false
+      description: "Filter connected accounts by name.\n\nIf provided, this query will attempt to find matches against the following Account and Profile fields:\n<ul>\n  <li>Account `displayName`</li>\n  <li>Individual Profile `firstName`, `middleName`, and `lastName`</li>\n  <li>Business Profile `legalBusinessName`</li>\n</ul>\n\nFiltering by Guest Profile `name` is not currently supported."
+      schema:
+        type: string
+      explode: false
     accountID:
       name: accountID
       in: path
@@ -603,30 +2610,16 @@ components:
         type: string
         format: uuid
       description: The Moov account identifier.
-  responses:
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    BadRequest:
-      description: The request was malformed or contained invalid parameters.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: Basic
     bearerAuth:
       type: http
       scheme: bearer
-      description: OAuth2 bearer token obtained from the /oauth2/token endpoint. Include in the Authorization header as "Bearer {token}".
+      bearerFormat: JWT
+      description: OAuth 2.0 access token passed as a Bearer token.
 x-refined-from:
-- moov-api-openapi.yml
+- moov-api-v2026.01.00-openapi.yml
+- moov-openapi.yml
 - moov-openapi.yml

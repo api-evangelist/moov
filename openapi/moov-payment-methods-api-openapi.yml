@@ -1,64 +1,230 @@
 openapi: 3.2.0
 info:
-  title: Moov Payment Methods API
-  termsOfService: https://moov.io/legal/platform-agreement/
+  title: Moov Payment methods API
   version: '1.0'
-  description: 'Operations tagged Payment Methods across 2 of this provider''s published API definitions: moov-api-openapi.yml, moov-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: 'Operations tagged Payment methods across 3 of this provider''s published API definitions: moov-api-v2026.01.00-openapi.yml, moov-openapi.yml, moov-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.moov.io
-  description: Production Server
-security:
-- bearerAuth: []
+  description: Production API host
+  variables: {}
 tags:
 - name: Payment Methods
-  description: Retrieve the available payment methods on an account, including bank accounts, cards, and wallets, which can be used as transfer sources or destinations.
 paths:
   /accounts/{accountID}/payment-methods:
     get:
       operationId: listPaymentMethods
-      summary: List payment methods
-      description: Retrieve all available payment methods for a Moov account, including bank accounts, cards, and wallets. The available methods depend on linked funding sources and the account's enabled capabilities.
-      tags:
-      - Payment Methods
+      description: 'Retrieve a list of payment methods associated with a Moov account. Read our payment methods
+
+        guide to learn more.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/payment-methods.read` scope.'
       parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: sourceID
+        in: query
+        required: false
+        description: "Optional parameter to filter the account's payment methods by source ID. \n\nA source ID can be a [walletID](https://docs.moov.io/api/sources/wallets/list/), [cardID](https://docs.moov.io/api/sources/cards/list/), \nor [bankAccountID](https://docs.moov.io/api/sources/bank-accounts/list/)."
+        schema:
+          type: string
+        explode: false
+      - name: paymentMethodType
+        in: query
+        required: false
+        description: Optional parameter to filter the account's payment methods by payment method type.
+        schema:
+          $ref: '#/components/schemas/PaymentMethodType'
+        explode: false
       responses:
         '200':
-          description: Payment methods returned successfully.
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/PaymentMethod'
+              example:
+              - paymentMethodID: 01234567-89ab-cdef-0123-456789abcdef
+                paymentMethodType: moov-wallet
+                wallet:
+                  walletID: 01234567-89ab-cdef-0123-456789abcdef
+                  partnerAccountID: 65b57f28-49e9-4afb-9bf6-7e4fb6444917
+                  walletType: general
+              - paymentMethodID: 01234567-89ab-cdef-0123-456789abcdef
+                paymentMethodType: apple-pay
+                applePay:
+                  brand: Visa
+                  cardType: credit
+                  cardDisplayName: Visa 1256
+                  fingerprint: 9948962d92a1ce40c9f918cd9ece3a22bde62fb325a2f1fe2e833969de672ba3
+                  expiration:
+                    month: '01'
+                    year: '21'
+                  dynamicLastFour: '1256'
+                  issuerCountry: US
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Payment Methods
+      x-speakeasy-name-override: list
+      security:
+      - BasicAuth: []
+      summary: List payment methods
+      x-summary-source: derived
     parameters:
     - $ref: '#/components/parameters/accountID'
     servers:
     - url: https://api.moov.io
-      description: Production Server
+      description: Production API host
+      variables: {}
   /accounts/{accountID}/payment-methods/{paymentMethodID}:
     get:
       operationId: getPaymentMethod
-      summary: Retrieve a payment method
-      description: Fetch the details of a specific payment method on a Moov account.
-      tags:
-      - Payment Methods
+      description: 'Get the specified payment method associated with a Moov account. Read our payment methods guide to learn more.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/payment-methods.read` scope.'
       parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
-      - $ref: '#/components/parameters/PaymentMethodIDParam'
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: paymentMethodID
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/PaymentMethodID'
       responses:
         '200':
-          description: Payment method returned successfully.
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/PaymentMethod'
+              example:
+                paymentMethodID: 01234567-89ab-cdef-0123-456789abcdef
+                paymentMethodType: moov-wallet
+                wallet:
+                  walletID: 01234567-89ab-cdef-0123-456789abcdef
+                  partnerAccountID: 65b57f28-49e9-4afb-9bf6-7e4fb6444917
+                  walletType: general
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
         '404':
-          $ref: '#/components/responses/NotFound'
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Payment Methods
+      x-speakeasy-name-override: get
+      security:
+      - BasicAuth: []
+      summary: Get payment method
+      x-summary-source: derived
     parameters:
     - $ref: '#/components/parameters/accountID'
     - name: paymentMethodID
@@ -68,282 +234,710 @@ paths:
         type: string
     servers:
     - url: https://api.moov.io
-      description: Production Server
+      description: Production API host
+      variables: {}
 components:
   schemas:
-    Address:
+    CardPaymentPaymentMethod:
       type: object
-      description: Physical or mailing address.
+      required:
+      - paymentMethodID
+      - paymentMethodType
+      - card
+      properties:
+        paymentMethodID:
+          $ref: '#/components/schemas/PaymentMethodID'
+        paymentMethodType:
+          type: string
+          enum:
+          - card-payment
+        card:
+          $ref: '#/components/schemas/PaymentMethodsCard'
+      title: Card payment
+    CardPresentPaymentPaymentMethod:
+      type: object
+      required:
+      - paymentMethodID
+      - paymentMethodType
+      properties:
+        paymentMethodID:
+          $ref: '#/components/schemas/PaymentMethodID'
+        paymentMethodType:
+          type: string
+          enum:
+          - card-present-payment
+        terminalCard:
+          $ref: '#/components/schemas/TerminalCard'
+      description: A card used at point of sale terminal for a card present transaction as contained within a payment method.
+    InstantBankCreditPaymentMethod:
+      type: object
+      required:
+      - paymentMethodID
+      - paymentMethodType
+      - bankAccount
+      properties:
+        paymentMethodID:
+          $ref: '#/components/schemas/PaymentMethodID'
+        paymentMethodType:
+          type: string
+          enum:
+          - instant-bank-credit
+        bankAccount:
+          $ref: '#/components/schemas/PaymentMethodsBankAccount'
+      description: Instantly send funds to a bank account.
+    CardExpiration:
+      type: object
+      required:
+      - month
+      - year
+      properties:
+        month:
+          type: string
+          minLength: 2
+          maxLength: 2
+          description: Two-digit month the card expires.
+        year:
+          type: string
+          minLength: 2
+          maxLength: 2
+          description: Two-digit year the card expires.
+      description: The expiration date of the card or token.
+      example:
+        month: '01'
+        year: '21'
+    AchCreditStandardPaymentMethod:
+      type: object
+      required:
+      - paymentMethodID
+      - paymentMethodType
+      - bankAccount
+      properties:
+        paymentMethodID:
+          $ref: '#/components/schemas/PaymentMethodID'
+        paymentMethodType:
+          type: string
+          enum:
+          - ach-credit-standard
+        bankAccount:
+          $ref: '#/components/schemas/PaymentMethodsBankAccount'
+      title: ACH credit standard
+    PaymentMethodType:
+      type: string
+      enum:
+      - moov-wallet
+      - ach-debit-fund
+      - ach-debit-collect
+      - ach-credit-standard
+      - ach-credit-same-day
+      - rtp-credit
+      - card-payment
+      - push-to-card
+      - pull-from-card
+      - apple-pay
+      - card-present-payment
+      - instant-bank-credit
+      description: The payment method type that represents a payment rail and directionality
+    DomesticPullFromCard:
+      type: string
+      enum:
+      - not-supported
+      - supported
+      - unknown
+      description: Indicates if the card supports domestic pull-from-card transfer.
+      example: supported
+    CardID:
+      type: string
+      description: ID of the card.
+      example: 01234567-89ab-cdef-0123-456789abcdef
+    CardAccountUpdater:
+      type: object
+      properties:
+        updatedOn:
+          type: string
+          format: date-time
+          description: Timestamp from the card network indicating when the card update was processed.
+        updateType:
+          $ref: '#/components/schemas/CardUpdateReason'
+      description: The results of the most recent card update request.
+      example:
+        updatedOn: '2024-05-06T12:20:38.184Z'
+        updateType: number-update
+    CardVerificationResult:
+      type: string
+      enum:
+      - noMatch
+      - match
+      - notChecked
+      - unavailable
+      - partialMatch
+      description: The result of a card verification check.
+      example: match
+    WalletID:
+      type: string
+    CardAddress:
+      type: object
+      required:
+      - postalCode
       properties:
         addressLine1:
           type: string
-          description: Primary street address.
+          maxLength: 60
+          description: Street address line 1.
         addressLine2:
           type: string
-          description: Secondary address line (suite, apartment, etc.).
+          maxLength: 32
+          description: Street address line 2 (e.g., apartment or suite number).
         city:
           type: string
+          maxLength: 32
           description: City name.
         stateOrProvince:
           type: string
-          description: Two-letter state or province code.
           maxLength: 2
+          description: Two-letter state or province code.
         postalCode:
           type: string
+          maxLength: 10
           description: Postal or ZIP code.
         country:
           type: string
-          description: Two-letter ISO 3166-1 alpha-2 country code.
           maxLength: 2
-    Wallet:
+          description: Two-letter ISO 3166-1 country code.
+      example:
+        addressLine1: 123 Main Street
+        addressLine2: Apt 302
+        city: Boulder
+        stateOrProvince: CO
+        postalCode: '80301'
+        country: US
+    CardBrand:
+      type: string
+      enum:
+      - American Express
+      - Discover
+      - Mastercard
+      - Visa
+      - Unknown
+      description: The card brand.
+      example: Visa
+    RtpCreditPaymentMethod:
       type: object
-      description: A Moov digital wallet that holds funds on the platform for an account. Wallets serve as intermediate stores of value for money movement.
+      required:
+      - paymentMethodID
+      - paymentMethodType
+      - bankAccount
       properties:
-        walletID:
+        paymentMethodID:
+          $ref: '#/components/schemas/PaymentMethodID'
+        paymentMethodType:
           type: string
-          format: uuid
-          description: Unique identifier for the wallet.
-        availableBalance:
-          $ref: '#/components/schemas/Amount'
-        createdOn:
-          type: string
-          format: date-time
-          description: ISO 8601 timestamp when the wallet was created.
-        updatedOn:
-          type: string
-          format: date-time
-          description: ISO 8601 timestamp when the wallet was last updated.
-    Amount:
+          enum:
+          - rtp-credit
+        bankAccount:
+          $ref: '#/components/schemas/PaymentMethodsBankAccount'
+      title: RTP credit
+    TerminalCard:
       type: object
-      description: A monetary amount with currency denomination.
       properties:
-        currency:
-          type: string
-          description: ISO 4217 three-letter currency code.
-          default: USD
-          minLength: 3
-          maxLength: 3
-        value:
-          type: integer
-          description: Amount in the smallest currency unit (e.g., cents for USD).
-          minimum: 0
-    Error:
-      type: object
-      description: Standard error response returned by the Moov API.
-      properties:
-        error:
-          type: string
-          description: Human-readable description of the error.
-        code:
-          type: string
-          description: Machine-readable error code.
-    CardVerification:
-      type: object
-      description: Results of card verification checks.
-      properties:
-        cvv:
-          type: string
-          description: CVV verification result.
-          enum:
-          - match
-          - noMatch
-          - notChecked
-          - unavailable
-        addressLine1:
-          type: string
-          description: Address line 1 AVS verification result.
-          enum:
-          - match
-          - noMatch
-          - notChecked
-          - unavailable
-        postalCode:
-          type: string
-          description: Postal code AVS verification result.
-          enum:
-          - match
-          - noMatch
-          - notChecked
-          - unavailable
-    BankAccount:
-      type: object
-      description: A bank account linked to a Moov account as a funding source for ACH and RTP transfers.
-      properties:
-        bankAccountID:
-          type: string
-          format: uuid
-          description: Unique identifier for the bank account.
-        bankName:
-          type: string
-          description: Name of the financial institution.
-        bankAccountType:
-          type: string
-          description: Type of bank account.
-          enum:
-          - checking
-          - savings
-          - loan
-        routingNumber:
-          type: string
-          description: ABA routing transit number for the bank.
-          pattern: ^\d{9}$
-        lastFourAccountNumber:
-          type: string
-          description: Last four digits of the bank account number.
-          pattern: ^\d{4}$
-        status:
-          type: string
-          description: Verification and usability status of the bank account.
-          enum:
-          - new
-          - unverified
-          - pending
-          - verified
-          - errored
-        verificationStatus:
-          type: string
-          description: Current state of the bank account verification process.
-          enum:
-          - unverified
-          - pending
-          - verificationFailed
-          - verified
-          - mxVerified
-        createdOn:
-          type: string
-          format: date-time
-          description: ISO 8601 timestamp when the bank account was linked.
-        updatedOn:
-          type: string
-          format: date-time
-          description: ISO 8601 timestamp when the bank account was last updated.
-    Card:
-      type: object
-      description: A credit or debit card linked to a Moov account as a payment source.
-      properties:
-        cardID:
-          type: string
-          format: uuid
-          description: Unique identifier for the card.
-        fingerprint:
-          type: string
-          description: Unique fingerprint identifying the underlying card number.
+        entryMode:
+          $ref: '#/components/schemas/EntryMode'
         brand:
-          type: string
-          description: Card network brand.
-          enum:
-          - Visa
-          - Mastercard
-          - AmericanExpress
-          - Discover
-          - DinersClub
-          - JCB
-        cardType:
-          type: string
-          description: Type of card.
-          enum:
-          - debit
-          - credit
-          - prepaid
-          - unknown
-        lastFourCardNumber:
-          type: string
-          description: Last four digits of the card number.
-          pattern: ^\d{4}$
+          $ref: '#/components/schemas/CardBrand'
         bin:
           type: string
-          description: First six digits of the card number (Bank Identification Number).
+          minLength: 6
+          maxLength: 8
+        cardType:
+          $ref: '#/components/schemas/CardType'
+        expiration:
+          $ref: '#/components/schemas/CardExpiration'
+        fingerprint:
+          $ref: '#/components/schemas/CardFingerprint'
+        holderName:
+          type: string
+          description: The name of the cardholder as it appears on the card.
+        issuer:
+          type: string
+          description: Financial institution that issued the card.
+        issuerCountry:
+          type: string
+          description: Country where the card was issued.
+        lastFourCardNumber:
+          type: string
+          minLength: 4
+          maxLength: 4
+          description: Last four digits of the card number
+        applicationID:
+          type: string
+          description: Identifier for the point of sale terminal application.
+        applicationName:
+          type: string
+          description: Name label for the point of sale terminal application.
+      description: Describes payment card details captured with tap or in-person payment.
+      example:
+        entryMode: contactless
+        brand: Visa
+        bin: '123456'
+        cardType: credit
+        expiration:
+          month: '01'
+          year: '21'
+        fingerprint: 9948962d92a1ce40c9f918cd9ece3a22bde62fb325a2f1fe2e833969de672ba3
+        holderName: Jules Jackson
+        issuer: GRINGOTTS BANK
+        issuerCountry: US
+        lastFourCardNumber: '1234'
+    PullFromCardPaymentMethod:
+      type: object
+      required:
+      - paymentMethodID
+      - paymentMethodType
+      - card
+      properties:
+        paymentMethodID:
+          $ref: '#/components/schemas/PaymentMethodID'
+        paymentMethodType:
+          type: string
+          enum:
+          - pull-from-card
+        card:
+          $ref: '#/components/schemas/PaymentMethodsCard'
+      title: Pull from card
+    MoovWalletPaymentMethod:
+      type: object
+      required:
+      - paymentMethodID
+      - paymentMethodType
+      - wallet
+      properties:
+        paymentMethodID:
+          $ref: '#/components/schemas/PaymentMethodID'
+        paymentMethodType:
+          type: string
+          enum:
+          - moov-wallet
+        wallet:
+          $ref: '#/components/schemas/PaymentMethodsWallet'
+      title: Moov wallet
+    CardVerification:
+      type: object
+      required:
+      - cvv
+      - addressLine1
+      - postalCode
+      properties:
+        cvv:
+          allOf:
+          - $ref: '#/components/schemas/CardVerificationResult'
+          description: Verification result of the card's CVV.
+        addressLine1:
+          allOf:
+          - $ref: '#/components/schemas/CardVerificationResult'
+          description: 'Verification result of the billing address line 1.
+
+            Derived from the same AVS code as `postalCode`; the card network returns a single code covering both address fields.'
+        postalCode:
+          allOf:
+          - $ref: '#/components/schemas/CardVerificationResult'
+          description: 'Verification result of the billing address postal code.
+
+            Derived from the same AVS code as `addressLine1`; the card network returns a single code covering both address fields.'
+        accountName:
+          allOf:
+          - $ref: '#/components/schemas/AccountNameVerification'
+          description: Verification results of the cardholder's name, broken down by name component.
+      description: The results of submitting cardholder data to a card network for verification.
+      example:
+        cvv: match
+        addressLine1: match
+        postalCode: match
+        accountName:
+          firstName: match
+          lastName: match
+          middleName: match
+          fullName: match
+    PaymentMethodsWallet:
+      type: object
+      required:
+      - walletID
+      - partnerAccountID
+      - walletType
+      properties:
+        walletID:
+          $ref: '#/components/schemas/WalletID'
+        partnerAccountID:
+          type: string
+        walletType:
+          $ref: '#/components/schemas/WalletType'
+    PaymentMethodsCard:
+      type: object
+      required:
+      - cardID
+      - fingerprint
+      - brand
+      - cardType
+      - lastFourCardNumber
+      - bin
+      - expiration
+      - billingAddress
+      - cardVerification
+      properties:
+        cardID:
+          $ref: '#/components/schemas/CardID'
+        fingerprint:
+          $ref: '#/components/schemas/CardFingerprint'
+        brand:
+          $ref: '#/components/schemas/CardBrand'
+        cardType:
+          $ref: '#/components/schemas/CardType'
+        lastFourCardNumber:
+          type: string
+          minLength: 4
+          maxLength: 4
+          description: Last four digits of the card number
+        bin:
+          type: string
+          minLength: 6
+          maxLength: 8
+          description: The first six to eight digits of the card number, which identifies the financial institution that issued the card.
         expiration:
           $ref: '#/components/schemas/CardExpiration'
         holderName:
           type: string
-          description: Name of the cardholder as it appears on the card.
+          description: The name of the cardholder as it appears on the card.
         billingAddress:
-          $ref: '#/components/schemas/Address'
+          allOf:
+          - $ref: '#/components/schemas/CardAddress'
+          description: The billing address associated with the card.
         cardVerification:
           $ref: '#/components/schemas/CardVerification'
         issuer:
           type: string
-          description: Name of the card-issuing financial institution.
+          description: Financial institution that issued the card.
         issuerCountry:
           type: string
-          description: Two-letter ISO country code of the card issuer.
-          maxLength: 2
-        createdOn:
+          description: Country where the card was issued.
+        cardOnFile:
+          type: boolean
+          description: Indicates cardholder has authorized card to be stored for future payments.
+        merchantAccountID:
           type: string
-          format: date-time
-          description: ISO 8601 timestamp when the card was linked.
+          description: 'Merchant account whose details (statement descriptor, address, etc.) are used for the card verification authorization.
+
+            If omitted, the partner account''s details are used instead.'
+        cardAccountUpdater:
+          $ref: '#/components/schemas/CardAccountUpdater'
+        domesticPushToCard:
+          $ref: '#/components/schemas/DomesticPushToCard'
+        domesticPullFromCard:
+          $ref: '#/components/schemas/DomesticPullFromCard'
+      description: A card as contained within a payment method.
+    ApplePayResponse:
+      type: object
+      required:
+      - brand
+      - cardType
+      - cardDisplayName
+      - fingerprint
+      - expiration
+      - dynamicLastFour
+      properties:
+        brand:
+          $ref: '#/components/schemas/CardBrand'
+        cardType:
+          $ref: '#/components/schemas/CardType'
+        cardDisplayName:
+          type: string
+          description: "  User-friendly name of the tokenized card returned by Apple.\n  \n  It usually contains the brand and the last four digits of the underlying card.\n  There is no standard format."
+          example: Visa 1256
+        fingerprint:
+          $ref: '#/components/schemas/CardFingerprint'
+        expiration:
+          $ref: '#/components/schemas/CardExpiration'
+        dynamicLastFour:
+          type: string
+          description: The last four digits of the Apple Pay token, which may differ from the tokenized card's last four digits.
+        issuerCountry:
+          type: string
+          description: Country where the underlying card was issued.
+          example: US
+      description: Describes an Apple Pay token on a Moov account.
+    BankAccountType:
+      type: string
+      enum:
+      - checking
+      - savings
+      - general-ledger
+      - loan
+      description: The bank account type.
+    CardFingerprint:
+      type: string
+      maxLength: 100
+      description: 'Uniquely identifies a linked payment card or token.
+
+        For Apple Pay, the fingerprint is based on the tokenized card number and may vary based on the user''s device.
+
+        This field can be used to identify specific payment methods across multiple accounts on your platform.'
+      example: 9948962d92a1ce40c9f918cd9ece3a22bde62fb325a2f1fe2e833969de672ba3
+    BankAccountStatus:
+      type: string
+      enum:
+      - new
+      - verified
+      - verificationFailed
+      - pending
+      - errored
+    BankAccountHolderType:
+      type: string
+      enum:
+      - individual
+      - business
+      - guest
+      description: The type of holder on a funding source.
+    EntryMode:
+      type: string
+      enum:
+      - contactless
+      description: How the card information was entered into the point of sale terminal.
+      example: contactless
+    WalletType:
+      type: string
+      enum:
+      - default
+      - general
+      - card-issuing
+      description: "Type of a wallet.\n  - `default`: The system-generated wallet automatically created when an account is granted the wallet capability.\n  - `general`: An additional, user-defined wallet created via API or Dashboard.\n  - `card-issuing`: The system-generated wallet automatically created when an account is granted the card-issuing capability."
+    AchDebitFundPaymentMethod:
+      type: object
+      required:
+      - paymentMethodID
+      - paymentMethodType
+      - bankAccount
+      properties:
+        paymentMethodID:
+          $ref: '#/components/schemas/PaymentMethodID'
+        paymentMethodType:
+          type: string
+          enum:
+          - ach-debit-fund
+        bankAccount:
+          $ref: '#/components/schemas/PaymentMethodsBankAccount'
+      title: ACH debit fund
+    DomesticPushToCard:
+      type: string
+      enum:
+      - not-supported
+      - standard
+      - fast-funds
+      - unknown
+      description: Indicates which level of domestic push-to-card transfer is supported by the card, if any.
+      example: standard
+    PaymentMethodID:
+      type: string
+      description: ID of the payment method.
+    PushToCardPaymentMethod:
+      type: object
+      required:
+      - paymentMethodID
+      - paymentMethodType
+      - card
+      properties:
+        paymentMethodID:
+          $ref: '#/components/schemas/PaymentMethodID'
+        paymentMethodType:
+          type: string
+          enum:
+          - push-to-card
+        card:
+          $ref: '#/components/schemas/PaymentMethodsCard'
+      title: Push to card
+    CardType:
+      type: string
+      enum:
+      - debit
+      - credit
+      - prepaid
+      - unknown
+      description: The type of the card.
+      example: credit
+    PaymentMethodsBankAccount:
+      type: object
+      required:
+      - bankAccountID
+      - fingerprint
+      - status
+      - holderName
+      - holderType
+      - bankName
+      - bankAccountType
+      - routingNumber
+      - lastFourAccountNumber
+      - updatedOn
+      properties:
+        bankAccountID:
+          type: string
+        fingerprint:
+          type: string
+          maxLength: 100
+          description: 'Once the bank account is linked, we don''t reveal the full bank account number.
+
+
+            The fingerprint acts as a way to identify whether two linked bank accounts are the same.'
+        status:
+          $ref: '#/components/schemas/BankAccountStatus'
+        holderName:
+          type: string
+        holderType:
+          $ref: '#/components/schemas/BankAccountHolderType'
+        bankName:
+          type: string
+        bankAccountType:
+          $ref: '#/components/schemas/BankAccountType'
+        routingNumber:
+          type: string
+        lastFourAccountNumber:
+          type: string
         updatedOn:
           type: string
           format: date-time
-          description: ISO 8601 timestamp when the card was last updated.
+      description: A bank account as contained within a payment method.
     PaymentMethod:
       type: object
-      description: A payment method on a Moov account, representing a bank account, card, or wallet that can be used as the source or destination of a transfer.
+      oneOf:
+      - $ref: '#/components/schemas/MoovWalletPaymentMethod'
+      - $ref: '#/components/schemas/AchDebitFundPaymentMethod'
+      - $ref: '#/components/schemas/AchDebitCollectPaymentMethod'
+      - $ref: '#/components/schemas/AchCreditStandardPaymentMethod'
+      - $ref: '#/components/schemas/AchCreditSameDayPaymentMethod'
+      - $ref: '#/components/schemas/RtpCreditPaymentMethod'
+      - $ref: '#/components/schemas/CardPaymentPaymentMethod'
+      - $ref: '#/components/schemas/PushToCardPaymentMethod'
+      - $ref: '#/components/schemas/PullFromCardPaymentMethod'
+      - $ref: '#/components/schemas/ApplePayPaymentMethod'
+      - $ref: '#/components/schemas/CardPresentPaymentPaymentMethod'
+      - $ref: '#/components/schemas/InstantBankCreditPaymentMethod'
+      discriminator:
+        propertyName: paymentMethodType
+        mapping:
+          moov-wallet: '#/components/schemas/MoovWalletPaymentMethod'
+          ach-debit-fund: '#/components/schemas/AchDebitFundPaymentMethod'
+          ach-debit-collect: '#/components/schemas/AchDebitCollectPaymentMethod'
+          ach-credit-standard: '#/components/schemas/AchCreditStandardPaymentMethod'
+          ach-credit-same-day: '#/components/schemas/AchCreditSameDayPaymentMethod'
+          rtp-credit: '#/components/schemas/RtpCreditPaymentMethod'
+          card-payment: '#/components/schemas/CardPaymentPaymentMethod'
+          push-to-card: '#/components/schemas/PushToCardPaymentMethod'
+          pull-from-card: '#/components/schemas/PullFromCardPaymentMethod'
+          apple-pay: '#/components/schemas/ApplePayPaymentMethod'
+          card-present-payment: '#/components/schemas/CardPresentPaymentPaymentMethod'
+          instant-bank-credit: '#/components/schemas/InstantBankCreditPaymentMethod'
+      description: A method of moving money
+    AchDebitCollectPaymentMethod:
+      type: object
+      required:
+      - paymentMethodID
+      - paymentMethodType
+      - bankAccount
       properties:
         paymentMethodID:
-          type: string
-          format: uuid
-          description: Unique identifier for the payment method.
+          $ref: '#/components/schemas/PaymentMethodID'
         paymentMethodType:
           type: string
-          description: The type of underlying payment instrument.
           enum:
-          - moov-wallet
-          - ach-debit-fund
           - ach-debit-collect
-          - ach-credit-standard
-          - ach-credit-same-day
-          - rtp-credit
-          - card-payment
-        wallet:
-          $ref: '#/components/schemas/Wallet'
         bankAccount:
-          $ref: '#/components/schemas/BankAccount'
-        card:
-          $ref: '#/components/schemas/Card'
-    CardExpiration:
+          $ref: '#/components/schemas/PaymentMethodsBankAccount'
+      title: ACH debit collect
+    AccountNameVerification:
       type: object
-      description: Card expiration date.
       properties:
-        month:
+        firstName:
+          allOf:
+          - $ref: '#/components/schemas/CardVerificationResult'
+          description: Verification result of the cardholder's first name.
+        lastName:
+          allOf:
+          - $ref: '#/components/schemas/CardVerificationResult'
+          description: Verification result of the cardholder's last name.
+        middleName:
+          allOf:
+          - $ref: '#/components/schemas/CardVerificationResult'
+          description: Verification result of the cardholder's middle name.
+        fullName:
+          allOf:
+          - $ref: '#/components/schemas/CardVerificationResult'
+          description: Verification result of the cardholder's full name.
+      description: The results of submitting cardholder name to a card network for verification.
+      example:
+        firstName: match
+        lastName: match
+        middleName: match
+        fullName: match
+    ApplePayPaymentMethod:
+      type: object
+      required:
+      - paymentMethodID
+      - paymentMethodType
+      - applePay
+      properties:
+        paymentMethodID:
+          $ref: '#/components/schemas/PaymentMethodID'
+        paymentMethodType:
           type: string
-          description: Two-digit expiration month.
-          pattern: ^(0[1-9]|1[0-2])$
-        year:
+          enum:
+          - apple-pay
+        applePay:
+          $ref: '#/components/schemas/ApplePayResponse'
+      title: Apple Pay
+    AchCreditSameDayPaymentMethod:
+      type: object
+      required:
+      - paymentMethodID
+      - paymentMethodType
+      - bankAccount
+      properties:
+        paymentMethodID:
+          $ref: '#/components/schemas/PaymentMethodID'
+        paymentMethodType:
           type: string
-          description: Two-digit expiration year.
-          pattern: ^\d{2}$
-  responses:
-    Unauthorized:
-      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+          enum:
+          - ach-credit-same-day
+        bankAccount:
+          $ref: '#/components/schemas/PaymentMethodsBankAccount'
+      title: ACH credit same day
+    CardUpdateReason:
+      type: string
+      enum:
+      - unspecified
+      - account-closed
+      - contact-cardholder
+      - expiration-update
+      - no-change
+      - no-match
+      - number-update
+      description: The results of the card update request.
+      example: number-update
   parameters:
-    AccountIDParam:
-      name: accountID
-      in: path
-      required: true
-      description: Unique identifier for the Moov account.
+    VersionHeader:
+      name: X-Moov-Version
+      in: header
+      required: false
+      description: 'Set this header to v2026.01.00 to use the API described in this specification.
+
+        When omitted, the server defaults to v2024.01.00, the earliest supported version, which may not match the behavior documented here.
+
+        An unrecognized well-formed version uses the latest supported version that is not newer than the requested version, when one exists.
+
+        For example, `v2026.08.00` uses `v2026.07.00`.
+
+        A malformed value, such as `2022`, returns a `404` response.'
       schema:
         type: string
-        format: uuid
-    PaymentMethodIDParam:
-      name: paymentMethodID
-      in: path
-      required: true
-      description: Unique identifier for the payment method.
-      schema:
-        type: string
-        format: uuid
+        enum:
+        - v2026.01.00
+        example: v2026.01.00
+        x-speakeasy-ignore: true
+      x-speakeasy-ignore: true
     accountID:
       name: accountID
       in: path
@@ -353,10 +947,15 @@ components:
         format: uuid
       description: The Moov account identifier.
   securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: Basic
     bearerAuth:
       type: http
       scheme: bearer
-      description: OAuth2 bearer token obtained from the /oauth2/token endpoint. Include in the Authorization header as "Bearer {token}".
+      bearerFormat: JWT
+      description: OAuth 2.0 access token passed as a Bearer token.
 x-refined-from:
-- moov-api-openapi.yml
+- moov-api-v2026.01.00-openapi.yml
+- moov-openapi.yml
 - moov-openapi.yml

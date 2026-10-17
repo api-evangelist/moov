@@ -1,0 +1,941 @@
+openapi: 3.2.0
+info:
+  title: Moov Images API
+  version: v2026.01.00
+  contact:
+    name: Moov Developer Support
+    email: help@moov.io
+    url: https://moov.io
+  license:
+    name: Unlicensed
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  description: 'Operations tagged Images across 2 of this provider''s published API definitions: moov-api-v2026.01.00-openapi.yml, moov-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moov.io
+  description: Production API host
+  variables: {}
+security:
+- BasicAuth: []
+tags:
+- name: Images
+paths:
+  /accounts/{accountID}/images:
+    get:
+      operationId: listImageMetadata
+      description: List metadata for all images in the specified account.
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: skip
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/Skip'
+        explode: false
+      - name: count
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/ImageListCount'
+        explode: false
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ImageMetadata'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Images
+      x-speakeasy-name-override: list
+      summary: List image metadata
+      x-summary-source: derived
+    post:
+      operationId: uploadImage
+      description: 'Upload a new PNG, JPEG, or WebP image with optional metadata.
+
+        Duplicate images return the existing image''s metadata with a 409 status. Requests larger than 16MB will be rejected.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: The resource was successfully created.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageMetadata'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '422':
+          description: The request was well-formed, but the contents failed validation. Check the request for missing or invalid fields.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageRequestValidationError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Images
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ImageUploadRequestMultiPart'
+            encoding:
+              image:
+                contentType: image/jpeg, image/png, image/webp
+              metadata:
+                contentType: application/json
+      x-speakeasy-name-override: upload
+      summary: Upload image
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+  /accounts/{accountID}/images/{imageID}:
+    get:
+      operationId: getImageMetadata
+      description: Retrieve metadata for a specific image by its ID.
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: imageID
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageMetadata'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Images
+      x-speakeasy-name-override: getMetadata
+      summary: Get image metadata
+      x-summary-source: derived
+    put:
+      operationId: updateImage
+      description: 'Replace an existing image and, optionally, its metadata.
+
+
+        This endpoint replaces the existing image with the new PNG, JPEG, or WebP. Omit
+
+        the metadata form section to keep existing metadata. Duplicate images, and requests larger than 16MB will be rejected.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: imageID
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageMetadata'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '422':
+          description: The request was well-formed, but the contents failed validation. Check the request for missing or invalid fields.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageRequestValidationError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Images
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ImageUploadRequestMultiPart'
+            encoding:
+              image:
+                contentType: image/jpeg, image/png, image/webp
+              metadata:
+                contentType: application/json
+      x-speakeasy-name-override: update
+      summary: Update image
+      x-summary-source: derived
+    delete:
+      operationId: deleteImage
+      description: 'Disable an image by its ID.
+
+
+        Disabled images are still be accessible via their public URL, and cannot be assigned
+
+        to products or line-items.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: imageID
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: The request completed successfully, but there is no content to return.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Images
+      x-speakeasy-name-override: delete
+      summary: Delete image
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+  /accounts/{accountID}/images/{imageID}/metadata:
+    put:
+      operationId: updateImageMetadata
+      description: Replace the metadata for an existing image.
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: imageID
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageMetadata'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '422':
+          description: The request was well-formed, but the contents failed validation. Check the request for missing or invalid fields.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageMetadataValidationError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Images
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImageMetadataRequest'
+      x-speakeasy-name-override: updateMetadata
+      summary: Update image metadata
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+  /images/{publicID}:
+    get:
+      operationId: getPublicImage
+      description: Get an image by its public ID.
+      parameters:
+      - name: if-none-match
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: publicID
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/ImagePublicID'
+      - name: size
+        in: query
+        required: false
+        description: 'Optional parameter to request a resized version of the image (WxH).
+
+
+          If either dimension is 0, the image will be scaled proportionally based on
+
+          the non-zero dimension. Dimensions are capped at 2048 pixels. A default size
+
+          of 400x400 will be used if this parameter is omitted.'
+        schema:
+          type: string
+          default: 400x400
+        explode: false
+      responses:
+        '200':
+          description: Response body for returning the raw image bytes.
+          headers:
+            Cache-Control:
+              required: true
+              schema:
+                type: string
+            Etag:
+              required: false
+              schema:
+                type: string
+          content:
+            image/webp:
+              schema:
+                type: string
+                format: binary
+            image/png:
+              schema:
+                type: string
+                format: binary
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+        '304':
+          description: The resource has not changed; client may use its cached representation.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+            Etag:
+              required: false
+              schema:
+                type: string
+            Cache-Control:
+              required: false
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '502':
+          description: The request failed because a downstream service returned an invalid response.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '503':
+          description: The request failed because a downstream service is unavailable.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Images
+      security:
+      - {}
+      x-speakeasy-name-override: getPublic
+      summary: Get public image
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+components:
+  schemas:
+    ImageRequestValidationError:
+      type: object
+      properties:
+        image:
+          type: string
+        metadata:
+          $ref: '#/components/schemas/ImageMetadataValidationError'
+    ImageMetadataValidationError:
+      type: object
+      properties:
+        altText:
+          type: string
+    ImageListCount:
+      type: integer
+      format: int64
+      maximum: 200
+      description: Page size for image list requests. When omitted, the server defaults to `20`.
+      example: 20
+    Skip:
+      type: integer
+      format: int64
+      description: The number of entries to skip when paginating a large result set.
+      example: 60
+    ImageMetadataRequest:
+      type: object
+      properties:
+        altText:
+          type: string
+          maxLength: 125
+          description: Alternative text for the image.
+      description: Request body for creating or updating image metadata.
+    ImageUploadRequestMultiPart:
+      type: object
+      properties:
+        image:
+          type: string
+          format: binary
+          description: A PNG, JPEG, or WebP image file to upload.
+        metadata:
+          allOf:
+          - $ref: '#/components/schemas/ImageMetadataRequest'
+          description: Optional, json-encoded metadata to associate with the uploaded image.
+      required:
+      - image
+    ImageID:
+      type: string
+      description: Unique identifier for a image resource.
+    GenericError:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    ImageMetadata:
+      type: object
+      required:
+      - imageID
+      - publicID
+      - link
+      - createdOn
+      - updatedOn
+      properties:
+        imageID:
+          $ref: '#/components/schemas/ImageID'
+        publicID:
+          allOf:
+          - $ref: '#/components/schemas/ImagePublicID'
+          description: The ID used to get an image with the public endpoint.
+        altText:
+          type: string
+          maxLength: 125
+          description: Alternative text for the image.
+        link:
+          type: string
+          format: uri
+          description: "A public URL to access the image. An optional `size={width}x{height}` \nquery parameter can be provided to resize the image."
+          example: https://api.moov.io/images/qJRAaAwwF5hmfeAFdHjIb
+        createdOn:
+          type: string
+          format: date-time
+        updatedOn:
+          type: string
+          format: date-time
+        disabledOn:
+          type: string
+          format: date-time
+      description: Metadata about an uploaded image.
+    ImagePublicID:
+      type: string
+      pattern: '[A-Za-z0-9_-]{21}'
+      description: A unique identifier for an image, used in public image links.
+  parameters:
+    VersionHeader:
+      name: X-Moov-Version
+      in: header
+      required: false
+      description: 'Set this header to v2026.01.00 to use the API described in this specification.
+
+        When omitted, the server defaults to v2024.01.00, the earliest supported version, which may not match the behavior documented here.
+
+        An unrecognized well-formed version uses the latest supported version that is not newer than the requested version, when one exists.
+
+        For example, `v2026.08.00` uses `v2026.07.00`.
+
+        A malformed value, such as `2022`, returns a `404` response.'
+      schema:
+        type: string
+        enum:
+        - v2026.01.00
+        example: v2026.01.00
+        x-speakeasy-ignore: true
+      x-speakeasy-ignore: true
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: Basic
+externalDocs:
+  url: https://docs.moov.io/
+  description: Moov Guides and API Documentation
+x-refined-from:
+- moov-api-v2026.01.00-openapi.yml
+- moov-openapi.yml

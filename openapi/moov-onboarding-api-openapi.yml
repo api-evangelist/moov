@@ -1,0 +1,986 @@
+openapi: 3.2.0
+info:
+  title: Moov Onboarding API
+  version: v2026.01.00
+  contact:
+    name: Moov Developer Support
+    email: help@moov.io
+    url: https://moov.io
+  license:
+    name: Unlicensed
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  description: 'Operations tagged Onboarding across 2 of this provider''s published API definitions: moov-api-v2026.01.00-openapi.yml, moov-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moov.io
+  description: Production API host
+  variables: {}
+security:
+- BasicAuth: []
+tags:
+- name: Onboarding
+paths:
+  /onboarding-invites:
+    post:
+      operationId: createOnboardingInvite
+      description: 'Create an invitation containing a unique link that allows the recipient to onboard their organization with Moov.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts.write` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OnboardingInvite'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '422':
+          description: The request was well-formed, but the contents failed validation. Check the request for missing or invalid fields.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OnboardingInviteError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Onboarding
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OnboardingInviteRequest'
+      x-speakeasy-name-override: createInvite
+      summary: Create onboarding invite
+      x-summary-source: derived
+    get:
+      operationId: listOnboardingInvites
+      description: 'List all the onboarding invites created by the caller''s account.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts.read` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OnboardingInvite'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Onboarding
+      x-speakeasy-name-override: listInvites
+      summary: List onboarding invites
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+  /onboarding-invites/{code}:
+    get:
+      operationId: getOnboardingInvite
+      description: 'Retrieve details about an onboarding invite.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts.read` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: code
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/OnboardingInviteCode'
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OnboardingInvite'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Onboarding
+      x-speakeasy-name-override: getInvite
+      summary: Get onboarding invite
+      x-summary-source: derived
+    delete:
+      operationId: revokeOnboardingInvite
+      description: 'Revoke an onboarding invite, rendering the invitation link unusable.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts.write` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: code
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/OnboardingInviteCode'
+      responses:
+        '204':
+          description: The request completed successfully, but there is no content to return.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Onboarding
+      x-speakeasy-name-override: revokeInvite
+      summary: Revoke onboarding invite
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+components:
+  schemas:
+    CreateBusinessProfile:
+      type: object
+      required:
+      - legalBusinessName
+      properties:
+        legalBusinessName:
+          type: string
+          maxLength: 64
+          pattern: '[À-ÖØ-öø-ÿ"''(),.0-9A-Za-z~ &!+:/-]*'
+          description: The legal name under which the entity is registered.
+          example: Classbooker, LLC
+        doingBusinessAs:
+          type: string
+          maxLength: 64
+          pattern: '[À-ÖØ-öø-ÿ"''(),.0-9A-Za-z~ &!+:/-]*'
+          description: A registered trade name under which the business operates, if different from its legal name.
+        businessType:
+          $ref: '#/components/schemas/BusinessType'
+        address:
+          $ref: '#/components/schemas/Address'
+        phone:
+          $ref: '#/components/schemas/PhoneNumber'
+        email:
+          $ref: '#/components/schemas/Email'
+        website:
+          type: string
+          format: uri
+          maxLength: 100
+        description:
+          type: string
+          minLength: 10
+          maxLength: 100
+          pattern: '[a-zA-Z0-9,.\/?:''"|~!@#$%^&*()+_= -]+'
+          example: Local fitness gym paying out instructors
+        taxID:
+          $ref: '#/components/schemas/TaxID'
+        industryCodes:
+          $ref: '#/components/schemas/IndustryCodes'
+        industry:
+          type: string
+          description: Classification identifier for the industry. Use the [GET industries](https://docs.moov.io/api/enrichment/form-shortening/industries/get/) endpoint to retrieve an array of valid industry details for a merchant, inducing all industry field values.
+          example: electronics-appliances
+        primaryRegulator:
+          $ref: '#/components/schemas/PrimaryRegulator'
+    CreateIndividualProfile:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          $ref: '#/components/schemas/IndividualName'
+        phone:
+          $ref: '#/components/schemas/PhoneNumber'
+        email:
+          $ref: '#/components/schemas/Email'
+        address:
+          $ref: '#/components/schemas/Address'
+        birthDate:
+          $ref: '#/components/schemas/BirthDate'
+        governmentID:
+          $ref: '#/components/schemas/GovernmentID'
+    CapabilityID:
+      type: string
+      enum:
+      - transfers
+      - send-funds
+      - send-funds.push-to-card
+      - money-transfer.push-to-card
+      - send-funds.ach
+      - send-funds.rtp
+      - send-funds.instant-bank
+      - collect-funds
+      - collect-funds.card-payments
+      - money-transfer.pull-from-card
+      - collect-funds.ach
+      - wallet
+      - wallet.balance
+      - card-issuing
+      - issuing.cardholder
+      - production-app
+      - platform.production-app
+      - platform.wallet-transfers
+      description: 'Moov account capabilities.
+
+
+        **Deprecated capabilities**
+
+
+        The `send-funds`, `collect-funds`, and `wallet` capability IDs are deprecated. Request granular capabilities instead (for example, `send-funds.ach`, `collect-funds.card-payments`, or `wallet.balance`). Deprecated values will be removed in a future API version.
+
+
+        Read our [capabilities reference](https://docs.moov.io/guides/accounts/capabilities/reference/) to choose the right capabilities for your integration.
+
+
+        The `production-app`, `platform.production-app`, and / or `platform.wallet-transfers` capabilities might appear in the list for your Partner account. These are read-only capabilities that Moov requests. These capabilities remain active with your account and require no additional action.'
+    Address:
+      type: object
+      required:
+      - addressLine1
+      - city
+      - stateOrProvince
+      - postalCode
+      - country
+      properties:
+        addressLine1:
+          type: string
+          maxLength: 60
+          pattern: '[a-zA-Z0-9,.\/?:''"|~!@#$%^&*()+_= -]+'
+          example: 123 Main Street
+        addressLine2:
+          type: string
+          maxLength: 32
+          pattern: '[a-zA-Z0-9,.\/?:''"|~!@#$%^&*()+_= -]+'
+          example: Apt 302
+        city:
+          type: string
+          maxLength: 32
+          pattern: '[a-zA-Z0-9,.\/?:''"|~!@#$%^&*()+_= -]+'
+          example: Boulder
+        stateOrProvince:
+          type: string
+          maxLength: 2
+          example: CO
+        postalCode:
+          type: string
+          maxLength: 5
+          example: '80301'
+        country:
+          type: string
+          maxLength: 2
+          example: US
+    OnboardingInviteRequest:
+      type: object
+      required:
+      - scopes
+      - capabilities
+      - feePlanCodes
+      properties:
+        returnURL:
+          type: string
+          format: uri
+          description: Optional URL to redirect the user to after they complete the onboarding process.
+        termsOfServiceURL:
+          type: string
+          format: uri
+          description: Optional URL to your organization's terms of service.
+        scopes:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApplicationScope'
+          minItems: 1
+          description: "  List of [scopes](https://docs.moov.io/api/authentication/scopes/) you request to use on this\n  account. These values are used to determine what can be done with the account onboarded."
+          example:
+          - accounts.read
+        grantScopes:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApplicationScope'
+          minItems: 0
+          description: "  List of [scopes](https://docs.moov.io/api/authentication/scopes/) you grant to allow being used \n  by the new account on yourself. These values are used to determine what the account onboarded can do."
+          example:
+          - transfers.write
+        capabilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/CapabilityID'
+          minItems: 1
+          description: "  List of [capabilities](https://docs.moov.io/guides/accounts/capabilities/reference/) you intend to request for this\n  account. These values are used to determine what information to collect from the user during onboarding."
+          example:
+          - collect-funds.card-payments
+          - send-funds.ach
+        feePlanCodes:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          description: List of fee plan codes to assign the account created by the invitee.
+          example:
+          - merchant-direct
+        prefill:
+          $ref: '#/components/schemas/CreateAccount'
+      description: Request to create an onboarding invite.
+    OnboardingInviteError:
+      type: object
+      properties:
+        returnURL:
+          type: string
+        termsOfServiceURL:
+          type: string
+        scopes:
+          $ref: '#/components/schemas/ArrayValidationError'
+        capabilities:
+          $ref: '#/components/schemas/ArrayValidationError'
+        feePlanCodes:
+          $ref: '#/components/schemas/ArrayValidationError'
+    PhoneNumber:
+      type: object
+      properties:
+        number:
+          type: string
+          maxLength: 10
+          example: '8185551212'
+        countryCode:
+          type: string
+          maxLength: 1
+          example: '1'
+    ManualTermsOfService:
+      type: object
+      required:
+      - acceptedDate
+      - acceptedIP
+      - acceptedUserAgent
+      - acceptedDomain
+      properties:
+        acceptedDate:
+          type: string
+          format: date-time
+          description: The date and time the terms of service were accepted.
+        acceptedIP:
+          type: string
+          description: The IP address (IPv4 or IPv6) from which the terms of service were accepted.
+          example: 2001:db8::1
+        acceptedUserAgent:
+          type: string
+          maxLength: 255
+          description: The user-agent of the user making the request.
+          example: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.71 Safari/537.36
+        acceptedDomain:
+          type: string
+          format: uri
+      description: Describes the acceptance of the Terms of Service. All data is required, and must be from the user.
+      title: Manual
+    BusinessType:
+      type: string
+      enum:
+      - soleProprietorship
+      - unincorporatedAssociation
+      - trust
+      - publicCorporation
+      - privateCorporation
+      - llc
+      - partnership
+      - unincorporatedNonProfit
+      - incorporatedNonProfit
+      - governmentEntity
+      description: The type of entity represented by this business.
+      example: llc
+    CreateAccount:
+      type: object
+      required:
+      - accountType
+      - profile
+      properties:
+        accountType:
+          $ref: '#/components/schemas/CreateAccountType'
+        profile:
+          $ref: '#/components/schemas/CreateProfile'
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+        termsOfService:
+          $ref: '#/components/schemas/TermsOfServicePayload'
+        foreignID:
+          type: string
+          maxLength: 64
+          pattern: '[a-zA-Z0-9,.\/?:''"|~!@#$%^&*()+_= -]+'
+          description: Optional alias from a foreign/external system which can be used to reference this resource.
+        customerSupport:
+          $ref: '#/components/schemas/CustomerSupport'
+        settings:
+          $ref: '#/components/schemas/Settings'
+        capabilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/CapabilityID'
+          description: 'Capabilities to request when the account is created. Request granular capability IDs that match your use case.
+
+
+            Read our [capabilities reference](https://docs.moov.io/guides/accounts/capabilities/reference/) to choose the right capabilities for your integration.
+
+
+            The `send-funds`, `collect-funds`, and `wallet` capability IDs are deprecated. Use granular values such as `send-funds.ach`, `collect-funds.card-payments`, or `wallet.balance` instead.'
+          example:
+          - collect-funds.card-payments
+          - send-funds.ach
+        mode:
+          $ref: '#/components/schemas/Mode'
+      example:
+        accountType: business
+        profile:
+          business:
+            legalBusinessName: Whole Body Fitness LLC
+    Email:
+      type: string
+      maxLength: 255
+      format: email
+      example: jordan.lee@classbooker.dev
+    Metadata:
+      type: object
+      additionalProperties:
+        type: string
+      description: Free-form key-value pair list. Useful for storing information that is not captured elsewhere.
+      example:
+        optional: metadata
+    BirthDate:
+      type: object
+      required:
+      - day
+      - month
+      - year
+      properties:
+        day:
+          type: integer
+          example: 9
+        month:
+          type: integer
+          example: 11
+        year:
+          type: integer
+          example: 1989
+    OnboardingInviteCode:
+      type: string
+      description: A unique code that identifies an onboarding invite.
+      example: N1IA5eWYNh
+    OnboardingPartnerAccount:
+      type: object
+      required:
+      - accountID
+      - accountMode
+      - displayName
+      properties:
+        accountID:
+          type: string
+          description: The account ID of the partner that created the invite.
+        accountMode:
+          $ref: '#/components/schemas/Mode'
+        displayName:
+          type: string
+          description: The name of the Moov account used to create the onboarding invite.
+          example: Bob's Widgets
+      description: The account that created the onboarding invite.
+    ApplicationScope:
+      type: string
+      enum:
+      - accounts.read
+      - accounts.write
+      - analytics.read
+      - apple-pay-merchant.read
+      - apple-pay-merchant.write
+      - apple-pay.read
+      - apple-pay.write
+      - bank-accounts.read
+      - bank-accounts.write
+      - capabilities.read
+      - capabilities.write
+      - cards.read
+      - cards.write
+      - documents.read
+      - documents.write
+      - fed.read
+      - files.read
+      - files.write
+      - issued-cards.read
+      - issued-cards.write
+      - issued-cards.read-private
+      - payment-methods.read
+      - ping.read
+      - profile-enrichment.read
+      - profile.read
+      - profile.write
+      - profile.disconnect
+      - representatives.read
+      - representatives.write
+      - transfers.read
+      - transfers.write
+      - wallets.read
+      description: A permission that the application requests on another account.
+    OnboardingInvite:
+      type: object
+      required:
+      - code
+      - link
+      - scopes
+      - capabilities
+      - feePlanCodes
+      - createdOn
+      properties:
+        code:
+          $ref: '#/components/schemas/OnboardingInviteCode'
+        link:
+          type: string
+          format: uri
+          description: A unique URL, including the invite code, that the recipient can follow to redeem the invitation.
+        returnURL:
+          type: string
+          description: Optional URL to redirect the user to after they complete the onboarding process.
+        termsOfServiceURL:
+          type: string
+          description: The terms of service URL set by the inviter.
+        scopes:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApplicationScope'
+          minItems: 1
+          description: 'List of [scopes](https://docs.moov.io/api/authentication/scopes/) you request to use on this
+
+            account. These values are used to determine what can be done with the account onboarded.'
+          example:
+          - accounts.read
+        grantScopes:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApplicationScope'
+          minItems: 0
+          description: "  List of [scopes](https://docs.moov.io/api/authentication/scopes/) you grant to allow being used \n  by the new account on yourself. These values are used to determine what the account onboarded can do."
+          example:
+          - transfers.write
+        capabilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/CapabilityID'
+          minItems: 1
+          description: "  List of [capabilities](https://docs.moov.io/guides/accounts/capabilities/reference/) you intend to request for this\n  account. These values are used to determine what information to collect from the user during onboarding."
+          example:
+          - collect-funds.card-payments
+          - send-funds.ach
+        feePlanCodes:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          description: List of fee plan codes to assign the account created by the invitee.
+          example:
+          - merchant-direct
+        redeemedAccountID:
+          type: string
+          description: The account ID of the account that redeemed the invite.
+        prefill:
+          $ref: '#/components/schemas/CreateAccount'
+        partner:
+          $ref: '#/components/schemas/OnboardingPartnerAccount'
+        createdOn:
+          type: string
+          format: date-time
+        revokedOn:
+          type: string
+          format: date-time
+        redeemedOn:
+          type: string
+          format: date-time
+    CreateAccountType:
+      type: string
+      enum:
+      - individual
+      - business
+    GovernmentID:
+      type: object
+      properties:
+        ssn:
+          type: object
+          properties:
+            full:
+              type: string
+              pattern: ^\d{3}[-]?\d{2}[-]?\d{4}$
+            lastFour:
+              type: string
+        itin:
+          type: object
+          properties:
+            full:
+              type: string
+              pattern: ^\d{3}[-]?\d{2}[-]?\d{4}$
+            lastFour:
+              type: string
+    ACHPaymentSettings:
+      type: object
+      required:
+      - companyName
+      properties:
+        companyName:
+          type: string
+          minLength: 1
+          maxLength: 16
+          pattern: '[a-zA-Z0-9- ]+'
+          description: The description that shows up on ACH transactions. This will default to the account's display name on account creation.
+          example: WholeBodyFitness
+    CardPaymentSettings:
+      type: object
+      properties:
+        statementDescriptor:
+          type: string
+          minLength: 4
+          maxLength: 22
+          pattern: '[a-zA-Z0-9.!*-+_ ]+'
+          description: The description that shows up on credit card transactions. This will default to the accounts display name on account creation.
+          example: Whole Body Fitness
+      description: User provided settings to manage card payments. This data is only allowed on a business account.
+    ArrayValidationError:
+      type: object
+      additionalProperties:
+        type: string
+      example:
+        '0': first element failed validation...
+    CreateProfile:
+      type: object
+      properties:
+        individual:
+          $ref: '#/components/schemas/CreateIndividualProfile'
+        business:
+          $ref: '#/components/schemas/CreateBusinessProfile'
+    CustomerSupport:
+      type: object
+      properties:
+        phone:
+          $ref: '#/components/schemas/PhoneNumber'
+        email:
+          $ref: '#/components/schemas/Email'
+        address:
+          $ref: '#/components/schemas/Address'
+        website:
+          type: string
+          format: uri
+      description: 'User-provided information that can be displayed on credit card transactions for customers to use when
+
+        contacting a customer support team. This data is only allowed on a business account.'
+    GenericError:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    PrimaryRegulator:
+      type: string
+      enum:
+      - OCC
+      - FDIC
+      - NCUA
+      - FRB
+      - state-cu-regulator
+      description: If the business is a financial institution, this field describes its primary regulator.
+    Mode:
+      type: string
+      enum:
+      - sandbox
+      - production
+      description: The operating mode for an account.
+      example: production
+    IndividualName:
+      type: object
+      required:
+      - firstName
+      - lastName
+      properties:
+        firstName:
+          type: string
+          maxLength: 64
+          pattern: '[À-ÖØ-öø-ÿ"''(),.0-9A-Za-z~ &!-]*'
+          description: The individual's first given name.
+          example: Jordan
+        middleName:
+          type: string
+          maxLength: 64
+          pattern: '[À-ÖØ-öø-ÿ"''(),.0-9A-Za-z~ &!-]*'
+          description: The individual's second given name, if any.
+          example: Reese
+        lastName:
+          type: string
+          maxLength: 64
+          pattern: '[À-ÖØ-öø-ÿ"''(),.0-9A-Za-z~ &!-]*'
+          description: The individual's family name.
+          example: Lee
+        suffix:
+          type: string
+          maxLength: 20
+          pattern: '[À-ÖØ-öø-ÿ"''(),.0-9A-Za-z~ &!-]*'
+          description: Suffix of a given name.
+          example: Jr
+    TermsOfServicePayload:
+      type: object
+      properties:
+        token:
+          type: string
+        manual:
+          $ref: '#/components/schemas/ManualTermsOfService'
+    IndustryCodes:
+      type: object
+      properties:
+        naics:
+          type: string
+          minLength: 2
+          maxLength: 6
+          example: '713940'
+        sic:
+          type: string
+          minLength: 4
+          maxLength: 4
+          example: '7991'
+        mcc:
+          type: string
+          minLength: 4
+          maxLength: 4
+          example: '7997'
+    Settings:
+      type: object
+      properties:
+        cardPayment:
+          $ref: '#/components/schemas/CardPaymentSettings'
+        achPayment:
+          $ref: '#/components/schemas/ACHPaymentSettings'
+      description: User provided settings to manage an account.
+    TaxID:
+      type: object
+      required:
+      - ein
+      properties:
+        ein:
+          type: object
+          properties:
+            number:
+              type: string
+              example: 12-3456789
+          required:
+          - number
+      description: An EIN (employer identification number) for the business. For sole proprietors, an SSN can be used as the EIN.
+  parameters:
+    VersionHeader:
+      name: X-Moov-Version
+      in: header
+      required: false
+      description: 'Set this header to v2026.01.00 to use the API described in this specification.
+
+        When omitted, the server defaults to v2024.01.00, the earliest supported version, which may not match the behavior documented here.
+
+        An unrecognized well-formed version uses the latest supported version that is not newer than the requested version, when one exists.
+
+        For example, `v2026.08.00` uses `v2026.07.00`.
+
+        A malformed value, such as `2022`, returns a `404` response.'
+      schema:
+        type: string
+        enum:
+        - v2026.01.00
+        example: v2026.01.00
+        x-speakeasy-ignore: true
+      x-speakeasy-ignore: true
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: Basic
+externalDocs:
+  url: https://docs.moov.io/
+  description: Moov Guides and API Documentation
+x-refined-from:
+- moov-api-v2026.01.00-openapi.yml
+- moov-openapi.yml

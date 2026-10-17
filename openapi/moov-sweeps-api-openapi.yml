@@ -1,117 +1,509 @@
 openapi: 3.2.0
 info:
   title: Moov Sweeps API
-  termsOfService: https://moov.io/legal/platform-agreement/
   version: '1.0'
-  description: 'Operations tagged Sweeps across 2 of this provider''s published API definitions: moov-api-openapi.yml, moov-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: 'Operations tagged Sweeps across 3 of this provider''s published API definitions: moov-api-v2026.01.00-openapi.yml, moov-openapi.yml, moov-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.moov.io
-  description: Production Server
-security:
-- bearerAuth: []
+  description: Production API host
+  variables: {}
 tags:
 - name: Sweeps
-  description: Configure automatic daily transfers from a Moov wallet to an external bank account on a set schedule using ACH or RTP rails.
 paths:
   /accounts/{accountID}/sweep-configs:
     post:
       operationId: createSweepConfig
-      summary: Create a sweep config
-      description: Configure automatic daily transfers from a Moov wallet to a linked bank account. Choose from standard ACH, same-day ACH, or RTP rails with varying settlement times from instant to next business day.
+      description: 'Create a sweep config for a wallet.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/wallets.write` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SweepConfig'
+              example:
+                sweepConfigID: 01234567-89ab-cdef-0123-456789abcdef
+                walletID: 01234567-89ab-cdef-0123-456789abcdef
+                status: enabled
+                pushPaymentMethod:
+                  paymentMethodID: 01234567-89ab-cdef-0123-456789abcdef
+                pullPaymentMethod:
+                  paymentMethodID: 01234567-89ab-cdef-0123-456789abcdef
+                minimumBalance: '0.00'
+                statementDescriptor: swp_012345
+                createdOn: '2024-05-06T12:20:38.184Z'
+                updatedOn: '2024-05-06T12:20:38.184Z'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '422':
+          description: The request was well-formed, but the contents failed validation. Check the request for missing or invalid fields.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateSweepConfigError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
       tags:
       - Sweeps
-      parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateSweepConfigRequest'
-      responses:
-        '200':
-          description: Sweep config created successfully.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SweepConfig'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+              $ref: '#/components/schemas/CreateSweepConfig'
+            example:
+              walletID: 01234567-89ab-cdef-0123-456789abcdef
+              status: enabled
+              pushPaymentMethodID: 01234567-89ab-cdef-0123-456789abcdef
+              pullPaymentMethodID: 01234567-89ab-cdef-0123-456789abcdef
+      x-speakeasy-name-override: createConfig
+      security:
+      - BasicAuth: []
+      summary: Create sweep config
+      x-summary-source: derived
     get:
       operationId: listSweepConfigs
-      summary: List sweep configs
-      description: Retrieve all sweep configurations for a Moov account.
-      tags:
-      - Sweeps
+      description: 'List sweep configs associated with an account.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/wallets.read` scope.'
       parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
         '200':
-          description: Sweep configs returned successfully.
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/SweepConfig'
+              example:
+              - sweepConfigID: 01234567-89ab-cdef-0123-456789abcdef
+                walletID: 01234567-89ab-cdef-0123-456789abcdef
+                status: enabled
+                pushPaymentMethod:
+                  paymentMethodID: 01234567-89ab-cdef-0123-456789abcdef
+                pullPaymentMethod:
+                  paymentMethodID: 01234567-89ab-cdef-0123-456789abcdef
+                minimumBalance: '0.00'
+                statementDescriptor: swp_012345
+                createdOn: '2024-05-06T12:20:38.184Z'
+                updatedOn: '2024-05-06T12:20:38.184Z'
+              - sweepConfigID: 01234567-89ab-cdef-0123-456789abcdef
+                walletID: 01234567-89ab-cdef-0123-456789abcdef
+                status: disabled
+                pushPaymentMethod:
+                  paymentMethodID: 01234567-89ab-cdef-0123-456789abcdef
+                pullPaymentMethod:
+                  paymentMethodID: 01234567-89ab-cdef-0123-456789abcdef
+                minimumBalance: '0.00'
+                statementDescriptor: swp_012345
+                createdOn: '2024-05-06T12:20:38.184Z'
+                updatedOn: '2024-05-06T12:20:38.184Z'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Sweeps
+      x-speakeasy-name-override: listConfigs
+      security:
+      - BasicAuth: []
+      summary: List sweep configs
+      x-summary-source: derived
     parameters:
     - $ref: '#/components/parameters/accountID'
     servers:
     - url: https://api.moov.io
-      description: Production Server
+      description: Production API host
+      variables: {}
   /accounts/{accountID}/sweep-configs/{sweepConfigID}:
     get:
       operationId: getSweepConfig
-      summary: Get a sweep config
-      description: Retrieve the details of a specific sweep configuration for a Moov account.
-      tags:
-      - Sweeps
+      description: 'Get a sweep config associated with a wallet.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/wallets.read` scope.'
       parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
-      - $ref: '#/components/parameters/SweepConfigIDParam'
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: sweepConfigID
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/SweepConfigID'
       responses:
         '200':
-          description: Sweep config returned successfully.
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/SweepConfig'
+              example:
+                sweepConfigID: 01234567-89ab-cdef-0123-456789abcdef
+                walletID: 01234567-89ab-cdef-0123-456789abcdef
+                status: enabled
+                pushPaymentMethod:
+                  paymentMethodID: 01234567-89ab-cdef-0123-456789abcdef
+                pullPaymentMethod:
+                  paymentMethodID: 01234567-89ab-cdef-0123-456789abcdef
+                minimumBalance: '0.00'
+                statementDescriptor: swp_012345
+                createdOn: '2024-05-06T12:20:38.184Z'
+                updatedOn: '2024-05-06T12:20:38.184Z'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
         '404':
-          $ref: '#/components/responses/NotFound'
-    patch:
-      operationId: updateSweepConfig
-      summary: Update a sweep config
-      description: Modify an existing sweep configuration, such as changing the target bank account, transfer rail, or schedule parameters.
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
       tags:
       - Sweeps
+      x-speakeasy-name-override: getConfig
+      security:
+      - BasicAuth: []
+      summary: Get sweep config
+      x-summary-source: derived
+    patch:
+      operationId: updateSweepConfig
+      description: 'Update settings on a sweep config.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/wallets.write` scope.'
       parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
-      - $ref: '#/components/parameters/SweepConfigIDParam'
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: sweepConfigID
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/SweepConfigID'
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SweepConfig'
+              example:
+                sweepConfigID: 01234567-89ab-cdef-0123-456789abcdef
+                walletID: 01234567-89ab-cdef-0123-456789abcdef
+                status: disabled
+                pushPaymentMethod:
+                  paymentMethodID: 01234567-89ab-cdef-0123-456789abcdef
+                pullPaymentMethod:
+                  paymentMethodID: 01234567-89ab-cdef-0123-456789abcdef
+                minimumBalance: '0.00'
+                statementDescriptor: swp_012345
+                createdOn: '2024-05-06T12:20:38.184Z'
+                updatedOn: '2024-05-06T12:20:38.184Z'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '422':
+          description: The request was well-formed, but the contents failed validation. Check the request for missing or invalid fields.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatchSweepConfigError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Sweeps
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateSweepConfigRequest'
-      responses:
-        '200':
-          description: Sweep config updated successfully.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SweepConfig'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
+              $ref: '#/components/schemas/PatchSweepConfig'
+            example:
+              status: disabled
+      x-speakeasy-name-override: updateConfig
+      security:
+      - BasicAuth: []
+      summary: Update sweep config
+      x-summary-source: derived
     parameters:
     - $ref: '#/components/parameters/accountID'
     - name: sweepConfigID
@@ -121,62 +513,270 @@ paths:
         type: string
     servers:
     - url: https://api.moov.io
-      description: Production Server
+      description: Production API host
+      variables: {}
   /accounts/{accountID}/wallets/{walletID}/sweeps:
     get:
       operationId: listSweeps
-      summary: List sweeps
-      description: Retrieve a list of sweep executions for a wallet, showing each automatic transfer that has been triggered by a sweep configuration.
-      tags:
-      - Sweeps
+      description: 'List sweeps associated with a wallet.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/wallets.read` scope.'
       parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
-      - $ref: '#/components/parameters/WalletIDParam'
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: walletID
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/WalletID'
+      - $ref: '#/components/parameters/Pagination.skip'
+      - $ref: '#/components/parameters/Pagination.count'
+      - name: status
+        in: query
+        required: false
+        description: Optional parameter to filter by sweep status.
+        schema:
+          $ref: '#/components/schemas/SweepStatus'
+        explode: false
+      - name: statementDescriptor
+        in: query
+        required: false
+        description: Optional string to filter by statement descriptor.
+        schema:
+          $ref: '#/components/schemas/SweepStatementDescriptor'
+        explode: false
       responses:
         '200':
-          description: Sweeps returned successfully.
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Sweep'
+              example:
+              - accruedAmount: '100.00'
+                accrualStartedOn: '2024-05-06T12:20:38.184Z'
+                currency: USD
+                status: accruing
+                sweepID: 01234567-89ab-cdef-0123-456789abcdef
+                subtotals:
+                - type: moov-fee
+                  count: 1
+                  amount:
+                    valueDecimal: '50.00'
+                    currency: USD
+                - type: account-funding
+                  count: 1
+                  amount:
+                    valueDecimal: '50.00'
+                    currency: USD
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Sweeps
+      x-speakeasy-name-override: list
+      security:
+      - BasicAuth: []
+      summary: List sweeps
+      x-summary-source: derived
     parameters:
     - $ref: '#/components/parameters/accountID'
     - $ref: '#/components/parameters/walletID'
     servers:
     - url: https://api.moov.io
-      description: Production Server
+      description: Production API host
+      variables: {}
   /accounts/{accountID}/wallets/{walletID}/sweeps/{sweepID}:
     get:
       operationId: getSweep
-      summary: Get a sweep
-      description: Fetch the details of a specific sweep execution, including its transfer amount, status, and associated transfer ID.
-      tags:
-      - Sweeps
+      description: 'Get details on a specific sweep.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/wallets.read` scope.'
       parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
-      - $ref: '#/components/parameters/WalletIDParam'
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: walletID
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/WalletID'
       - name: sweepID
         in: path
         required: true
-        description: Unique identifier for the sweep execution.
         schema:
-          type: string
-          format: uuid
+          $ref: '#/components/schemas/SweepID'
       responses:
         '200':
-          description: Sweep details returned successfully.
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Sweep'
+              examples:
+                Paid sweep:
+                  summary: Paid sweep
+                  value:
+                    accruedAmount: '100.00'
+                    accrualStartedOn: '2024-05-06T12:20:38.184Z'
+                    accrualEndedOn: '2024-05-06T12:20:38.184Z'
+                    currency: USD
+                    pushPaymentMethodID: 01234567-89ab-cdef-0123-456789abcdef
+                    residualBalance: '0.00'
+                    statementDescriptor: swp_012345
+                    status: paid
+                    sweepID: 01234567-89ab-cdef-0123-456789abcdef
+                    transferAmount: '12.98'
+                    transferID: 01234567-89ab-cdef-0123-456789abcdef
+                    subtotals:
+                    - type: moov-fee
+                      count: 1
+                      amount:
+                        valueDecimal: '50.00'
+                        currency: USD
+                    - type: account-funding
+                      count: 1
+                      amount:
+                        valueDecimal: '50.00'
+                        currency: USD
+                Accrued sweep:
+                  summary: Accrued sweep
+                  value:
+                    accruedAmount: '100.00'
+                    accrualStartedOn: '2024-05-06T12:20:38.184Z'
+                    currency: USD
+                    status: accruing
+                    sweepID: 01234567-89ab-cdef-0123-456789abcdef
+                    subtotals:
+                    - type: moov-fee
+                      count: 1
+                      amount:
+                        valueDecimal: '50.00'
+                        currency: USD
+                    - type: account-funding
+                      count: 1
+                      amount:
+                        valueDecimal: '50.00'
+                        currency: USD
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
         '404':
-          $ref: '#/components/responses/NotFound'
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Sweeps
+      x-speakeasy-name-override: get
+      security:
+      - BasicAuth: []
+      summary: Get sweep
+      x-summary-source: derived
     parameters:
     - $ref: '#/components/parameters/accountID'
     - $ref: '#/components/parameters/walletID'
@@ -187,190 +787,335 @@ paths:
         type: string
     servers:
     - url: https://api.moov.io
-      description: Production Server
+      description: Production API host
+      variables: {}
 components:
   schemas:
-    Amount:
+    Count:
+      type: integer
+      format: int64
+      description: Limits the maximum number of results returned, or determines the page size when used with `skip` or `cursor` for pagination.
+      example: 20
+    SweepStatementDescriptor:
+      type: string
+      minLength: 4
+      maxLength: 10
+      description: The text that appears on the banking statement. The default descriptor is a 10 character ID if an override is not set in the sweep configs statementDescriptor.
+    WalletTransactionType:
+      type: string
+      enum:
+      - account-funding
+      - ach-reversal
+      - auto-sweep
+      - card-payment
+      - card-decline
+      - card-reversal
+      - cash-out
+      - dispute
+      - dispute-reversal
+      - facilitator-fee
+      - issuing-refund
+      - issuing-transaction
+      - issuing-transaction-adjustment
+      - issuing-auth-hold
+      - issuing-auth-release
+      - issuing-decline
+      - moov-fee
+      - payment
+      - payout
+      - refund
+      - refund-failure
+      - rtp-failure
+      - top-up
+      - wallet-transfer
+      - adjustment
+      - fee-revenue
+      - residual
+    Currency:
+      type: string
+      pattern: ^[A-Za-z]{3}$
+      description: A 3-letter ISO 4217 currency code.
+      example: USD
+    SweepConfigID:
+      type: string
+    WalletID:
+      type: string
+    SweepStatus:
+      type: string
+      enum:
+      - accruing
+      - action-required
+      - canceled
+      - closed
+      - failed
+      - paid
+    SweepSubtotal:
       type: object
-      description: A monetary amount with currency denomination.
+      required:
+      - type
+      - count
+      - amount
       properties:
-        currency:
-          type: string
-          description: ISO 4217 three-letter currency code.
-          default: USD
-          minLength: 3
-          maxLength: 3
-        value:
+        type:
+          allOf:
+          - $ref: '#/components/schemas/WalletTransactionType'
+          description: The type of wallet transaction the subtotal is for.
+        count:
           type: integer
-          description: Amount in the smallest currency unit (e.g., cents for USD).
-          minimum: 0
-    Error:
-      type: object
-      description: Standard error response returned by the Moov API.
-      properties:
-        error:
-          type: string
-          description: Human-readable description of the error.
-        code:
-          type: string
-          description: Machine-readable error code.
+          format: int64
+          description: The number of transactions of this type accrued in the sweep.
+        amount:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: The value of transactions of this type accrued in the sweep.
+    Skip:
+      type: integer
+      format: int64
+      description: The number of entries to skip when paginating a large result set.
+      example: 60
     SweepConfig:
       type: object
-      description: Configuration for automatic scheduled transfers from a Moov wallet to an external bank account. Sweeps execute daily based on the configured payment rail.
+      required:
+      - sweepConfigID
+      - walletID
+      - status
+      - pushPaymentMethod
+      - pullPaymentMethod
+      - createdOn
+      - updatedOn
       properties:
         sweepConfigID:
-          type: string
-          format: uuid
-          description: Unique identifier for the sweep configuration.
+          $ref: '#/components/schemas/SweepConfigID'
         walletID:
-          type: string
-          format: uuid
-          description: The wallet from which funds will be swept.
-        paymentMethodID:
-          type: string
-          format: uuid
-          description: The destination bank account payment method for the sweep.
+          $ref: '#/components/schemas/WalletID'
         status:
-          type: string
-          description: Whether the sweep configuration is active.
-          enum:
-          - enabled
-          - disabled
-        statementDescriptor:
-          type: string
-          description: Description that appears on bank statements for sweep transfers.
+          $ref: '#/components/schemas/SweepConfigStatus'
+        pushPaymentMethod:
+          $ref: '#/components/schemas/SweepConfigPaymentMethod'
+        pullPaymentMethod:
+          $ref: '#/components/schemas/SweepConfigPaymentMethod'
         minimumBalance:
-          $ref: '#/components/schemas/Amount'
+          type: string
+          pattern: ^\d+\.\d{1,2}$
+          description: An optional field to specify an amount to maintain in the wallet. This is a decimal-formatted numerical string that represents up to 2 decimal place precision. In USD for example, 12.34 is $12.34 and 0.99 is $0.99. If not supplied, the default is 0.00.
+        statementDescriptor:
+          $ref: '#/components/schemas/SweepStatementDescriptor'
+        lockedFields:
+          type: array
+          items:
+            type: string
+          description: An array of fields that are locked. To request updates, please contact Moov support.
         createdOn:
           type: string
           format: date-time
-          description: ISO 8601 timestamp when the sweep config was created.
         updatedOn:
           type: string
           format: date-time
-          description: ISO 8601 timestamp when the sweep config was last updated.
-    CreateSweepConfigRequest:
+    AmountDecimal:
       type: object
-      description: Request body for creating a sweep configuration.
       required:
-      - walletID
+      - currency
+      - valueDecimal
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        valueDecimal:
+          type: string
+          pattern: ^\d+\.\d{1,9}$
+          description: "A decimal-formatted numerical string that represents up to 9 decimal place precision. \n\nFor example, $12.987654321 is '12.987654321'."
+          example: '12.987654321'
+    PatchSweepConfig:
+      type: object
+      properties:
+        status:
+          allOf:
+          - $ref: '#/components/schemas/SweepConfigStatus'
+        pushPaymentMethodID:
+          type:
+          - string
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/PaymentMethodID'
+        pullPaymentMethodID:
+          type:
+          - string
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/PaymentMethodID'
+        statementDescriptor:
+          type:
+          - string
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/SweepStatementDescriptor'
+        minimumBalance:
+          type:
+          - string
+          - 'null'
+          pattern: ^\d+\.\d{1,2}$
+    SweepConfigPaymentMethod:
+      type: object
+      required:
       - paymentMethodID
       properties:
-        walletID:
-          type: string
-          format: uuid
-          description: The wallet from which funds will be swept.
         paymentMethodID:
-          type: string
-          format: uuid
-          description: The bank account payment method to sweep funds to.
-        statementDescriptor:
-          type: string
-          description: Descriptor that appears on bank statements for sweep transfers.
-          maxLength: 10
-        minimumBalance:
-          $ref: '#/components/schemas/Amount'
-    UpdateSweepConfigRequest:
-      type: object
-      description: Request body for updating a sweep configuration.
-      properties:
-        status:
-          type: string
-          description: Enable or disable the sweep configuration.
-          enum:
-          - enabled
-          - disabled
-        statementDescriptor:
-          type: string
-          description: Updated statement descriptor for sweep transfers.
-          maxLength: 10
-        minimumBalance:
-          $ref: '#/components/schemas/Amount'
-    Sweep:
-      type: object
-      description: A single execution of a sweep transfer triggered by a sweep configuration.
-      properties:
-        sweepID:
-          type: string
-          format: uuid
-          description: Unique identifier for this sweep execution.
-        sweepConfigID:
-          type: string
-          format: uuid
-          description: The sweep configuration that triggered this sweep.
-        walletID:
-          type: string
-          format: uuid
-          description: The wallet from which funds were swept.
-        transferID:
-          type: string
-          format: uuid
-          description: The transfer created to move the swept funds.
-        status:
-          type: string
-          description: Execution status of the sweep.
-          enum:
-          - scheduled
-          - pending
-          - completed
-          - failed
-        amount:
-          $ref: '#/components/schemas/Amount'
-        createdOn:
+          $ref: '#/components/schemas/PaymentMethodID'
+        disabledOn:
           type: string
           format: date-time
-          description: ISO 8601 timestamp when the sweep was created.
-  responses:
-    BadRequest:
-      description: The request was malformed or contained invalid parameters.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+      description: 'The payment method used to push or pull funds to a bank account.
+
+        The push payment method can only be ach-credit-standard, ach-credit-same-day, rtp-credit, or instant-bank-credit (API v2026.01.00 and later). The pull payment method can only be ach-debit-fund.'
+    PaymentMethodID:
+      type: string
+      description: ID of the payment method.
+    Sweep:
+      type: object
+      required:
+      - sweepID
+      - status
+      - accruedAmount
+      - currency
+      - accrualStartedOn
+      properties:
+        sweepID:
+          $ref: '#/components/schemas/SweepID'
+        status:
+          $ref: '#/components/schemas/SweepStatus'
+        accruedAmount:
+          type: string
+          pattern: ^\d+\.\d{1,9}$
+          description: The total net amount of wallet transactions accrued in the sweep.
+        residualBalance:
+          type: string
+          pattern: ^\d+\.\d{1,9}$
+          description: Amount remaining in the wallet after the sweep transfer completes.
+        currency:
+          $ref: '#/components/schemas/Currency'
+        accrualStartedOn:
+          type: string
+          format: date-time
+          description: The date-time the sweep began accruing transactions.
+        accrualEndedOn:
+          type: string
+          format: date-time
+          description: The date-time the sweep stopped accruing transactions.
+        pushPaymentMethodID:
+          $ref: '#/components/schemas/PaymentMethodID'
+        pullPaymentMethodID:
+          $ref: '#/components/schemas/PaymentMethodID'
+        transferID:
+          type: string
+        transferAmount:
+          type: string
+          pattern: ^\d+\.\d{1,9}$
+          description: Amount that is transferred.
+        statementDescriptor:
+          $ref: '#/components/schemas/SweepStatementDescriptor'
+        subtotals:
+          type: array
+          items:
+            $ref: '#/components/schemas/SweepSubtotal'
+          description: The subtotal of each transaction type contributing to the sweep's accrued amount.
+    GenericError:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    SweepConfigStatus:
+      type: string
+      enum:
+      - enabled
+      - disabled
+    CreateSweepConfigError:
+      type: object
+      properties:
+        walletID:
+          type: string
+        status:
+          type: string
+        pushPaymentMethodID:
+          type: string
+        pullPaymentMethodID:
+          type: string
+        statementDescriptor:
+          type: string
+        minimumBalance:
+          type: string
+    PatchSweepConfigError:
+      type: object
+      properties:
+        status:
+          type: string
+        pushPaymentMethodID:
+          type: string
+        pullPaymentMethodID:
+          type: string
+        statementDescriptor:
+          type: string
+        minimumBalance:
+          type: string
+    CreateSweepConfig:
+      type: object
+      required:
+      - walletID
+      - status
+      - pushPaymentMethodID
+      - pullPaymentMethodID
+      properties:
+        walletID:
+          $ref: '#/components/schemas/WalletID'
+        status:
+          $ref: '#/components/schemas/SweepConfigStatus'
+        pushPaymentMethodID:
+          $ref: '#/components/schemas/PaymentMethodID'
+        pullPaymentMethodID:
+          $ref: '#/components/schemas/PaymentMethodID'
+        statementDescriptor:
+          $ref: '#/components/schemas/SweepStatementDescriptor'
+        minimumBalance:
+          type: string
+          pattern: ^\d+\.\d{1,2}$
+    SweepID:
+      type: string
   parameters:
-    SweepConfigIDParam:
-      name: sweepConfigID
-      in: path
-      required: true
-      description: Unique identifier for the sweep configuration.
+    Pagination.skip:
+      name: skip
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/Skip'
+      explode: false
+    VersionHeader:
+      name: X-Moov-Version
+      in: header
+      required: false
+      description: 'Set this header to v2026.01.00 to use the API described in this specification.
+
+        When omitted, the server defaults to v2024.01.00, the earliest supported version, which may not match the behavior documented here.
+
+        An unrecognized well-formed version uses the latest supported version that is not newer than the requested version, when one exists.
+
+        For example, `v2026.08.00` uses `v2026.07.00`.
+
+        A malformed value, such as `2022`, returns a `404` response.'
       schema:
         type: string
-        format: uuid
-    AccountIDParam:
-      name: accountID
-      in: path
-      required: true
-      description: Unique identifier for the Moov account.
+        enum:
+        - v2026.01.00
+        example: v2026.01.00
+        x-speakeasy-ignore: true
+      x-speakeasy-ignore: true
+    Pagination.count:
+      name: count
+      in: query
+      required: false
+      description: Page size. When omitted, the server defaults to `200`.
       schema:
-        type: string
-        format: uuid
-    WalletIDParam:
-      name: walletID
-      in: path
-      required: true
-      description: Unique identifier for the wallet.
-      schema:
-        type: string
-        format: uuid
-    walletID:
-      name: walletID
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
+        $ref: '#/components/schemas/Count'
+      explode: false
     accountID:
       name: accountID
       in: path
@@ -379,11 +1124,23 @@ components:
         type: string
         format: uuid
       description: The Moov account identifier.
+    walletID:
+      name: walletID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
   securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: Basic
     bearerAuth:
       type: http
       scheme: bearer
-      description: OAuth2 bearer token obtained from the /oauth2/token endpoint. Include in the Authorization header as "Bearer {token}".
+      bearerFormat: JWT
+      description: OAuth 2.0 access token passed as a Bearer token.
 x-refined-from:
-- moov-api-openapi.yml
+- moov-api-v2026.01.00-openapi.yml
+- moov-openapi.yml
 - moov-openapi.yml

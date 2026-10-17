@@ -1,83 +1,569 @@
 openapi: 3.2.0
 info:
-  title: Moov Card Issuing API
-  description: The Moov API lets software platforms accept, store, send, and spend money through a single REST API.
-  version: v2026.04.00
-  contact:
-    name: Moov
-    url: https://moov.io
-  termsOfService: https://moov.io/legal/platform-agreement/
+  title: Moov Card issuing API
+  version: '1.0'
+  description: 'Operations tagged Card issuing across 3 of this provider''s published API definitions: moov-api-v2026.01.00-openapi.yml, moov-openapi.yml, moov-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.moov.io
-  description: Moov production
-security:
-- bearerAuth: []
+  description: Production API host
+  variables: {}
 tags:
-- name: Card Issuing
-  description: Virtual spending cards, authorizations, and card transactions.
+- name: Card issuing
 paths:
   /issuing/{accountID}/cards:
-    parameters:
-    - $ref: '#/components/parameters/accountID'
     post:
-      operationId: createIssuedCard
-      tags:
-      - Card Issuing
-      summary: Create a spending card
+      operationId: requestCard
+      description: 'Request a virtual card be issued.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/issued-cards.write` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        description: The Moov business account for which the card is to be issued.
+        schema:
+          type: string
       responses:
         '200':
-          description: The created spending card.
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IssuedCard'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '422':
+          description: The request was well-formed, but the contents failed validation. Check the request for missing or invalid fields.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestCardError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Card issuing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestCard'
+      x-speakeasy-name-override: request
+      security:
+      - BasicAuth: []
+      summary: Request card
+      x-summary-source: derived
     get:
       operationId: listIssuedCards
-      tags:
-      - Card Issuing
-      summary: List spending cards
+      description: 'List Moov issued cards existing for the account.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/issued-cards.read` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        description: The Moov business account for which the cards have been issued.
+        schema:
+          type: string
+      - $ref: '#/components/parameters/Pagination.skip'
+      - $ref: '#/components/parameters/Pagination.count'
+      - name: states
+        in: query
+        required: false
+        description: Optional, comma-separated states to filter the Moov list issued cards response. For example `active,closed`
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/IssuedCardState'
+        explode: false
       responses:
         '200':
-          description: A list of spending cards.
-  /issuing/{accountID}/cards/{issuedCardID}:
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IssuedCard'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Card issuing
+      x-speakeasy-name-override: list
+      security:
+      - BasicAuth: []
+      summary: List issued cards
+      x-summary-source: derived
     parameters:
     - $ref: '#/components/parameters/accountID'
-    - $ref: '#/components/parameters/issuedCardID'
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+  /issuing/{accountID}/cards/{issuedCardID}:
     get:
       operationId: getIssuedCard
-      tags:
-      - Card Issuing
-      summary: Retrieve a spending card
+      description: 'Retrieve a single issued card associated with a Moov account.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/issued-cards.read` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        description: The Moov business account for which the card was issued.
+        schema:
+          type: string
+      - name: issuedCardID
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
         '200':
-          description: The spending card.
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IssuedCard'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Card issuing
+      x-speakeasy-name-override: get
+      security:
+      - BasicAuth: []
+      summary: Get issued card
+      x-summary-source: derived
     patch:
       operationId: updateIssuedCard
-      tags:
-      - Card Issuing
-      summary: Update a spending card
+      description: 'Update a Moov issued card.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/issued-cards.write` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        description: The Moov business account for which the card was issued.
+        schema:
+          type: string
+      - name: issuedCardID
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
         '200':
-          description: The updated spending card.
-  /issuing/{accountID}/cards/{issuedCardID}/details:
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IssuedCard'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '422':
+          description: The request was well-formed, but the contents failed validation. Check the request for missing or invalid fields.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateIssuedCardError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Card issuing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateIssuedCard'
+      x-speakeasy-name-override: update
+      security:
+      - BasicAuth: []
+      summary: Update issued card
+      x-summary-source: derived
     parameters:
     - $ref: '#/components/parameters/accountID'
     - $ref: '#/components/parameters/issuedCardID'
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+  /issuing/{accountID}/cards/{issuedCardID}/details:
     get:
-      operationId: getIssuedCardDetails
-      tags:
-      - Card Issuing
-      summary: Get PCI details for a spending card
+      operationId: getFullIssuedCard
+      description: 'Get issued card with PAN, CVV, and expiration.
+
+
+        Only use this endpoint if you have provided Moov with a copy of your PCI attestation of compliance.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/issued-cards.read-private` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        description: The Moov business account for which the card was issued.
+        schema:
+          type: string
+      - name: issuedCardID
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
         '200':
-          description: The full PCI card details.
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FullIssuedCard'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Card issuing
+      x-speakeasy-name-override: getFull
+      security:
+      - BasicAuth: []
+      summary: Get full issued card
+      x-summary-source: derived
+    parameters:
+    - $ref: '#/components/parameters/accountID'
+    - $ref: '#/components/parameters/issuedCardID'
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
   /issuing/{accountID}/authorizations:
     parameters:
     - $ref: '#/components/parameters/accountID'
     get:
       operationId: listAuthorizations
       tags:
-      - Card Issuing
+      - Card issuing
       summary: List authorizations
       responses:
         '200':
           description: A list of authorizations.
+      security:
+      - bearerAuth: []
+    servers:
+    - url: https://api.moov.io
+      description: Moov production
   /issuing/{accountID}/authorizations/{authorizationID}:
     parameters:
     - $ref: '#/components/parameters/accountID'
@@ -89,11 +575,16 @@ paths:
     get:
       operationId: getAuthorization
       tags:
-      - Card Issuing
+      - Card issuing
       summary: Retrieve an authorization
       responses:
         '200':
           description: The authorization.
+      security:
+      - bearerAuth: []
+    servers:
+    - url: https://api.moov.io
+      description: Moov production
   /issuing/{accountID}/authorizations/{authorizationID}/events:
     parameters:
     - $ref: '#/components/parameters/accountID'
@@ -105,22 +596,32 @@ paths:
     get:
       operationId: listAuthorizationEvents
       tags:
-      - Card Issuing
+      - Card issuing
       summary: List authorization events
       responses:
         '200':
           description: A list of authorization events.
+      security:
+      - bearerAuth: []
+    servers:
+    - url: https://api.moov.io
+      description: Moov production
   /issuing/{accountID}/card-transactions:
     parameters:
     - $ref: '#/components/parameters/accountID'
     get:
       operationId: listCardTransactions
       tags:
-      - Card Issuing
+      - Card issuing
       summary: List card transactions
       responses:
         '200':
           description: A list of card transactions.
+      security:
+      - bearerAuth: []
+    servers:
+    - url: https://api.moov.io
+      description: Moov production
   /issuing/{accountID}/card-transactions/{cardTransactionID}:
     parameters:
     - $ref: '#/components/parameters/accountID'
@@ -132,13 +633,448 @@ paths:
     get:
       operationId: getCardTransaction
       tags:
-      - Card Issuing
+      - Card issuing
       summary: Retrieve a card transaction
       responses:
         '200':
           description: The card transaction.
+      security:
+      - bearerAuth: []
+    servers:
+    - url: https://api.moov.io
+      description: Moov production
 components:
+  schemas:
+    Count:
+      type: integer
+      format: int64
+      description: Limits the maximum number of results returned, or determines the page size when used with `skip` or `cursor` for pagination.
+      example: 20
+    Address:
+      type: object
+      required:
+      - addressLine1
+      - city
+      - stateOrProvince
+      - postalCode
+      - country
+      properties:
+        addressLine1:
+          type: string
+          maxLength: 60
+          pattern: '[a-zA-Z0-9,.\/?:''"|~!@#$%^&*()+_= -]+'
+          example: 123 Main Street
+        addressLine2:
+          type: string
+          maxLength: 32
+          pattern: '[a-zA-Z0-9,.\/?:''"|~!@#$%^&*()+_= -]+'
+          example: Apt 302
+        city:
+          type: string
+          maxLength: 32
+          pattern: '[a-zA-Z0-9,.\/?:''"|~!@#$%^&*()+_= -]+'
+          example: Boulder
+        stateOrProvince:
+          type: string
+          maxLength: 2
+          example: CO
+        postalCode:
+          type: string
+          maxLength: 5
+          example: '80301'
+        country:
+          type: string
+          maxLength: 2
+          example: US
+    CardExpiration:
+      type: object
+      required:
+      - month
+      - year
+      properties:
+        month:
+          type: string
+          minLength: 2
+          maxLength: 2
+          description: Two-digit month the card expires.
+        year:
+          type: string
+          minLength: 2
+          maxLength: 2
+          description: Two-digit year the card expires.
+      description: The expiration date of the card or token.
+      example:
+        month: '01'
+        year: '21'
+    IssuingControls:
+      type: object
+      properties:
+        singleUse:
+          type: boolean
+          description: Indicates if the card is single-use. If true, the card closes after the first authorization.
+        velocityLimits:
+          type: array
+          items:
+            $ref: '#/components/schemas/IssuingVelocityLimit'
+          description: Sets the spending limit per time interval. Only one limit per interval is supported.
+      description: Mutable spend controls for the card.
+    Metadata:
+      type: object
+      additionalProperties:
+        type: string
+      description: Free-form key-value pair list. Useful for storing information that is not captured elsewhere.
+      example:
+        optional: metadata
+    IssuedCard:
+      type: object
+      required:
+      - issuedCardID
+      - brand
+      - lastFourCardNumber
+      - expiration
+      - fundingWalletID
+      - state
+      - formFactor
+      - createdOn
+      - updatedOn
+      properties:
+        issuedCardID:
+          type: string
+        brand:
+          $ref: '#/components/schemas/CardBrand'
+        lastFourCardNumber:
+          type: string
+        expiration:
+          $ref: '#/components/schemas/CardExpiration'
+        fundingWalletID:
+          type: string
+          description: Unique identifier for the wallet funding the card.
+        authorizedUserAccountID:
+          type: string
+          description: Identifier for the account of the card's authorized user.
+        nickname:
+          type: string
+          description: An optional descriptive name for the card.
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+        billingAddress:
+          allOf:
+          - $ref: '#/components/schemas/Address'
+          description: Billing address associated with the card.
+        state:
+          $ref: '#/components/schemas/IssuedCardState'
+        formFactor:
+          $ref: '#/components/schemas/IssuedCardFormFactor'
+        controls:
+          $ref: '#/components/schemas/IssuingControls'
+        createdOn:
+          type: string
+          format: date-time
+        updatedOn:
+          type: string
+          format: date-time
+    IssuedCardFormFactor:
+      type: string
+      enum:
+      - virtual
+      description: Specifies the type of spend card to be issued. Presently supports virtual only, providing a digital number without a physical card.
+    CardBrand:
+      type: string
+      enum:
+      - American Express
+      - Discover
+      - Mastercard
+      - Visa
+      - Unknown
+      description: The card brand.
+      example: Visa
+    CardExpirationError:
+      type: object
+      properties:
+        month:
+          type: string
+        year:
+          type: string
+    Skip:
+      type: integer
+      format: int64
+      description: The number of entries to skip when paginating a large result set.
+      example: 60
+    UpdateIssuedCardError:
+      type: object
+      properties:
+        state:
+          type: string
+        nickname:
+          type: string
+        metadata:
+          type: string
+        billingAddress:
+          $ref: '#/components/schemas/AddressError'
+    IssuingVelocityLimitError:
+      type: object
+      properties:
+        amount:
+          type: string
+        interval:
+          type: string
+    UpdateIssuedCardState:
+      type: string
+      enum:
+      - active
+      - frozen
+      - closed
+      description: 'Updates the state of a Moov issued card.
+
+        - `active`: Reactivates a frozen card so it can approve authorizations again.
+
+        - `frozen`: Temporarily suspends the card so it cannot approve authorizations. A card can be moved between `frozen` and `active` at will until it is `closed`, which is a terminal state.
+
+        - `closed`: The card is permanently deactivated and cannot approve authorizations. A card can be closed by request or when it expires.'
+    IssuingVelocityLimit:
+      type: object
+      required:
+      - amount
+      - interval
+      properties:
+        amount:
+          type: integer
+          format: int64
+          description: The maximum amount in cents that can be spent in a given interval.
+          example: 10000
+        interval:
+          $ref: '#/components/schemas/IssuingIntervalLimit'
+    RequestCard:
+      type: object
+      properties:
+        authorizedUserAccountID:
+          type: string
+        nickname:
+          type: string
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+        billingAddress:
+          $ref: '#/components/schemas/Address'
+        expiration:
+          $ref: '#/components/schemas/CardExpiration'
+        controls:
+          $ref: '#/components/schemas/IssuingControls'
+    IssuingControlsError:
+      type: object
+      properties:
+        velocityLimits:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/IssuingVelocityLimitError'
+      example:
+        velocityLimits:
+          '0':
+            amount: must be no less than 1
+            interval: must be a valid value
+    GenericError:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    AddressError:
+      type: object
+      properties:
+        addressLine1:
+          type: string
+        addressLine2:
+          type: string
+        city:
+          type: string
+        stateOrProvince:
+          type: string
+        postalCode:
+          type: string
+        country:
+          type: string
+    AddressUpdate:
+      type: object
+      properties:
+        addressLine1:
+          type: string
+          maxLength: 60
+          pattern: '[a-zA-Z0-9,.\/?:''"|~!@#$%^&*()+_= -]+'
+          example: 123 Main Street
+        addressLine2:
+          type: string
+          maxLength: 32
+          pattern: '[a-zA-Z0-9,.\/?:''"|~!@#$%^&*()+_= -]+'
+          example: Apt 302
+        city:
+          type: string
+          maxLength: 32
+          pattern: '[a-zA-Z0-9,.\/?:''"|~!@#$%^&*()+_= -]+'
+          example: Boulder
+        stateOrProvince:
+          type: string
+          maxLength: 2
+          example: CO
+        postalCode:
+          type: string
+          maxLength: 5
+          example: '80301'
+        country:
+          type: string
+          maxLength: 2
+          example: US
+    IssuedCardState:
+      type: string
+      enum:
+      - active
+      - frozen
+      - closed
+      description: 'The `state` represents the operational status of an issued card. A card can only approve incoming authorizations if it is in an active state.
+
+
+        - `active`: The card is operational and can approve authorizations.
+
+        - `frozen`: The card is temporarily suspended and cannot approve authorizations. A frozen card can be reactivated by setting its state back to `active`.
+
+        - `closed`: The card is permanently deactivated and cannot approve authorizations. A card can be closed by request or when it expires.'
+    UpdateIssuedCard:
+      type: object
+      properties:
+        state:
+          $ref: '#/components/schemas/UpdateIssuedCardState'
+        nickname:
+          type:
+          - string
+          - 'null'
+        metadata:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/Metadata'
+        billingAddress:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/AddressUpdate'
+    RequestCardError:
+      type: object
+      properties:
+        authorizedUserAccountID:
+          type: string
+        nickname:
+          type: string
+        metadata:
+          type: string
+        billingAddress:
+          $ref: '#/components/schemas/AddressError'
+        expiration:
+          $ref: '#/components/schemas/CardExpirationError'
+        controls:
+          $ref: '#/components/schemas/IssuingControlsError'
+    IssuingIntervalLimit:
+      type: string
+      enum:
+      - per-transaction
+      description: Specifies the time frame for a velocity limit. `per-transaction` applies to each individual authorization and never resets. Time-based intervals (where supported) reset at midnight ET.
+    FullIssuedCard:
+      type: object
+      required:
+      - issuedCardID
+      - brand
+      - lastFourCardNumber
+      - expiration
+      - fundingWalletID
+      - state
+      - formFactor
+      - createdOn
+      - updatedOn
+      - pan
+      - cvv
+      properties:
+        issuedCardID:
+          type: string
+        brand:
+          $ref: '#/components/schemas/CardBrand'
+        lastFourCardNumber:
+          type: string
+        expiration:
+          $ref: '#/components/schemas/CardExpiration'
+        fundingWalletID:
+          type: string
+          description: Unique identifier for the wallet funding the card.
+        authorizedUserAccountID:
+          type: string
+          description: Identifier for the account of the card's authorized user.
+        nickname:
+          type: string
+          description: An optional descriptive name for the card.
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+        billingAddress:
+          allOf:
+          - $ref: '#/components/schemas/Address'
+          description: Billing address associated with the card.
+        state:
+          $ref: '#/components/schemas/IssuedCardState'
+        formFactor:
+          $ref: '#/components/schemas/IssuedCardFormFactor'
+        controls:
+          $ref: '#/components/schemas/IssuingControls'
+        createdOn:
+          type: string
+          format: date-time
+        updatedOn:
+          type: string
+          format: date-time
+        pan:
+          type: string
+          minLength: 16
+          maxLength: 19
+          description: The issued card's Primary Account Number (PAN)
+        cvv:
+          type: string
+          minLength: 3
+          maxLength: 4
+          description: The issued card's 3- or 4-digit Card Verification Value (CVV).
+      description: The full details of an issued card, including PAN and CVV.
   parameters:
+    Pagination.skip:
+      name: skip
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/Skip'
+      explode: false
+    VersionHeader:
+      name: X-Moov-Version
+      in: header
+      required: false
+      description: 'Set this header to v2026.01.00 to use the API described in this specification.
+
+        When omitted, the server defaults to v2024.01.00, the earliest supported version, which may not match the behavior documented here.
+
+        An unrecognized well-formed version uses the latest supported version that is not newer than the requested version, when one exists.
+
+        For example, `v2026.08.00` uses `v2026.07.00`.
+
+        A malformed value, such as `2022`, returns a `404` response.'
+      schema:
+        type: string
+        enum:
+        - v2026.01.00
+        example: v2026.01.00
+        x-speakeasy-ignore: true
+      x-speakeasy-ignore: true
+    Pagination.count:
+      name: count
+      in: query
+      required: false
+      description: Page size. When omitted, the server defaults to `200`.
+      schema:
+        $ref: '#/components/schemas/Count'
+      explode: false
     issuedCardID:
       name: issuedCardID
       in: path
@@ -155,11 +1091,15 @@ components:
         format: uuid
       description: The Moov account identifier.
   securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: Basic
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
       description: OAuth 2.0 access token passed as a Bearer token.
-externalDocs:
-  description: Moov API reference and canonical OpenAPI spec
-  url: https://docs.moov.io/api/
+x-refined-from:
+- moov-api-v2026.01.00-openapi.yml
+- moov-openapi.yml
+- moov-openapi.yml

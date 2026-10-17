@@ -1,55 +1,177 @@
 openapi: 3.2.0
 info:
   title: Moov Representatives API
-  termsOfService: https://moov.io/legal/platform-agreement/
   version: '1.0'
-  description: 'Operations tagged Representatives across 2 of this provider''s published API definitions: moov-api-openapi.yml, moov-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: 'Operations tagged Representatives across 3 of this provider''s published API definitions: moov-api-v2026.01.00-openapi.yml, moov-openapi.yml, moov-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.moov.io
-  description: Production Server
-security:
-- bearerAuth: []
+  description: Production API host
+  variables: {}
 tags:
 - name: Representatives
-  description: Manage business representatives associated with a Moov account for KYB compliance and ownership verification.
 paths:
   /accounts/{accountID}/representatives:
     post:
-      operationId: addRepresentative
-      summary: Add a representative
-      description: Add a business representative to a Moov account for KYB compliance. Representatives are individuals with significant ownership or control over the business, as required by FinCEN beneficial ownership rules.
-      tags:
-      - Representatives
+      operationId: createRepresentative
+      description: 'Moov accounts associated with businesses require information regarding individuals who represent the business.
+
+        You can provide this information by creating a representative. Each account is allowed a maximum of 7 representatives.
+
+        Read our business representatives guide to learn more.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/representatives.write` scope.'
       parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
-      requestBody:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
         required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateRepresentativeRequest'
+        description: ID of the account.
+        schema:
+          type: string
       responses:
         '200':
-          description: Representative added successfully.
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Representative'
         '400':
-          $ref: '#/components/responses/BadRequest'
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
         '401':
-          $ref: '#/components/responses/Unauthorized'
-    get:
-      operationId: listRepresentatives
-      summary: List representatives
-      description: Retrieve all business representatives associated with a Moov account, including their verification status and ownership details.
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '422':
+          description: The request was well-formed, but the contents failed validation. Check the request for missing or invalid fields.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RepresentativeValidationError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
       tags:
       - Representatives
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRepresentative'
+      x-speakeasy-name-override: create
+      security:
+      - BasicAuth: []
+      summary: Create representative
+      x-summary-source: derived
+    get:
+      operationId: listRepresentatives
+      description: 'A Moov account may have multiple representatives depending on the associated business''s ownership and management structure.
+
+        You can use this method to list all the representatives for a given Moov account.
+
+        Note that Moov accounts associated with an individual do not have representatives.
+
+        Read our business representatives guide to learn more.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/representatives.read` scope.'
       parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        description: ID of the account.
+        schema:
+          type: string
       responses:
         '200':
-          description: Representatives returned successfully.
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -57,301 +179,842 @@ paths:
                 items:
                   $ref: '#/components/schemas/Representative'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Representatives
+      x-speakeasy-name-override: list
+      security:
+      - BasicAuth: []
+      summary: List representatives
+      x-summary-source: derived
     parameters:
     - $ref: '#/components/parameters/accountID'
     servers:
     - url: https://api.moov.io
-      description: Production Server
+      description: Production API host
+      variables: {}
   /accounts/{accountID}/representatives/{representativeID}:
-    get:
-      operationId: getRepresentative
-      summary: Retrieve a representative
-      description: Fetch the full profile and verification details for a specific business representative on a Moov account.
+    delete:
+      operationId: deleteRepresentative
+      description: 'Deletes a business representative associated with a Moov account. Read our business representatives guide to learn more.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/representatives.write` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        description: ID of the account.
+        schema:
+          type: string
+      - name: representativeID
+        in: path
+        required: true
+        description: ID of the representative.
+        schema:
+          type: string
+      responses:
+        '204':
+          description: The request completed successfully, but there is no content to return.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
       tags:
       - Representatives
+      x-speakeasy-name-override: delete
+      security:
+      - BasicAuth: []
+      summary: Delete representative
+      x-summary-source: derived
+    get:
+      operationId: getRepresentative
+      description: 'Retrieve a specific representative associated with a given Moov account. Read our business representatives guide to learn more.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/representatives.read` scope.'
       parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
-      - $ref: '#/components/parameters/RepresentativeIDParam'
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        description: ID of the account.
+        schema:
+          type: string
+      - name: representativeID
+        in: path
+        required: true
+        description: ID of the representative.
+        schema:
+          type: string
       responses:
         '200':
-          description: Representative details returned successfully.
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Representative'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
         '404':
-          $ref: '#/components/responses/NotFound'
-    patch:
-      operationId: updateRepresentative
-      summary: Update a representative
-      description: Modify the information for an existing business representative. Use this to correct or update personal details, ownership percentages, or contact information as part of KYB compliance maintenance.
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
       tags:
       - Representatives
+      x-speakeasy-name-override: get
+      security:
+      - BasicAuth: []
+      summary: Get representative
+      x-summary-source: derived
+    patch:
+      operationId: updateRepresentative
+      description: 'If a representative''s information has changed you can patch the information associated with a specific representative ID.
+
+        Read our business representatives guide to learn more.
+
+
+        When **can** profile data be updated:
+
+
+        - For unverified representatives, all profile data can be edited.
+
+        - During the verification process, missing or incomplete profile data can be edited.
+
+        - Verified representatives can only add missing profile data.
+
+
+        When **can''t** profile data be updated:
+
+
+        - Verified representatives cannot change any existing profile data.
+
+
+        If you need to update information in a locked state, please contact Moov support.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/representatives.write` scope.'
       parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
-      - $ref: '#/components/parameters/RepresentativeIDParam'
-      requestBody:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
         required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateRepresentativeRequest'
+        description: ID of the account.
+        schema:
+          type: string
+      - name: representativeID
+        in: path
+        required: true
+        description: ID of the representative.
+        schema:
+          type: string
       responses:
         '200':
-          description: Representative updated successfully.
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Representative'
         '400':
-          $ref: '#/components/responses/BadRequest'
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
         '404':
-          $ref: '#/components/responses/NotFound'
-    delete:
-      operationId: removeRepresentative
-      summary: Remove a representative
-      description: Delete a business representative from a Moov account. This may affect the account's compliance status and capability eligibility.
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
       tags:
       - Representatives
-      parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
-      - $ref: '#/components/parameters/RepresentativeIDParam'
-      responses:
-        '204':
-          description: Representative removed successfully.
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateRepresentative'
+      x-speakeasy-name-override: update
+      security:
+      - BasicAuth: []
+      summary: Update representative
+      x-summary-source: derived
     parameters:
     - $ref: '#/components/parameters/accountID'
     - $ref: '#/components/parameters/representativeID'
     servers:
     - url: https://api.moov.io
-      description: Production Server
+      description: Production API host
+      variables: {}
 components:
   schemas:
+    PhoneNumberError:
+      type: object
+      properties:
+        number:
+          type: string
+        countryCode:
+          type: string
     Address:
       type: object
-      description: Physical or mailing address.
+      required:
+      - addressLine1
+      - city
+      - stateOrProvince
+      - postalCode
+      - country
       properties:
         addressLine1:
           type: string
-          description: Primary street address.
+          maxLength: 60
+          pattern: '[a-zA-Z0-9,.\/?:''"|~!@#$%^&*()+_= -]+'
+          example: 123 Main Street
         addressLine2:
           type: string
-          description: Secondary address line (suite, apartment, etc.).
+          maxLength: 32
+          pattern: '[a-zA-Z0-9,.\/?:''"|~!@#$%^&*()+_= -]+'
+          example: Apt 302
         city:
           type: string
-          description: City name.
+          maxLength: 32
+          pattern: '[a-zA-Z0-9,.\/?:''"|~!@#$%^&*()+_= -]+'
+          example: Boulder
         stateOrProvince:
           type: string
-          description: Two-letter state or province code.
           maxLength: 2
+          example: CO
         postalCode:
           type: string
-          description: Postal or ZIP code.
+          maxLength: 5
+          example: '80301'
         country:
           type: string
-          description: Two-letter ISO 3166-1 alpha-2 country code.
           maxLength: 2
-    UpdateRepresentativeRequest:
+          example: US
+    PhoneNumber:
       type: object
-      description: Request body for updating a business representative. Only provided fields are updated.
       properties:
-        name:
-          $ref: '#/components/schemas/Name'
-        phone:
-          $ref: '#/components/schemas/Phone'
-        email:
+        number:
           type: string
-          format: email
-          description: Representative's email address.
-        address:
-          $ref: '#/components/schemas/Address'
+          maxLength: 10
+          example: '8185551212'
+        countryCode:
+          type: string
+          maxLength: 1
+          example: '1'
+    Email:
+      type: string
+      maxLength: 255
+      format: email
+      example: jordan.lee@classbooker.dev
+    BirthDate:
+      type: object
+      required:
+      - day
+      - month
+      - year
+      properties:
+        day:
+          type: integer
+          example: 9
+        month:
+          type: integer
+          example: 11
+        year:
+          type: integer
+          example: 1989
+    BirthDateUpdate:
+      type: object
+      properties:
+        day:
+          type: integer
+          example: 9
+        month:
+          type: integer
+          example: 11
+        year:
+          type: integer
+          example: 1989
+    IndividualNameUpdate:
+      type: object
+      properties:
+        firstName:
+          type: string
+          maxLength: 64
+          pattern: '[À-ÖØ-öø-ÿ"''(),.0-9A-Za-z~ &!-]*'
+          description: The individual's first given name.
+          example: Jordan
+        middleName:
+          type: string
+          maxLength: 64
+          pattern: '[À-ÖØ-öø-ÿ"''(),.0-9A-Za-z~ &!-]*'
+          description: The individual's second given name, if any.
+          example: Reese
+        lastName:
+          type: string
+          maxLength: 64
+          pattern: '[À-ÖØ-öø-ÿ"''(),.0-9A-Za-z~ &!-]*'
+          description: The individual's family name.
+          example: Lee
+        suffix:
+          type: string
+          maxLength: 20
+          pattern: '[À-ÖØ-öø-ÿ"''(),.0-9A-Za-z~ &!-]*'
+          description: Suffix of a given name.
+          example: Jr
+    RepresentativeValidationError:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: object
+          properties:
+            name:
+              $ref: '#/components/schemas/IndividualNameError'
+            phone:
+              $ref: '#/components/schemas/PhoneNumberError'
+            email:
+              type: string
+            address:
+              $ref: '#/components/schemas/AddressError'
+            birthDate:
+              $ref: '#/components/schemas/BirthDateValidationError'
+            governmentID:
+              $ref: '#/components/schemas/GovernmentIDError'
+            responsibilities:
+              $ref: '#/components/schemas/RepresentativeResponsibilitiesError'
+    CreateRepresentative:
+      type: object
+      properties:
         birthDate:
-          type: string
-          format: date
-          description: Date of birth in ISO 8601 format.
+          $ref: '#/components/schemas/BirthDate'
         governmentID:
           $ref: '#/components/schemas/GovernmentID'
         responsibilities:
           $ref: '#/components/schemas/RepresentativeResponsibilities'
-    RepresentativeResponsibilities:
+      allOf:
+      - type: object
+        required:
+        - name
+        properties:
+          name:
+            $ref: '#/components/schemas/IndividualName'
+          phone:
+            $ref: '#/components/schemas/PhoneNumber'
+          email:
+            $ref: '#/components/schemas/Email'
+          address:
+            $ref: '#/components/schemas/Address'
+        description: The template for omitting properties.
+      description: Describes a business representative to create.
+    GovernmentID:
       type: object
-      description: Ownership and control responsibilities of a business representative.
       properties:
-        isController:
-          type: boolean
-          description: Whether this representative has significant control over the business.
-        isOwner:
-          type: boolean
-          description: Whether this representative owns 25% or more of the business.
-        ownershipPercentage:
-          type: number
-          description: Percentage of business ownership held by this representative.
-          minimum: 0
-          maximum: 100
-        jobTitle:
+        ssn:
+          type: object
+          properties:
+            full:
+              type: string
+              pattern: ^\d{3}[-]?\d{2}[-]?\d{4}$
+            lastFour:
+              type: string
+        itin:
+          type: object
+          properties:
+            full:
+              type: string
+              pattern: ^\d{3}[-]?\d{2}[-]?\d{4}$
+            lastFour:
+              type: string
+    IndividualNameError:
+      type: object
+      properties:
+        firstName:
           type: string
-          description: Representative's job title within the business.
+        middleName:
+          type: string
+        lastName:
+          type: string
+        suffix:
+          type: string
     Representative:
       type: object
-      description: A business representative with significant ownership or control over a Moov business account, required for KYB compliance.
+      required:
+      - representativeID
+      - name
+      - createdOn
+      - updatedOn
       properties:
         representativeID:
           type: string
-          format: uuid
-          description: Unique identifier for the representative.
+          description: Unique identifier for this representative.
         name:
-          $ref: '#/components/schemas/Name'
+          $ref: '#/components/schemas/IndividualName'
         phone:
-          $ref: '#/components/schemas/Phone'
+          $ref: '#/components/schemas/PhoneNumber'
         email:
-          type: string
-          format: email
-          description: Representative's email address.
+          $ref: '#/components/schemas/Email'
         address:
           $ref: '#/components/schemas/Address'
-        birthDate:
-          type: string
-          format: date
-          description: Date of birth in ISO 8601 format.
-        governmentID:
-          $ref: '#/components/schemas/GovernmentID'
+        birthDateProvided:
+          type: boolean
+          description: Indicates whether this representative's birth date has been provided.
+        governmentIDProvided:
+          type: boolean
+          description: Indicates whether a government ID (SSN, ITIN, etc.) has been provided for this representative.
         responsibilities:
           $ref: '#/components/schemas/RepresentativeResponsibilities'
         createdOn:
           type: string
           format: date-time
-          description: ISO 8601 timestamp when the representative was added.
         updatedOn:
           type: string
           format: date-time
-          description: ISO 8601 timestamp when the representative was last updated.
         disabledOn:
           type: string
           format: date-time
-          description: ISO 8601 timestamp when the representative was disabled, if applicable.
-    Error:
+      description: Describes a business representative.
+    BirthDateValidationError:
       type: object
-      description: Standard error response returned by the Moov API.
+      properties:
+        day:
+          type: string
+        month:
+          type: string
+        year:
+          type: string
+    AddressError:
+      type: object
+      properties:
+        addressLine1:
+          type: string
+        addressLine2:
+          type: string
+        city:
+          type: string
+        stateOrProvince:
+          type: string
+        postalCode:
+          type: string
+        country:
+          type: string
+    GenericError:
+      type: object
+      required:
+      - error
       properties:
         error:
           type: string
-          description: Human-readable description of the error.
-        code:
-          type: string
-          description: Machine-readable error code.
-    GovernmentID:
+    AddressUpdate:
       type: object
-      description: Government-issued identification for KYC verification.
       properties:
-        ssn:
-          $ref: '#/components/schemas/SsnOrItin'
-        itin:
-          $ref: '#/components/schemas/SsnOrItin'
-    CreateRepresentativeRequest:
+        addressLine1:
+          type: string
+          maxLength: 60
+          pattern: '[a-zA-Z0-9,.\/?:''"|~!@#$%^&*()+_= -]+'
+          example: 123 Main Street
+        addressLine2:
+          type: string
+          maxLength: 32
+          pattern: '[a-zA-Z0-9,.\/?:''"|~!@#$%^&*()+_= -]+'
+          example: Apt 302
+        city:
+          type: string
+          maxLength: 32
+          pattern: '[a-zA-Z0-9,.\/?:''"|~!@#$%^&*()+_= -]+'
+          example: Boulder
+        stateOrProvince:
+          type: string
+          maxLength: 2
+          example: CO
+        postalCode:
+          type: string
+          maxLength: 5
+          example: '80301'
+        country:
+          type: string
+          maxLength: 2
+          example: US
+    IndividualName:
       type: object
-      description: Request body for adding a business representative to an account.
       required:
-      - name
-      properties:
-        name:
-          $ref: '#/components/schemas/Name'
-        phone:
-          $ref: '#/components/schemas/Phone'
-        email:
-          type: string
-          format: email
-          description: Representative's email address.
-        address:
-          $ref: '#/components/schemas/Address'
-        birthDate:
-          type: string
-          format: date
-          description: Date of birth in ISO 8601 format (YYYY-MM-DD).
-        governmentID:
-          $ref: '#/components/schemas/GovernmentID'
-        responsibilities:
-          $ref: '#/components/schemas/RepresentativeResponsibilities'
-    Phone:
-      type: object
-      description: Phone number with country code.
-      properties:
-        number:
-          type: string
-          description: Phone number digits without formatting.
-          pattern: ^\d{10,15}$
-        countryCode:
-          type: string
-          description: International country calling code (e.g., "1" for US).
-    SsnOrItin:
-      type: object
-      description: Social Security Number or Individual Taxpayer Identification Number.
-      properties:
-        full:
-          type: string
-          description: Full 9-digit SSN or ITIN. Only provided on write; masked on read.
-          pattern: ^\d{9}$
-        lastFour:
-          type: string
-          description: Last four digits of the SSN or ITIN.
-          pattern: ^\d{4}$
-    Name:
-      type: object
-      description: Full name of an individual.
+      - firstName
+      - lastName
       properties:
         firstName:
           type: string
-          description: Given name.
+          maxLength: 64
+          pattern: '[À-ÖØ-öø-ÿ"''(),.0-9A-Za-z~ &!-]*'
+          description: The individual's first given name.
+          example: Jordan
         middleName:
           type: string
-          description: Middle name or initial.
+          maxLength: 64
+          pattern: '[À-ÖØ-öø-ÿ"''(),.0-9A-Za-z~ &!-]*'
+          description: The individual's second given name, if any.
+          example: Reese
         lastName:
           type: string
-          description: Family name.
+          maxLength: 64
+          pattern: '[À-ÖØ-öø-ÿ"''(),.0-9A-Za-z~ &!-]*'
+          description: The individual's family name.
+          example: Lee
         suffix:
           type: string
-          description: Name suffix (e.g., Jr., Sr., III).
-  responses:
-    BadRequest:
-      description: The request was malformed or contained invalid parameters.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+          maxLength: 20
+          pattern: '[À-ÖØ-öø-ÿ"''(),.0-9A-Za-z~ &!-]*'
+          description: Suffix of a given name.
+          example: Jr
+    UpdateRepresentative:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/IndividualNameUpdate'
+        phone:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/PhoneNumber'
+        email:
+          type:
+          - string
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/Email'
+        address:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/AddressUpdate'
+        birthDate:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/BirthDateUpdate'
+        governmentID:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/GovernmentID'
+        responsibilities:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/RepresentativeResponsibilities'
+    GovernmentIDError:
+      type: object
+      properties:
+        ssn:
+          type: object
+          properties:
+            full:
+              type: string
+            lastFour:
+              type: string
+        itin:
+          type: object
+          properties:
+            full:
+              type: string
+            lastFour:
+              type: string
+    RepresentativeResponsibilities:
+      type: object
+      properties:
+        isController:
+          type: boolean
+          description: Indicates whether this individual has significant management responsibilities within the business.
+        isOwner:
+          type: boolean
+          description: 'If `true`, this field indicates that the individual has a business ownership stake of at least 25% in the
+
+            business. If the representative does not own at least 25% of the business, this field should be `false`.'
+        ownershipPercentage:
+          type: integer
+          description: The percentage of ownership this individual has in the business (required if `isOwner` is `true`).
+          example: 38
+        jobTitle:
+          type: string
+          maxLength: 64
+          pattern: '[a-zA-Z0-9,.\/?:''"|~!@#$%^&*()+_= -]+'
+          example: CEO
+      description: Describes the job responsibilities of a business representative.
+    RepresentativeResponsibilitiesError:
+      type: object
+      properties:
+        isController:
+          type: string
+        isOwner:
+          type: string
+        ownershipPercentage:
+          type: string
+        jobTitle:
+          type: string
   parameters:
-    AccountIDParam:
-      name: accountID
-      in: path
-      required: true
-      description: Unique identifier for the Moov account.
+    VersionHeader:
+      name: X-Moov-Version
+      in: header
+      required: false
+      description: 'Set this header to v2026.01.00 to use the API described in this specification.
+
+        When omitted, the server defaults to v2024.01.00, the earliest supported version, which may not match the behavior documented here.
+
+        An unrecognized well-formed version uses the latest supported version that is not newer than the requested version, when one exists.
+
+        For example, `v2026.08.00` uses `v2026.07.00`.
+
+        A malformed value, such as `2022`, returns a `404` response.'
       schema:
         type: string
-        format: uuid
-    RepresentativeIDParam:
+        enum:
+        - v2026.01.00
+        example: v2026.01.00
+        x-speakeasy-ignore: true
+      x-speakeasy-ignore: true
+    representativeID:
       name: representativeID
       in: path
       required: true
-      description: Unique identifier for the representative.
       schema:
         type: string
         format: uuid
@@ -363,18 +1026,16 @@ components:
         type: string
         format: uuid
       description: The Moov account identifier.
-    representativeID:
-      name: representativeID
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
   securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: Basic
     bearerAuth:
       type: http
       scheme: bearer
-      description: OAuth2 bearer token obtained from the /oauth2/token endpoint. Include in the Authorization header as "Bearer {token}".
+      bearerFormat: JWT
+      description: OAuth 2.0 access token passed as a Bearer token.
 x-refined-from:
-- moov-api-openapi.yml
+- moov-api-v2026.01.00-openapi.yml
+- moov-openapi.yml
 - moov-openapi.yml

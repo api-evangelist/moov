@@ -1,174 +1,523 @@
 openapi: 3.2.0
 info:
   title: Moov Wallets API
-  termsOfService: https://moov.io/legal/platform-agreement/
   version: '1.0'
-  description: 'Operations tagged Wallets across 2 of this provider''s published API definitions: moov-api-openapi.yml, moov-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: 'Operations tagged Wallets across 3 of this provider''s published API definitions: moov-api-v2026.01.00-openapi.yml, moov-openapi.yml, moov-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.moov.io
-  description: Production Server
-security:
-- bearerAuth: []
+  description: Production API host
+  variables: {}
 tags:
 - name: Wallets
-  description: Create and manage Moov digital wallets that hold funds within the platform. Supports wallet transactions and balance adjustments.
 paths:
   /accounts/{accountID}/wallets:
     post:
       operationId: createWallet
-      summary: Create a wallet
-      description: Create a Moov digital wallet for an account to hold funds within the platform. Wallets serve as an intermediate store of value for money movement operations.
-      tags:
-      - Wallets
+      description: 'Create a new wallet for an account. You can specify optional attributes such as a display name and description to specify the intended use of the wallet. This will generate a new moov-wallet payment method.
+
+
+        Read our Moov wallets guide to learn more.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/wallets.write` scope.'
       parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        description: The Moov account ID the wallet belongs to.
+        schema:
+          type: string
       responses:
         '200':
-          description: Wallet created successfully.
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Wallet'
         '400':
-          $ref: '#/components/responses/BadRequest'
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
         '401':
-          $ref: '#/components/responses/Unauthorized'
-    get:
-      operationId: listWallets
-      summary: List wallets
-      description: Retrieve all wallets associated with a Moov account, including their current balances and currencies.
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '422':
+          description: The request was well-formed, but the contents failed validation. Check the request for missing or invalid fields.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateWalletValidationError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
       tags:
       - Wallets
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWallet'
+      x-speakeasy-name-override: create
+      security:
+      - BasicAuth: []
+      summary: Create wallet
+      x-summary-source: derived
+    get:
+      operationId: listWallets
+      description: 'List the wallets associated with a Moov account.
+
+
+        Read our Moov wallets guide to learn more.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/wallets.read` scope.'
       parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/VersionHeader'
+      - $ref: '#/components/parameters/WalletListFilters.status'
+      - $ref: '#/components/parameters/WalletListFilters.walletType'
+      - $ref: '#/components/parameters/Pagination.skip'
+      - $ref: '#/components/parameters/Pagination.count'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
         '200':
-          description: Wallets returned successfully.
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Wallet'
+              example:
+              - walletID: 01234567-89ab-cdef-0123-456789abcdef
+                availableBalance:
+                  currency: USD
+                  value: 1234
+                  valueDecimal: '12.34'
+                partnerAccountID: 65b57f28-49e9-4afb-9bf6-7e4fb6444917
+                name: My Wallet
+                status: active
+                walletType: general
+                description: For payments
+                createdOn: '2025-01-21T21:32:16Z'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '422':
+          description: The request was well-formed, but the contents failed validation. Check the request for missing or invalid fields.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListWalletsValidationError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Wallets
+      x-speakeasy-name-override: list
+      security:
+      - BasicAuth: []
+      summary: List wallets
+      x-summary-source: derived
     parameters:
     - $ref: '#/components/parameters/accountID'
     servers:
     - url: https://api.moov.io
-      description: Production Server
+      description: Production API host
+      variables: {}
   /accounts/{accountID}/wallets/{walletID}:
     get:
       operationId: getWallet
-      summary: Retrieve a wallet
-      description: Fetch the details and current balance of a specific Moov wallet for an account.
-      tags:
-      - Wallets
+      description: 'Get information on a specific wallet (e.g., the available balance).
+
+
+        Read our Moov wallets guide to learn more.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/wallets.read` scope.'
       parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
-      - $ref: '#/components/parameters/WalletIDParam'
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: walletID
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/WalletID'
       responses:
         '200':
-          description: Wallet details returned successfully.
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Wallet'
+              example:
+                walletID: 01234567-89ab-cdef-0123-456789abcdef
+                availableBalance:
+                  currency: USD
+                  value: 1234
+                  valueDecimal: '12.34'
+                partnerAccountID: 65b57f28-49e9-4afb-9bf6-7e4fb6444917
+                name: My Wallet
+                status: active
+                walletType: general
+                description: For payments
+                createdOn: '2025-01-21T21:32:16Z'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
         '404':
-          $ref: '#/components/responses/NotFound'
-    patch:
-      operationId: updateWallet
-      summary: Update a wallet
-      description: Modify the configuration of an existing Moov wallet, such as updating its display name or settings.
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
       tags:
       - Wallets
+      x-speakeasy-name-override: get
+      security:
+      - BasicAuth: []
+      summary: Get wallet
+      x-summary-source: derived
+    patch:
+      operationId: updateWallet
+      description: 'Update properties of an existing wallet such as name, description, status, or metadata.
+
+
+        Read our Moov wallets guide to learn more.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/wallets.write` scope.'
       parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
-      - $ref: '#/components/parameters/WalletIDParam'
-      requestBody:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: walletID
+        in: path
         required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateWalletRequest'
+        description: Identifier for the wallet.
+        schema:
+          $ref: '#/components/schemas/WalletID'
+      - name: accountID
+        in: path
+        required: true
+        description: The Moov account ID the wallet belongs to.
+        schema:
+          type: string
       responses:
         '200':
-          description: Wallet updated successfully.
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Wallet'
         '400':
-          $ref: '#/components/responses/BadRequest'
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
         '404':
-          $ref: '#/components/responses/NotFound'
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '422':
+          description: The request was well-formed, but the contents failed validation. Check the request for missing or invalid fields.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatchWalletValidationError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Wallets
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchWallet'
+      x-speakeasy-name-override: update
+      security:
+      - BasicAuth: []
+      summary: Update wallet
+      x-summary-source: derived
     parameters:
     - $ref: '#/components/parameters/accountID'
     - $ref: '#/components/parameters/walletID'
     servers:
     - url: https://api.moov.io
-      description: Production Server
+      description: Production API host
+      variables: {}
   /accounts/{accountID}/wallets/{walletID}/transactions:
+    parameters:
+    - $ref: '#/components/parameters/accountID'
+    - $ref: '#/components/parameters/walletID'
     get:
       operationId: listWalletTransactions
-      summary: List wallet transactions
-      description: Retrieve the transaction history for a Moov wallet, showing all credits and debits with timestamps and amounts.
       tags:
       - Wallets
-      parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
-      - $ref: '#/components/parameters/WalletIDParam'
-      - $ref: '#/components/parameters/CountParam'
-      - $ref: '#/components/parameters/SkipParam'
+      summary: List wallet transactions
       responses:
         '200':
-          description: Wallet transactions returned successfully.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/WalletTransaction'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-    parameters:
-    - $ref: '#/components/parameters/accountID'
-    - $ref: '#/components/parameters/walletID'
+          description: A list of wallet transactions.
+      security:
+      - bearerAuth: []
     servers:
     - url: https://api.moov.io
-      description: Production Server
+      description: Moov production
   /accounts/{accountID}/wallets/{walletID}/transactions/{transactionID}:
-    get:
-      operationId: getWalletTransaction
-      summary: Retrieve a wallet transaction
-      description: Fetch the details of a specific transaction within a Moov wallet, including its type, amount, and associated transfer reference.
-      tags:
-      - Wallets
-      parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
-      - $ref: '#/components/parameters/WalletIDParam'
-      - name: transactionID
-        in: path
-        required: true
-        description: Unique identifier for the wallet transaction.
-        schema:
-          type: string
-          format: uuid
-      responses:
-        '200':
-          description: Wallet transaction returned successfully.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WalletTransaction'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
     parameters:
     - $ref: '#/components/parameters/accountID'
     - $ref: '#/components/parameters/walletID'
@@ -177,9 +526,19 @@ paths:
       required: true
       schema:
         type: string
+    get:
+      operationId: getWalletTransaction
+      tags:
+      - Wallets
+      summary: Retrieve a wallet transaction
+      responses:
+        '200':
+          description: The wallet transaction.
+      security:
+      - bearerAuth: []
     servers:
     - url: https://api.moov.io
-      description: Production Server
+      description: Moov production
   /accounts/{accountID}/adjustments:
     parameters:
     - $ref: '#/components/parameters/accountID'
@@ -191,6 +550,8 @@ paths:
       responses:
         '200':
           description: A list of adjustments.
+      security:
+      - bearerAuth: []
     servers:
     - url: https://api.moov.io
       description: Moov production
@@ -210,151 +571,228 @@ paths:
       responses:
         '200':
           description: The adjustment.
+      security:
+      - bearerAuth: []
     servers:
     - url: https://api.moov.io
       description: Moov production
 components:
   schemas:
-    Wallet:
+    Count:
+      type: integer
+      format: int64
+      description: Limits the maximum number of results returned, or determines the page size when used with `skip` or `cursor` for pagination.
+      example: 20
+    Currency:
+      type: string
+      pattern: ^[A-Za-z]{3}$
+      description: A 3-letter ISO 4217 currency code.
+      example: USD
+    PatchWallet:
       type: object
-      description: A Moov digital wallet that holds funds on the platform for an account. Wallets serve as intermediate stores of value for money movement.
-      properties:
-        walletID:
-          type: string
-          format: uuid
-          description: Unique identifier for the wallet.
-        availableBalance:
-          $ref: '#/components/schemas/Amount'
-        createdOn:
-          type: string
-          format: date-time
-          description: ISO 8601 timestamp when the wallet was created.
-        updatedOn:
-          type: string
-          format: date-time
-          description: ISO 8601 timestamp when the wallet was last updated.
-    Amount:
-      type: object
-      description: A monetary amount with currency denomination.
-      properties:
-        currency:
-          type: string
-          description: ISO 4217 three-letter currency code.
-          default: USD
-          minLength: 3
-          maxLength: 3
-        value:
-          type: integer
-          description: Amount in the smallest currency unit (e.g., cents for USD).
-          minimum: 0
-    Error:
-      type: object
-      description: Standard error response returned by the Moov API.
-      properties:
-        error:
-          type: string
-          description: Human-readable description of the error.
-        code:
-          type: string
-          description: Machine-readable error code.
-    UpdateWalletRequest:
-      type: object
-      description: Request body for updating a Moov wallet.
       properties:
         name:
           type: string
-          description: Display name for the wallet.
-    WalletTransaction:
+        status:
+          $ref: '#/components/schemas/WalletStatus'
+        description:
+          type: string
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+      example:
+        name: My second wallet
+        description: My new description
+        metadata:
+          optional: metadata
+    Wallet:
       type: object
-      description: A single credit or debit entry in the history of a Moov wallet.
+      required:
+      - walletID
+      - availableBalance
+      - partnerAccountID
+      - name
+      - status
+      - walletType
+      - description
+      - createdOn
       properties:
         walletID:
+          $ref: '#/components/schemas/WalletID'
+        availableBalance:
+          $ref: '#/components/schemas/WalletAvailableBalance'
+        partnerAccountID:
           type: string
-          format: uuid
-          description: Identifier of the wallet this transaction belongs to.
-        transactionID:
+        name:
           type: string
-          format: uuid
-          description: Unique identifier for the wallet transaction.
-        transactionType:
-          type: string
-          description: Type of wallet transaction.
-          enum:
-          - ach-reversal
-          - card-payment
-          - ach-payment
-          - rtp-payment
-          - wallet-transfer
-          - dispute
-          - dispute-reversal
-          - moov-fee
-          - moov-fee-reversal
-          - refund
-          - refund-failure
-        sourceType:
-          type: string
-          description: The source that triggered this wallet transaction.
-        sourceID:
-          type: string
-          format: uuid
-          description: Identifier of the source object (e.g., transfer ID).
+          description: Name of the wallet
         status:
+          $ref: '#/components/schemas/WalletStatus'
+        walletType:
+          $ref: '#/components/schemas/WalletType'
+        description:
           type: string
-          description: Transaction status.
-          enum:
-          - pending
-          - completed
-          - failed
-        memo:
-          type: string
-          description: Human-readable description of the transaction.
+          description: Description of the wallet
+        metadata:
+          $ref: '#/components/schemas/Metadata'
         createdOn:
           type: string
           format: date-time
-          description: ISO 8601 timestamp when the transaction was created.
-        amount:
-          $ref: '#/components/schemas/Amount'
+        closedOn:
+          type: string
+          format: date-time
+      description: A Moov wallet to store funds for transfers.
+    WalletAvailableBalance:
+      type: object
+      required:
+      - currency
+      - value
+      - valueDecimal
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        value:
+          type: integer
+          format: int64
+          description: "Quantity in the smallest unit of the specified currency. \n\nIn USD this is cents, for example, $12.04 is 1204 and $0.99 is 99."
+          example: 1204
+        valueDecimal:
+          type: string
+          pattern: ^\d+\.\d{1,9}$
+    Metadata:
+      type: object
+      additionalProperties:
+        type: string
+      description: Free-form key-value pair list. Useful for storing information that is not captured elsewhere.
+      example:
+        optional: metadata
+    WalletID:
+      type: string
+    Skip:
+      type: integer
+      format: int64
+      description: The number of entries to skip when paginating a large result set.
+      example: 60
+    CreateWalletValidationError:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        metadata:
+          type: string
+    WalletType:
+      type: string
+      enum:
+      - default
+      - general
+      - card-issuing
+      description: "Type of a wallet.\n  - `default`: The system-generated wallet automatically created when an account is granted the wallet capability.\n  - `general`: An additional, user-defined wallet created via API or Dashboard.\n  - `card-issuing`: The system-generated wallet automatically created when an account is granted the card-issuing capability."
+    PatchWalletValidationError:
+      type: object
+      properties:
+        name:
+          type: string
+        status:
+          type: string
+        description:
+          type: string
+        metadata:
+          type: string
+    GenericError:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    WalletStatus:
+      type: string
+      enum:
+      - active
+      - closed
+      description: "Status of a wallet.\n  - `active`: The wallet is available for use and has an enabled payment method.\n  - `closed`: The wallet is no longer active and the corresponding payment method has been disabled."
+    ListWalletsValidationError:
+      type: object
+      properties:
+        status:
+          type: string
+        walletType:
+          type: string
+        skip:
+          type: string
+        count:
+          type: string
+    CreateWallet:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+          description: Name of the wallet.
+        description:
+          type: string
+          description: Description of the wallet.
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+      example:
+        name: My wallet
+        description: A general wallet used for my payments
+        metadata:
+          optional: metadata
   parameters:
-    SkipParam:
+    Pagination.skip:
       name: skip
       in: query
-      description: Number of results to skip for pagination.
+      required: false
       schema:
-        type: integer
-        minimum: 0
-        default: 0
-    AccountIDParam:
-      name: accountID
-      in: path
-      required: true
-      description: Unique identifier for the Moov account.
+        $ref: '#/components/schemas/Skip'
+      explode: false
+    WalletListFilters.status:
+      name: status
+      in: query
+      required: false
+      description: Optional parameter for filtering wallets by status.
+      schema:
+        $ref: '#/components/schemas/WalletStatus'
+      explode: false
+    VersionHeader:
+      name: X-Moov-Version
+      in: header
+      required: false
+      description: 'Set this header to v2026.01.00 to use the API described in this specification.
+
+        When omitted, the server defaults to v2024.01.00, the earliest supported version, which may not match the behavior documented here.
+
+        An unrecognized well-formed version uses the latest supported version that is not newer than the requested version, when one exists.
+
+        For example, `v2026.08.00` uses `v2026.07.00`.
+
+        A malformed value, such as `2022`, returns a `404` response.'
       schema:
         type: string
-        format: uuid
-    CountParam:
+        enum:
+        - v2026.01.00
+        example: v2026.01.00
+        x-speakeasy-ignore: true
+      x-speakeasy-ignore: true
+    Pagination.count:
       name: count
       in: query
-      description: Maximum number of results to return per page.
+      required: false
+      description: Page size. When omitted, the server defaults to `200`.
       schema:
-        type: integer
-        minimum: 1
-        maximum: 100
-        default: 20
-    WalletIDParam:
-      name: walletID
-      in: path
-      required: true
-      description: Unique identifier for the wallet.
+        $ref: '#/components/schemas/Count'
+      explode: false
+    WalletListFilters.walletType:
+      name: walletType
+      in: query
+      required: false
+      description: Optional parameter for filtering wallets by type.
       schema:
-        type: string
-        format: uuid
-    walletID:
-      name: walletID
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
+        $ref: '#/components/schemas/WalletType'
+      explode: false
     accountID:
       name: accountID
       in: path
@@ -363,30 +801,23 @@ components:
         type: string
         format: uuid
       description: The Moov account identifier.
-  responses:
-    BadRequest:
-      description: The request was malformed or contained invalid parameters.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+    walletID:
+      name: walletID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
   securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: Basic
     bearerAuth:
       type: http
       scheme: bearer
-      description: OAuth2 bearer token obtained from the /oauth2/token endpoint. Include in the Authorization header as "Bearer {token}".
+      bearerFormat: JWT
+      description: OAuth 2.0 access token passed as a Bearer token.
 x-refined-from:
-- moov-api-openapi.yml
+- moov-api-v2026.01.00-openapi.yml
+- moov-openapi.yml
 - moov-openapi.yml

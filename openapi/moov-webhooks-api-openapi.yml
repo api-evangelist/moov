@@ -1,0 +1,988 @@
+openapi: 3.2.0
+info:
+  title: Moov Webhooks API
+  version: v2026.01.00
+  contact:
+    name: Moov Developer Support
+    email: help@moov.io
+    url: https://moov.io
+  license:
+    name: Unlicensed
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  description: 'Operations tagged Webhooks across 2 of this provider''s published API definitions: moov-api-v2026.01.00-openapi.yml, moov-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moov.io
+  description: Production API host
+  variables: {}
+security:
+- BasicAuth: []
+tags:
+- name: Webhooks
+paths:
+  /event-types:
+    get:
+      operationId: listEventTypes
+      description: List all available event types that can be subscribed to.
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventType'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Webhooks
+      x-speakeasy-name-override: listEventTypes
+      summary: List event types
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+  /webhooks:
+    get:
+      operationId: listWebhooks
+      description: List all webhooks configured for the account.
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Webhook'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Webhooks
+      x-speakeasy-name-override: list
+      summary: List webhooks
+      x-summary-source: derived
+    post:
+      operationId: createWebhook
+      description: Create a new webhook for the account.
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      responses:
+        '201':
+          description: The resource was successfully created.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Webhook'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '422':
+          description: The request was well-formed, but the contents failed validation. Check the request for missing or invalid fields.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateWebhookValidationError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Webhooks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWebhook'
+      x-speakeasy-name-override: create
+      summary: Create webhook
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+  /webhooks/{webhookID}:
+    get:
+      operationId: getWebhook
+      description: Get details of a specific webhook.
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: webhookID
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Webhook'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Webhooks
+      x-speakeasy-name-override: get
+      summary: Get webhook
+      x-summary-source: derived
+    put:
+      operationId: updateWebhook
+      description: Update an existing webhook.
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: webhookID
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Webhook'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '422':
+          description: The request was well-formed, but the contents failed validation. Check the request for missing or invalid fields.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateWebhookValidationError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Webhooks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateWebhook'
+      x-speakeasy-name-override: update
+      summary: Update webhook
+      x-summary-source: derived
+    delete:
+      operationId: disableWebhook
+      description: Disable a webhook. Disabled webhooks will no longer receive events.
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: webhookID
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: The request completed successfully, but there is no content to return.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Webhooks
+      x-speakeasy-name-override: disable
+      summary: Disable webhook
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+  /webhooks/{webhookID}/ping:
+    post:
+      operationId: pingWebhook
+      description: Send a test ping to a webhook to verify it is configured correctly.
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: webhookID
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PingResponse'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Webhooks
+      x-speakeasy-name-override: ping
+      summary: Ping webhook
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+  /webhooks/{webhookID}/secret:
+    get:
+      operationId: getWebhookSecret
+      description: Get the secret key for verifying webhook payloads.
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: webhookID
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookSecret'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Webhooks
+      x-speakeasy-name-override: getSecret
+      summary: Get webhook secret
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+components:
+  schemas:
+    CreateWebhookValidationError:
+      type: object
+      properties:
+        url:
+          type: string
+          description: Details about the URL validation error.
+        status:
+          type: string
+          description: Details about the status validation error.
+        eventTypes:
+          type: string
+          description: Details about the event types validation error.
+        description:
+          type: string
+          description: Details about the description validation error.
+    WebhookSecret:
+      type: object
+      required:
+      - secret
+      properties:
+        secret:
+          type: string
+          description: The secret key used to sign webhook payloads. Use this to verify the authenticity of incoming webhooks.
+      description: The secret used to verify webhook payloads.
+    UpdateWebhookValidationError:
+      type: object
+      properties:
+        url:
+          type: string
+          description: Details about the URL validation error.
+        status:
+          type: string
+          description: Details about the status validation error.
+        eventTypes:
+          type: string
+          description: Details about the event types validation error.
+        description:
+          type: string
+          description: Details about the description validation error.
+    UpdateWebhook:
+      type: object
+      required:
+      - url
+      - status
+      - eventTypes
+      - description
+      properties:
+        url:
+          type: string
+          format: uri
+          description: The URL where webhook events will be sent.
+        status:
+          allOf:
+          - $ref: '#/components/schemas/WebhookStatus'
+          description: The status of the webhook.
+        eventTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebhookEventType'
+          description: The list of event types this webhook should subscribe to.
+        description:
+          type: string
+          description: A description of the webhook for reference. Can be an empty string.
+      description: Request body for updating an existing webhook.
+    PingResponse:
+      type: object
+      required:
+      - webhook
+      - requestBodySent
+      - responseStatusCode
+      properties:
+        webhook:
+          allOf:
+          - $ref: '#/components/schemas/Webhook'
+          description: The webhook that was pinged.
+        requestBodySent:
+          type: object
+          additionalProperties: {}
+          description: The request body sent to the target URL. It will contain an event type of `event.test` and an empty (null) data payload.
+        responseStatusCode:
+          type: integer
+          format: int32
+          description: The response status code after sending a ping event to the URL.
+      description: Response from pinging a webhook.
+    Webhook:
+      type: object
+      required:
+      - webhookID
+      - url
+      - status
+      - eventTypes
+      - description
+      - createdOn
+      - updatedOn
+      properties:
+        webhookID:
+          type: string
+          description: Unique identifier for the webhook.
+        url:
+          type: string
+          format: uri
+          description: The URL where webhook events will be sent.
+        status:
+          $ref: '#/components/schemas/WebhookStatus'
+        eventTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebhookEventType'
+          description: The list of event types this webhook is subscribed to.
+        description:
+          type: string
+          description: A description of the webhook for reference.
+        createdOn:
+          type: string
+          format: date-time
+          description: Timestamp of when the webhook was created.
+        updatedOn:
+          type: string
+          format: date-time
+          description: Timestamp of when the webhook was last updated.
+        lastUsedOn:
+          type: string
+          format: date-time
+          description: Timestamp of when the webhook last received an event.
+      description: A configured webhook endpoint that receives event notifications.
+    WebhookStatus:
+      type: string
+      enum:
+      - enabled
+      - disabled
+      description: The status of a webhook.
+    WebhookEventType:
+      type: string
+      enum:
+      - '*'
+      - account.created
+      - account.updated
+      - account.disconnected
+      - balance.updated
+      - bankAccount.created
+      - bankAccount.updated
+      - bankAccount.deleted
+      - cancellation.created
+      - cancellation.updated
+      - card.autoUpdated
+      - capability.requested
+      - capability.updated
+      - dispute.created
+      - dispute.updated
+      - invoice.created
+      - invoice.updated
+      - networkID.updated
+      - paymentMethod.enabled
+      - paymentMethod.disabled
+      - refund.created
+      - refund.updated
+      - representative.created
+      - representative.updated
+      - representative.deleted
+      - sweep.created
+      - sweep.updated
+      - terminalApplication.created
+      - terminalApplication.updated
+      - ticket.created
+      - ticket.updated
+      - ticket.messageAdded
+      - transfer.created
+      - transfer.updated
+      - wallet.created
+      - wallet.updated
+      - walletTransaction.updated
+      - billingStatement.created
+      - authorization.expiring
+      - event.test
+      description: The type of event that occurred.
+    GenericError:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    CreateWebhook:
+      type: object
+      required:
+      - url
+      - status
+      - eventTypes
+      - description
+      properties:
+        url:
+          type: string
+          format: uri
+          description: The URL where webhook events will be sent.
+        status:
+          allOf:
+          - $ref: '#/components/schemas/WebhookStatus'
+          description: The status of the webhook.
+        eventTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebhookEventType'
+          description: The list of event types this webhook should subscribe to.
+        description:
+          type: string
+          description: A description of the webhook for reference. Can be an empty string.
+      description: Request body for creating a new webhook.
+    EventType:
+      type: object
+      required:
+      - eventTypeID
+      - type
+      - description
+      properties:
+        eventTypeID:
+          type: string
+          description: Unique identifier for the event type.
+        type:
+          type: string
+          description: The type identifier string.
+        description:
+          type: string
+          description: A human-readable description of the event type.
+      description: Describes an available event type that can be subscribed to.
+  parameters:
+    VersionHeader:
+      name: X-Moov-Version
+      in: header
+      required: false
+      description: 'Set this header to v2026.01.00 to use the API described in this specification.
+
+        When omitted, the server defaults to v2024.01.00, the earliest supported version, which may not match the behavior documented here.
+
+        An unrecognized well-formed version uses the latest supported version that is not newer than the requested version, when one exists.
+
+        For example, `v2026.08.00` uses `v2026.07.00`.
+
+        A malformed value, such as `2022`, returns a `404` response.'
+      schema:
+        type: string
+        enum:
+        - v2026.01.00
+        example: v2026.01.00
+        x-speakeasy-ignore: true
+      x-speakeasy-ignore: true
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: Basic
+externalDocs:
+  url: https://docs.moov.io/
+  description: Moov Guides and API Documentation
+x-refined-from:
+- moov-api-v2026.01.00-openapi.yml
+- moov-openapi.yml

@@ -1,58 +1,177 @@
 openapi: 3.2.0
 info:
-  title: Moov Payment Links API
-  description: The Moov API is a RESTful financial infrastructure platform that enables developers to integrate money movement capabilities into their applications.
-  version: 2026.01.00
+  title: Moov Payment links API
+  version: v2026.01.00
   contact:
-    name: Moov Support
-    url: https://docs.moov.io/
-  termsOfService: https://moov.io/legal/platform-agreement/
+    name: Moov Developer Support
+    email: help@moov.io
+    url: https://moov.io
+  license:
+    name: Unlicensed
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  description: 'Operations tagged Payment links across 2 of this provider''s published API definitions: moov-api-v2026.01.00-openapi.yml, moov-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.moov.io
-  description: Production Server
+  description: Production API host
+  variables: {}
 security:
-- bearerAuth: []
+- BasicAuth: []
 tags:
 - name: Payment Links
-  description: Create and manage shareable payment links that allow customers to pay via card or bank account without custom code.
 paths:
   /accounts/{accountID}/payment-links:
     post:
       operationId: createPaymentLink
-      summary: Create a payment link
-      description: Generate a shareable payment link that allows customers to pay via credit card, debit card, or bank account without requiring custom frontend code. Payment links can be shared via email, SMS, or embedded in applications.
-      tags:
-      - Payment Links
+      description: 'Create a payment link that allows an end user to make a payment on Moov''s hosted payment link page.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/transfers.write` scope.'
       parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
-      requestBody:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
         required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreatePaymentLinkRequest'
+        description: The merchant account ID.
+        schema:
+          type: string
       responses:
         '200':
-          description: Payment link created successfully.
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/PaymentLink'
         '400':
-          $ref: '#/components/responses/BadRequest'
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
         '401':
-          $ref: '#/components/responses/Unauthorized'
-    get:
-      operationId: listPaymentLinks
-      summary: List payment links
-      description: Retrieve all payment links for a Moov account, including their status, amounts, and usage statistics.
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '422':
+          description: The request was well-formed, but the contents failed validation. Check the request for missing or invalid fields.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatePaymentLinkError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
       tags:
       - Payment Links
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePaymentLink'
+      x-speakeasy-name-override: create
+      summary: Create payment link
+      x-summary-source: derived
+    get:
+      operationId: listPaymentLinks
+      description: 'List all the payment links created under a Moov account.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/transfers.read` scope.'
       parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/VersionHeader'
+      - $ref: '#/components/parameters/Pagination.skip'
+      - $ref: '#/components/parameters/Pagination.count'
+      - $ref: '#/components/parameters/PaymentLinkListFilters.types'
+      - name: accountID
+        in: path
+        required: true
+        description: The merchant account ID.
+        schema:
+          type: string
       responses:
         '200':
-          description: Payment links returned successfully.
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -60,239 +179,1385 @@ paths:
                 items:
                   $ref: '#/components/schemas/PaymentLink'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Payment Links
+      x-speakeasy-name-override: list
+      summary: List payment links
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
   /accounts/{accountID}/payment-links/{paymentLinkCode}:
     get:
       operationId: getPaymentLink
-      summary: Get a payment link
-      description: Retrieve the details of a specific payment link using its unique code.
-      tags:
-      - Payment Links
+      description: 'Retrieve a payment link by code.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/transfers.read` scope.'
       parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
-      - $ref: '#/components/parameters/PaymentLinkCodeParam'
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        description: The merchant account ID.
+        schema:
+          type: string
+      - name: paymentLinkCode
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/PaymentLinkCode'
       responses:
         '200':
-          description: Payment link returned successfully.
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/PaymentLink'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
         '404':
-          $ref: '#/components/responses/NotFound'
-    patch:
-      operationId: updatePaymentLink
-      summary: Update a payment link
-      description: Modify the configuration of an existing payment link, such as updating the amount, description, or expiration date.
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
       tags:
       - Payment Links
+      x-speakeasy-name-override: get
+      summary: Get payment link
+      x-summary-source: derived
+    patch:
+      operationId: updatePaymentLink
+      description: 'Update a payment link.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/transfers.write` scope.'
       parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
-      - $ref: '#/components/parameters/PaymentLinkCodeParam'
-      requestBody:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
         required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdatePaymentLinkRequest'
+        description: The merchant account ID.
+        schema:
+          type: string
+      - name: paymentLinkCode
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/PaymentLinkCode'
       responses:
         '200':
-          description: Payment link updated successfully.
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/PaymentLink'
         '400':
-          $ref: '#/components/responses/BadRequest'
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
         '404':
-          $ref: '#/components/responses/NotFound'
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '422':
+          description: The request was well-formed, but the contents failed validation. Check the request for missing or invalid fields.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdatePaymentLinkError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Payment Links
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePaymentLink'
+      x-speakeasy-name-override: update
+      summary: Update payment link
+      x-summary-source: derived
     delete:
       operationId: disablePaymentLink
-      summary: Disable a payment link
-      description: Deactivate a payment link so it can no longer be used to collect payments.
-      tags:
-      - Payment Links
+      description: 'Disable a payment link.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/transfers.write` scope.'
       parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
-      - $ref: '#/components/parameters/PaymentLinkCodeParam'
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        description: The merchant account ID.
+        schema:
+          type: string
+      - name: paymentLinkCode
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/PaymentLinkCode'
       responses:
         '204':
-          description: Payment link disabled successfully.
+          description: The request completed successfully, but there is no content to return.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
         '404':
-          $ref: '#/components/responses/NotFound'
-  /accounts/{accountID}/payment-links/{paymentLinkCode}/qrcode:
-    get:
-      operationId: getPaymentLinkQrCode
-      summary: Get payment link QR code
-      description: Retrieve a QR code image for a payment link, suitable for embedding in invoices, receipts, or printed materials to allow in-person payments.
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
       tags:
       - Payment Links
+      x-speakeasy-name-override: disable
+      summary: Disable payment link
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+  /accounts/{accountID}/payment-links/{paymentLinkCode}/qrcode:
+    get:
+      operationId: getPaymentLinkQRCode
+      description: 'Retrieve the payment link encoded in a QR code.
+
+
+        Use the `Accept` header to specify the format of the response. Supported formats are `application/json` and `image/png`.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/transfers.write` scope.'
       parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
-      - $ref: '#/components/parameters/PaymentLinkCodeParam'
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        description: The merchant account ID.
+        schema:
+          type: string
+      - name: paymentLinkCode
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/PaymentLinkCode'
       responses:
         '200':
-          description: QR code image returned successfully.
+          description: The request has succeeded.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
           content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QRCode'
             image/png:
               schema:
                 type: string
                 format: binary
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
         '404':
-          $ref: '#/components/responses/NotFound'
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Payment Links
+      x-speakeasy-name-override: getQRCode
+      summary: Get payment link QR code
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
 components:
   schemas:
-    Amount:
+    Count:
+      type: integer
+      format: int64
+      description: Limits the maximum number of results returned, or determines the page size when used with `skip` or `cursor` for pagination.
+      example: 20
+    CreatePaymentLinkLineItem:
       type: object
-      description: A monetary amount with currency denomination.
+      required:
+      - name
+      - basePrice
+      - quantity
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 150
+          description: The name of the item.
+        basePrice:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: The base price of the item before applying option modifiers.
+        quantity:
+          type: integer
+          format: int32
+          minimum: 1
+          description: The quantity of this item.
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreatePaymentLinkLineItemOption'
+          description: Optional list of modifiers applied to this item (e.g., toppings, upgrades, customizations).
+        imageIDs:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImageID'
+          description: "  Optional list of images associated with this line item.\n  This field is being deprecated in favor using the images associated with a productID and will soon be unsupported."
+          deprecated: true
+        productID:
+          type: string
+          description: "  Optional unique identifier associating the line item with a product.\n  When provided, images associated with the product will be included on the line item.\n  This does not populate other details of the line item."
+      description: Represents a single line item in a payment link, including optional modifiers and quantity.
+    PhoneNumberError:
+      type: object
+      properties:
+        number:
+          type: string
+        countryCode:
+          type: string
+    CreatePaymentLinkLineItemsValidationError:
+      type: object
+      properties:
+        items:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/CreatePaymentLinkLineItemValidationError'
+    Currency:
+      type: string
+      pattern: ^[A-Za-z]{3}$
+      description: A 3-letter ISO 4217 currency code.
+      example: USD
+    DisplayOptionsError:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        callToAction:
+          type: string
+    PaymentLinkLineItems:
+      type: object
+      required:
+      - items
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentLinkLineItem'
+          minItems: 1
+          description: The list of line items.
+      description: 'An optional collection of line items for a payment link.
+
+        When line items are provided, their total plus tax must equal the payment link amount.'
+    CreatePaymentLinkLineItemValidationError:
+      type: object
+      properties:
+        productID:
+          type: string
+        name:
+          type: string
+        basePrice:
+          $ref: '#/components/schemas/AmountDecimalValidationError'
+        options:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/CreatePaymentLinkLineItemOptionValidationError'
+        quantity:
+          type: string
+    AmountDecimalValidationError:
+      type: object
       properties:
         currency:
           type: string
-          description: ISO 4217 three-letter currency code.
-          default: USD
-          minLength: 3
-          maxLength: 3
-        value:
-          type: integer
-          description: Amount in the smallest currency unit (e.g., cents for USD).
-          minimum: 0
-    Error:
+        valueDecimal:
+          type: string
+    PhoneNumber:
       type: object
-      description: Standard error response returned by the Moov API.
+      properties:
+        number:
+          type: string
+          maxLength: 10
+          example: '8185551212'
+        countryCode:
+          type: string
+          maxLength: 1
+          example: '1'
+    PaymentLinkType:
+      type: string
+      enum:
+      - payment
+      - payout
+      - invoice-payment
+    PaymentLinkPaymentDetailsUpdate:
+      type: object
+      properties:
+        allowedMethods:
+          type: array
+          items:
+            $ref: '#/components/schemas/CollectionPaymentMethodType'
+          minItems: 1
+          description: A list of payment methods that should be supported for this payment link.
+        cardDetails:
+          $ref: '#/components/schemas/CardPaymentDetails'
+        achDetails:
+          $ref: '#/components/schemas/ACHPaymentDetails'
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+          description: Optional free-form metadata for the transfer.
+      description: Options for payment links used to collect payment.
+    PaymentLinkCode:
+      type: string
+      description: Unique code identifying this payment link.
+      example: uc7ZYKrMhi
+    Email:
+      type: string
+      maxLength: 255
+      format: email
+      example: jordan.lee@classbooker.dev
+    AmountValidationError:
+      type: object
+      properties:
+        currency:
+          type: string
+        value:
+          type: string
+    CreatePaymentLinkError:
+      type: object
+      properties:
+        partnerAccountID:
+          type: string
+        merchantPaymentMethodID:
+          type: string
+        amount:
+          $ref: '#/components/schemas/AmountValidationError'
+        salesTaxAmount:
+          $ref: '#/components/schemas/AmountValidationError'
+        maxUses:
+          type: string
+        expiresOn:
+          type: string
+        display:
+          $ref: '#/components/schemas/DisplayOptionsError'
+        payment:
+          $ref: '#/components/schemas/PaymentDetailsError'
+        payout:
+          $ref: '#/components/schemas/PayoutDetailsError'
+        lineItems:
+          $ref: '#/components/schemas/CreatePaymentLinkLineItemsValidationError'
+    PaymentLinkCustomerOptions:
+      type: object
+      properties:
+        requireAddress:
+          type: boolean
+          description: If true, a billing address is required when completing the payment form.
+        requirePhone:
+          type: boolean
+          description: If true, a phone number is required when completing the payment form.
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+          description: Optional free-form metadata for the Moov account that will represent this customer.
+    ACHPaymentDetailsError:
+      type: object
+      properties:
+        companyEntryDescription:
+          type: string
+        originatingCompanyName:
+          type: string
+    PaymentLinkPaymentDetails:
+      type: object
+      required:
+      - allowedMethods
+      properties:
+        allowedMethods:
+          type: array
+          items:
+            $ref: '#/components/schemas/CollectionPaymentMethodType'
+          minItems: 1
+          description: A list of payment methods that should be supported for this payment link.
+        cardDetails:
+          $ref: '#/components/schemas/CardPaymentDetails'
+        achDetails:
+          $ref: '#/components/schemas/ACHPaymentDetails'
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+          description: Optional free-form metadata for the transfer.
+      description: Options for payment links used to collect payment.
+    PaymentDetailsError:
+      type: object
+      properties:
+        allowedMethods:
+          type: string
+        cardDetails:
+          $ref: '#/components/schemas/CardPaymentDetailsError'
+        achDetails:
+          $ref: '#/components/schemas/ACHPaymentDetailsError'
+        metadata:
+          type: string
+    ACHPaymentDetails:
+      type: object
+      properties:
+        companyEntryDescription:
+          $ref: '#/components/schemas/ACHCompanyEntryDescription'
+        originatingCompanyName:
+          $ref: '#/components/schemas/ACHOriginatingCompanyName'
+      description: Options for payment links used to collect an ACH payment.
+    PayoutDetailsError:
+      type: object
+      properties:
+        allowedMethods:
+          type: string
+        recipient:
+          $ref: '#/components/schemas/PayoutRecipientError'
+        metadata:
+          type: string
+    PaymentLinkDisplayOptionsUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+          description: The payment page title displayed to the user.
+        description:
+          type: string
+          description: A payment description displayed to the user.
+        callToAction:
+          $ref: '#/components/schemas/CallToAction'
+      description: Customizable display options for a payment link.
+    ACHOriginatingCompanyName:
+      type: string
+      minLength: 4
+      maxLength: 16
+      description: An optional override of the default NACHA company name for a transfer.
+      example: Whole Body Fit
+    PaymentLinkLineItemImageMetadata:
+      type: object
+      required:
+      - imageID
+      - link
+      - publicID
+      properties:
+        imageID:
+          $ref: '#/components/schemas/ImageID'
+        altText:
+          type: string
+          maxLength: 125
+          description: Alternative text for the image.
+        link:
+          type: string
+          format: uri
+          description: The image's public URL.
+          example: https://api.moov.io/images/q7lKWleAy9fUNhEGezQ1g
+        publicID:
+          $ref: '#/components/schemas/ImagePublicID'
+    Skip:
+      type: integer
+      format: int64
+      description: The number of entries to skip when paginating a large result set.
+      example: 60
+    PaymentLinkLineItemOption:
+      type: object
+      required:
+      - name
+      - quantity
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 150
+          description: The name of the option or modifier.
+        quantity:
+          type: integer
+          format: int32
+          minimum: 1
+          description: The quantity of this option.
+        priceModifier:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: Optional price modification applied by this option. Can be positive, negative, or zero.
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentLinkLineItemImageMetadata'
+          description: Optional list of images associated with this line item option.
+        group:
+          type: string
+          maxLength: 100
+          description: Optional group identifier to categorize related options (e.g., 'toppings').
+      description: Represents a modifier or option applied to a line item.
+    CreatePaymentLinkLineItemOptionValidationError:
+      type: object
+      properties:
+        name:
+          type: string
+        group:
+          type: string
+        priceModifier:
+          $ref: '#/components/schemas/AmountDecimalValidationError'
+        quantity:
+          type: string
+    CreatePaymentLinkLineItemOption:
+      type: object
+      required:
+      - name
+      - quantity
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 150
+          description: The name of the option or modifier.
+        quantity:
+          type: integer
+          format: int32
+          minimum: 1
+          description: The quantity of this option.
+        priceModifier:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: Optional price modification applied by this option. Can be positive, negative, or zero.
+        imageIDs:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImageID'
+          description: "    Optional list of images associated with this line item option.\n    This field is being deprecated in favor using the images associated with a productID and will soon be unsupported."
+          deprecated: true
+        group:
+          type: string
+          maxLength: 100
+          description: Optional group identifier to categorize related options (e.g., 'toppings').
+      description: Represents a modifier or option applied to a line item.
+    ImageID:
+      type: string
+      description: Unique identifier for a image resource.
+    DisbursementPaymentMethodType:
+      type: string
+      enum:
+      - push-to-card
+      - rtp-credit
+      - ach-credit-same-day
+      - ach-credit-standard
+      - push-to-apple-pay
+      - push-to-google-pay
+      description: Payment methods allowed for disbursing funds.
+    QRCode:
+      type: object
+      required:
+      - qrCode
+      properties:
+        qrCode:
+          type: string
+          description: A base64-encoded PNG image of the QR code.
+          example: iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAIAAADaA7F0AAAACXBIWXMAAAsTAAALEwEAmpwYAAAA...
+    UpdatePaymentLinkError:
+      type: object
+      properties:
+        amount:
+          $ref: '#/components/schemas/AmountValidationError'
+        salesTaxAmount:
+          $ref: '#/components/schemas/AmountValidationError'
+        expiresOn:
+          type: string
+        display:
+          $ref: '#/components/schemas/DisplayOptionsError'
+        payment:
+          $ref: '#/components/schemas/PaymentDetailsError'
+        payout:
+          $ref: '#/components/schemas/PayoutDetailsError'
+        lineItems:
+          $ref: '#/components/schemas/CreatePaymentLinkLineItemsValidationError'
+    PaymentLinkPayoutDetailsUpdate:
+      type: object
+      properties:
+        allowedMethods:
+          type: array
+          items:
+            $ref: '#/components/schemas/DisbursementPaymentMethodType'
+          minItems: 1
+          description: A list of payment methods that should be supported for this payment link.
+        recipient:
+          $ref: '#/components/schemas/PayoutRecipient'
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+          description: Optional free-form metadata for the transfer.
+      description: Options for payout links used to send a payout.
+    UpdatePaymentLink:
+      type: object
+      properties:
+        amount:
+          $ref: '#/components/schemas/AmountUpdate'
+        salesTaxAmount:
+          $ref: '#/components/schemas/AmountUpdate'
+        expiresOn:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        display:
+          $ref: '#/components/schemas/PaymentLinkDisplayOptionsUpdate'
+        customer:
+          $ref: '#/components/schemas/PaymentLinkCustomerOptions'
+        payment:
+          $ref: '#/components/schemas/PaymentLinkPaymentDetailsUpdate'
+        payout:
+          $ref: '#/components/schemas/PaymentLinkPayoutDetailsUpdate'
+        lineItems:
+          $ref: '#/components/schemas/CreatePaymentLinkLineItemsUpdate'
+      example:
+        amount:
+          currency: USD
+          value: 12099
+        payout:
+          allowedMethods:
+          - push-to-card
+          - rtp-credit
+          recipient:
+            email: jordan@example.com
+    AmountDecimal:
+      type: object
+      required:
+      - currency
+      - valueDecimal
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        valueDecimal:
+          type: string
+          pattern: ^\d+\.\d{1,9}$
+          description: "A decimal-formatted numerical string that represents up to 9 decimal place precision. \n\nFor example, $12.987654321 is '12.987654321'."
+          example: '12.987654321'
+    PayoutRecipient:
+      type: object
+      properties:
+        email:
+          $ref: '#/components/schemas/Email'
+        phone:
+          $ref: '#/components/schemas/PhoneNumber'
+      description: 'Specify the intended recipient of the payout.
+
+        Either `email` or `phone` must be specified, but not both.
+
+
+        This information will be used to authenticate the end user when they follow the payment link.'
+    PaymentLinkPayoutDetails:
+      type: object
+      required:
+      - allowedMethods
+      - recipient
+      properties:
+        allowedMethods:
+          type: array
+          items:
+            $ref: '#/components/schemas/DisbursementPaymentMethodType'
+          minItems: 1
+          description: A list of payment methods that should be supported for this payment link.
+        recipient:
+          $ref: '#/components/schemas/PayoutRecipient'
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+          description: Optional free-form metadata for the transfer.
+      description: Options for payout links used to send a payout.
+    CollectionPaymentMethodType:
+      type: string
+      enum:
+      - apple-pay
+      - card-payment
+      - ach-debit-collect
+      description: Payment methods allowed for collecting a payment.
+    CreatePaymentLinkLineItems:
+      type: object
+      required:
+      - items
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreatePaymentLinkLineItem'
+          minItems: 1
+          description: The list of line items.
+      description: 'An optional collection of line items for a payment link.
+
+        When line items are provided, their total plus tax must equal the payment link amount.'
+    GenericError:
+      type: object
+      required:
+      - error
       properties:
         error:
           type: string
-          description: Human-readable description of the error.
-        code:
-          type: string
-          description: Machine-readable error code.
-    UpdatePaymentLinkRequest:
+    CardDynamicDescriptor:
+      type: string
+      minLength: 4
+      maxLength: 22
+      description: An optional override of the default card statement descriptor for a transfer. Accounts must be enabled by Moov to set this field.
+      example: WhlBdy *Yoga 11-12
+    CallToAction:
+      type: string
+      enum:
+      - pay
+      - book
+      - subscribe
+      - donate
+      - confirm
+      - auto
+      description: "The text to be displayed on web form's submit button.\n\nIf set to \"auto\" the UI will automatically select between \n\"pay\" and \"confirm\" for payments and payouts respectively."
+    PaymentLinkLineItem:
       type: object
-      description: Request body for updating a payment link.
-      properties:
-        amount:
-          $ref: '#/components/schemas/Amount'
-        description:
-          type: string
-          description: Updated description for the payment link.
-          maxLength: 250
-        status:
-          type: string
-          description: Update the status of the payment link.
-          enum:
-          - active
-          - inactive
-        expiresOn:
-          type: string
-          format: date-time
-          description: Updated expiration timestamp for the payment link.
-    CreatePaymentLinkRequest:
-      type: object
-      description: Request body for creating a payment link.
       required:
-      - amount
+      - name
+      - basePrice
+      - quantity
       properties:
-        amount:
-          $ref: '#/components/schemas/Amount'
-        description:
+        name:
           type: string
-          description: Description of the payment that will be shown to the payer.
-          maxLength: 250
-        expiresOn:
+          minLength: 1
+          maxLength: 150
+          description: The name of the item.
+        basePrice:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: The base price of the item before applying option modifiers.
+        quantity:
+          type: integer
+          format: int32
+          minimum: 1
+          description: The quantity of this item.
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentLinkLineItemOption'
+          description: Optional list of modifiers applied to this item (e.g., toppings, upgrades, customizations).
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentLinkLineItemImageMetadata'
+          description: Optional list of images associated with this line item.
+        productID:
           type: string
-          format: date-time
-          description: ISO 8601 timestamp when this payment link should expire.
+          description: Optional unique identifier associating the line item with a product.
+      description: Represents a single line item in a payment link, including optional modifiers and quantity.
+    ImagePublicID:
+      type: string
+      pattern: '[A-Za-z0-9_-]{21}'
+      description: A unique identifier for an image, used in public image links.
     PaymentLink:
       type: object
-      description: A shareable link that allows customers to make payments via card or bank account without requiring custom frontend development.
+      required:
+      - code
+      - paymentLinkType
+      - mode
+      - status
+      - partnerAccountID
+      - merchantAccountID
+      - ownerAccountID
+      - merchantPaymentMethodID
+      - link
+      - amount
+      - uses
+      - display
+      - customer
+      - createdOn
+      - updatedOn
       properties:
-        paymentLinkCode:
-          type: string
-          description: Unique code identifier used in the payment link URL.
-        accountID:
-          type: string
-          format: uuid
-          description: The Moov account that created this payment link.
+        code:
+          $ref: '#/components/schemas/PaymentLinkCode'
+        paymentLinkType:
+          $ref: '#/components/schemas/PaymentLinkType'
+        mode:
+          $ref: '#/components/schemas/Mode'
         status:
+          $ref: '#/components/schemas/PaymentLinkStatus'
+        partnerAccountID:
           type: string
-          description: Current usability status of the payment link.
-          enum:
-          - active
-          - inactive
-          - expired
-        amount:
-          $ref: '#/components/schemas/Amount'
-        currency:
+          description: The partner's Moov account ID.
+        merchantAccountID:
           type: string
-          description: ISO 4217 currency code for the payment.
-          default: USD
-        description:
+          description: The merchant's Moov account ID.
+        ownerAccountID:
           type: string
-          description: Description of what the payment is for.
-        url:
+          description: The payment link's owner's Moov account ID.
+        merchantPaymentMethodID:
+          type: string
+          description: The merchant's preferred payment method ID. Must be a wallet payment method.
+        link:
           type: string
           format: uri
-          description: The shareable URL for this payment link.
+          description: Link to the payment landing page for this payment link.
+        amount:
+          allOf:
+          - $ref: '#/components/schemas/Amount'
+          description: 'The fixed amount of the payment link.
+
+
+            In API versions before `2026.07.00`, this was a required field.
+
+
+            In API version `2026.07.00` and beyond, this field is present for `payment` and `payout` links and omitted
+
+            for `customAmountPayment` links, where the payor chooses the amount.'
+        salesTaxAmount:
+          allOf:
+          - $ref: '#/components/schemas/Amount'
+          description: Optional sales tax amount.
+        uses:
+          type: integer
+          format: int64
+          description: The number of times this payment link has been used.
+        maxUses:
+          type: integer
+          format: int64
+          description: 'An optional limit on the number of times this payment link can be used.
+
+
+            **For payouts, `maxUses` is always 1.**'
+        lastUsedOn:
+          type: string
+          format: date-time
+          description: The timestamp when this payment link was last used.
         expiresOn:
           type: string
           format: date-time
-          description: ISO 8601 timestamp when the payment link expires.
+          description: An optional expiration date for this payment link.
+        display:
+          $ref: '#/components/schemas/PaymentLinkDisplayOptions'
+        customer:
+          $ref: '#/components/schemas/PaymentLinkCustomerOptions'
+        payment:
+          $ref: '#/components/schemas/PaymentLinkPaymentDetails'
+        payout:
+          $ref: '#/components/schemas/PaymentLinkPayoutDetails'
+        lineItems:
+          $ref: '#/components/schemas/PaymentLinkLineItems'
         createdOn:
           type: string
           format: date-time
-          description: ISO 8601 timestamp when the payment link was created.
         updatedOn:
           type: string
           format: date-time
-          description: ISO 8601 timestamp when the payment link was last updated.
-  responses:
-    BadRequest:
-      description: The request was malformed or contained invalid parameters.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+        disabledOn:
+          type: string
+          format: date-time
+      example:
+        code: 3QLHtONjd5
+        paymentLinkType: payment
+        mode: sandbox
+        status: active
+        partnerAccountID: d290f1ee-6c54-4b01-90e6-d701748f0851
+        merchantAccountID: 34233b72-780c-4e0e-8b08-cbbe1bc878f8
+        ownerAccountID: d290f1ee-6c54-4b01-90e6-d701748f0851
+        merchantPaymentMethodID: 4c4e7f8e-81f4-4f3d-8f6f-6f6e7f8e4c4e
+        link: https://moov.link/p/3QLHtONjd5
+        amount:
+          currency: USD
+          value: 10000
+        uses: 0
+        display:
+          title: Example Payment Link
+          description: This is an example payment link.
+          callToAction: pay
+        customer:
+          requirePhone: true
+        payment:
+          allowedMethods:
+          - card-payment
+          - ach-debit-collect
+        updatedOn: '2025-01-09T17:09:13.33Z'
+        createdOn: '2025-01-09T17:09:13.33Z'
+    CardPaymentDetailsError:
+      type: object
+      properties:
+        dynamicDescriptor:
+          type: string
+    CardPaymentDetails:
+      type: object
+      properties:
+        dynamicDescriptor:
+          $ref: '#/components/schemas/CardDynamicDescriptor'
+      description: Options for payment links used to collect a card payment.
+    Mode:
+      type: string
+      enum:
+      - sandbox
+      - production
+      description: The operating mode for an account.
+      example: production
+    PaymentLinkStatus:
+      type: string
+      enum:
+      - active
+      - used
+      - disabled
+      - expired
+    Amount:
+      type: object
+      required:
+      - currency
+      - value
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        value:
+          type: integer
+          format: int64
+          description: "Quantity in the smallest unit of the specified currency. \n\nIn USD this is cents, for example, $12.04 is 1204 and $0.99 is 99."
+          example: 1204
+    CreatePaymentLink:
+      type: object
+      required:
+      - partnerAccountID
+      - merchantPaymentMethodID
+      - amount
+      - display
+      properties:
+        partnerAccountID:
+          type: string
+          description: The partner's Moov account ID.
+        merchantPaymentMethodID:
+          type: string
+          description: The merchant's preferred payment method ID. Must be a wallet payment method.
+        amount:
+          allOf:
+          - $ref: '#/components/schemas/Amount'
+          description: 'The fixed amount of the payment link.
+
+
+            In API versions before `2026.07.00`, this was a required field.
+
+
+            In API version `2026.07.00` and beyond, this field is required for `payment` and `payout` links and must be
+
+            omitted for `customAmountPayment` links, where the payor chooses the amount.'
+        salesTaxAmount:
+          allOf:
+          - $ref: '#/components/schemas/Amount'
+          description: Optional sales tax amount.
+        maxUses:
+          type: integer
+          format: int64
+          description: 'An optional limit on the number of times this payment link can be used.
+
+
+            **For payouts, `maxUses` is always 1.**'
+        expiresOn:
+          type: string
+          format: date-time
+          description: An optional expiration date for this payment link.
+        display:
+          $ref: '#/components/schemas/PaymentLinkDisplayOptions'
+        customer:
+          $ref: '#/components/schemas/PaymentLinkCustomerOptions'
+        payment:
+          $ref: '#/components/schemas/PaymentLinkPaymentDetails'
+        payout:
+          $ref: '#/components/schemas/PaymentLinkPayoutDetails'
+        lineItems:
+          $ref: '#/components/schemas/CreatePaymentLinkLineItems'
+      description: 'Request to create a new payment link.
+
+
+        A payment link must include exactly one of `payment`, `payout`, or `customAmountPayment` details. For payout payment links,
+
+        `maxUses` will automatically be set to 1, as these are intended for a one-time disbursement
+
+        to a specific recipient.
+
+        '
+      example:
+        partnerAccountID: d290f1ee-6c54-4b01-90e6-d701748f0851
+        merchantPaymentMethodID: 4c4e7f8e-81f4-4f3d-8f6f-6f6e7f8e4c4e
+        amount:
+          currency: USD
+          value: 2500
+        display:
+          title: Claim your payout
+          description: Q3 rebate payout.
+          callToAction: confirm
+        payout:
+          allowedMethods:
+          - push-to-card
+          - push-to-apple-pay
+          - rtp-credit
+          - ach-credit-standard
+          recipient:
+            email: jordan@example.com
+    ACHCompanyEntryDescription:
+      type: string
+      minLength: 4
+      maxLength: 10
+      description: An optional override of the default NACHA company entry description for a transfer.
+      example: Gym dues
+    PayoutRecipientError:
+      type: object
+      properties:
+        email:
+          type: string
+        phone:
+          $ref: '#/components/schemas/PhoneNumberError'
+    AmountUpdate:
+      type: object
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        value:
+          type: integer
+          format: int64
+          description: "Quantity in the smallest unit of the specified currency. \n\nIn USD this is cents, for example, $12.04 is 1204 and $0.99 is 99."
+          example: 1204
+    PaymentLinkDisplayOptions:
+      type: object
+      required:
+      - title
+      - description
+      - callToAction
+      properties:
+        title:
+          type: string
+          description: The payment page title displayed to the user.
+        description:
+          type: string
+          description: A payment description displayed to the user.
+        callToAction:
+          $ref: '#/components/schemas/CallToAction'
+      description: Customizable display options for a payment link.
+    CreatePaymentLinkLineItemsUpdate:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreatePaymentLinkLineItem'
+          minItems: 1
+          description: The list of line items.
+      description: 'An optional collection of line items for a payment link.
+
+        When line items are provided, their total plus tax must equal the payment link amount.'
   parameters:
-    AccountIDParam:
-      name: accountID
-      in: path
-      required: true
-      description: Unique identifier for the Moov account.
+    Pagination.skip:
+      name: skip
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/Skip'
+      explode: false
+    PaymentLinkListFilters.types:
+      name: types
+      in: query
+      required: false
+      description: A comma-separated list of payment link types to filter results.
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/PaymentLinkType'
+      explode: false
+    VersionHeader:
+      name: X-Moov-Version
+      in: header
+      required: false
+      description: 'Set this header to v2026.01.00 to use the API described in this specification.
+
+        When omitted, the server defaults to v2024.01.00, the earliest supported version, which may not match the behavior documented here.
+
+        An unrecognized well-formed version uses the latest supported version that is not newer than the requested version, when one exists.
+
+        For example, `v2026.08.00` uses `v2026.07.00`.
+
+        A malformed value, such as `2022`, returns a `404` response.'
       schema:
         type: string
-        format: uuid
-    PaymentLinkCodeParam:
-      name: paymentLinkCode
-      in: path
-      required: true
-      description: Unique code identifier for the payment link.
+        enum:
+        - v2026.01.00
+        example: v2026.01.00
+        x-speakeasy-ignore: true
+      x-speakeasy-ignore: true
+    Pagination.count:
+      name: count
+      in: query
+      required: false
+      description: Page size. When omitted, the server defaults to `200`.
       schema:
-        type: string
+        $ref: '#/components/schemas/Count'
+      explode: false
   securitySchemes:
-    bearerAuth:
+    BasicAuth:
       type: http
-      scheme: bearer
-      description: OAuth2 bearer token obtained from the /oauth2/token endpoint. Include in the Authorization header as "Bearer {token}".
+      scheme: Basic
 externalDocs:
-  description: Moov API Documentation
-  url: https://docs.moov.io/api/
+  url: https://docs.moov.io/
+  description: Moov Guides and API Documentation
+x-refined-from:
+- moov-api-v2026.01.00-openapi.yml
+- moov-openapi.yml

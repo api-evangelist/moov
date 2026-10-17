@@ -1,0 +1,604 @@
+openapi: 3.2.0
+info:
+  title: Moov Wallet transactions API
+  version: v2026.01.00
+  contact:
+    name: Moov Developer Support
+    email: help@moov.io
+    url: https://moov.io
+  license:
+    name: Unlicensed
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  description: 'Operations tagged Wallet transactions across 2 of this provider''s published API definitions: moov-api-v2026.01.00-openapi.yml, moov-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moov.io
+  description: Production API host
+  variables: {}
+security:
+- BasicAuth: []
+tags:
+- name: Wallet transactions
+paths:
+  /accounts/{accountID}/wallets/{walletID}/transactions:
+    get:
+      operationId: listWalletTransactions
+      description: 'List all the transactions associated with a particular Moov wallet.
+
+
+        Read our wallet transactions guide to learn more.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/wallets.read` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/Pagination.skip'
+      - $ref: '#/components/parameters/Pagination.count'
+      - $ref: '#/components/parameters/ListTransactionsQuery.walletID'
+      - $ref: '#/components/parameters/ListTransactionsQuery.transactionType'
+      - $ref: '#/components/parameters/ListTransactionsQuery.transactionTypes'
+      - $ref: '#/components/parameters/ListTransactionsQuery.sourceType'
+      - $ref: '#/components/parameters/ListTransactionsQuery.sourceID'
+      - $ref: '#/components/parameters/ListTransactionsQuery.status'
+      - $ref: '#/components/parameters/ListTransactionsQuery.createdStartDateTime'
+      - $ref: '#/components/parameters/ListTransactionsQuery.createdEndDateTime'
+      - $ref: '#/components/parameters/ListTransactionsQuery.completedStartDateTime'
+      - $ref: '#/components/parameters/ListTransactionsQuery.completedEndDateTime'
+      - $ref: '#/components/parameters/ListTransactionsQuery.sweepID'
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WalletTransaction'
+              example:
+              - walletID: 01234567-89ab-cdef-0123-456789abcdef
+                transactionID: 01234567-89ab-cdef-0123-456789abcdef
+                transactionType: card-payment
+                sourceType: transfer
+                sourceID: 01234567-89ab-cdef-0123-456789abcdef
+                status: completed
+                memo: An example completed card payment
+                createdOn: '2024-05-06T12:20:38.184Z'
+                completedOn: '2024-05-06T12:20:38.184Z'
+                currency: USD
+                grossAmount: 2000
+                grossAmountDecimal: '20.00'
+                fee: 30
+                feeDecimal: '0.30'
+                netAmount: 1970
+                netAmountDecimal: '19.70'
+                availableBalance: 10000
+                availableBalanceDecimal: '100.00'
+              - walletID: 01234567-89ab-cdef-0123-456789abcdef
+                transactionID: 01234567-89ab-cdef-0123-456789abcdef
+                transactionType: card-payment
+                sourceType: transfer
+                sourceID: 01234567-89ab-cdef-0123-456789abcdef
+                status: pending
+                memo: An example pending card payment
+                createdOn: '2024-05-06T12:20:38.184Z'
+                currency: USD
+                grossAmount: 2000
+                grossAmountDecimal: '20.00'
+                fee: 30
+                feeDecimal: '0.30'
+                netAmount: 1970
+                netAmountDecimal: '19.70'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '422':
+          description: The request was well-formed, but the contents failed validation. Check the request for missing or invalid fields.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListWalletTransactionsValidationError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Wallet transactions
+      x-speakeasy-name-override: list
+      summary: List wallet transactions
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+  /accounts/{accountID}/wallets/{walletID}/transactions/{transactionID}:
+    get:
+      operationId: getWalletTransaction
+      description: 'Get details on a specific wallet transaction.
+
+
+        Read our wallet transactions guide to learn more.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/wallets.read` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: walletID
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/WalletID'
+      - name: transactionID
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/WalletTransactionID'
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WalletTransaction'
+              example:
+                walletID: 01234567-89ab-cdef-0123-456789abcdef
+                transactionID: 01234567-89ab-cdef-0123-456789abcdef
+                transactionType: card-payment
+                sourceType: transfer
+                sourceID: 01234567-89ab-cdef-0123-456789abcdef
+                status: completed
+                memo: An example completed card payment
+                createdOn: '2024-05-06T12:20:38.184Z'
+                completedOn: '2024-05-06T12:20:38.184Z'
+                currency: USD
+                grossAmount: 2000
+                grossAmountDecimal: '20.00'
+                fee: 30
+                feeDecimal: '0.30'
+                netAmount: 1970
+                netAmountDecimal: '19.70'
+                availableBalance: 10000
+                availableBalanceDecimal: '100.00'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Wallet transactions
+      x-speakeasy-name-override: get
+      summary: Get wallet transaction
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+components:
+  schemas:
+    Count:
+      type: integer
+      format: int64
+      description: Limits the maximum number of results returned, or determines the page size when used with `skip` or `cursor` for pagination.
+      example: 20
+    WalletTransactionSourceType:
+      type: string
+      enum:
+      - transfer
+      - dispute
+      - issuing-card-transaction
+      - issuing-authorization
+      - sweep
+      - adjustment
+      - fee
+      - residual
+    WalletTransactionType:
+      type: string
+      enum:
+      - account-funding
+      - ach-reversal
+      - auto-sweep
+      - card-payment
+      - card-decline
+      - card-reversal
+      - cash-out
+      - dispute
+      - dispute-reversal
+      - facilitator-fee
+      - issuing-refund
+      - issuing-transaction
+      - issuing-transaction-adjustment
+      - issuing-auth-hold
+      - issuing-auth-release
+      - issuing-decline
+      - moov-fee
+      - payment
+      - payout
+      - refund
+      - refund-failure
+      - rtp-failure
+      - top-up
+      - wallet-transfer
+      - adjustment
+      - fee-revenue
+      - residual
+    Currency:
+      type: string
+      pattern: ^[A-Za-z]{3}$
+      description: A 3-letter ISO 4217 currency code.
+      example: USD
+    WalletID:
+      type: string
+    WalletTransactionStatus:
+      type: string
+      enum:
+      - pending
+      - completed
+      - canceled
+      - failed
+    WalletTransaction:
+      type: object
+      required:
+      - walletID
+      - transactionID
+      - transactionType
+      - sourceType
+      - sourceID
+      - status
+      - memo
+      - createdOn
+      - currency
+      - grossAmount
+      - grossAmountDecimal
+      - fee
+      - feeDecimal
+      - netAmount
+      - netAmountDecimal
+      properties:
+        walletID:
+          $ref: '#/components/schemas/WalletID'
+        transactionID:
+          $ref: '#/components/schemas/WalletTransactionID'
+        transactionType:
+          $ref: '#/components/schemas/WalletTransactionType'
+        sourceType:
+          $ref: '#/components/schemas/WalletTransactionSourceType'
+        sourceID:
+          type: string
+          description: The ID of the Moov object to which this transaction is related.
+        status:
+          $ref: '#/components/schemas/WalletTransactionStatus'
+        memo:
+          type: string
+          description: Detailed description of the transaction.
+        createdOn:
+          type: string
+          format: date-time
+        completedOn:
+          type: string
+          format: date-time
+        currency:
+          $ref: '#/components/schemas/Currency'
+        grossAmount:
+          type: integer
+          format: int64
+          description: The total transaction amount. The amount is in the smallest unit of the specified currency. In USD this is cents, for example, $12.04 is 1204 and $0.99 is 99.
+        grossAmountDecimal:
+          type: string
+          pattern: ^\d+\.\d{1,9}$
+          description: The total transaction amount. Same as `grossAmount`, but a decimal-formatted numerical string that represents up to 9 decimal place precision. In USD for example, 12.987654321 is $12.987654321 and 0.9987634521 is $0.9987634521.
+        fee:
+          type: integer
+          format: int64
+          description: Total fees paid for the transaction. The value is in the smallest unit of the specified currency. In USD this is cents, for example, $12.04 is 1204 and $0.99 is 99.
+        feeIDs:
+          type: array
+          items:
+            type: string
+          description: The IDs of the fees paid for the transaction.
+        feeDecimal:
+          type: string
+          pattern: ^\d+\.\d{1,9}$
+          description: Total fees paid for the transaction. Same as `fee`, but a decimal-formatted numerical string that represents up to 9 decimal place precision. In USD for example, 12.987654321 is $12.987654321 and 0.9987634521 is $0.9987634521.
+        netAmount:
+          type: integer
+          format: int64
+          description: Net amount is the gross amount less fees paid, and the amount that affects the wallet's balance. The amount is in the smallest unit of the specified currency. In USD this is cents, for example, $12.04 is 1204 and $0.99 is 99.
+        netAmountDecimal:
+          type: string
+          pattern: ^\d+\.\d{1,9}$
+          description: Net amount is the gross amount less fees paid, and the amount that affects the wallet's balance. Same as `netAmount`, but a decimal-formatted numerical string that represents up to 9 decimal place precision. In USD for example, 12.987654321 is $12.987654321 and 0.9987634521 is $0.9987634521.
+        availableBalance:
+          type: integer
+          format: int64
+          description: The wallet's total available balance after recording a completed transaction. The value is in the smallest unit of the specified currency. In USD this is cents, for example, $12.04 is 1204 and $0.99 is 99.
+        availableBalanceDecimal:
+          type: string
+          pattern: ^\d+\.\d{1,9}$
+          description: The wallet's total available balance after recording a completed transaction. Same as `availableBalance`, but a decimal-formatted numerical string that represents up to 9 decimal place precision. In USD for example, 12.987654321 is $12.987654321 and 0.9987634521 is $0.9987634521.
+        sweepID:
+          allOf:
+          - $ref: '#/components/schemas/SweepID'
+          description: ID of the sweep this transaction accrued in.
+      description: A transaction that funds or deducts from the wallet.
+    Skip:
+      type: integer
+      format: int64
+      description: The number of entries to skip when paginating a large result set.
+      example: 60
+    WalletTransactionID:
+      type: string
+    SweepID:
+      type: string
+    ListWalletTransactionsValidationError:
+      type: object
+      properties:
+        transactionType:
+          type: string
+        transactionTypes:
+          type: string
+        sourceType:
+          type: string
+        sourceID:
+          type: string
+        status:
+          type: string
+        sweepID:
+          type: string
+        createdStartDateTime:
+          type: string
+        createdEndDateTime:
+          type: string
+        completedStartDateTime:
+          type: string
+        completedEndDateTime:
+          type: string
+        statementDescriptor:
+          type: string
+        skip:
+          type: string
+        count:
+          type: string
+  parameters:
+    ListTransactionsQuery.sweepID:
+      name: sweepID
+      in: query
+      required: false
+      description: Optional ID to filter for transactions accrued in a sweep.
+      schema:
+        $ref: '#/components/schemas/SweepID'
+      explode: false
+    ListTransactionsQuery.completedStartDateTime:
+      name: completedStartDateTime
+      in: query
+      required: false
+      description: Optional date-time which inclusively filters all transactions completed after this date-time.
+      schema:
+        type: string
+        format: date-time
+      explode: false
+    ListTransactionsQuery.sourceID:
+      name: sourceID
+      in: query
+      required: false
+      description: Optional parameter to filter by source ID.
+      schema:
+        type: string
+      explode: false
+    ListTransactionsQuery.status:
+      name: status
+      in: query
+      required: false
+      description: Optional parameter to filter by status (`pending` or `completed`).
+      schema:
+        $ref: '#/components/schemas/WalletTransactionStatus'
+      explode: false
+    Pagination.skip:
+      name: skip
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/Skip'
+      explode: false
+    ListTransactionsQuery.transactionType:
+      name: transactionType
+      in: query
+      required: false
+      description: Optional parameter to filter by transaction type.
+      schema:
+        $ref: '#/components/schemas/WalletTransactionType'
+      explode: false
+    ListTransactionsQuery.transactionTypes:
+      name: transactionTypes
+      in: query
+      required: false
+      description: Optional, comma-separated parameter to filter by transaction types.
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/WalletTransactionType'
+      explode: false
+    ListTransactionsQuery.createdStartDateTime:
+      name: createdStartDateTime
+      in: query
+      required: false
+      description: Optional date-time which inclusively filters all transactions created after this date-time.
+      schema:
+        type: string
+        format: date-time
+      explode: false
+    ListTransactionsQuery.createdEndDateTime:
+      name: createdEndDateTime
+      in: query
+      required: false
+      description: Optional date-time which exclusively filters all transactions created before this date-time.
+      schema:
+        type: string
+        format: date-time
+      explode: false
+    VersionHeader:
+      name: X-Moov-Version
+      in: header
+      required: false
+      description: 'Set this header to v2026.01.00 to use the API described in this specification.
+
+        When omitted, the server defaults to v2024.01.00, the earliest supported version, which may not match the behavior documented here.
+
+        An unrecognized well-formed version uses the latest supported version that is not newer than the requested version, when one exists.
+
+        For example, `v2026.08.00` uses `v2026.07.00`.
+
+        A malformed value, such as `2022`, returns a `404` response.'
+      schema:
+        type: string
+        enum:
+        - v2026.01.00
+        example: v2026.01.00
+        x-speakeasy-ignore: true
+      x-speakeasy-ignore: true
+    ListTransactionsQuery.completedEndDateTime:
+      name: completedEndDateTime
+      in: query
+      required: false
+      description: Optional date-time which exclusively filters all transactions completed before this date-time.
+      schema:
+        type: string
+        format: date-time
+      explode: false
+    ListTransactionsQuery.walletID:
+      name: walletID
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/WalletID'
+    Pagination.count:
+      name: count
+      in: query
+      required: false
+      description: Page size. When omitted, the server defaults to `200`.
+      schema:
+        $ref: '#/components/schemas/Count'
+      explode: false
+    ListTransactionsQuery.sourceType:
+      name: sourceType
+      in: query
+      required: false
+      description: Optional parameter to filter by source type (i.e. transfer, dispute, issuing-transaction).
+      schema:
+        $ref: '#/components/schemas/WalletTransactionSourceType'
+      explode: false
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: Basic
+externalDocs:
+  url: https://docs.moov.io/
+  description: Moov Guides and API Documentation
+x-refined-from:
+- moov-api-v2026.01.00-openapi.yml
+- moov-openapi.yml

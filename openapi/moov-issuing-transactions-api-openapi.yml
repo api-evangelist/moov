@@ -1,0 +1,788 @@
+openapi: 3.2.0
+info:
+  title: Moov Issuing transactions API
+  version: v2026.01.00
+  contact:
+    name: Moov Developer Support
+    email: help@moov.io
+    url: https://moov.io
+  license:
+    name: Unlicensed
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  description: 'Operations tagged Issuing transactions across 2 of this provider''s published API definitions: moov-api-v2026.01.00-openapi.yml, moov-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moov.io
+  description: Production API host
+  variables: {}
+security:
+- BasicAuth: []
+tags:
+- name: Issuing transactions
+paths:
+  /issuing/{accountID}/authorizations:
+    get:
+      operationId: listIssuedCardAuthorizations
+      description: 'List issued card authorizations associated with a Moov account.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/issued-cards.read` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        description: The Moov business account for which cards have been issued.
+        schema:
+          type: string
+      - $ref: '#/components/parameters/Pagination.skip'
+      - $ref: '#/components/parameters/Pagination.count'
+      - $ref: '#/components/parameters/ListIssuingAuthorizationsQuery.issuedCardID'
+      - $ref: '#/components/parameters/ListIssuingAuthorizationsQuery.startDateTime'
+      - $ref: '#/components/parameters/ListIssuingAuthorizationsQuery.endDateTime'
+      - $ref: '#/components/parameters/ListIssuingAuthorizationsQuery.statuses'
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IssuedCardAuthorization'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Issuing transactions
+      x-speakeasy-name-override: listAuthorizations
+      summary: List issued card authorizations
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+  /issuing/{accountID}/authorizations/{authorizationID}:
+    get:
+      operationId: getIssuedCardAuthorization
+      description: 'Retrieves details of an authorization associated with a specific Moov account.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/issued-cards.read` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        description: The Moov business account for which cards have been issued.
+        schema:
+          type: string
+      - name: authorizationID
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IssuedCardAuthorization'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Issuing transactions
+      x-speakeasy-name-override: getAuthorization
+      summary: Get issued card authorization
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+  /issuing/{accountID}/authorizations/{authorizationID}/events:
+    get:
+      operationId: listIssuedCardAuthorizationEvents
+      description: 'List card network and Moov platform events that affect the authorization and its hold on a wallet balance.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/issued-cards.read` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        description: The Moov business account for which cards have been issued.
+        schema:
+          type: string
+      - name: authorizationID
+        in: path
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/Pagination.skip'
+      - $ref: '#/components/parameters/Pagination.count'
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IssuedCardAuthorizationEvent'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Issuing transactions
+      x-speakeasy-name-override: listAuthorizationEvents
+      summary: List issued card authorization events
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+  /issuing/{accountID}/card-transactions:
+    get:
+      operationId: listIssuedCardTransactions
+      description: 'List issued card transactions associated with a Moov account.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/issued-cards.read` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        description: The Moov business account for which cards have been issued.
+        schema:
+          type: string
+      - $ref: '#/components/parameters/Pagination.skip'
+      - $ref: '#/components/parameters/Pagination.count'
+      - $ref: '#/components/parameters/ListIssuingTransactionsQuery.issuedCardID'
+      - $ref: '#/components/parameters/ListIssuingTransactionsQuery.merchantName'
+      - $ref: '#/components/parameters/ListIssuingTransactionsQuery.startDateTime'
+      - $ref: '#/components/parameters/ListIssuingTransactionsQuery.endDateTime'
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IssuedCardTransaction'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Issuing transactions
+      x-speakeasy-name-override: list
+      summary: List issued card transactions
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+  /issuing/{accountID}/card-transactions/{cardTransactionID}:
+    get:
+      operationId: getIssuedCardTransaction
+      description: 'Retrieves details of an issued card transaction associated with a specific Moov account.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/issued-cards.read` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        description: The Moov business account for which cards have been issued.
+        schema:
+          type: string
+      - name: cardTransactionID
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IssuedCardTransaction'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Issuing transactions
+      x-speakeasy-name-override: get
+      summary: Get issued card transaction
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+components:
+  schemas:
+    Count:
+      type: integer
+      format: int64
+      description: Limits the maximum number of results returned, or determines the page size when used with `skip` or `cursor` for pagination.
+      example: 20
+    IssuingMerchantData:
+      type: object
+      required:
+      - networkID
+      - country
+      - mcc
+      properties:
+        networkID:
+          type: string
+          description: External identifier used to identify the merchant with the card brand.
+        name:
+          type: string
+          description: Name of the merchant.
+          example: Whole Body Fitness
+        city:
+          type: string
+          description: The merchant's location.
+          example: San Francisco
+        country:
+          type: string
+          description: Two-letter country code.
+          example: US
+        postalCode:
+          type: string
+          description: The merchant's five-digit postal code.
+          example: '94107'
+        state:
+          type: string
+          description: The merchant's two-letter state abbreviation.
+          example: CA
+        mcc:
+          type: string
+          description: The Merchant Category Code.
+          example: '7298'
+    IssuingAuthorizationStatus:
+      type: string
+      enum:
+      - pending
+      - declined
+      - canceled
+      - cleared
+      - expired
+      description: Status of a card issuing authorization.
+    IssuingDeclineReason:
+      type: string
+      enum:
+      - insufficient-funds
+      - card-not-active
+      - card-expiration
+      - spend-cutoff-reached
+      - outside-allowed-schedule
+      - spend-limit-exceeded
+      - merchant-category-not-supported
+      - merchant-category-restricted
+      - merchant-restricted
+      - merchant-country-not-supported
+      - unsupported-transaction
+      - network-stand-in
+      - declined-by-issuer
+      - invalid-request
+      - system-error
+      description: 'The reason an authorization or authorization event was declined. Only present if the
+
+        authorization or event has been declined.'
+    CardIssuingNetwork:
+      type: string
+      enum:
+      - discover
+      - shazam
+      - visa
+      description: The name of the network a card transaction is routed through.
+    Skip:
+      type: integer
+      format: int64
+      description: The number of entries to skip when paginating a large result set.
+      example: 60
+    IssuedCardAuthorizationEventResult:
+      type: string
+      enum:
+      - approved
+      - declined
+      - processed
+      description: The result of an event.
+    IssuedCardAuthorization:
+      type: object
+      required:
+      - authorizationID
+      - issuedCardID
+      - fundingWalletID
+      - network
+      - authorizedAmount
+      - status
+      - merchantData
+      - createdOn
+      properties:
+        authorizationID:
+          type: string
+        issuedCardID:
+          type: string
+        lastFourCardNumber:
+          type: string
+          minLength: 4
+          maxLength: 4
+          description: Last four digits of the card number. Omitted for authorizations recorded before this was captured.
+        fundingWalletID:
+          type: string
+        network:
+          $ref: '#/components/schemas/CardIssuingNetwork'
+        authorizedAmount:
+          $ref: '#/components/schemas/SignedDecimalString'
+        status:
+          $ref: '#/components/schemas/IssuingAuthorizationStatus'
+        merchantData:
+          $ref: '#/components/schemas/IssuingMerchantData'
+        createdOn:
+          type: string
+          format: date-time
+        cardTransactions:
+          type: array
+          items:
+            type: string
+          description: List of card transaction IDs associated with this authorization.
+        declineReason:
+          $ref: '#/components/schemas/IssuingDeclineReason'
+    SignedDecimalString:
+      type: string
+      format: ^\d+\.\d{1,2}$
+      description: A decimal-formatted numerical string that represents up to 2 decimal place precision. In USD for example, 12.34 is $12.34 and 0.99 is $0.99.
+      example: '-14.89'
+    IssuedCardEventType:
+      type: string
+      enum:
+      - authorization
+      - reversal
+      - authorization-advice
+      - authorization-expiration
+      - authorization-incremental
+      - clearing
+      description: The type of event that occurred on the card.
+    IssuedCardAuthorizationEvent:
+      type: object
+      required:
+      - eventID
+      - eventType
+      - amount
+      - result
+      - createdOn
+      properties:
+        eventID:
+          type: string
+          description: The identifier for this event. Use the `eventType` field to determine what resource is identified by this ID (`authorization`, `reversal`, etc.).
+        eventType:
+          $ref: '#/components/schemas/IssuedCardEventType'
+        amount:
+          $ref: '#/components/schemas/SignedDecimalString'
+        result:
+          $ref: '#/components/schemas/IssuedCardAuthorizationEventResult'
+        createdOn:
+          type: string
+          format: date-time
+        declineReason:
+          $ref: '#/components/schemas/IssuingDeclineReason'
+    IssuedCardTransaction:
+      type: object
+      required:
+      - cardTransactionID
+      - issuedCardID
+      - fundingWalletID
+      - amount
+      - authorizedOn
+      - merchantData
+      - createdOn
+      properties:
+        cardTransactionID:
+          type: string
+        issuedCardID:
+          type: string
+        lastFourCardNumber:
+          type: string
+          minLength: 4
+          maxLength: 4
+          description: Last four digits of the card number. Omitted for transactions recorded before this was captured.
+        fundingWalletID:
+          type: string
+        amount:
+          $ref: '#/components/schemas/SignedDecimalString'
+        authorizationID:
+          type: string
+        authorizedOn:
+          type: string
+          format: date-time
+        merchantData:
+          $ref: '#/components/schemas/IssuingMerchantData'
+        createdOn:
+          type: string
+          format: date-time
+  parameters:
+    Pagination.skip:
+      name: skip
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/Skip'
+      explode: false
+    ListIssuingAuthorizationsQuery.statuses:
+      name: statuses
+      in: query
+      required: false
+      description: Optional, comma-separated statuses of the authorization to filter results.
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/IssuingAuthorizationStatus'
+      explode: false
+    ListIssuingAuthorizationsQuery.endDateTime:
+      name: endDateTime
+      in: query
+      required: false
+      description: Optional date-time which exclusively filters all authorizations created before this date-time.
+      schema:
+        type: string
+        format: date-time
+      explode: false
+    ListIssuingTransactionsQuery.endDateTime:
+      name: endDateTime
+      in: query
+      required: false
+      description: Optional date-time which exclusively filters all card transactions created before this date-time.
+      schema:
+        type: string
+        format: date-time
+      explode: false
+    ListIssuingTransactionsQuery.startDateTime:
+      name: startDateTime
+      in: query
+      required: false
+      description: Optional date-time which inclusively filters all card transactions created after this date-time.
+      schema:
+        type: string
+        format: date-time
+      explode: false
+    ListIssuingAuthorizationsQuery.issuedCardID:
+      name: issuedCardID
+      in: query
+      required: false
+      description: Optional ID of the issued card to filter results.
+      schema:
+        type: string
+      explode: false
+    VersionHeader:
+      name: X-Moov-Version
+      in: header
+      required: false
+      description: 'Set this header to v2026.01.00 to use the API described in this specification.
+
+        When omitted, the server defaults to v2024.01.00, the earliest supported version, which may not match the behavior documented here.
+
+        An unrecognized well-formed version uses the latest supported version that is not newer than the requested version, when one exists.
+
+        For example, `v2026.08.00` uses `v2026.07.00`.
+
+        A malformed value, such as `2022`, returns a `404` response.'
+      schema:
+        type: string
+        enum:
+        - v2026.01.00
+        example: v2026.01.00
+        x-speakeasy-ignore: true
+      x-speakeasy-ignore: true
+    ListIssuingAuthorizationsQuery.startDateTime:
+      name: startDateTime
+      in: query
+      required: false
+      description: Optional date-time which inclusively filters all authorizations created after this date-time.
+      schema:
+        type: string
+        format: date-time
+      explode: false
+    ListIssuingTransactionsQuery.issuedCardID:
+      name: issuedCardID
+      in: query
+      required: false
+      description: Optional ID of the issued card to filter results.
+      schema:
+        type: string
+      explode: false
+    Pagination.count:
+      name: count
+      in: query
+      required: false
+      description: Page size. When omitted, the server defaults to `200`.
+      schema:
+        $ref: '#/components/schemas/Count'
+      explode: false
+    ListIssuingTransactionsQuery.merchantName:
+      name: merchantName
+      in: query
+      required: false
+      description: Optional case-insensitive substring match on the merchant name to filter results.
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 100
+      explode: false
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: Basic
+externalDocs:
+  url: https://docs.moov.io/
+  description: Moov Guides and API Documentation
+x-refined-from:
+- moov-api-v2026.01.00-openapi.yml
+- moov-openapi.yml

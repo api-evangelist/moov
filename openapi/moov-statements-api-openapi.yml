@@ -1,0 +1,891 @@
+openapi: 3.2.0
+info:
+  title: Moov Statements API
+  version: v2026.01.00
+  contact:
+    name: Moov Developer Support
+    email: help@moov.io
+    url: https://moov.io
+  license:
+    name: Unlicensed
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  description: 'Operations tagged Statements across 2 of this provider''s published API definitions: moov-api-v2026.01.00-openapi.yml, moov-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moov.io
+  description: Production API host
+  variables: {}
+security:
+- BasicAuth: []
+tags:
+- name: Statements
+paths:
+  /accounts/{accountID}/statements:
+    get:
+      operationId: listStatements
+      description: 'Retrieve all statements associated with an account.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/profile.read` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - $ref: '#/components/parameters/StatementListFilters.billingPeriodStartDateTime'
+      - $ref: '#/components/parameters/StatementListFilters.billingPeriodEndDateTime'
+      - $ref: '#/components/parameters/Pagination.skip'
+      - $ref: '#/components/parameters/Pagination.count'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/ID'
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Statement'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Statements
+      x-speakeasy-name-override: list
+      summary: List statements
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+  /accounts/{accountID}/statements/{statementID}:
+    get:
+      operationId: getStatement
+      description: 'Retrieve a statement by its ID.
+
+
+        Use the `Accept` header to specify the format of the response. Supported formats are `application/json` and `application/pdf`.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/profile.read` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/ID'
+      - name: statementID
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/ID'
+      responses:
+        '200':
+          description: The request has succeeded.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Statement'
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Statements
+      x-speakeasy-name-override: get
+      summary: Get statement
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+components:
+  schemas:
+    Count:
+      type: integer
+      format: int64
+      description: Limits the maximum number of results returned, or determines the page size when used with `skip` or `cursor` for pagination.
+      example: 20
+    Currency:
+      type: string
+      pattern: ^[A-Za-z]{3}$
+      description: A 3-letter ISO 4217 currency code.
+      example: USD
+    BillingSummary:
+      type: object
+      properties:
+        cardAcquiring:
+          type: object
+          properties:
+            volumeAmount:
+              allOf:
+              - $ref: '#/components/schemas/AmountDecimal'
+              description: The total transaction volume amount. This field is deprecated and will be removed in a future release.
+              deprecated: true
+            volumeCount:
+              type: integer
+              format: int64
+              description: The total number of transactions. This field is deprecated and will be removed in a future release.
+              deprecated: true
+            feeAmount:
+              allOf:
+              - $ref: '#/components/schemas/AmountDecimal'
+              description: The total fee amount.
+            merchantFeesCollected:
+              allOf:
+              - $ref: '#/components/schemas/AmountDecimal'
+              description: Total fee revenue collected from merchants.
+            partnerFeesAssessed:
+              allOf:
+              - $ref: '#/components/schemas/AmountDecimal'
+              description: Total fee costs incurred by the partner.
+            netIncome:
+              allOf:
+              - $ref: '#/components/schemas/AmountDecimal'
+              description: Net revenue after deducting partner fee costs.
+            interchangeFees:
+              $ref: '#/components/schemas/BillingSummaryInterchange'
+          description: A summary of card acquiring fees.
+        ach:
+          allOf:
+          - $ref: '#/components/schemas/BillingSummaryDetails'
+          description: A summary of ACH fees.
+        instantPayments:
+          allOf:
+          - $ref: '#/components/schemas/BillingSummaryDetails'
+          description: A summary of instant payment fees.
+        platformFees:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: The total amount of platform fees. This field is deprecated and will be removed in a future release. Use summary.accountFees.
+          deprecated: true
+        accountFees:
+          allOf:
+          - $ref: '#/components/schemas/BillingSummaryDetails'
+          description: A summary of account fees.
+        adjustmentFees:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: The total amount of adjustment fees. This field is deprecated and will be removed in a future release. Use adjustments.total.
+          deprecated: true
+        otherFees:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: The total amount of other card fees. This field is deprecated and will be removed in a future release. Use summary.otherCardFees.
+          deprecated: true
+        otherCardFees:
+          allOf:
+          - $ref: '#/components/schemas/BillingSummaryDetails'
+          description: A summary of other card fees.
+        total:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: The total amount of all fees.
+        netIncomeSubtotal:
+          allOf:
+          - $ref: '#/components/schemas/BillingSummaryDetails'
+          description: Total net revenue after deducting total partner fees.
+        revenueShare:
+          type: string
+          description: Partner’s share of the net income, expressed as a percentage.
+        residualSubtotal:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: The portion of net income allocated to the partner before monthly partner costs.
+        monthlyPartnerCosts:
+          $ref: '#/components/schemas/PartnerFees'
+        netPartnerPayment:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: Final partner payment after deducting monthlyPartnerCosts.
+        totalNetPartnerPayment:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: Final partner payment after deducting monthlyPartnerCosts and any adjustments.
+      description: A summary of all fees included in a statement.
+    CardAcquiringFees:
+      type: object
+      required:
+      - visa
+      - mastercard
+      - discover
+      - americanExpress
+      properties:
+        visa:
+          allOf:
+          - $ref: '#/components/schemas/CardBrandFees'
+          description: Fees associated with Visa transactions.
+        mastercard:
+          allOf:
+          - $ref: '#/components/schemas/CardBrandFees'
+          description: Fees associated with Mastercard transactions.
+        discover:
+          allOf:
+          - $ref: '#/components/schemas/CardBrandFees'
+          description: Fees associated with Discover transactions.
+        americanExpress:
+          allOf:
+          - $ref: '#/components/schemas/CardBrandFees'
+          description: Fees associated with American Express transactions.
+      description: A detailed breakdown of card acquiring fees by card brand.
+    BillingInterchangeProgramFee:
+      type: object
+      required:
+      - programName
+      - count
+      - percentageRate
+      - perItemRate
+      - total
+      - transferVolume
+      properties:
+        programName:
+          type: string
+          description: The name of the interchange program.
+        count:
+          type: integer
+          format: int64
+          description: The number of transactions for this program.
+        percentageRate:
+          type: number
+          format: decimal
+          description: The percentage rate for this program.
+        perItemRate:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: The per-item rate for this program.
+        total:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: The total fee amount for this program.
+        transferVolume:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: The total transfer volume for this program.
+      description: Details of a specific interchange program fee.
+    BillingAdjustment:
+      type: object
+      required:
+      - feeName
+      - count
+      - amount
+      properties:
+        feeName:
+          type: string
+          description: The name of the adjustment fee, shown as the statement line item.
+        count:
+          type: integer
+          format: int64
+          description: The number of adjustments with this fee name.
+        amount:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: The total amount for this fee name. May be negative for a credit/refund.
+      description: An adjustment (correction) fee grouped by its statement line-item name.
+    Statement:
+      type: object
+      required:
+      - statementID
+      - statementName
+      - fileName
+      - fileSize
+      - billingPeriodStartDateTime
+      - billingPeriodEndDateTime
+      - subscriptionIDs
+      - summary
+      - createdOn
+      - updatedOn
+      properties:
+        statementID:
+          allOf:
+          - $ref: '#/components/schemas/ID'
+          description: The unique identifier for the statement.
+        statementName:
+          type: string
+          description: The name of the statement.
+        fileName:
+          type: string
+          description: The name of the statement file.
+        fileSize:
+          type: integer
+          format: int64
+          description: The size of the statement file in bytes.
+        billingPeriodStartDateTime:
+          type: string
+          format: date-time
+          description: The start date and time of the billing period.
+        billingPeriodEndDateTime:
+          type: string
+          format: date-time
+          description: The end date and time of the billing period.
+        subscriptionIDs:
+          type: array
+          items:
+            $ref: '#/components/schemas/ID'
+          description: List of subscription IDs associated with this statement.
+        summary:
+          $ref: '#/components/schemas/BillingSummary'
+        cardAcquiringFees:
+          $ref: '#/components/schemas/CardAcquiringFees'
+        achFees:
+          $ref: '#/components/schemas/ACHFees'
+        instantPaymentFees:
+          $ref: '#/components/schemas/InstantPaymentFees'
+        platformFees:
+          $ref: '#/components/schemas/PlatformFees'
+        accountFees:
+          $ref: '#/components/schemas/AccountFees'
+        otherCardFees:
+          $ref: '#/components/schemas/OtherCardFees'
+        partnerFees:
+          $ref: '#/components/schemas/PartnerFees'
+        adjustments:
+          $ref: '#/components/schemas/AdjustmentFees'
+        createdOn:
+          type: string
+          format: date-time
+          description: The date and time the statement was created.
+        updatedOn:
+          type: string
+          format: date-time
+          description: The date and time the statement was last updated.
+      description: A billing statement for a Moov account.
+    AdjustmentFees:
+      type: object
+      required:
+      - items
+      - total
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/BillingAdjustment'
+          description: Adjustment fees grouped by fee name.
+        total:
+          allOf:
+          - $ref: '#/components/schemas/BillingCountAndAmount'
+          description: Total adjustment fees.
+      description: A detailed breakdown of adjustment (correction) fees by fee name.
+    ACHFees:
+      type: object
+      required:
+      - standardCredit
+      - sameDayCredit
+      - debits
+      - return
+      - unauthorizedReturn
+      - noticeOfChange
+      - bankAccountVerification
+      - total
+      properties:
+        standardCredit:
+          allOf:
+          - $ref: '#/components/schemas/BillingCountAndAmount'
+          description: Fees for standard credit transfers.
+        sameDayCredit:
+          allOf:
+          - $ref: '#/components/schemas/BillingCountAndAmount'
+          description: Fees for same-day credit transfers.
+        debits:
+          allOf:
+          - $ref: '#/components/schemas/BillingCountAndAmount'
+          description: Fees for debit transfers.
+        return:
+          allOf:
+          - $ref: '#/components/schemas/BillingCountAndAmount'
+          description: Fees for authorized returns.
+        unauthorizedReturn:
+          allOf:
+          - $ref: '#/components/schemas/BillingCountAndAmount'
+          description: Fees for unauthorized returns.
+        noticeOfChange:
+          allOf:
+          - $ref: '#/components/schemas/BillingCountAndAmount'
+          description: Fees for notices of change.
+        bankAccountVerification:
+          allOf:
+          - $ref: '#/components/schemas/BillingCountAndAmount'
+          description: Fees for successful bank account verifications via Plaid or MX.
+        total:
+          allOf:
+          - $ref: '#/components/schemas/BillingCountAndAmount'
+          description: Total ACH fees.
+      description: A detailed breakdown of ACH fees.
+    BillingCountAndAmount:
+      type: object
+      required:
+      - count
+      - amount
+      properties:
+        count:
+          type: integer
+          format: int64
+          description: The number of items.
+        amount:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: The total amount.
+    PlatformFees:
+      type: object
+      required:
+      - walletFee
+      - merchantPCIFee
+      - total
+      properties:
+        walletFee:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: Fees associated with wallet services.
+        merchantPCIFee:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: Fees for PCI compliance.
+        total:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: Total platform fees.
+      description: A detailed breakdown of platform fees. This field is deprecated and will be removed in a future release. Use accountFees.
+      deprecated: true
+    BillingSummaryDetails:
+      type: object
+      properties:
+        volumeAmount:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: The total transaction volume amount. This field is deprecated and will be removed in a future release.
+          deprecated: true
+        volumeCount:
+          type: integer
+          format: int64
+          description: The total number of transactions. This field is deprecated and will be removed in a future release.
+          deprecated: true
+        feeAmount:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: The total fee amount.
+        merchantFeesCollected:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: Total fee revenue collected from merchants.
+        partnerFeesAssessed:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: Total fee costs incurred by the partner.
+        netIncome:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: Net revenue after deducting partner fee costs.
+    Skip:
+      type: integer
+      format: int64
+      description: The number of entries to skip when paginating a large result set.
+      example: 60
+    AmountDecimal:
+      type: object
+      required:
+      - currency
+      - valueDecimal
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        valueDecimal:
+          type: string
+          pattern: ^\d+\.\d{1,9}$
+          description: "A decimal-formatted numerical string that represents up to 9 decimal place precision. \n\nFor example, $12.987654321 is '12.987654321'."
+          example: '12.987654321'
+    InstantPaymentFees:
+      type: object
+      required:
+      - rtpCreditTransaction
+      - pushToCardTransaction
+      - pullFromCardTransaction
+      - instantVerification
+      - total
+      properties:
+        rtpCreditTransaction:
+          allOf:
+          - $ref: '#/components/schemas/BillingCountAndAmount'
+          description: Fees for RTP credit transactions.
+        rtpDecline:
+          allOf:
+          - $ref: '#/components/schemas/BillingCountAndAmount'
+          description: Fees for RTP declines.
+        pushToCardTransaction:
+          allOf:
+          - $ref: '#/components/schemas/BillingCountAndAmount'
+          description: Fees for push-to-card transactions.
+        pushToCardDecline:
+          allOf:
+          - $ref: '#/components/schemas/BillingCountAndAmount'
+          description: Fees for push-to-card declines.
+        pullFromCardTransaction:
+          allOf:
+          - $ref: '#/components/schemas/BillingCountAndAmount'
+          description: Fees for pull-from-card transactions.
+        pullFromCardDecline:
+          allOf:
+          - $ref: '#/components/schemas/BillingCountAndAmount'
+          description: Fees for pull-from-card declines.
+        pullFromCardRefund:
+          allOf:
+          - $ref: '#/components/schemas/BillingCountAndAmount'
+          description: Fees for pull-from-card refunds.
+        instantVerification:
+          allOf:
+          - $ref: '#/components/schemas/BillingCountAndAmount'
+          description: Fees for instant payment verifications.
+        total:
+          allOf:
+          - $ref: '#/components/schemas/BillingCountAndAmount'
+          description: Total instant payment fees.
+      description: A detailed breakdown of instant payment fees.
+    BillingSummaryInterchange:
+      type: object
+      required:
+      - visa
+      - mastercard
+      - discover
+      - americanExpress
+      properties:
+        visa:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: Total interchange fees for Visa.
+        mastercard:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: Total interchange fees for Mastercard.
+        discover:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: Total interchange fees for Discover.
+        americanExpress:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: Total interchange fees for American Express.
+      description: A summary of interchange fees by card brand.
+    AccountFees:
+      type: object
+      required:
+      - walletFee
+      - merchantPCIFee
+      - invoicePaymentFee
+      - total
+      properties:
+        walletFee:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: Fees associated with wallet services.
+        merchantPCIFee:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: Fees for PCI compliance.
+        invoicePaymentFee:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: Fees for invoice payments.
+        kybFee:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: Fees for business verification.
+        kycFee:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: Fees for customer verification.
+        transactionMonitoringFee:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: Fees for transaction risk monitoring.
+        total:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: Total platform fees.
+      description: A detailed breakdown of account fees.
+    GenericError:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    OtherCardFees:
+      type: object
+      required:
+      - disputes
+      - cardAccountUpdater
+      - cardVerification
+      - nameVerification
+      - total
+      properties:
+        disputes:
+          allOf:
+          - $ref: '#/components/schemas/BillingCountAndAmount'
+          description: Fees for disputes.
+        cardAccountUpdater:
+          allOf:
+          - $ref: '#/components/schemas/BillingCountAndAmount'
+          description: Fees for card account updater services.
+        cardVerification:
+          allOf:
+          - $ref: '#/components/schemas/BillingCountAndAmount'
+          description: Fees for card verification.
+        nameVerification:
+          allOf:
+          - $ref: '#/components/schemas/BillingCountAndAmount'
+          description: Fees for name verification.
+        total:
+          allOf:
+          - $ref: '#/components/schemas/BillingCountAndAmount'
+          description: Total other card fees.
+      description: A detailed breakdown of other card-related fees.
+    ID:
+      type: string
+      maxLength: 36
+      description: A unique identifier for a Moov resource. Supports UUID format (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx) or typed format with base32-encoded UUID and type suffix (e.g., kuoaydiojf7uszaokc2ggnaaaa_xfer).
+    CardBrandFees:
+      type: object
+      required:
+      - total
+      properties:
+        interchange:
+          allOf:
+          - $ref: '#/components/schemas/BillingCountAndAmount'
+          description: Details of interchange fees.
+        interchangePrograms:
+          type: array
+          items:
+            $ref: '#/components/schemas/BillingInterchangeProgramFee'
+          description: A list of interchange program fees.
+        networkPassthrough:
+          allOf:
+          - $ref: '#/components/schemas/BillingCountAndAmount'
+          description: Details of network passthrough fees.
+        completedDomesticOnline:
+          allOf:
+          - $ref: '#/components/schemas/BillingCountAndAmount'
+          description: Details of completed domestic online transactions.
+        completedDomesticInPerson:
+          allOf:
+          - $ref: '#/components/schemas/BillingCountAndAmount'
+          description: Details of completed domestic in-person transactions.
+        completedInternationalOnline:
+          allOf:
+          - $ref: '#/components/schemas/BillingCountAndAmount'
+          description: Details of completed international online transactions.
+        completedInternationalInPerson:
+          allOf:
+          - $ref: '#/components/schemas/BillingCountAndAmount'
+          description: Details of completed international in-person transactions.
+        declines:
+          allOf:
+          - $ref: '#/components/schemas/BillingCountAndAmount'
+          description: Details of declined transactions.
+        refunds:
+          allOf:
+          - $ref: '#/components/schemas/BillingCountAndAmount'
+          description: Details of refunded transactions.
+        cardCancellations:
+          allOf:
+          - $ref: '#/components/schemas/BillingCountAndAmount'
+          description: Details of card cancellations.
+        total:
+          allOf:
+          - $ref: '#/components/schemas/BillingCountAndAmount'
+          description: Total fees for this card brand.
+    PartnerFees:
+      type: object
+      required:
+      - minimumCommitment
+      - monthlyPlatform
+      - total
+      properties:
+        minimumCommitment:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: The minimum spending amount that must be met in the billing period. If actual usage is below the minimum amount, account is charged the difference.
+        monthlyPlatform:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: Fixed recurring fee for the billing period regardless of usage.
+        total:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: Total partner fees.
+      description: Monthly partner costs that are charged separately and not included in residual subtotal (e.g. platform fees, minimums).
+  parameters:
+    Pagination.skip:
+      name: skip
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/Skip'
+      explode: false
+    StatementListFilters.billingPeriodEndDateTime:
+      name: billingPeriodEndDateTime
+      in: query
+      required: false
+      description: Optional date-time which exclusively filters all statements where billing period is before this date-time.
+      schema:
+        type: string
+        format: date-time
+      explode: false
+    StatementListFilters.billingPeriodStartDateTime:
+      name: billingPeriodStartDateTime
+      in: query
+      required: false
+      description: Optional date-time which inclusively filters all statements where billing period is on or after this date-time.
+      schema:
+        type: string
+        format: date-time
+      explode: false
+    VersionHeader:
+      name: X-Moov-Version
+      in: header
+      required: false
+      description: 'Set this header to v2026.01.00 to use the API described in this specification.
+
+        When omitted, the server defaults to v2024.01.00, the earliest supported version, which may not match the behavior documented here.
+
+        An unrecognized well-formed version uses the latest supported version that is not newer than the requested version, when one exists.
+
+        For example, `v2026.08.00` uses `v2026.07.00`.
+
+        A malformed value, such as `2022`, returns a `404` response.'
+      schema:
+        type: string
+        enum:
+        - v2026.01.00
+        example: v2026.01.00
+        x-speakeasy-ignore: true
+      x-speakeasy-ignore: true
+    Pagination.count:
+      name: count
+      in: query
+      required: false
+      description: Page size. When omitted, the server defaults to `200`.
+      schema:
+        $ref: '#/components/schemas/Count'
+      explode: false
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: Basic
+externalDocs:
+  url: https://docs.moov.io/
+  description: Moov Guides and API Documentation
+x-refined-from:
+- moov-api-v2026.01.00-openapi.yml
+- moov-openapi.yml

@@ -1,0 +1,1039 @@
+openapi: 3.2.0
+info:
+  title: Moov Products API
+  version: v2026.01.00
+  contact:
+    name: Moov Developer Support
+    email: help@moov.io
+    url: https://moov.io
+  license:
+    name: Unlicensed
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  description: 'Operations tagged Products across 2 of this provider''s published API definitions: moov-api-v2026.01.00-openapi.yml, moov-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moov.io
+  description: Production API host
+  variables: {}
+security:
+- BasicAuth: []
+tags:
+- name: Products
+paths:
+  /accounts/{accountID}/products:
+    get:
+      operationId: listProducts
+      description: List active (non-disabled) products for an account.
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: title
+        in: query
+        required: false
+        description: Allows filtering products by title. This supports partial matches and is case-insensitive
+        schema:
+          type: string
+        explode: false
+      - $ref: '#/components/parameters/Pagination.skip'
+      - $ref: '#/components/parameters/Pagination.count'
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Products
+      x-speakeasy-name-override: list
+      summary: List products
+      x-summary-source: derived
+    post:
+      operationId: createProduct
+      description: Creates a new product for the specified account.
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: The resource was successfully created.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+              example:
+                productID: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                title: World's best lemonade
+                description: Really, the best.
+                basePrice:
+                  valueDecimal: '4.99'
+                  currency: USD
+                images:
+                - imageID: fed91252-6f48-4b70-885e-520bf53a52ff
+                  altText: A refreshing glass of lemonade
+                  link: https://api.moov.io/product-images/k9FzFqsMaot1IPzufEvE0
+                  publicID: q7lKWleAy9fUNhEGezQ1g
+                - imageID: eb466644-0a58-4b87-af1e-94d03e223ad2
+                  altText: Lemonade with strawberries
+                  link: https://api.moov.io/product-images/2pMcLHOeDbg85aVaRdqi9
+                  publicID: 2pMcLHOeDbg85aVaRdqi9
+                optionGroups:
+                - name: Flavor add-ins
+                  description: Choose up to 3 flavor add-ins to enhance your lemonade.
+                  minSelect: 0
+                  maxSelect: 3
+                  options:
+                  - name: Strawberry puree
+                    description: Fresh and fruity.
+                    priceModifier:
+                      valueDecimal: '0.99'
+                      currency: USD
+                    images:
+                    - imageID: d359808d-9896-4414-8d17-dac43f35842d
+                      link: https://api.moov.io/product-images/BGjP7ho9WgICuSQT0HA9Z
+                      publicID: BGjP7ho9WgICuSQT0HA9Z
+                  - name: Passionfruit syrup
+                    priceModifier:
+                      valueDecimal: '0.49'
+                      currency: USD
+                  - name: Cherry syrup
+                    priceModifier:
+                      valueDecimal: '0.49'
+                      currency: USD
+                - name: Sweetener
+                  description: Choose a sweetener for your lemonade.
+                  minSelect: 1
+                  maxSelect: 1
+                  options:
+                  - name: Cane Sugar
+                  - name: Honey
+                    priceModifier:
+                      valueDecimal: '0.99'
+                      currency: USD
+                  - name: Stevia
+                    description: Natural, zero-calorie sweetener.
+                createdOn: '2025-09-01T00:00:00Z'
+                updatedOn: '2025-09-02T00:00:00Z'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '422':
+          description: The request was well-formed, but the contents failed validation. Check the request for missing or invalid fields.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductRequestValidationError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductRequest'
+            example:
+              title: World's best lemonade
+              description: Really, the best.
+              basePrice:
+                valueDecimal: '4.99'
+                currency: USD
+              images:
+              - imageID: fed91252-6f48-4b70-885e-520bf53a52ff
+              - imageID: eb466644-0a58-4b87-af1e-94d03e223ad2
+              optionGroups:
+              - name: Flavor add-ins
+                description: Choose up to 3 flavor add-ins to enhance your lemonade.
+                minSelect: 0
+                maxSelect: 3
+                options:
+                - name: Strawberry puree
+                  description: Fresh and fruity.
+                  priceModifier:
+                    valueDecimal: '0.99'
+                    currency: USD
+                  images:
+                  - imageID: d359808d-9896-4414-8d17-dac43f35842d
+                - name: Passionfruit syrup
+                  priceModifier:
+                    valueDecimal: '0.49'
+                    currency: USD
+                - name: Cherry syrup
+                  priceModifier:
+                    valueDecimal: '0.49'
+                    currency: USD
+              - name: Sweetener
+                description: Choose a sweetener for your lemonade.
+                minSelect: 1
+                maxSelect: 1
+                options:
+                - name: Cane Sugar
+                - name: Honey
+                  priceModifier:
+                    valueDecimal: '0.99'
+                    currency: USD
+                - name: Stevia
+                  description: Natural, zero-calorie sweetener.
+      x-speakeasy-name-override: create
+      summary: Create product
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+  /accounts/{accountID}/products/{productID}:
+    get:
+      operationId: getProduct
+      description: Retrieve a product by ID.
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: productID
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/ProductID'
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Products
+      x-speakeasy-name-override: get
+      summary: Get product
+      x-summary-source: derived
+    put:
+      operationId: updateProduct
+      description: Update a product and its options.
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: productID
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/ProductID'
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '422':
+          description: The request was well-formed, but the contents failed validation. Check the request for missing or invalid fields.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductRequestValidationError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductRequest'
+      x-speakeasy-name-override: update
+      summary: Update product
+      x-summary-source: derived
+    delete:
+      operationId: disableProduct
+      description: 'Disable a product by ID.
+
+
+        The product will no longer be available, but will remain in the system for historical and reporting purposes.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: productID
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/ProductID'
+      responses:
+        '204':
+          description: The request completed successfully, but there is no content to return.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Products
+      x-speakeasy-name-override: disable
+      summary: Disable product
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+components:
+  schemas:
+    Count:
+      type: integer
+      format: int64
+      description: Limits the maximum number of results returned, or determines the page size when used with `skip` or `cursor` for pagination.
+      example: 20
+    ProductID:
+      type: string
+      description: Unique identifier for a product.
+    AssignProductImage:
+      type: object
+      required:
+      - imageID
+      properties:
+        imageID:
+          $ref: '#/components/schemas/ProductImageID'
+    Currency:
+      type: string
+      pattern: ^[A-Za-z]{3}$
+      description: A 3-letter ISO 4217 currency code.
+      example: USD
+    ProductOption:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: The display name of a product option.
+        description:
+          type: string
+          maxLength: 500
+          description: 'A detailed description of the option.
+
+
+            - Must be valid UTF-8 text
+
+            - Supports Markdown for formatting
+
+            - HTML is not permitted and will be rejected'
+        priceModifier:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: The adjustment applied to a product's base price by this option. Can be negative, positive, or zero.
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductImageMetadata'
+          maxItems: 20
+          description: The images associated with this option.
+      description: Represents a single product option within a group.
+    AmountDecimalValidationError:
+      type: object
+      properties:
+        currency:
+          type: string
+        valueDecimal:
+          type: string
+    AssignProductImageValidationError:
+      type: object
+      properties:
+        imageID:
+          type: string
+    Product:
+      type: object
+      required:
+      - productID
+      - title
+      - basePrice
+      - createdOn
+      - updatedOn
+      properties:
+        productID:
+          $ref: '#/components/schemas/ProductID'
+        title:
+          type: string
+          maxLength: 150
+        description:
+          type: string
+          maxLength: 5000
+          description: 'A detailed description of the product.
+
+
+            - Must be valid UTF-8 text
+
+            - Supports Markdown for formatting
+
+            - HTML is not permitted and will be rejected'
+        basePrice:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: A product's starting price, before applying modifiers.
+        optionGroups:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductOptionGroup'
+          description: Optional configuration options for a product, such as size or color.
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductImageMetadata'
+          maxItems: 20
+          description: Optional images associated with the product.
+        createdOn:
+          type: string
+          format: date-time
+          description: The date and time when the product was added.
+        updatedOn:
+          type: string
+          format: date-time
+          description: The date and time when the product was last updated.
+        disabledOn:
+          type: string
+          format: date-time
+          description: The date and time when the product was disabled.
+      description: A good or service offered by a merchant.
+    AssignProductImages:
+      type: array
+      items:
+        $ref: '#/components/schemas/AssignProductImage'
+      description: Assign previously uploaded images to a product or option.
+    ProductOptionGroup:
+      type: object
+      required:
+      - name
+      - minSelect
+      - maxSelect
+      - options
+      properties:
+        name:
+          type: string
+          maxLength: 100
+        description:
+          type: string
+          maxLength: 500
+          description: 'A detailed description of the option group.
+
+
+            - Must be valid UTF-8 text
+
+            - Supports Markdown for formatting
+
+            - HTML is not permitted and will be rejected'
+        minSelect:
+          type: integer
+          format: int32
+          description: 'The minimum number of options that must be selected from this group.
+
+
+            A value of 0 indicates that no selection from this group is required.'
+        maxSelect:
+          type: integer
+          format: int32
+          minimum: 1
+          description: The maximum number of options that can be selected from this group.
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductOption'
+          description: The options available within this group.
+      description: Represents a group of product configuration options, such as size or color.
+    Skip:
+      type: integer
+      format: int64
+      description: The number of entries to skip when paginating a large result set.
+      example: 60
+    ProductOptionValidationError:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        priceModifier:
+          $ref: '#/components/schemas/AmountDecimalValidationError'
+        images:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/AssignProductImageValidationError'
+    AssignProductImagesItem:
+      type: array
+      items:
+        $ref: '#/components/schemas/AssignProductImage'
+      description: Assign previously uploaded images to a product or option.
+    AmountDecimal:
+      type: object
+      required:
+      - currency
+      - valueDecimal
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        valueDecimal:
+          type: string
+          pattern: ^\d+\.\d{1,9}$
+          description: "A decimal-formatted numerical string that represents up to 9 decimal place precision. \n\nFor example, $12.987654321 is '12.987654321'."
+          example: '12.987654321'
+    CreateProductOptionGroup:
+      type: object
+      required:
+      - name
+      - minSelect
+      - maxSelect
+      - options
+      properties:
+        name:
+          type: string
+          maxLength: 100
+        description:
+          type: string
+          maxLength: 500
+          description: 'A detailed description of the option group.
+
+
+            - Must be valid UTF-8 text
+
+            - Supports Markdown for formatting
+
+            - HTML is not permitted and will be rejected'
+        minSelect:
+          type: integer
+          format: int32
+          description: 'The minimum number of options that must be selected from this group.
+
+
+            A value of 0 indicates that no selection from this group is required.'
+        maxSelect:
+          type: integer
+          format: int32
+          minimum: 1
+          description: The maximum number of options that can be selected from this group.
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateProductOption'
+          description: The options available within this group.
+    GenericError:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    CreateProductOption:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: The display name of a product option.
+        description:
+          type: string
+          maxLength: 500
+          description: 'A detailed description of the option.
+
+
+            - Must be valid UTF-8 text
+
+            - Supports Markdown for formatting
+
+            - HTML is not permitted and will be rejected'
+        priceModifier:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: The adjustment applied to a product's base price by this option. Can be negative, positive, or zero.
+        images:
+          $ref: '#/components/schemas/AssignProductImagesItem'
+    ProductOptionGroupValidationError:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        minSelect:
+          type: string
+        maxSelect:
+          type: string
+        options:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ProductOptionValidationError'
+    ProductImageMetadata:
+      type: object
+      required:
+      - imageID
+      - link
+      - publicID
+      properties:
+        imageID:
+          $ref: '#/components/schemas/ProductImageID'
+        altText:
+          type: string
+          maxLength: 125
+          description: Alternative text for the image.
+        link:
+          type: string
+          format: uri
+          description: The image's public URL.
+          example: https://api.moov.io/images/q7lKWleAy9fUNhEGezQ1g
+        publicID:
+          type: string
+          description: The public ID used to access the image.
+          example: q7lKWleAy9fUNhEGezQ1g
+    ProductImageID:
+      type: string
+      description: Unique identifier for a product or product option image resource.
+    ProductRequest:
+      type: object
+      required:
+      - title
+      - basePrice
+      properties:
+        title:
+          type: string
+          maxLength: 150
+        description:
+          type: string
+          maxLength: 5000
+          description: 'A detailed description of the product.
+
+
+            - Must be valid UTF-8 text
+
+            - Supports Markdown for formatting
+
+            - HTML is not permitted and will be rejected'
+        basePrice:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: A product's starting price, before applying modifiers.
+        images:
+          $ref: '#/components/schemas/AssignProductImages'
+        optionGroups:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateProductOptionGroup'
+          description: Optional configuration options for a product, such as size or color.
+      description: Request to create or update a product.
+    ProductRequestValidationError:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        basePrice:
+          $ref: '#/components/schemas/AmountDecimalValidationError'
+        images:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/AssignProductImageValidationError'
+        optionGroups:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ProductOptionGroupValidationError'
+  parameters:
+    Pagination.skip:
+      name: skip
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/Skip'
+      explode: false
+    VersionHeader:
+      name: X-Moov-Version
+      in: header
+      required: false
+      description: 'Set this header to v2026.01.00 to use the API described in this specification.
+
+        When omitted, the server defaults to v2024.01.00, the earliest supported version, which may not match the behavior documented here.
+
+        An unrecognized well-formed version uses the latest supported version that is not newer than the requested version, when one exists.
+
+        For example, `v2026.08.00` uses `v2026.07.00`.
+
+        A malformed value, such as `2022`, returns a `404` response.'
+      schema:
+        type: string
+        enum:
+        - v2026.01.00
+        example: v2026.01.00
+        x-speakeasy-ignore: true
+      x-speakeasy-ignore: true
+    Pagination.count:
+      name: count
+      in: query
+      required: false
+      description: Page size. When omitted, the server defaults to `200`.
+      schema:
+        $ref: '#/components/schemas/Count'
+      explode: false
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: Basic
+externalDocs:
+  url: https://docs.moov.io/
+  description: Moov Guides and API Documentation
+x-refined-from:
+- moov-api-v2026.01.00-openapi.yml
+- moov-openapi.yml

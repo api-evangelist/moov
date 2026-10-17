@@ -1,0 +1,226 @@
+openapi: 3.2.0
+info:
+  title: Moov Enriched profile API
+  version: v2026.01.00
+  contact:
+    name: Moov Developer Support
+    email: help@moov.io
+    url: https://moov.io
+  license:
+    name: Unlicensed
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  description: 'Operations tagged Enriched profile across 2 of this provider''s published API definitions: moov-api-v2026.01.00-openapi.yml, moov-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moov.io
+  description: Production API host
+  variables: {}
+security:
+- BasicAuth: []
+tags:
+- name: Enriched profile
+paths:
+  /enrichment/profile:
+    get:
+      operationId: getEnrichmentProfile
+      description: 'Fetch enriched profile data. Requires a valid email address. This service is offered in collaboration with Clearbit.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/profile-enrichment.read` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: email
+        in: query
+        required: true
+        schema:
+          type: string
+        explode: false
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnrichedBusinessResponse'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Enriched profile
+      x-speakeasy-name-override: get
+      summary: Get enrichment profile
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+components:
+  parameters:
+    VersionHeader:
+      name: X-Moov-Version
+      in: header
+      required: false
+      description: 'Set this header to v2026.01.00 to use the API described in this specification.
+
+        When omitted, the server defaults to v2024.01.00, the earliest supported version, which may not match the behavior documented here.
+
+        An unrecognized well-formed version uses the latest supported version that is not newer than the requested version, when one exists.
+
+        For example, `v2026.08.00` uses `v2026.07.00`.
+
+        A malformed value, such as `2022`, returns a `404` response.'
+      schema:
+        type: string
+        enum:
+        - v2026.01.00
+        example: v2026.01.00
+        x-speakeasy-ignore: true
+      x-speakeasy-ignore: true
+  schemas:
+    Address:
+      type: object
+      required:
+      - addressLine1
+      - city
+      - stateOrProvince
+      - postalCode
+      - country
+      properties:
+        addressLine1:
+          type: string
+          maxLength: 60
+          pattern: '[a-zA-Z0-9,.\/?:''"|~!@#$%^&*()+_= -]+'
+          example: 123 Main Street
+        addressLine2:
+          type: string
+          maxLength: 32
+          pattern: '[a-zA-Z0-9,.\/?:''"|~!@#$%^&*()+_= -]+'
+          example: Apt 302
+        city:
+          type: string
+          maxLength: 32
+          pattern: '[a-zA-Z0-9,.\/?:''"|~!@#$%^&*()+_= -]+'
+          example: Boulder
+        stateOrProvince:
+          type: string
+          maxLength: 2
+          example: CO
+        postalCode:
+          type: string
+          maxLength: 5
+          example: '80301'
+        country:
+          type: string
+          maxLength: 2
+          example: US
+    PhoneNumber:
+      type: object
+      properties:
+        number:
+          type: string
+          maxLength: 10
+          example: '8185551212'
+        countryCode:
+          type: string
+          maxLength: 1
+          example: '1'
+    EnrichedBusinessProfile:
+      type: object
+      properties:
+        address:
+          $ref: '#/components/schemas/Address'
+        email:
+          $ref: '#/components/schemas/Email'
+        industryCodes:
+          $ref: '#/components/schemas/EnrichedIndustryCodes'
+        legalBusinessName:
+          type: string
+        phone:
+          $ref: '#/components/schemas/PhoneNumber'
+        website:
+          type: string
+    Email:
+      type: string
+      maxLength: 255
+      format: email
+      example: jordan.lee@classbooker.dev
+    EnrichedIndustryCodes:
+      type: object
+      properties:
+        naics:
+          type: string
+          minLength: 2
+          maxLength: 6
+          example: '713940'
+        sic:
+          type: string
+          minLength: 4
+          maxLength: 4
+          example: '7991'
+    EnrichedBusinessResponse:
+      type: object
+      properties:
+        business:
+          $ref: '#/components/schemas/EnrichedBusinessProfile'
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: Basic
+externalDocs:
+  url: https://docs.moov.io/
+  description: Moov Guides and API Documentation
+x-refined-from:
+- moov-api-v2026.01.00-openapi.yml
+- moov-openapi.yml

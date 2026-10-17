@@ -1,0 +1,1539 @@
+openapi: 3.2.0
+info:
+  title: Moov Fee plans API
+  version: v2026.01.00
+  contact:
+    name: Moov Developer Support
+    email: help@moov.io
+    url: https://moov.io
+  license:
+    name: Unlicensed
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  description: 'Operations tagged Fee plans across 2 of this provider''s published API definitions: moov-api-v2026.01.00-openapi.yml, moov-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moov.io
+  description: Production API host
+  variables: {}
+security:
+- BasicAuth: []
+tags:
+- name: Fee plans
+paths:
+  /accounts/{accountID}/fee-plan-agreements:
+    get:
+      operationId: listFeePlanAgreements
+      description: 'List all fee plan agreements associated with an account.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/profile.read` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - $ref: '#/components/parameters/Pagination.skip'
+      - $ref: '#/components/parameters/Pagination.count'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/ID'
+      - name: agreementID
+        in: query
+        required: false
+        description: A comma-separated list of agreement IDs to filter the results by.
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/ID'
+        explode: false
+      - name: status
+        in: query
+        required: false
+        description: A comma-separated list of statuses to filter the results by.
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/FeePlanAgreementStatus'
+        explode: false
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FeePlanAgreement'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Fee plans
+      summary: List fee plan agreements
+      x-summary-source: derived
+    post:
+      operationId: createFeePlanAgreements
+      description: 'Creates the subscription of a fee plan to a merchant account. Merchants are required to accept the fee plan terms prior to activation.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/profile.write` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/ID'
+      responses:
+        '201':
+          description: The resource was successfully created.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeePlanAgreement'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '422':
+          description: The request was well-formed, but the contents failed validation. Check the request for missing or invalid fields.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeePlanAgreementError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Fee plans
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFeePlanAgreement'
+      summary: Create fee plan agreements
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+  /accounts/{accountID}/fee-plans:
+    get:
+      operationId: listFeePlans
+      description: 'List all fee plans available for use by an account. This is intended to be used by an account when
+
+        selecting a fee plan to apply to a connected account.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/profile.read` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/ID'
+      - name: planIDs
+        in: query
+        required: false
+        description: A comma-separated list of plan IDs to filter the results by.
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/ID'
+        explode: false
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FeePlan'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Fee plans
+      summary: List fee plans
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+  /accounts/{accountID}/fee-revenue:
+    get:
+      operationId: listFeeRevenue
+      description: 'Used by a partner. Retrieve revenue generated from merchant fees.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/profile.read` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - $ref: '#/components/parameters/Pagination.skip'
+      - $ref: '#/components/parameters/Pagination.count'
+      - name: accountID
+        in: path
+        required: true
+        description: The Partner's AccountID.
+        schema:
+          $ref: '#/components/schemas/ID'
+      - name: transferID
+        in: query
+        required: false
+        description: Optional transfer ID to filter the results by.
+        schema:
+          $ref: '#/components/schemas/ID'
+        explode: false
+      - name: disputeID
+        in: query
+        required: false
+        description: Optional dispute ID to filter the results by.
+        schema:
+          $ref: '#/components/schemas/ID'
+        explode: false
+      - name: residualID
+        in: query
+        required: false
+        description: Optional residual ID to filter the results by.
+        schema:
+          $ref: '#/components/schemas/ID'
+        explode: false
+      - name: startDateTime
+        in: query
+        required: false
+        description: Optional date-time to inclusively filter all fees created after this date-time.
+        schema:
+          type: string
+          format: RFC-3339
+        explode: false
+      - name: endDateTime
+        in: query
+        required: false
+        description: Optional date-time to exclusively filter all fees created before this date-time.
+        schema:
+          type: string
+          format: RFC-3339
+        explode: false
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IncurredFee'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Fee plans
+      summary: List fee revenue
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+  /accounts/{accountID}/fees:
+    get:
+      operationId: retrieveFees
+      description: 'Retrieve fees assessed to an account.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/transfers.read` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/ID'
+      - name: transferID
+        in: query
+        required: false
+        description: Optional transfer ID to filter the results by.
+        schema:
+          $ref: '#/components/schemas/ID'
+        explode: false
+      - name: disputeID
+        in: query
+        required: false
+        description: Optional dispute ID to filter the results by.
+        schema:
+          $ref: '#/components/schemas/ID'
+        explode: false
+      - name: residualID
+        in: query
+        required: false
+        description: Optional residual ID to filter the results by.
+        schema:
+          $ref: '#/components/schemas/ID'
+        explode: false
+      - name: startDateTime
+        in: query
+        required: false
+        description: Optional date-time to inclusively filter all fees created after this date-time.
+        schema:
+          type: string
+          format: RFC-3339
+        explode: false
+      - name: endDateTime
+        in: query
+        required: false
+        description: Optional date-time to exclusively filter all fees created before this date-time.
+        schema:
+          type: string
+          format: RFC-3339
+        explode: false
+      - $ref: '#/components/parameters/Pagination.skip'
+      - $ref: '#/components/parameters/Pagination.count'
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IncurredFee'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Fee plans
+      summary: Retrieve fees
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+  /accounts/{accountID}/fees/.fetch:
+    post:
+      operationId: listFeesFetch
+      description: 'List fees associated with an account.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/transfers.read` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/ID'
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IncurredFee'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Fee plans
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListFeesFetchRequest'
+      summary: List fees fetch
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+  /accounts/{accountID}/partner-pricing-agreements:
+    get:
+      operationId: listPartnerPricingAgreements
+      description: 'List all partner pricing agreements associated with an account.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/profile.read` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - $ref: '#/components/parameters/Pagination.skip'
+      - $ref: '#/components/parameters/Pagination.count'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/ID'
+      - name: agreementID
+        in: query
+        required: false
+        description: A comma-separated list of agreement IDs to filter the results by.
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/ID'
+        explode: false
+      - name: status
+        in: query
+        required: false
+        description: A comma-separated list of statuses to filter the results by.
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/FeePlanAgreementStatus'
+        explode: false
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PartnerPricingAgreement'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Fee plans
+      summary: List partner pricing agreements
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+  /accounts/{accountID}/residuals:
+    get:
+      operationId: listResiduals
+      description: 'List all residuals associated with an account.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/profile.read` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - $ref: '#/components/parameters/Pagination.skip'
+      - $ref: '#/components/parameters/Pagination.count'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/ID'
+      - name: startDateTime
+        in: query
+        required: false
+        description: Optional date-time to inclusively filter all residuals with a period start after this date-time.
+        schema:
+          type: string
+          format: RFC-3339
+        explode: false
+      - name: endDateTime
+        in: query
+        required: false
+        description: Optional date-time to exclusively filter all residuals with a period end before this date-time.
+        schema:
+          type: string
+          format: RFC-3339
+        explode: false
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Residual'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Fee plans
+      summary: List residuals
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+  /accounts/{accountID}/residuals/{residualID}:
+    get:
+      operationId: getResidual
+      description: 'Get a residual associated with an account.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/profile.read` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/ID'
+      - name: residualID
+        in: path
+        required: true
+        description: Unique identifier for this residual payment calculation.
+        schema:
+          $ref: '#/components/schemas/ID'
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Residual'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Fee plans
+      summary: Get residual
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+  /accounts/{accountID}/residuals/{residualID}/fees:
+    get:
+      operationId: listResidualFees
+      description: 'List all fees associated with a residual.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/profile.read` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - $ref: '#/components/parameters/Pagination.skip'
+      - $ref: '#/components/parameters/Pagination.count'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/ID'
+      - name: residualID
+        in: path
+        required: true
+        description: Unique identifier for this residual payment calculation.
+        schema:
+          $ref: '#/components/schemas/ID'
+      - name: startDateTime
+        in: query
+        required: false
+        description: Optional date-time to inclusively filter all fees created after this date-time.
+        schema:
+          type: string
+          format: RFC-3339
+        explode: false
+      - name: endDateTime
+        in: query
+        required: false
+        description: Optional date-time to exclusively filter all fees created before this date-time.
+        schema:
+          type: string
+          format: RFC-3339
+        explode: false
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IncurredFee'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Fee plans
+      summary: List residual fees
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+components:
+  schemas:
+    MonthlyPlatformFee:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/AmountDecimal'
+      description: Fixed recurring amount paid in the billing period regardless of usage.
+    Count:
+      type: integer
+      format: int64
+      description: Limits the maximum number of results returned, or determines the page size when used with `skip` or `cursor` for pagination.
+      example: 20
+    FeePlanAgreementError:
+      type: object
+      properties:
+        planID:
+          $ref: '#/components/schemas/ID'
+    Currency:
+      type: string
+      pattern: ^[A-Za-z]{3}$
+      description: A 3-letter ISO 4217 currency code.
+      example: USD
+    FeePlanAgreement:
+      type: object
+      required:
+      - agreementID
+      - planID
+      - name
+      - acceptedOn
+      - status
+      - cardAcquiringModel
+      - billableFees
+      - minimumCommitment
+      - monthlyPlatformFee
+      properties:
+        agreementID:
+          $ref: '#/components/schemas/ID'
+        planID:
+          $ref: '#/components/schemas/ID'
+        accountID:
+          $ref: '#/components/schemas/ID'
+        name:
+          type: string
+          description: The name of the agreement.
+        description:
+          type: string
+          description: The description of the agreement.
+        acceptedOn:
+          type: string
+          format: date-time
+        status:
+          $ref: '#/components/schemas/FeePlanAgreementStatus'
+        cardAcquiringModel:
+          $ref: '#/components/schemas/CardAcquiringModel'
+        billableFees:
+          type: array
+          items:
+            $ref: '#/components/schemas/BillableFee'
+        minimumCommitment:
+          $ref: '#/components/schemas/MinimumCommitment'
+        monthlyPlatformFee:
+          $ref: '#/components/schemas/MonthlyPlatformFee'
+        priorAgreementID:
+          allOf:
+          - $ref: '#/components/schemas/ID'
+          description: The agreement this one replaced. Only set when the agreement was created by replacing another.
+        priorAgreementTerminatedOn:
+          type: string
+          format: date-time
+          description: The date and time the prior agreement was terminated.
+    FeePlanAgreementStatus:
+      type: string
+      enum:
+      - active
+      - terminated
+    FeePlan:
+      type: object
+      required:
+      - planID
+      - name
+      - cardAcquiringModel
+      - billableFees
+      - minimumCommitment
+      - monthlyPlatformFee
+      - createdAt
+      properties:
+        planID:
+          $ref: '#/components/schemas/ID'
+        name:
+          type: string
+          description: The name of the fee plan.
+          example: Fixed Rate Merchant Plan
+        description:
+          type: string
+          description: A description of the fee plan.
+        cardAcquiringModel:
+          $ref: '#/components/schemas/CardAcquiringModel'
+        billableFees:
+          type: array
+          items:
+            $ref: '#/components/schemas/BillableFee'
+          description: Additional usage-based fees for this plan.
+        minimumCommitment:
+          $ref: '#/components/schemas/MinimumCommitment'
+        monthlyPlatformFee:
+          $ref: '#/components/schemas/MonthlyPlatformFee'
+        createdAt:
+          type: string
+          format: date-time
+    ListFeesFetchRequest:
+      type: object
+      properties:
+        feeIDs:
+          type: array
+          items:
+            $ref: '#/components/schemas/ID'
+      description: Array of fee IDs to fetch.
+    Skip:
+      type: integer
+      format: int64
+      description: The number of entries to skip when paginating a large result set.
+      example: 60
+    VolumeRange:
+      type: object
+      required:
+      - fromValue
+      - flatAmount
+      - perUnitAmount
+      properties:
+        fromValue:
+          type: integer
+          description: Specifies the lower value of a tier for the fee.
+        toValue:
+          type: integer
+          description: Specifies the upper value of a tier for the fee.
+        flatAmount:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: The flat amount for a whole tier of the fee.
+        perUnitAmount:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: The unit price for a specific tier of the fee.
+      description: Defines the volume ranges for tiered pricing models.
+    PartnerPricingAgreement:
+      type: object
+      required:
+      - revenueShare
+      properties:
+        revenueShare:
+          type: string
+          description: 'The decimal-formatted numerical string of the revenue split for partner.
+
+
+            For example, 2.25% is ''2.25''.'
+          example: '2.25'
+      allOf:
+      - $ref: '#/components/schemas/FeePlanAgreement'
+    FeeProperties:
+      type: object
+      required:
+      - volumeRanges
+      properties:
+        fixedAmount:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: A fixed fee that is applied to the amount of each transaction in the `fixed` and `blended` fee models.
+        variableRate:
+          type: string
+          pattern: ^[0-9]+.?[0-9]*$
+          description: "A percentage fee that is applied to the amount of each transaction in the `blended` fee model, expressed as a decimal. \n\nFor example, 0.05% is '0.05'."
+          example: '0.05'
+        minPerTransaction:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: Specifies the minimum allowable spending for a single transaction, working as a transaction floor.
+        maxPerTransaction:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: Specifies the maximum allowable spending for a single transaction, working as a transaction ceiling.
+        volumeRanges:
+          type: array
+          items:
+            $ref: '#/components/schemas/VolumeRange'
+          description: Defines the volume ranges for tiered pricing models.
+      description: Defines the specific parameters used for fee calculation.
+      example:
+        fixedAmount:
+          currency: USD
+          valueDecimal: '0.0195'
+        variableRate: '0.15'
+        minPerTransaction:
+          currency: USD
+          valueDecimal: '0.0195'
+        maxPerTransaction:
+          currency: USD
+          valueDecimal: '0.035'
+        volumeRanges:
+        - fromValue: 1
+          toValue: 2
+          flatAmount:
+            currency: USD
+            valueDecimal: '1.23'
+          perUnitAmount:
+            currency: USD
+            valueDecimal: '1.23'
+    AmountDecimal:
+      type: object
+      required:
+      - currency
+      - valueDecimal
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        valueDecimal:
+          type: string
+          pattern: ^\d+\.\d{1,9}$
+          description: "A decimal-formatted numerical string that represents up to 9 decimal place precision. \n\nFor example, $12.987654321 is '12.987654321'."
+          example: '12.987654321'
+    FeeModel:
+      type: string
+      enum:
+      - fixed
+      - blended
+      - variable
+      description: Specifies the pricing model used for the calculation of the final fee.
+    GenericError:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    FeeCategory:
+      type: string
+      enum:
+      - ach
+      - card-acquiring
+      - card-other
+      - card-pull
+      - card-push
+      - monthly-platform
+      - network-passthrough
+      - other
+      - rtp
+    ID:
+      type: string
+      maxLength: 36
+      description: A unique identifier for a Moov resource. Supports UUID format (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx) or typed format with base32-encoded UUID and type suffix (e.g., kuoaydiojf7uszaokc2ggnaaaa_xfer).
+    Residual:
+      type: object
+      required:
+      - residualID
+      - partnerAccountID
+      - periodStart
+      - periodEnd
+      - merchantFees
+      - partnerCost
+      - netIncome
+      - revenueShare
+      - residualAmount
+      - createdOn
+      - updatedOn
+      properties:
+        residualID:
+          allOf:
+          - $ref: '#/components/schemas/ID'
+          description: Unique identifier for this residual payment calculation.
+        partnerAccountID:
+          allOf:
+          - $ref: '#/components/schemas/ID'
+          description: The partner account ID this residual belongs to.
+        periodStart:
+          type: string
+          format: date-time
+          description: Start date and time of the residual calculation period.
+        periodEnd:
+          type: string
+          format: date-time
+          description: End date and time of the residual calculation period.
+        merchantFees:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: Total amount of merchant fees collected during the period. This represents the partner's revenue from merchant fees.
+        partnerCost:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: Partner's total cost (buy rate) during the period.
+        netIncome:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: Net income calculated as merchant fee revenue minus partner costs.
+        revenueShare:
+          type: string
+          description: The revenue share percentage the partner receives, expressed as a decimal string (e.g., "25.00" for 25%).
+          example: '2.25'
+        residualAmount:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: The amount the partner receives as their share of the net income (netIncome × revenueShare).
+        createdOn:
+          type: string
+          format: date-time
+          description: Timestamp when the residual was created.
+        updatedOn:
+          type: string
+          format: date-time
+          description: Timestamp when the residual was last updated.
+    MinimumCommitment:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/AmountDecimal'
+      description: The minimum spending amount that must be met in the billing period. If actual usage is below the minimum amount, account is charged the difference.
+    CreateFeePlanAgreement:
+      type: object
+      required:
+      - planID
+      properties:
+        planID:
+          allOf:
+          - $ref: '#/components/schemas/ID'
+          description: "A unique identifier for a fee plan: the pricing terms, such as flat-rate or cost-plus, that an account \nis charged under its fee plan agreement. Use GET /accounts/{accountID}/fee-plans to list the fee plans \navailable to assign to a given account."
+        priorAgreementID:
+          allOf:
+          - $ref: '#/components/schemas/ID'
+          description: 'The account''s active fee plan agreement to supersede. When set, that agreement is terminated and
+
+            the new one takes its place in a single operation, so the account is never without an active fee
+
+            plan agreement. This new agreement always receives a newly issued agreementID.
+
+
+            Omit it if the account doesn''t already have an active fee plan agreement.'
+    BillableFee:
+      type: object
+      required:
+      - feeModel
+      - feeCategory
+      properties:
+        billableFeeID:
+          $ref: '#/components/schemas/ID'
+        billableEvent:
+          type: string
+          description: A unique code identifying a charge.
+        feeName:
+          type: string
+          description: Specifies the name of the fee that will be billed.
+        feeModel:
+          $ref: '#/components/schemas/FeeModel'
+        feeCategory:
+          $ref: '#/components/schemas/FeeCategory'
+        feeProperties:
+          $ref: '#/components/schemas/FeeProperties'
+        feeConditions:
+          $ref: '#/components/schemas/FeeConditions'
+      example:
+        billableFeeID: 9d957d33-1a9a-47aa-9460-fe1a90f003dd
+        billableEvent: card-auth-volume
+        feeName: Card decline fee
+        feeModel: fixed
+        feeCategory: card-acquiring
+        feeProperties:
+          fixedAmount:
+            currency: USD
+            valueDecimal: '0.0195'
+          variableRate: '0.15'
+          minPerTransaction:
+            currency: USD
+            valueDecimal: '0.0195'
+          maxPerTransaction:
+            currency: USD
+            valueDecimal: '0.035'
+          volumeRanges:
+          - fromValue: 1
+            toValue: 2
+            flatAmount:
+              currency: USD
+              valueDecimal: '1.23'
+            perUnitAmount:
+              currency: USD
+              valueDecimal: '1.23'
+        feeConditions:
+          transactionType:
+          - decline
+    GeneratedBy:
+      type: object
+      properties:
+        transferID:
+          $ref: '#/components/schemas/ID'
+        cardID:
+          $ref: '#/components/schemas/ID'
+        disputeID:
+          $ref: '#/components/schemas/ID'
+        accountID:
+          $ref: '#/components/schemas/ID'
+        bankAccountID:
+          $ref: '#/components/schemas/ID'
+        invoiceID:
+          $ref: '#/components/schemas/ID'
+      description: The entity that generated the fee.
+    IncurredFee:
+      type: object
+      properties:
+        feeID:
+          $ref: '#/components/schemas/ID'
+        accountID:
+          allOf:
+          - $ref: '#/components/schemas/ID'
+          description: Account ID the fee belongs to.
+        walletID:
+          allOf:
+          - $ref: '#/components/schemas/ID'
+          description: Wallet ID associated with the fee.
+        createdOn:
+          type: string
+          format: date-time
+          description: Timestamp when the fee was created.
+        feeName:
+          type: string
+          description: Name of the fee.
+        amount:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: The fee amount.
+        generatedBy:
+          allOf:
+          - $ref: '#/components/schemas/GeneratedBy'
+          description: Object indicating what generated the fee (TransferID, CardID, DisputeID, AccountID, or BankAccountID).
+        feeGroup:
+          type: string
+          description: Describes the source of the fee, such as a Moov-set processing fee, a network pass-through fee, or an interchange or discount fee.
+        residualID:
+          allOf:
+          - $ref: '#/components/schemas/ID'
+          description: Unique identifier for this residual payment calculation.
+      description: A fee incurred by a user.
+    FeeConditions:
+      type: object
+      additionalProperties: {}
+      description: Defines the specific conditions that must be met for the fee to be applied.
+      example:
+        cardBrand:
+        - visa
+    CardAcquiringModel:
+      type: string
+      enum:
+      - cost-plus
+      - flat-rate
+      description: Specifies the card processing pricing model
+  parameters:
+    Pagination.skip:
+      name: skip
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/Skip'
+      explode: false
+    VersionHeader:
+      name: X-Moov-Version
+      in: header
+      required: false
+      description: 'Set this header to v2026.01.00 to use the API described in this specification.
+
+        When omitted, the server defaults to v2024.01.00, the earliest supported version, which may not match the behavior documented here.
+
+        An unrecognized well-formed version uses the latest supported version that is not newer than the requested version, when one exists.
+
+        For example, `v2026.08.00` uses `v2026.07.00`.
+
+        A malformed value, such as `2022`, returns a `404` response.'
+      schema:
+        type: string
+        enum:
+        - v2026.01.00
+        example: v2026.01.00
+        x-speakeasy-ignore: true
+      x-speakeasy-ignore: true
+    Pagination.count:
+      name: count
+      in: query
+      required: false
+      description: Page size. When omitted, the server defaults to `200`.
+      schema:
+        $ref: '#/components/schemas/Count'
+      explode: false
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: Basic
+externalDocs:
+  url: https://docs.moov.io/
+  description: Moov Guides and API Documentation
+x-refined-from:
+- moov-api-v2026.01.00-openapi.yml
+- moov-openapi.yml

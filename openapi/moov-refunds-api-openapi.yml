@@ -1,95 +1,42 @@
 openapi: 3.2.0
 info:
   title: Moov Refunds API
+  description: The Moov API lets software platforms accept, store, send, and spend money through a single REST API.
+  version: v2026.04.00
+  contact:
+    name: Moov
+    url: https://moov.io
   termsOfService: https://moov.io/legal/platform-agreement/
-  version: '1.0'
-  description: 'Operations tagged Refunds across 2 of this provider''s published API definitions: moov-api-openapi.yml, moov-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.moov.io
-  description: Production Server
+  description: Moov production
 security:
 - bearerAuth: []
 tags:
 - name: Refunds
-  description: Create and retrieve refunds for completed card transfers, including full and partial refund support.
+  description: Refunds and reversals on card transfers.
 paths:
   /accounts/{accountID}/transfers/{transferID}/refunds:
-    post:
-      operationId: createRefund
-      summary: Create a refund
-      description: Initiate a refund for a completed card transfer. Supports full and partial refunds. The refunded amount will be returned to the original payment method.
-      tags:
-      - Refunds
-      parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
-      - $ref: '#/components/parameters/TransferIDParam'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateRefundRequest'
-      responses:
-        '200':
-          description: Refund created successfully.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Refund'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
-    get:
-      operationId: listRefunds
-      summary: List refunds
-      description: Retrieve all refunds associated with a specific transfer.
-      tags:
-      - Refunds
-      parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
-      - $ref: '#/components/parameters/TransferIDParam'
-      responses:
-        '200':
-          description: Refunds returned successfully.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Refund'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
     parameters:
     - $ref: '#/components/parameters/accountID'
     - $ref: '#/components/parameters/transferID'
-    servers:
-    - url: https://api.moov.io
-      description: Production Server
-  /accounts/{accountID}/transfers/{transferID}/refunds/{refundID}:
-    get:
-      operationId: getRefund
-      summary: Retrieve a refund
-      description: Fetch the details and current status of a specific refund on a transfer.
+    post:
+      operationId: createRefund
       tags:
       - Refunds
-      parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
-      - $ref: '#/components/parameters/TransferIDParam'
-      - $ref: '#/components/parameters/RefundIDParam'
+      summary: Create a refund
       responses:
         '200':
-          description: Refund details returned successfully.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Refund'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
+          description: The created refund.
+    get:
+      operationId: listRefunds
+      tags:
+      - Refunds
+      summary: List refunds
+      responses:
+        '200':
+          description: A list of refunds.
+  /accounts/{accountID}/transfers/{transferID}/refunds/{refundID}:
     parameters:
     - $ref: '#/components/parameters/accountID'
     - $ref: '#/components/parameters/transferID'
@@ -98,9 +45,14 @@ paths:
       required: true
       schema:
         type: string
-    servers:
-    - url: https://api.moov.io
-      description: Production Server
+    get:
+      operationId: getRefund
+      tags:
+      - Refunds
+      summary: Retrieve a refund
+      responses:
+        '200':
+          description: The refund.
   /accounts/{accountID}/transfers/{transferID}/reversals:
     parameters:
     - $ref: '#/components/parameters/accountID'
@@ -113,35 +65,8 @@ paths:
       responses:
         '200':
           description: The reversal.
-    servers:
-    - url: https://api.moov.io
-      description: Moov production
 components:
   parameters:
-    RefundIDParam:
-      name: refundID
-      in: path
-      required: true
-      description: Unique identifier for the refund.
-      schema:
-        type: string
-        format: uuid
-    AccountIDParam:
-      name: accountID
-      in: path
-      required: true
-      description: Unique identifier for the Moov account.
-      schema:
-        type: string
-        format: uuid
-    TransferIDParam:
-      name: transferID
-      in: path
-      required: true
-      description: Unique identifier for the transfer.
-      schema:
-        type: string
-        format: uuid
     transferID:
       name: transferID
       in: path
@@ -157,91 +82,12 @@ components:
         type: string
         format: uuid
       description: The Moov account identifier.
-  schemas:
-    Amount:
-      type: object
-      description: A monetary amount with currency denomination.
-      properties:
-        currency:
-          type: string
-          description: ISO 4217 three-letter currency code.
-          default: USD
-          minLength: 3
-          maxLength: 3
-        value:
-          type: integer
-          description: Amount in the smallest currency unit (e.g., cents for USD).
-          minimum: 0
-    Error:
-      type: object
-      description: Standard error response returned by the Moov API.
-      properties:
-        error:
-          type: string
-          description: Human-readable description of the error.
-        code:
-          type: string
-          description: Machine-readable error code.
-    Refund:
-      type: object
-      description: A refund issued against a completed card transfer.
-      properties:
-        refundID:
-          type: string
-          format: uuid
-          description: Unique identifier for the refund.
-        status:
-          type: string
-          description: Current status of the refund.
-          enum:
-          - created
-          - pending
-          - completed
-          - failed
-        amount:
-          $ref: '#/components/schemas/Amount'
-        createdOn:
-          type: string
-          format: date-time
-          description: ISO 8601 timestamp when the refund was created.
-        updatedOn:
-          type: string
-          format: date-time
-          description: ISO 8601 timestamp when the refund was last updated.
-    CreateRefundRequest:
-      type: object
-      description: Request body for creating a refund on a card transfer.
-      required:
-      - amount
-      properties:
-        amount:
-          type: integer
-          description: Amount to refund in the smallest currency unit (e.g., cents). Must not exceed the original transfer amount.
-          minimum: 1
-  responses:
-    BadRequest:
-      description: The request was malformed or contained invalid parameters.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
-      description: OAuth2 bearer token obtained from the /oauth2/token endpoint. Include in the Authorization header as "Bearer {token}".
-x-refined-from:
-- moov-api-openapi.yml
-- moov-openapi.yml
+      bearerFormat: JWT
+      description: OAuth 2.0 access token passed as a Bearer token.
+externalDocs:
+  description: Moov API reference and canonical OpenAPI spec
+  url: https://docs.moov.io/api/

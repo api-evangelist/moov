@@ -1,0 +1,1236 @@
+openapi: 3.2.0
+info:
+  title: Moov Scheduling API
+  version: v2026.01.00
+  contact:
+    name: Moov Developer Support
+    email: help@moov.io
+    url: https://moov.io
+  license:
+    name: Unlicensed
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  description: 'Operations tagged Scheduling across 2 of this provider''s published API definitions: moov-api-v2026.01.00-openapi.yml, moov-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.moov.io
+  description: Production API host
+  variables: {}
+security:
+- BasicAuth: []
+tags:
+- name: Scheduling
+paths:
+  /accounts/{accountID}/schedules:
+    post:
+      operationId: createSchedule
+      description: 'Describes the schedule to create or modify.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/transfers.write` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        description: Account ID of the account that will run the transfer.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduleResponse'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '422':
+          description: The request was well-formed, but the contents failed validation. Check the request for missing or invalid fields.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduleValidationError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Scheduling
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpsertSchedule'
+      x-speakeasy-name-override: create
+      summary: Create schedule
+      x-summary-source: derived
+    get:
+      operationId: listSchedules
+      description: 'Describes a list of schedules associated with an account. Append the `hydrate=accounts` query parameter to include partial account details in the response.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/transfers.read` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - $ref: '#/components/parameters/Pagination.skip'
+      - $ref: '#/components/parameters/Pagination.count'
+      - name: hydrate
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - accounts
+        explode: false
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ScheduleListResponse'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Scheduling
+      x-speakeasy-name-override: list
+      summary: List schedules
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+  /accounts/{accountID}/schedules/{scheduleID}:
+    put:
+      operationId: updateSchedule
+      description: 'Describes the schedule to modify.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/transfers.write` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        description: Account ID of the account that will run the transfer.
+        schema:
+          type: string
+      - name: scheduleID
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduleResponse'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '422':
+          description: The request was well-formed, but the contents failed validation. Check the request for missing or invalid fields.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduleValidationError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Scheduling
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpsertSchedule'
+      x-speakeasy-name-override: update
+      summary: Update schedule
+      x-summary-source: derived
+    get:
+      operationId: getSchedules
+      description: 'Describes a schedule associated with an account. Requires at least 1 occurrence or recurTransfer to be specified.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/transfers.read` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: scheduleID
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduleResponse'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Scheduling
+      x-speakeasy-name-override: get
+      summary: Get schedules
+      x-summary-source: derived
+    delete:
+      operationId: cancelSchedule
+      description: 'Describes the schedule to cancel.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/transfers.write` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        description: Your Moov account ID as the partner running the transfers.
+        schema:
+          type: string
+      - name: scheduleID
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: The request completed successfully, but there is no content to return.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Scheduling
+      x-speakeasy-name-override: cancel
+      summary: Cancel schedule
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+  /accounts/{accountID}/schedules/{scheduleID}/occurrences/{occurrenceFilter}:
+    get:
+      operationId: getScheduledOccurrence
+      description: 'Gets a specific occurrence.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/transfers.read` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: scheduleID
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: occurrenceFilter
+        in: path
+        required: true
+        description: "  Allows the specification of additional filters beyond the string.\n\n  Specifying a string returns the exact occurrence.\n  Specifying a RFC 3339 timestamp returns the latest occurrence at or before that timestamp.\n  Specifying `latest` returns the latest occurrence at or before now."
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OccurrencesResponse'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Scheduling
+      x-speakeasy-name-override: getOccurrance
+      summary: Get scheduled occurrence
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+components:
+  schemas:
+    Count:
+      type: integer
+      format: int64
+      description: Limits the maximum number of results returned, or determines the page size when used with `skip` or `cursor` for pagination.
+      example: 20
+    Currency:
+      type: string
+      pattern: ^[A-Za-z]{3}$
+      description: A 3-letter ISO 4217 currency code.
+      example: USD
+    ScheduledTransferLineItems:
+      type: object
+      required:
+      - items
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScheduledTransferLineItem'
+          minItems: 1
+          description: The list of line items.
+      description: Line items for a scheduled transfer.
+    ScheduleValidationError:
+      type: object
+      properties:
+        occurrences:
+          type: object
+          additionalProperties:
+            type: string
+        recur:
+          type: string
+        description:
+          type: string
+    ScheduleResponse:
+      type: object
+      required:
+      - destinationAccountID
+      - mode
+      - ownerAccountID
+      - partnerAccountID
+      - scheduleID
+      - sourceAccountID
+      - createdOn
+      - updatedOn
+      properties:
+        description:
+          type: string
+          description: Simple description to place on the transfer.
+        destinationAccountID:
+          type: string
+          example: c520f1b9-0ba7-42f5-b977-248cdbe41c69
+        mode:
+          $ref: '#/components/schemas/Mode'
+        occurrences:
+          type: array
+          items:
+            $ref: '#/components/schemas/OccurrencesResponse'
+        ownerAccountID:
+          type: string
+          example: c520f1b9-0ba7-42f5-b977-248cdbe41c69
+        partnerAccountID:
+          type: string
+          example: c520f1b9-0ba7-42f5-b977-248cdbe41c69
+        recur:
+          $ref: '#/components/schemas/RecurResponse'
+        scheduleID:
+          type: string
+          example: c520f1b9-0ba7-42f5-b977-248cdbe41c69
+        sourceAccountID:
+          type: string
+          example: c520f1b9-0ba7-42f5-b977-248cdbe41c69
+        createdOn:
+          type: string
+          format: date-time
+        updatedOn:
+          type: string
+          format: date-time
+        disabledOn:
+          type: string
+          format: date-time
+    ScheduledTransferLineItem:
+      type: object
+      required:
+      - name
+      - basePrice
+      - quantity
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 150
+          description: The name of the item.
+        basePrice:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: The base price of the item before applying option modifiers.
+        quantity:
+          type: integer
+          format: int32
+          minimum: 1
+          description: The quantity of this item.
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScheduledTransferLineItemOption'
+          description: Optional list of modifiers applied to this item (e.g., toppings, upgrades, customizations).
+        productID:
+          type: string
+          description: Optional unique identifier associating the line item with a product.
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScheduledTransferImageMetadata'
+          description: Optional list of images associated with this line item.
+      description: Represents a single item in a scheduled transfer, including optional modifiers and quantity.
+    CreateScheduledTransferLineItemOption:
+      type: object
+      required:
+      - name
+      - quantity
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 150
+          description: The name of the option or modifier.
+        quantity:
+          type: integer
+          format: int32
+          minimum: 1
+          description: The quantity of this option.
+        priceModifier:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: Optional price modification applied by this option. Can be positive, negative, or zero.
+        group:
+          type: string
+          maxLength: 100
+          description: Optional group identifier to categorize related options (e.g., 'toppings').
+        imageIDs:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImageID'
+          description: "  Optional list of images associated with this line item option.\n  This field is being deprecated in favor using the images associated with a productID and will soon be unsupported."
+          deprecated: true
+      description: Represents a modifier or option applied to a scheduled transfer line item.
+    ACHOriginatingCompanyName:
+      type: string
+      minLength: 4
+      maxLength: 16
+      description: An optional override of the default NACHA company name for a transfer.
+      example: Whole Body Fit
+    Skip:
+      type: integer
+      format: int64
+      description: The number of entries to skip when paginating a large result set.
+      example: 60
+    ImageID:
+      type: string
+      description: Unique identifier for a image resource.
+    AmountDecimal:
+      type: object
+      required:
+      - currency
+      - valueDecimal
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        valueDecimal:
+          type: string
+          pattern: ^\d+\.\d{1,9}$
+          description: "A decimal-formatted numerical string that represents up to 9 decimal place precision. \n\nFor example, $12.987654321 is '12.987654321'."
+          example: '12.987654321'
+    OccurrenceStatus:
+      type: string
+      enum:
+      - pending
+      - failed
+      - completed
+      description: Status of the completed occurrence.
+    CreateScheduledTransferLineItems:
+      type: object
+      required:
+      - items
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateScheduledTransferLineItem'
+          minItems: 1
+          description: The list of line items.
+      description: 'An optional collection of line items for a scheduled transfer.
+
+        When line items are provided their total must equal `amount` minus `salesTaxAmount`.'
+    RecurResponse:
+      type: object
+      required:
+      - recurrenceRule
+      - runTransfer
+      properties:
+        recurrenceRule:
+          type: string
+          description: "  RRule as defined by RFC 5545 (https://www.rfc-editor.org/rfc/rfc5545#section-3.3.10).\n  Generators available online at the following sites - https://freetools.textmagic.com/rrule-generator, https://jkbrzt.github.io/rrule/"
+        runTransfer:
+          $ref: '#/components/schemas/RunTransfer'
+        indefinite:
+          type: boolean
+          description: True if the RRule set runs indefinitely.
+        start:
+          type: string
+          format: date-time
+          example: '2009-11-10T23:00:00Z'
+    PartialScheduleAccount:
+      type: object
+      required:
+      - accountID
+      - displayName
+      properties:
+        accountID:
+          type: string
+        displayName:
+          type: string
+        email:
+          type: string
+    Recur:
+      type: object
+      required:
+      - recurrenceRule
+      - runTransfer
+      properties:
+        recurrenceRule:
+          type: string
+          description: "  RRule as defined by RFC 5545 (https://www.rfc-editor.org/rfc/rfc5545#section-3.3.10). \n  Generators available online at the following sites - https://freetools.textmagic.com/rrule-generator, https://jkbrzt.github.io/rrule/"
+        runTransfer:
+          $ref: '#/components/schemas/CreateRunTransfer'
+        indefinite:
+          type: boolean
+          description: True if the RRule set runs indefinitely.
+        start:
+          type: string
+          format: date-time
+          example: '2009-11-10T23:00:00Z'
+      description: Defines configuration for recurring transfers.
+    GenericError:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    CardDynamicDescriptor:
+      type: string
+      minLength: 4
+      maxLength: 22
+      description: An optional override of the default card statement descriptor for a transfer. Accounts must be enabled by Moov to set this field.
+      example: WhlBdy *Yoga 11-12
+    ScheduleListResponse:
+      type: object
+      properties:
+        sourceAccount:
+          $ref: '#/components/schemas/PartialScheduleAccount'
+        destinationAccount:
+          $ref: '#/components/schemas/PartialScheduleAccount'
+        partnerAccount:
+          $ref: '#/components/schemas/PartialScheduleAccount'
+      allOf:
+      - $ref: '#/components/schemas/ScheduleResponse'
+    ImagePublicID:
+      type: string
+      pattern: '[A-Za-z0-9_-]{21}'
+      description: A unique identifier for an image, used in public image links.
+    UpsertSchedule:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Simple description of what the schedule is.
+        occurrences:
+          type: array
+          items:
+            $ref: '#/components/schemas/Occurrence'
+        recur:
+          $ref: '#/components/schemas/Recur'
+    SchedulePaymentMethod:
+      type: object
+      required:
+      - paymentMethodID
+      properties:
+        paymentMethodID:
+          type: string
+          example: c520f1b9-0ba7-42f5-b977-248cdbe41c69
+        achDetails:
+          type: object
+          properties:
+            companyEntryDescription:
+              $ref: '#/components/schemas/ACHCompanyEntryDescription'
+            originatingCompanyName:
+              $ref: '#/components/schemas/ACHOriginatingCompanyName'
+        cardDetails:
+          type: object
+          properties:
+            dynamicDescriptor:
+              $ref: '#/components/schemas/CardDynamicDescriptor'
+    Mode:
+      type: string
+      enum:
+      - sandbox
+      - production
+      description: The operating mode for an account.
+      example: production
+    Amount:
+      type: object
+      required:
+      - currency
+      - value
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        value:
+          type: integer
+          format: int64
+          description: "Quantity in the smallest unit of the specified currency. \n\nIn USD this is cents, for example, $12.04 is 1204 and $0.99 is 99."
+          example: 1204
+    ACHCompanyEntryDescription:
+      type: string
+      minLength: 4
+      maxLength: 10
+      description: An optional override of the default NACHA company entry description for a transfer.
+      example: Gym dues
+    CreateScheduledTransferLineItem:
+      type: object
+      required:
+      - name
+      - basePrice
+      - quantity
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 150
+          description: The name of the item.
+        basePrice:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: The base price of the item before applying option modifiers.
+        quantity:
+          type: integer
+          format: int32
+          minimum: 1
+          description: The quantity of this item.
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateScheduledTransferLineItemOption'
+          description: Optional list of modifiers applied to this item (e.g., toppings, upgrades, customizations).
+        productID:
+          type: string
+          description: "  Optional unique identifier associating the line item with a product.\n  This is for reporting or tracking purposes, and does not populate other details of the line item."
+        imageIDs:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImageID'
+          description: "  Optional list of images associated with this line item.\n  This field is being deprecated in favor using the images associated with a productID and will soon be unsupported."
+          deprecated: true
+      description: Represents a single item in a scheduled transfer, including optional modifiers and quantity.
+    CreateRunTransfer:
+      type: object
+      required:
+      - amount
+      - destination
+      - partnerAccountID
+      - source
+      - description
+      properties:
+        amount:
+          $ref: '#/components/schemas/Amount'
+        salesTaxAmount:
+          allOf:
+          - $ref: '#/components/schemas/Amount'
+          description: Optional sales tax amount. This amount is included in the total transfer amount.
+        destination:
+          $ref: '#/components/schemas/SchedulePaymentMethod'
+        partnerAccountID:
+          type: string
+          example: c520f1b9-0ba7-42f5-b977-248cdbe41c69
+        source:
+          $ref: '#/components/schemas/SchedulePaymentMethod'
+        description:
+          type: string
+          description: Simple description to place on the transfer.
+        lineItems:
+          $ref: '#/components/schemas/CreateScheduledTransferLineItems'
+      description: Defines the attributes of a transfer.
+    OccurrencesResponse:
+      type: object
+      required:
+      - runOn
+      - runTransfer
+      properties:
+        scheduleID:
+          type: string
+        occurrenceID:
+          type: string
+        mode:
+          allOf:
+          - $ref: '#/components/schemas/Mode'
+          description: Sandbox or production account mode of this schedule.
+        generated:
+          type: boolean
+          description: True if this was generated by a RRule.
+        indefinite:
+          type: boolean
+          description: True if the RRule set runs indefinitely.
+        canceledOn:
+          type: string
+          format: date-time
+        runOn:
+          type: string
+          format: date-time
+        runTransfer:
+          $ref: '#/components/schemas/RunTransfer'
+        ranOn:
+          type: string
+          format: date-time
+        ranTransferID:
+          type: string
+        status:
+          $ref: '#/components/schemas/OccurrenceStatus'
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+          description: Contains details on why the occurrence errored.
+    Occurrence:
+      type: object
+      properties:
+        canceled:
+          type: boolean
+          description: If set to true, will cancel the occurrence. If set false will resume the occurrence. If unset leaves the value unchanged.
+        occurrenceID:
+          type: string
+          description: "  If set this defines what occurrence to modify, if invalid will fail the request. \n  If null or \"\" it defines to add a new occurrence."
+          example: c520f1b9-0ba7-42f5-b977-248cdbe41c69
+        runOn:
+          type: string
+          format: date-time
+          description: Timestamp to run the transfer after. Value must be into the future.
+          example: '2009-11-10T23:00:00Z'
+        runTransfer:
+          $ref: '#/components/schemas/CreateRunTransfer'
+      description: Occurrences to either create or modify.
+    RunTransfer:
+      type: object
+      required:
+      - amount
+      - destination
+      - partnerAccountID
+      - source
+      - description
+      properties:
+        amount:
+          $ref: '#/components/schemas/Amount'
+        salesTaxAmount:
+          allOf:
+          - $ref: '#/components/schemas/Amount'
+          description: Optional sales tax amount. This amount is included in the total transfer amount.
+        destination:
+          $ref: '#/components/schemas/SchedulePaymentMethod'
+        partnerAccountID:
+          type: string
+          example: c520f1b9-0ba7-42f5-b977-248cdbe41c69
+        source:
+          $ref: '#/components/schemas/SchedulePaymentMethod'
+        description:
+          type: string
+          description: Simple description to place on the transfer.
+        lineItems:
+          $ref: '#/components/schemas/ScheduledTransferLineItems'
+    ScheduledTransferLineItemOption:
+      type: object
+      required:
+      - name
+      - quantity
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 150
+          description: The name of the option or modifier.
+        quantity:
+          type: integer
+          format: int32
+          minimum: 1
+          description: The quantity of this option.
+        priceModifier:
+          allOf:
+          - $ref: '#/components/schemas/AmountDecimal'
+          description: Optional price modification applied by this option. Can be positive, negative, or zero.
+        group:
+          type: string
+          maxLength: 100
+          description: Optional group identifier to categorize related options (e.g., 'toppings').
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScheduledTransferImageMetadata'
+          description: Optional list of images associated with this line item.
+      description: Represents a modifier or option applied to a scheduled transfer line item.
+    ScheduledTransferImageMetadata:
+      type: object
+      required:
+      - imageID
+      - link
+      - publicID
+      properties:
+        imageID:
+          $ref: '#/components/schemas/ImageID'
+        altText:
+          type: string
+          maxLength: 125
+          description: Alternative text for the image.
+        link:
+          type: string
+          format: uri
+          description: The image's public URL.
+          example: https://api.moov.io/images/q7lKWleAy9fUNhEGezQ1g
+        publicID:
+          $ref: '#/components/schemas/ImagePublicID'
+  parameters:
+    Pagination.skip:
+      name: skip
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/Skip'
+      explode: false
+    VersionHeader:
+      name: X-Moov-Version
+      in: header
+      required: false
+      description: 'Set this header to v2026.01.00 to use the API described in this specification.
+
+        When omitted, the server defaults to v2024.01.00, the earliest supported version, which may not match the behavior documented here.
+
+        An unrecognized well-formed version uses the latest supported version that is not newer than the requested version, when one exists.
+
+        For example, `v2026.08.00` uses `v2026.07.00`.
+
+        A malformed value, such as `2022`, returns a `404` response.'
+      schema:
+        type: string
+        enum:
+        - v2026.01.00
+        example: v2026.01.00
+        x-speakeasy-ignore: true
+      x-speakeasy-ignore: true
+    Pagination.count:
+      name: count
+      in: query
+      required: false
+      description: Page size. When omitted, the server defaults to `200`.
+      schema:
+        $ref: '#/components/schemas/Count'
+      explode: false
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: Basic
+externalDocs:
+  url: https://docs.moov.io/
+  description: Moov Guides and API Documentation
+x-refined-from:
+- moov-api-v2026.01.00-openapi.yml
+- moov-openapi.yml

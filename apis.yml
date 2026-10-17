@@ -191,43 +191,14 @@ common:
   url: finops/moov-finops.yml
 
 apis:
-- aid: moov:moov-api
-  name: Moov API
-  description: The complete Moov REST API (version v2026.01.00), published by Moov as its OpenAPI source of truth and linked from docs.moov.io/llms.txt.
-    It covers accounts, capabilities, bank accounts, cards, wallets, transfers, refunds and reversals, disputes, sweeps, payment links, invoices,
-    card issuing, underwriting, webhooks and more, served from https://api.moov.io.
-  humanURL: https://docs.moov.io/api/
-  baseURL: https://api.moov.io
-  tags:
-  - Payments
-  - Money Movement
-  - Embedded Finance
-  properties:
-  - type: OpenAPI
-    url: openapi/moov-openapi.yml
-  - type: OpenAPI
-    name: OpenAPI (provider-hosted)
-    url: https://spec.speakeasy.com/moov/moov/api-v2026.01.00
-  - type: APIReference
-    url: https://docs.moov.io/api/
-  - type: JSONSchema
-    url: json-schema/moov-transfer-schema.json
-  - type: JSONSchema
-    url: json-schema/moov-card-schema.json
-  - type: JSONSchema
-    url: json-schema/moov-wallet-transaction-schema.json
-  - type: JSONSchema
-    url: json-schema/moov-payment-link-schema.json
-  - type: JSONSchema
-    url: json-schema/moov-created-transfer-schema.json
-  - type: JSONSchema
-    url: json-schema/moov-onboarding-invite-schema.json
 - aid: moov:moov-js
   name: Moov.js
-  description: Moov.js is a client-side JavaScript SDK designed to streamline interactions with the Moov API while keeping personally identifiable
-    information out of developer infrastructure. All PII is transmitted directly to Moov, relieving developers of the responsibility for storing
-    or handling sensitive user data. The SDK supports account creation, funding source integration, and transfer facilitation, along with pre-built
-    UI components called Moov Drops.
+  description: >-
+    Moov.js is a client-side JavaScript SDK designed to streamline interactions with the Moov API while
+    keeping personally identifiable information out of developer infrastructure. All PII is transmitted
+    directly to Moov, relieving developers of the responsibility for storing or handling sensitive user
+    data. The SDK supports account creation, funding source integration, and transfer facilitation, along
+    with pre-built UI components called Moov Drops.
   humanURL: https://docs.moov.io/moovjs/
   tags:
   - Client SDK
@@ -240,10 +211,12 @@ apis:
     url: https://docs.moov.io/moovjs/
 - aid: moov:moov-drops
   name: Moov Drops
-  description: Moov Drops are pre-built, drop-in web UI components for complicated payment and account management flows. These components securely
-    collect payment and account information from users without developers needing to build complex financial forms from scratch. Drops integrate
-    with the Moov API and Moov.js to provide a cohesive front-end experience for onboarding, bank account linking, card collection, and other
-    payment-related workflows.
+  description: >-
+    Moov Drops are pre-built, drop-in web UI components for complicated payment and account management
+    flows. These components securely collect payment and account information from users without developers
+    needing to build complex financial forms from scratch. Drops integrate with the Moov API and Moov.js
+    to provide a cohesive front-end experience for onboarding, bank account linking, card collection,
+    and other payment-related workflows.
   humanURL: https://docs.moov.io/guides/developer-tools/
   tags:
   - Embedded Finance
@@ -256,9 +229,12 @@ apis:
     url: https://docs.moov.io/guides/developer-tools/
 - aid: moov:moov-backend-sdks
   name: Moov Backend SDKs
-  description: Moov provides official server-side client libraries for interacting with the Moov API across multiple programming languages, including
-    Go, TypeScript, Python, Java, PHP, Ruby, and C#/.NET. These SDKs abstract the HTTP layer and provide idiomatic interfaces for each language
-    to access Moov's full range of financial operations. Each SDK is actively maintained and versioned to track the Moov API's versioning scheme.
+  description: >-
+    Moov provides official server-side client libraries for interacting with the Moov API across multiple
+    programming languages, including Go, TypeScript, Python, Java, PHP, Ruby, and C#/.NET. These SDKs
+    abstract the HTTP layer and provide idiomatic interfaces for each language to access Moov's full range
+    of financial operations. Each SDK is actively maintained and versioned to track the Moov API's versioning
+    scheme.
   humanURL: https://docs.moov.io/sdks/
   tags:
   - .NET
@@ -274,8 +250,9 @@ apis:
     url: https://docs.moov.io/sdks/
 - aid: moov:moov-accounts-api
   name: Moov Accounts API
-  description: Create and manage Moov accounts representing individual or business legal entities. Accounts are the foundation for all money movement
-    operations.
+  description: >-
+    Create and manage Moov accounts representing individual or business legal entities. Accounts are the
+    foundation for all money movement operations.
   humanURL: https://docs.moov.io/api/
   baseURL: https://api.moov.io
   tags:
@@ -317,7 +294,9 @@ apis:
     url: json-ld/moov-context.jsonld
 - aid: moov:moov-bank-accounts-api
   name: Moov Bank Accounts API
-  description: Link and manage bank accounts as funding sources for ACH and RTP transfers. Includes micro-deposit and instant verification flows.
+  description: >-
+    Link and manage bank accounts as funding sources for ACH and RTP transfers. Includes micro-deposit
+    and instant verification flows.
   humanURL: https://docs.moov.io/api/
   baseURL: https://api.moov.io
   tags:
@@ -337,7 +316,9 @@ apis:
     url: json-ld/moov-context.jsonld
 - aid: moov:moov-capabilities-api
   name: Moov Capabilities API
-  description: Request and manage capabilities that enable specific financial operations on an account, such as send-funds or collect-funds.
+  description: >-
+    Request and manage capabilities that enable specific financial operations on an account, such as send-funds
+    or collect-funds.
   humanURL: https://docs.moov.io/api/
   baseURL: https://api.moov.io
   tags:
@@ -377,7 +358,9 @@ apis:
     url: json-ld/moov-context.jsonld
 - aid: moov:moov-disputes-api
   name: Moov Disputes API
-  description: Manage card payment disputes including evidence submission, acceptance, and lifecycle tracking for chargeback resolution.
+  description: >-
+    Manage card payment disputes including evidence submission, acceptance, and lifecycle tracking for
+    chargeback resolution.
   humanURL: https://docs.moov.io/api/
   baseURL: https://api.moov.io
   tags:
@@ -397,7 +380,9 @@ apis:
     url: json-ld/moov-context.jsonld
 - aid: moov:moov-payment-links-api
   name: Moov Payment Links API
-  description: Create and manage shareable payment links that allow customers to pay via card or bank account without custom code.
+  description: >-
+    Create and manage shareable payment links that allow customers to pay via card or bank account without
+    custom code.
   humanURL: https://docs.moov.io/api/
   baseURL: https://api.moov.io
   tags:
@@ -417,8 +402,9 @@ apis:
     url: json-ld/moov-context.jsonld
 - aid: moov:moov-payment-methods-api
   name: Moov Payment Methods API
-  description: Retrieve the available payment methods on an account, including bank accounts, cards, and wallets, which can be used as transfer
-    sources or destinations.
+  description: >-
+    Retrieve the available payment methods on an account, including bank accounts, cards, and wallets,
+    which can be used as transfer sources or destinations.
   humanURL: https://docs.moov.io/api/
   baseURL: https://api.moov.io
   tags:
@@ -438,7 +424,8 @@ apis:
     url: json-ld/moov-context.jsonld
 - aid: moov:moov-refunds-api
   name: Moov Refunds API
-  description: Create and retrieve refunds for completed card transfers, including full and partial refund support.
+  description: >-
+    Create and retrieve refunds for completed card transfers, including full and partial refund support.
   humanURL: https://docs.moov.io/api/
   baseURL: https://api.moov.io
   tags:
@@ -458,7 +445,8 @@ apis:
     url: json-ld/moov-context.jsonld
 - aid: moov:moov-representatives-api
   name: Moov Representatives API
-  description: Manage business representatives associated with a Moov account for KYB compliance and ownership verification.
+  description: >-
+    Manage business representatives associated with a Moov account for KYB compliance and ownership verification.
   humanURL: https://docs.moov.io/api/
   baseURL: https://api.moov.io
   tags:
@@ -478,7 +466,9 @@ apis:
     url: json-ld/moov-context.jsonld
 - aid: moov:moov-sweeps-api
   name: Moov Sweeps API
-  description: Configure automatic daily transfers from a Moov wallet to an external bank account on a set schedule using ACH or RTP rails.
+  description: >-
+    Configure automatic daily transfers from a Moov wallet to an external bank account on a set schedule
+    using ACH or RTP rails.
   humanURL: https://docs.moov.io/api/
   baseURL: https://api.moov.io
   tags:
@@ -498,7 +488,9 @@ apis:
     url: json-ld/moov-context.jsonld
 - aid: moov:moov-transfers-api
   name: Moov Transfers API
-  description: Initiate and manage money movement between Moov accounts. Supports ACH, RTP, and card rails with full lifecycle tracking.
+  description: >-
+    Initiate and manage money movement between Moov accounts. Supports ACH, RTP, and card rails with full
+    lifecycle tracking.
   humanURL: https://docs.moov.io/api/
   baseURL: https://api.moov.io
   tags:
@@ -518,7 +510,9 @@ apis:
     url: json-ld/moov-context.jsonld
 - aid: moov:moov-wallets-api
   name: Moov Wallets API
-  description: Create and manage Moov digital wallets that hold funds within the platform. Supports wallet transactions and balance adjustments.
+  description: >-
+    Create and manage Moov digital wallets that hold funds within the platform. Supports wallet transactions
+    and balance adjustments.
   humanURL: https://docs.moov.io/api/
   baseURL: https://api.moov.io
   tags:
@@ -568,7 +562,559 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/moov-underwriting-api-openapi.yml
-
+- aid: moov:moov-account-terminal-applications-api
+  name: Moov Account Terminal Applications API
+  description: >-
+    The Account Terminal Applications API from Moov — 3 operation(s) for account terminal applications.
+  humanURL: https://docs.moov.io/api/
+  baseURL: https://api.moov.io
+  tags:
+  - Account Terminal Applications
+  properties:
+  - type: OpenAPI
+    url: openapi/moov-account-terminal-applications-api-openapi.yml
+  - type: APIReference
+    url: https://docs.moov.io/api/
+  - type: JSONSchema
+    url: json-schema/moov-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-card-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-wallet-transaction-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-payment-link-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-created-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-onboarding-invite-schema.json
+- aid: moov:moov-adjustments-api
+  name: Moov Adjustments API
+  description: The Adjustments API from Moov — 2 operation(s) for adjustments.
+  humanURL: https://docs.moov.io/api/
+  baseURL: https://api.moov.io
+  tags:
+  - Adjustments
+  properties:
+  - type: OpenAPI
+    url: openapi/moov-adjustments-api-openapi.yml
+  - type: APIReference
+    url: https://docs.moov.io/api/
+  - type: JSONSchema
+    url: json-schema/moov-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-card-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-wallet-transaction-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-payment-link-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-created-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-onboarding-invite-schema.json
+- aid: moov:moov-apple-pay-api
+  name: Moov Apple pay API
+  description: The Apple pay API from Moov — 3 operation(s) for apple pay.
+  humanURL: https://docs.moov.io/api/
+  baseURL: https://api.moov.io
+  tags:
+  - Apple pay
+  properties:
+  - type: OpenAPI
+    url: openapi/moov-apple-pay-api-openapi.yml
+  - type: APIReference
+    url: https://docs.moov.io/api/
+  - type: JSONSchema
+    url: json-schema/moov-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-card-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-wallet-transaction-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-payment-link-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-created-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-onboarding-invite-schema.json
+- aid: moov:moov-avatars-api
+  name: Moov Avatars API
+  description: The Avatars API from Moov — 1 operation(s) for avatars.
+  humanURL: https://docs.moov.io/api/
+  baseURL: https://api.moov.io
+  tags:
+  - Avatars
+  properties:
+  - type: OpenAPI
+    url: openapi/moov-avatars-api-openapi.yml
+  - type: APIReference
+    url: https://docs.moov.io/api/
+  - type: JSONSchema
+    url: json-schema/moov-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-card-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-wallet-transaction-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-payment-link-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-created-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-onboarding-invite-schema.json
+- aid: moov:moov-branding-api
+  name: Moov Branding API
+  description: The Branding API from Moov — 1 operation(s) for branding.
+  humanURL: https://docs.moov.io/api/
+  baseURL: https://api.moov.io
+  tags:
+  - Branding
+  properties:
+  - type: OpenAPI
+    url: openapi/moov-branding-api-openapi.yml
+  - type: APIReference
+    url: https://docs.moov.io/api/
+  - type: JSONSchema
+    url: json-schema/moov-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-card-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-wallet-transaction-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-payment-link-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-created-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-onboarding-invite-schema.json
+- aid: moov:moov-end-to-end-encryption-api
+  name: Moov End to End Encryption API
+  description: The End to End Encryption API from Moov — 2 operation(s) for end to end encryption.
+  humanURL: https://docs.moov.io/api/
+  baseURL: https://api.moov.io
+  tags:
+  - End to End Encryption
+  properties:
+  - type: OpenAPI
+    url: openapi/moov-end-to-end-encryption-api-openapi.yml
+  - type: APIReference
+    url: https://docs.moov.io/api/
+  - type: JSONSchema
+    url: json-schema/moov-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-card-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-wallet-transaction-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-payment-link-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-created-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-onboarding-invite-schema.json
+- aid: moov:moov-enriched-address-api
+  name: Moov Enriched address API
+  description: The Enriched address API from Moov — 1 operation(s) for enriched address.
+  humanURL: https://docs.moov.io/api/
+  baseURL: https://api.moov.io
+  tags:
+  - Enriched address
+  properties:
+  - type: OpenAPI
+    url: openapi/moov-enriched-address-api-openapi.yml
+  - type: APIReference
+    url: https://docs.moov.io/api/
+  - type: JSONSchema
+    url: json-schema/moov-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-card-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-wallet-transaction-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-payment-link-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-created-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-onboarding-invite-schema.json
+- aid: moov:moov-enriched-profile-api
+  name: Moov Enriched profile API
+  description: The Enriched profile API from Moov — 1 operation(s) for enriched profile.
+  humanURL: https://docs.moov.io/api/
+  baseURL: https://api.moov.io
+  tags:
+  - Enriched profile
+  properties:
+  - type: OpenAPI
+    url: openapi/moov-enriched-profile-api-openapi.yml
+  - type: APIReference
+    url: https://docs.moov.io/api/
+  - type: JSONSchema
+    url: json-schema/moov-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-card-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-wallet-transaction-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-payment-link-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-created-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-onboarding-invite-schema.json
+- aid: moov:moov-fee-plans-api
+  name: Moov Fee plans API
+  description: The Fee plans API from Moov — 9 operation(s) for fee plans.
+  humanURL: https://docs.moov.io/api/
+  baseURL: https://api.moov.io
+  tags:
+  - Fee plans
+  properties:
+  - type: OpenAPI
+    url: openapi/moov-fee-plans-api-openapi.yml
+  - type: APIReference
+    url: https://docs.moov.io/api/
+  - type: JSONSchema
+    url: json-schema/moov-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-card-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-wallet-transaction-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-payment-link-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-created-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-onboarding-invite-schema.json
+- aid: moov:moov-files-api
+  name: Moov Files API
+  description: The Files API from Moov — 2 operation(s) for files.
+  humanURL: https://docs.moov.io/api/
+  baseURL: https://api.moov.io
+  tags:
+  - Files
+  properties:
+  - type: OpenAPI
+    url: openapi/moov-files-api-openapi.yml
+  - type: APIReference
+    url: https://docs.moov.io/api/
+  - type: JSONSchema
+    url: json-schema/moov-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-card-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-wallet-transaction-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-payment-link-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-created-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-onboarding-invite-schema.json
+- aid: moov:moov-images-api
+  name: Moov Images API
+  description: The Images API from Moov — 4 operation(s) for images.
+  humanURL: https://docs.moov.io/api/
+  baseURL: https://api.moov.io
+  tags:
+  - Images
+  properties:
+  - type: OpenAPI
+    url: openapi/moov-images-api-openapi.yml
+  - type: APIReference
+    url: https://docs.moov.io/api/
+  - type: JSONSchema
+    url: json-schema/moov-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-card-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-wallet-transaction-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-payment-link-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-created-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-onboarding-invite-schema.json
+- aid: moov:moov-industries-api
+  name: Moov Industries API
+  description: The Industries API from Moov — 1 operation(s) for industries.
+  humanURL: https://docs.moov.io/api/
+  baseURL: https://api.moov.io
+  tags:
+  - Industries
+  properties:
+  - type: OpenAPI
+    url: openapi/moov-industries-api-openapi.yml
+  - type: APIReference
+    url: https://docs.moov.io/api/
+  - type: JSONSchema
+    url: json-schema/moov-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-card-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-wallet-transaction-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-payment-link-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-created-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-onboarding-invite-schema.json
+- aid: moov:moov-issuing-transactions-api
+  name: Moov Issuing transactions API
+  description: The Issuing transactions API from Moov — 5 operation(s) for issuing transactions.
+  humanURL: https://docs.moov.io/api/
+  baseURL: https://api.moov.io
+  tags:
+  - Issuing transactions
+  properties:
+  - type: OpenAPI
+    url: openapi/moov-issuing-transactions-api-openapi.yml
+  - type: APIReference
+    url: https://docs.moov.io/api/
+  - type: JSONSchema
+    url: json-schema/moov-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-card-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-wallet-transaction-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-payment-link-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-created-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-onboarding-invite-schema.json
+- aid: moov:moov-onboarding-api
+  name: Moov Onboarding API
+  description: The Onboarding API from Moov — 2 operation(s) for onboarding.
+  humanURL: https://docs.moov.io/api/
+  baseURL: https://api.moov.io
+  tags:
+  - Onboarding
+  properties:
+  - type: OpenAPI
+    url: openapi/moov-onboarding-api-openapi.yml
+  - type: APIReference
+    url: https://docs.moov.io/api/
+  - type: JSONSchema
+    url: json-schema/moov-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-card-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-wallet-transaction-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-payment-link-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-created-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-onboarding-invite-schema.json
+- aid: moov:moov-ping-api
+  name: Moov Ping API
+  description: The Ping API from Moov — 1 operation(s) for ping.
+  humanURL: https://docs.moov.io/api/
+  baseURL: https://api.moov.io
+  tags:
+  - Ping
+  properties:
+  - type: OpenAPI
+    url: openapi/moov-ping-api-openapi.yml
+  - type: APIReference
+    url: https://docs.moov.io/api/
+  - type: JSONSchema
+    url: json-schema/moov-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-card-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-wallet-transaction-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-payment-link-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-created-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-onboarding-invite-schema.json
+- aid: moov:moov-products-api
+  name: Moov Products API
+  description: The Products API from Moov — 2 operation(s) for products.
+  humanURL: https://docs.moov.io/api/
+  baseURL: https://api.moov.io
+  tags:
+  - Products
+  properties:
+  - type: OpenAPI
+    url: openapi/moov-products-api-openapi.yml
+  - type: APIReference
+    url: https://docs.moov.io/api/
+  - type: JSONSchema
+    url: json-schema/moov-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-card-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-wallet-transaction-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-payment-link-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-created-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-onboarding-invite-schema.json
+- aid: moov:moov-receipts-api
+  name: Moov Receipts API
+  description: The Receipts API from Moov — 1 operation(s) for receipts.
+  humanURL: https://docs.moov.io/api/
+  baseURL: https://api.moov.io
+  tags:
+  - Receipts
+  properties:
+  - type: OpenAPI
+    url: openapi/moov-receipts-api-openapi.yml
+  - type: APIReference
+    url: https://docs.moov.io/api/
+  - type: JSONSchema
+    url: json-schema/moov-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-card-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-wallet-transaction-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-payment-link-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-created-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-onboarding-invite-schema.json
+- aid: moov:moov-scheduling-api
+  name: Moov Scheduling API
+  description: The Scheduling API from Moov — 3 operation(s) for scheduling.
+  humanURL: https://docs.moov.io/api/
+  baseURL: https://api.moov.io
+  tags:
+  - Scheduling
+  properties:
+  - type: OpenAPI
+    url: openapi/moov-scheduling-api-openapi.yml
+  - type: APIReference
+    url: https://docs.moov.io/api/
+  - type: JSONSchema
+    url: json-schema/moov-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-card-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-wallet-transaction-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-payment-link-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-created-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-onboarding-invite-schema.json
+- aid: moov:moov-statements-api
+  name: Moov Statements API
+  description: The Statements API from Moov — 2 operation(s) for statements.
+  humanURL: https://docs.moov.io/api/
+  baseURL: https://api.moov.io
+  tags:
+  - Statements
+  properties:
+  - type: OpenAPI
+    url: openapi/moov-statements-api-openapi.yml
+  - type: APIReference
+    url: https://docs.moov.io/api/
+  - type: JSONSchema
+    url: json-schema/moov-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-card-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-wallet-transaction-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-payment-link-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-created-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-onboarding-invite-schema.json
+- aid: moov:moov-support-api
+  name: Moov Support API
+  description: The Support API from Moov — 3 operation(s) for support.
+  humanURL: https://docs.moov.io/api/
+  baseURL: https://api.moov.io
+  tags:
+  - Support
+  properties:
+  - type: OpenAPI
+    url: openapi/moov-support-api-openapi.yml
+  - type: APIReference
+    url: https://docs.moov.io/api/
+  - type: JSONSchema
+    url: json-schema/moov-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-card-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-wallet-transaction-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-payment-link-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-created-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-onboarding-invite-schema.json
+- aid: moov:moov-terminal-applications-api
+  name: Moov Terminal Applications API
+  description: The Terminal Applications API from Moov — 3 operation(s) for terminal applications.
+  humanURL: https://docs.moov.io/api/
+  baseURL: https://api.moov.io
+  tags:
+  - Terminal Applications
+  properties:
+  - type: OpenAPI
+    url: openapi/moov-terminal-applications-api-openapi.yml
+  - type: APIReference
+    url: https://docs.moov.io/api/
+  - type: JSONSchema
+    url: json-schema/moov-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-card-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-wallet-transaction-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-payment-link-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-created-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-onboarding-invite-schema.json
+- aid: moov:moov-wallet-transactions-api
+  name: Moov Wallet transactions API
+  description: The Wallet transactions API from Moov — 2 operation(s) for wallet transactions.
+  humanURL: https://docs.moov.io/api/
+  baseURL: https://api.moov.io
+  tags:
+  - Wallet transactions
+  properties:
+  - type: OpenAPI
+    url: openapi/moov-wallet-transactions-api-openapi.yml
+  - type: APIReference
+    url: https://docs.moov.io/api/
+  - type: JSONSchema
+    url: json-schema/moov-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-card-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-wallet-transaction-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-payment-link-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-created-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-onboarding-invite-schema.json
+- aid: moov:moov-webhooks-api
+  name: Moov Webhooks API
+  description: The Webhooks API from Moov — 5 operation(s) for webhooks.
+  humanURL: https://docs.moov.io/api/
+  baseURL: https://api.moov.io
+  tags:
+  - Webhooks
+  properties:
+  - type: OpenAPI
+    url: openapi/moov-webhooks-api-openapi.yml
+  - type: APIReference
+    url: https://docs.moov.io/api/
+  - type: JSONSchema
+    url: json-schema/moov-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-card-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-wallet-transaction-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-payment-link-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-created-transfer-schema.json
+  - type: JSONSchema
+    url: json-schema/moov-onboarding-invite-schema.json
 x-merged-from:
 - moov-io
 x-enrichment:

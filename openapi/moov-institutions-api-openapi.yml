@@ -1,49 +1,615 @@
 openapi: 3.2.0
 info:
   title: Moov Institutions API
-  description: The Moov API lets software platforms accept, store, send, and spend money through a single REST API.
-  version: v2026.04.00
-  contact:
-    name: Moov
-    url: https://moov.io
-  termsOfService: https://moov.io/legal/platform-agreement/
+  version: '1.0'
+  description: 'Operations tagged Institutions across 3 of this provider''s published API definitions: moov-api-v2026.01.00-openapi.yml, moov-openapi.yml, moov-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.moov.io
-  description: Moov production
-security:
-- bearerAuth: []
+  description: Production API host
+  variables: {}
 tags:
 - name: Institutions
-  description: Financial institution lookup by routing number.
 paths:
   /institutions:
     get:
-      operationId: getInstitutions
-      tags:
-      - Institutions
-      summary: Look up financial institutions
-      description: Validate a financial institution before initiating payment activity, or check which payment rails are available for a given routing number.
+      operationId: searchInstitutions
+      description: 'Search for financial institutions by name or routing number.
+
+
+        This endpoint returns metadata about each matched institution, including basic identifying details (such as name, routing number, and address) and information about which payment services they support (e.g., ACH, RTP, and Wire).
+
+
+        This can be used to validate a financial institution before initiating payment activity, or to check which payment rails are available for a given routing number.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/institutions.read` scope.'
       parameters:
-      - name: routingNumber
-        in: query
-        schema:
-          type: string
-        description: The ABA routing number to look up.
-      - name: name
-        in: query
-        schema:
-          type: string
-        description: Filter by institution name.
+      - $ref: '#/components/parameters/VersionHeader'
+      - $ref: '#/components/parameters/InstitutionSearchFilters.name'
+      - $ref: '#/components/parameters/InstitutionSearchFilters.routingNumber'
+      - $ref: '#/components/parameters/InstitutionSearchFilters.limit'
       responses:
         '200':
-          description: Matching institutions and supported rails.
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstitutionsSearchResponse'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Institutions
+      security:
+      - BasicAuth: []
+      summary: Search institutions
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+  /institutions/ach/search:
+    get:
+      operationId: listInstitutions
+      description: 'This endpoint has been deprecated and will be removed in a future release. Use /institutions.
+
+
+        Search for institutions by either their name or routing number.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/fed.read` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - $ref: '#/components/parameters/InstitutionsFilters.name'
+      - $ref: '#/components/parameters/InstitutionsFilters.routingNumber'
+      - $ref: '#/components/parameters/InstitutionsFilters.state'
+      - $ref: '#/components/parameters/InstitutionsFilters.limit'
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FinancialInstitutions'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Institutions
+      deprecated: true
+      x-speakeasy-name-override: search
+      security:
+      - BasicAuth: []
+      summary: List institutions
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
 components:
+  schemas:
+    FinancialInstitutions:
+      type: object
+      required:
+      - achParticipants
+      properties:
+        achParticipants:
+          type: array
+          items:
+            $ref: '#/components/schemas/AchParticipant'
+    Address:
+      type: object
+      required:
+      - addressLine1
+      - city
+      - stateOrProvince
+      - postalCode
+      - country
+      properties:
+        addressLine1:
+          type: string
+          maxLength: 60
+          pattern: '[a-zA-Z0-9,.\/?:''"|~!@#$%^&*()+_= -]+'
+          example: 123 Main Street
+        addressLine2:
+          type: string
+          maxLength: 32
+          pattern: '[a-zA-Z0-9,.\/?:''"|~!@#$%^&*()+_= -]+'
+          example: Apt 302
+        city:
+          type: string
+          maxLength: 32
+          pattern: '[a-zA-Z0-9,.\/?:''"|~!@#$%^&*()+_= -]+'
+          example: Boulder
+        stateOrProvince:
+          type: string
+          maxLength: 2
+          example: CO
+        postalCode:
+          type: string
+          maxLength: 5
+          example: '80301'
+        country:
+          type: string
+          maxLength: 2
+          example: US
+    PhoneNumber:
+      type: object
+      properties:
+        number:
+          type: string
+          maxLength: 10
+          example: '8185551212'
+        countryCode:
+          type: string
+          maxLength: 1
+          example: '1'
+    RTPServices:
+      type: object
+      required:
+      - receivePayments
+      - receiveRequestForPayment
+      properties:
+        receivePayments:
+          type: boolean
+          description: Can the institution receive payments
+          example: true
+        receiveRequestForPayment:
+          type: boolean
+          description: Can the institution receive request for payment messages
+          example: true
+    RTPInstitution:
+      type: object
+      required:
+      - name
+      - routingNumber
+      - services
+      properties:
+        name:
+          type: string
+          description: Name of the financial institution.
+          example: First Citizens
+        routingNumber:
+          type: string
+          maxLength: 9
+          example: '123456789'
+        services:
+          $ref: '#/components/schemas/RTPServices'
+    Contact:
+      type: object
+      properties:
+        phone:
+          $ref: '#/components/schemas/PhoneNumber'
+    ACHInstitution:
+      type: object
+      required:
+      - name
+      - routingNumber
+      properties:
+        name:
+          type: string
+          description: Name of the financial institution.
+          example: First Citizens
+        routingNumber:
+          type: string
+          maxLength: 9
+          example: '123456789'
+        address:
+          $ref: '#/components/schemas/Address'
+        contact:
+          $ref: '#/components/schemas/Contact'
+    InstitutionLogo:
+      type: object
+      required:
+      - name
+      - url
+      properties:
+        name:
+          type: string
+        url:
+          type: string
+    AchParticipant:
+      type: object
+      required:
+      - achLocation
+      - customerName
+      - newRoutingNumber
+      - officeCode
+      - phoneNumber
+      - recordTypeCode
+      - revised
+      - routingNumber
+      - servicingFRBNumber
+      - statusCode
+      - viewCode
+      - cleanName
+      - logo
+      properties:
+        achLocation:
+          $ref: '#/components/schemas/AchLocation'
+        customerName:
+          type: string
+          example: Main Street Bank
+        newRoutingNumber:
+          type: string
+          maxLength: 9
+          example: '987654321'
+        officeCode:
+          type: string
+          example: '0'
+        phoneNumber:
+          type: string
+          example: '1234567789'
+        recordTypeCode:
+          type: string
+          example: '1'
+        revised:
+          type: string
+          example: 041921
+        routingNumber:
+          type: string
+          maxLength: 9
+          example: '123456789'
+        servicingFRBNumber:
+          type: string
+          example: '123456789'
+        statusCode:
+          type: string
+          example: '1'
+        viewCode:
+          type: string
+          example: '1'
+        cleanName:
+          type: string
+          example: Main Street Bank
+        logo:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/InstitutionLogo'
+          example:
+            name: Main Street Bank
+            url: https://www.mainstreetbank.com/logo.png
+    WireInstitution:
+      type: object
+      required:
+      - name
+      - routingNumber
+      - services
+      properties:
+        name:
+          type: string
+          description: Name of the financial institution.
+          example: First Citizens
+        routingNumber:
+          type: string
+          maxLength: 9
+          example: '123456789'
+        address:
+          $ref: '#/components/schemas/Address'
+        services:
+          $ref: '#/components/schemas/WireServices'
+    InstitutionsSearchResponse:
+      type: object
+      required:
+      - ach
+      - rtp
+      - wire
+      - fednow
+      properties:
+        ach:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ACHInstitution'
+        rtp:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/RTPInstitution'
+        wire:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/WireInstitution'
+        fednow:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/FedNowInstitution'
+    GenericError:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    FedNowInstitution:
+      type: object
+      required:
+      - name
+      - routingNumber
+      - services
+      properties:
+        name:
+          type: string
+          description: Name of the financial institution.
+          example: First Citizens
+        routingNumber:
+          type: string
+          maxLength: 9
+          example: '123456789'
+        services:
+          $ref: '#/components/schemas/FedNowServices'
+    WireServices:
+      type: object
+      required:
+      - fundsTransferStatus
+      - fundsSettlementOnlyStatus
+      - bookEntrySecuritiesTransferStatus
+      properties:
+        fundsTransferStatus:
+          type: boolean
+          description: The institution's capability to process standard Fedwire funds transfers.
+          example: true
+        fundsSettlementOnlyStatus:
+          type: boolean
+          description: The institution's capability for settlement-only transfers.
+          example: false
+        bookEntrySecuritiesTransferStatus:
+          type: boolean
+          description: The institution's capability to handle transfers of securities.
+          example: false
+    AchLocation:
+      type: object
+      required:
+      - address
+      - city
+      - postalCode
+      - postalCodeExtension
+      - state
+      properties:
+        address:
+          type: string
+          maxLength: 32
+          example: 123 Main Street
+        city:
+          type: string
+          maxLength: 24
+          example: Boulder
+        postalCode:
+          type: string
+          maxLength: 5
+          example: '80301'
+        postalCodeExtension:
+          type: string
+          maxLength: 4
+          example: '0000'
+        state:
+          type: string
+          maxLength: 24
+          example: Colorado
+    FedNowServices:
+      type: object
+      required:
+      - receivePayments
+      - sendPayments
+      - requestForPayment
+      properties:
+        receivePayments:
+          type: boolean
+          description: Indicates if the institution can receive instant payments.
+          example: true
+        sendPayments:
+          type: boolean
+          description: Indicates if the institution can send instant payments.
+          example: true
+        requestForPayment:
+          type: boolean
+          description: Indicates if the institution can process request for payment messages.
+          example: true
+  parameters:
+    InstitutionSearchFilters.limit:
+      name: limit
+      in: query
+      required: false
+      description: Maximum results returned by a search.
+      schema:
+        type: integer
+      explode: false
+    InstitutionSearchFilters.routingNumber:
+      name: routingNumber
+      in: query
+      required: false
+      description: Routing number for a financial institution. Either `routingNumber` or `name` is required.
+      schema:
+        type: string
+      explode: false
+    InstitutionsFilters.routingNumber:
+      name: routingNumber
+      in: query
+      required: false
+      description: Routing number for a financial institution. Either `routingNumber` or `name` is required.
+      schema:
+        type: string
+      explode: false
+    InstitutionsFilters.state:
+      name: state
+      in: query
+      required: false
+      description: The state where a financial institution is based.
+      schema:
+        type: string
+      explode: false
+    VersionHeader:
+      name: X-Moov-Version
+      in: header
+      required: false
+      description: 'Set this header to v2026.01.00 to use the API described in this specification.
+
+        When omitted, the server defaults to v2024.01.00, the earliest supported version, which may not match the behavior documented here.
+
+        An unrecognized well-formed version uses the latest supported version that is not newer than the requested version, when one exists.
+
+        For example, `v2026.08.00` uses `v2026.07.00`.
+
+        A malformed value, such as `2022`, returns a `404` response.'
+      schema:
+        type: string
+        enum:
+        - v2026.01.00
+        example: v2026.01.00
+        x-speakeasy-ignore: true
+      x-speakeasy-ignore: true
+    InstitutionSearchFilters.name:
+      name: name
+      in: query
+      required: false
+      description: Name of the financial institution. Either `name` or `routingNumber` is required.
+      schema:
+        type: string
+      explode: false
+    InstitutionsFilters.limit:
+      name: limit
+      in: query
+      required: false
+      description: Maximum results returned by a search.
+      schema:
+        type: integer
+      explode: false
+    InstitutionsFilters.name:
+      name: name
+      in: query
+      required: false
+      description: Name of the financial institution. Either `name` or `routingNumber` is required.
+      schema:
+        type: string
+      explode: false
   securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: Basic
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
       description: OAuth 2.0 access token passed as a Bearer token.
-externalDocs:
-  description: Moov API reference and canonical OpenAPI spec
-  url: https://docs.moov.io/api/
+x-refined-from:
+- moov-api-v2026.01.00-openapi.yml
+- moov-openapi.yml
+- moov-openapi.yml

@@ -1,107 +1,463 @@
 openapi: 3.2.0
 info:
   title: Moov Capabilities API
-  termsOfService: https://moov.io/legal/platform-agreement/
   version: '1.0'
-  description: 'Operations tagged Capabilities across 2 of this provider''s published API definitions: moov-api-openapi.yml, moov-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: 'Operations tagged Capabilities across 3 of this provider''s published API definitions: moov-api-v2026.01.00-openapi.yml, moov-openapi.yml, moov-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.moov.io
-  description: Production Server
-security:
-- bearerAuth: []
+  description: Production API host
+  variables: {}
 tags:
 - name: Capabilities
-  description: Request and manage capabilities that enable specific financial operations on an account, such as send-funds or collect-funds.
 paths:
   /accounts/{accountID}/capabilities:
-    post:
-      operationId: requestCapabilities
-      summary: Request capabilities
-      description: Request one or more capabilities for a Moov account to enable specific financial operations. Moov will evaluate the request and may require additional information before granting capabilities.
+    get:
+      operationId: listCapabilities
+      description: 'Retrieve all the capabilities an account has requested.
+
+
+        Read our capabilities reference to learn more.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/capabilities.read` scope.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Capability'
+              example:
+              - capability: send-funds.ach
+                accountID: 01234567-89ab-cdef-0123-456789abcdef
+                status: enabled
+                createdOn: '2024-05-06T12:20:38.184Z'
+                updatedOn: '2024-05-06T12:20:38.184Z'
+              - capability: collect-funds.card-payments
+                accountID: 01234567-89ab-cdef-0123-456789abcdef
+                status: in-review
+                requirements:
+                  currentlyDue:
+                  - business.owners
+                createdOn: '2024-05-06T12:20:38.184Z'
+                updatedOn: '2024-05-06T12:20:38.184Z'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
       tags:
       - Capabilities
+      x-speakeasy-name-override: list
+      security:
+      - BasicAuth: []
+      summary: List capabilities
+      x-summary-source: derived
+    post:
+      operationId: requestCapabilities
+      description: 'Request capabilities for a specific account. Read our capabilities reference to learn more.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/capabilities.write` scope.'
       parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Capability'
+              example:
+              - capability: send-funds.ach
+                accountID: 01234567-89ab-cdef-0123-456789abcdef
+                status: enabled
+                createdOn: '2024-05-06T12:20:38.184Z'
+                updatedOn: '2024-05-06T12:20:38.184Z'
+              - capability: collect-funds.card-payments
+                accountID: 01234567-89ab-cdef-0123-456789abcdef
+                status: in-review
+                requirements:
+                  currentlyDue:
+                  - business.owners
+                createdOn: '2024-05-06T12:20:38.184Z'
+                updatedOn: '2024-05-06T12:20:38.184Z'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '401':
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '404':
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '422':
+          description: The request was well-formed, but the contents failed validation. Check the request for missing or invalid fields.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddCapabilitiesError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Capabilities
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RequestCapabilitiesRequest'
-      responses:
-        '200':
-          description: Capabilities requested successfully.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Capability'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-    get:
-      operationId: listCapabilities
-      summary: List capabilities
-      description: Retrieve all capabilities associated with an account, including their current status and any outstanding requirements needed for activation.
-      tags:
-      - Capabilities
-      parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
-      responses:
-        '200':
-          description: Capabilities returned successfully.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Capability'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+              $ref: '#/components/schemas/AddCapabilities'
+            example:
+              capabilities:
+              - collect-funds.card-payments
+      x-speakeasy-name-override: request
+      security:
+      - BasicAuth: []
+      summary: Request capabilities
+      x-summary-source: derived
     parameters:
     - $ref: '#/components/parameters/accountID'
     servers:
     - url: https://api.moov.io
-      description: Production Server
+      description: Production API host
+      variables: {}
   /accounts/{accountID}/capabilities/{capabilityID}:
     get:
       operationId: getCapability
-      summary: Retrieve a capability
-      description: Fetch the current status and requirements for a specific capability on a Moov account. Use this to track onboarding progress for a given feature.
-      tags:
-      - Capabilities
+      description: 'Retrieve a specific capability that an account has requested. Read our capabilities reference to learn more.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/capabilities.read` scope.'
       parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
-      - $ref: '#/components/parameters/CapabilityIDParam'
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: capabilityID
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/CapabilityID'
       responses:
         '200':
-          description: Capability details returned successfully.
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Capability'
+              example:
+                capability: send-funds.ach
+                accountID: 01234567-89ab-cdef-0123-456789abcdef
+                status: enabled
+                createdOn: '2024-05-06T12:20:38.184Z'
+                updatedOn: '2024-05-06T12:20:38.184Z'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
         '404':
-          $ref: '#/components/responses/NotFound'
-    delete:
-      operationId: disableCapability
-      summary: Disable a capability
-      description: Remove a capability from a Moov account, preventing the associated financial operations from being performed on that account.
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
       tags:
       - Capabilities
+      x-speakeasy-name-override: get
+      security:
+      - BasicAuth: []
+      summary: Get capability
+      x-summary-source: derived
+    delete:
+      operationId: disableCapability
+      description: 'Disable a specific capability that an account has requested. Read our capabilities reference to learn more.
+
+
+        To access this endpoint using an access token
+
+        you''ll need to specify the `/accounts/{accountID}/capabilities.write` scope.'
       parameters:
-      - $ref: '#/components/parameters/AccountIDParam'
-      - $ref: '#/components/parameters/CapabilityIDParam'
+      - $ref: '#/components/parameters/VersionHeader'
+      - name: accountID
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: capabilityID
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/CapabilityID'
       responses:
         '204':
-          description: Capability disabled successfully.
+          description: The request completed successfully, but there is no content to return.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: The request contained missing or expired authentication.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '403':
+          description: The user is not authorized to make the request.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
         '404':
-          $ref: '#/components/responses/NotFound'
+          description: The requested resource was not found.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '409':
+          description: The request conflicted with the current state of the target resource.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Capabilities
+      x-speakeasy-name-override: disable
+      security:
+      - BasicAuth: []
+      summary: Disable capability
+      x-summary-source: derived
     parameters:
     - $ref: '#/components/parameters/accountID'
     - name: capabilityID
@@ -111,24 +467,295 @@ paths:
         type: string
     servers:
     - url: https://api.moov.io
-      description: Production Server
+      description: Production API host
+      variables: {}
 components:
+  schemas:
+    CapabilityRequirement:
+      type: object
+      properties:
+        currentlyDue:
+          type: array
+          items:
+            $ref: '#/components/schemas/RequirementID'
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/RequirementError'
+      description: Represents individual and business data necessary to facilitate the enabling of a capability for an account.
+    CapabilityID:
+      type: string
+      enum:
+      - transfers
+      - send-funds
+      - send-funds.push-to-card
+      - money-transfer.push-to-card
+      - send-funds.ach
+      - send-funds.rtp
+      - send-funds.instant-bank
+      - collect-funds
+      - collect-funds.card-payments
+      - money-transfer.pull-from-card
+      - collect-funds.ach
+      - wallet
+      - wallet.balance
+      - card-issuing
+      - issuing.cardholder
+      - production-app
+      - platform.production-app
+      - platform.wallet-transfers
+      description: 'Moov account capabilities.
+
+
+        **Deprecated capabilities**
+
+
+        The `send-funds`, `collect-funds`, and `wallet` capability IDs are deprecated. Request granular capabilities instead (for example, `send-funds.ach`, `collect-funds.card-payments`, or `wallet.balance`). Deprecated values will be removed in a future API version.
+
+
+        Read our [capabilities reference](https://docs.moov.io/guides/accounts/capabilities/reference/) to choose the right capabilities for your integration.
+
+
+        The `production-app`, `platform.production-app`, and / or `platform.wallet-transfers` capabilities might appear in the list for your Partner account. These are read-only capabilities that Moov requests. These capabilities remain active with your account and require no additional action.'
+    RequirementID:
+      type: string
+      enum:
+      - account.tos-acceptance
+      - individual.mobile
+      - individual.email
+      - individual.email-or-mobile
+      - individual.firstname
+      - individual.lastname
+      - individual.address
+      - individual.ssn-last4
+      - individual.ssn
+      - individual.birthdate
+      - business.legalname
+      - business.description-or-website
+      - business.entity-type
+      - business.business-type
+      - business.dba
+      - business.ein
+      - business.address
+      - business.phone
+      - business.admins
+      - business.controllers
+      - business.owners
+      - business.classification
+      - business.industry-code-mcc
+      - business.industry
+      - business.indicate-owners-provided
+      - business.average-transaction-size
+      - business.max-transaction-size
+      - business.average-monthly-transaction-volume
+      - business.volume-by-customer-type
+      - business.card-volume-distribution
+      - business.fulfillment
+      - business.description
+      - business.underwriting-documents-tier-one
+      - bank-accounts.name
+      - bank-accounts.routing-number
+      - bank-accounts.account-number
+      - document.business.verification
+      - document.individual.tin
+      - document.individual.verification
+      - document.representative.{rep-uuid}.tin
+      - document.representative.{rep-uuid}.verification
+      - representative.{rep-uuid}.mobile
+      - representative.{rep-uuid}.email
+      - representative.{rep-uuid}.email-or-mobile
+      - representative.{rep-uuid}.firstname
+      - representative.{rep-uuid}.lastname
+      - representative.{rep-uuid}.address
+      - representative.{rep-uuid}.ssn-last4
+      - representative.{rep-uuid}.ssn
+      - representative.{rep-uuid}.birthdate
+      - representative.{rep-uuid}.job-title
+      - representative.{rep-uuid}.is-controller
+      - representative.{rep-uuid}.is-owner
+      - representative.{rep-uuid}.ownership
+      - document.{doc-uuid}
+      - underwriting.businessPresence
+      - underwriting.geographicReach
+      - underwriting.volumeShareByCustomerType
+      - underwriting.pendingLitigation
+      - underwriting.documents.processingStatementsPast3Months
+      - underwriting.collectFunds.cardPayments.cardAcceptanceMethods
+      - underwriting.collectFunds.cardPayments.currentlyAcceptsCards
+      - underwriting.collectFunds.cardPayments.estimatedActivity.averageTransactionAmount
+      - underwriting.collectFunds.cardPayments.estimatedActivity.maximumTransactionAmount
+      - underwriting.collectFunds.cardPayments.estimatedActivity.monthlyVolumeRange
+      - underwriting.collectFunds.cardPayments.fulfillment
+      - underwriting.collectFunds.cardPayments.refundPolicy
+      - underwriting.collectFunds.ach.cardAcceptanceMethods
+      - underwriting.collectFunds.ach.currentlyAcceptsCards
+      - underwriting.collectFunds.ach.estimatedActivity.averageTransactionAmount
+      - underwriting.collectFunds.ach.estimatedActivity.maximumTransactionAmount
+      - underwriting.collectFunds.ach.estimatedActivity.monthlyVolumeRange
+      - underwriting.collectFunds.ach.fulfillment
+      - underwriting.collectFunds.ach.refundPolicy
+      - underwriting.sendFunds.ach.cardAcceptanceMethods
+      - underwriting.sendFunds.ach.currentlyAcceptsCards
+      - underwriting.sendFunds.ach.estimatedActivity.averageTransactionAmount
+      - underwriting.sendFunds.ach.estimatedActivity.maximumTransactionAmount
+      - underwriting.sendFunds.ach.estimatedActivity.monthlyVolumeRange
+      - underwriting.sendFunds.ach.fulfillment
+      - underwriting.sendFunds.ach.refundPolicy
+      - underwriting.sendFunds.rtp.cardAcceptanceMethods
+      - underwriting.sendFunds.rtp.currentlyAcceptsCards
+      - underwriting.sendFunds.rtp.estimatedActivity.averageTransactionAmount
+      - underwriting.sendFunds.rtp.estimatedActivity.maximumTransactionAmount
+      - underwriting.sendFunds.rtp.estimatedActivity.monthlyVolumeRange
+      - underwriting.sendFunds.rtp.fulfillment
+      - underwriting.sendFunds.rtp.refundPolicy
+      - underwriting.sendFunds.pushToCard.cardAcceptanceMethods
+      - underwriting.sendFunds.pushToCard.currentlyAcceptsCards
+      - underwriting.sendFunds.pushToCard.estimatedActivity.averageTransactionAmount
+      - underwriting.sendFunds.pushToCard.estimatedActivity.maximumTransactionAmount
+      - underwriting.sendFunds.pushToCard.estimatedActivity.monthlyVolumeRange
+      - underwriting.sendFunds.pushToCard.fulfillment
+      - underwriting.sendFunds.pushToCard.refundPolicy
+      - underwriting.sendFunds.instantBank.cardAcceptanceMethods
+      - underwriting.sendFunds.instantBank.currentlyAcceptsCards
+      - underwriting.sendFunds.instantBank.estimatedActivity.averageTransactionAmount
+      - underwriting.sendFunds.instantBank.estimatedActivity.maximumTransactionAmount
+      - underwriting.sendFunds.instantBank.estimatedActivity.monthlyVolumeRange
+      - underwriting.sendFunds.instantBank.fulfillment
+      - underwriting.sendFunds.instantBank.refundPolicy
+      - underwriting.moneyTransfer.pullFromCard.cardAcceptanceMethods
+      - underwriting.moneyTransfer.pullFromCard.currentlyAcceptsCards
+      - underwriting.moneyTransfer.pullFromCard.estimatedActivity.averageTransactionAmount
+      - underwriting.moneyTransfer.pullFromCard.estimatedActivity.maximumTransactionAmount
+      - underwriting.moneyTransfer.pullFromCard.estimatedActivity.monthlyVolumeRange
+      - underwriting.moneyTransfer.pullFromCard.fulfillment
+      - underwriting.moneyTransfer.pullFromCard.refundPolicy
+      - underwriting.moneyTransfer.pushToCard.cardAcceptanceMethods
+      - underwriting.moneyTransfer.pushToCard.currentlyAcceptsCards
+      - underwriting.moneyTransfer.pushToCard.estimatedActivity.averageTransactionAmount
+      - underwriting.moneyTransfer.pushToCard.estimatedActivity.maximumTransactionAmount
+      - underwriting.moneyTransfer.pushToCard.estimatedActivity.monthlyVolumeRange
+      - underwriting.moneyTransfer.pushToCard.fulfillment
+      - underwriting.moneyTransfer.pushToCard.refundPolicy
+      description: The unique ID of what the requirement is asking to be filled out.
+    CapabilityStatus:
+      type: string
+      enum:
+      - enabled
+      - disabled
+      - pending
+      - in-review
+      description: The status of the capability requested for an account.
+    RequirementError:
+      type: object
+      required:
+      - requirement
+      properties:
+        requirement:
+          $ref: '#/components/schemas/RequirementID'
+        errorCode:
+          $ref: '#/components/schemas/RequirementErrorCode'
+    RequirementErrorCode:
+      type: string
+      enum:
+      - invalid-value
+      - failed-automatic-verification
+      - failed-other
+      - invalid-address
+      - address-restricted
+      - tax-id-mismatch
+      - document-id-mismatch
+      - document-date-of-birth-mismatch
+      - document-name-mismatch
+      - document-address.mismatch
+      - document-number-mismatch
+      - document-incomplete
+      - document-failed-risk
+      - document-illegible
+      - document-unsupported
+      - document-not-uploaded
+      - document-corrupt
+      - document-expired
+    AddCapabilities:
+      type: object
+      required:
+      - capabilities
+      properties:
+        capabilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/CapabilityID'
+          description: 'Capabilities to request for the account. Request granular capability IDs that match your use case.
+
+
+            Read our [capabilities reference](https://docs.moov.io/guides/accounts/capabilities/reference/) to choose the right capabilities for your integration.
+
+
+            The `send-funds`, `collect-funds`, and `wallet` capability IDs are deprecated. Use granular values such as `send-funds.ach`, `collect-funds.card-payments`, or `wallet.balance` instead.'
+    Capability:
+      type: object
+      required:
+      - capability
+      - accountID
+      - status
+      - createdOn
+      - updatedOn
+      properties:
+        capability:
+          $ref: '#/components/schemas/CapabilityID'
+        accountID:
+          type: string
+        status:
+          $ref: '#/components/schemas/CapabilityStatus'
+        requirements:
+          $ref: '#/components/schemas/CapabilityRequirement'
+        disabledReason:
+          type: string
+        createdOn:
+          type: string
+          format: date-time
+        updatedOn:
+          type: string
+          format: date-time
+        disabledOn:
+          type: string
+          format: date-time
+    GenericError:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+    AddCapabilitiesError:
+      type: object
+      properties:
+        error:
+          type: string
+        capabilities:
+          type: object
+          additionalProperties:
+            type: string
   parameters:
-    CapabilityIDParam:
-      name: capabilityID
-      in: path
-      required: true
-      description: Unique identifier for the capability.
+    VersionHeader:
+      name: X-Moov-Version
+      in: header
+      required: false
+      description: 'Set this header to v2026.01.00 to use the API described in this specification.
+
+        When omitted, the server defaults to v2024.01.00, the earliest supported version, which may not match the behavior documented here.
+
+        An unrecognized well-formed version uses the latest supported version that is not newer than the requested version, when one exists.
+
+        For example, `v2026.08.00` uses `v2026.07.00`.
+
+        A malformed value, such as `2022`, returns a `404` response.'
       schema:
         type: string
-    AccountIDParam:
-      name: accountID
-      in: path
-      required: true
-      description: Unique identifier for the Moov account.
-      schema:
-        type: string
-        format: uuid
+        enum:
+        - v2026.01.00
+        example: v2026.01.00
+        x-speakeasy-ignore: true
+      x-speakeasy-ignore: true
     accountID:
       name: accountID
       in: path
@@ -137,97 +764,16 @@ components:
         type: string
         format: uuid
       description: The Moov account identifier.
-  schemas:
-    Error:
-      type: object
-      description: Standard error response returned by the Moov API.
-      properties:
-        error:
-          type: string
-          description: Human-readable description of the error.
-        code:
-          type: string
-          description: Machine-readable error code.
-    CapabilityRequirement:
-      type: object
-      description: A requirement that must be satisfied to activate a capability.
-      properties:
-        requirement:
-          type: string
-          description: Machine-readable identifier for the requirement type.
-        errorCode:
-          type: string
-          description: Error code providing more detail about why the requirement is unmet.
-    RequestCapabilitiesRequest:
-      type: object
-      description: Request body for enabling capabilities on a Moov account.
-      required:
-      - capabilities
-      properties:
-        capabilities:
-          type: array
-          description: List of capability identifiers to request.
-          items:
-            type: string
-    Capability:
-      type: object
-      description: A feature or permission that enables specific financial operations on a Moov account, such as the ability to send or receive funds.
-      properties:
-        capability:
-          type: string
-          description: Identifier for the capability type (e.g., "transfers.push", "collect-funds").
-        accountID:
-          type: string
-          format: uuid
-          description: The account this capability belongs to.
-        status:
-          type: string
-          description: Current activation status of the capability.
-          enum:
-          - enabled
-          - disabled
-          - pending
-          - in-review
-        requirements:
-          type: array
-          description: List of requirements that must be fulfilled to activate this capability.
-          items:
-            $ref: '#/components/schemas/CapabilityRequirement'
-        disabledReason:
-          type: string
-          description: Explanation of why the capability is disabled, if applicable.
-        createdOn:
-          type: string
-          format: date-time
-          description: ISO 8601 timestamp when the capability was created.
-        updatedOn:
-          type: string
-          format: date-time
-          description: ISO 8601 timestamp when the capability was last updated.
-  responses:
-    BadRequest:
-      description: The request was malformed or contained invalid parameters.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: Basic
     bearerAuth:
       type: http
       scheme: bearer
-      description: OAuth2 bearer token obtained from the /oauth2/token endpoint. Include in the Authorization header as "Bearer {token}".
+      bearerFormat: JWT
+      description: OAuth 2.0 access token passed as a Bearer token.
 x-refined-from:
-- moov-api-openapi.yml
+- moov-api-v2026.01.00-openapi.yml
+- moov-openapi.yml
 - moov-openapi.yml

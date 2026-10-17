@@ -1,145 +1,347 @@
 openapi: 3.2.0
 info:
   title: Moov Authentication API
-  description: The Moov API is a RESTful financial infrastructure platform that enables developers to integrate money movement capabilities into their applications.
-  version: 2026.01.00
+  version: v2026.01.00
   contact:
-    name: Moov Support
-    url: https://docs.moov.io/
-  termsOfService: https://moov.io/legal/platform-agreement/
+    name: Moov Developer Support
+    email: help@moov.io
+    url: https://moov.io
+  license:
+    name: Unlicensed
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  description: 'Operations tagged Authentication across 2 of this provider''s published API definitions: moov-api-v2026.01.00-openapi.yml, moov-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.moov.io
-  description: Production Server
+  description: Production API host
+  variables: {}
 security:
-- bearerAuth: []
+- BasicAuth: []
 tags:
 - name: Authentication
-  description: OAuth2 access token creation and revocation for API authentication.
 paths:
-  /oauth2/token:
-    post:
-      operationId: createAccessToken
-      summary: Create an access token
-      description: Exchange credentials for an OAuth2 access token. The token must be included as a Bearer token in the Authorization header for all subsequent API requests. Include the required scopes to grant permission for the operations you intend to perform.
-      tags:
-      - Authentication
-      security: []
-      requestBody:
-        required: true
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/TokenRequest'
-      responses:
-        '200':
-          description: Access token created successfully.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AccessToken'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
   /oauth2/revoke:
     post:
       operationId: revokeAccessToken
-      summary: Revoke an access token
-      description: Revoke a previously issued OAuth2 access token to invalidate it immediately. Use this when a token is no longer needed or when rotating credentials.
+      description: 'Revoke an auth token.
+
+
+        Allows clients to notify the authorization server that a previously obtained refresh or access token is no longer needed.'
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
+      responses:
+        '204':
+          description: The request completed successfully, but there is no content to return.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '422':
+          description: The request was well-formed, but the contents failed validation. Check the request for missing or invalid fields.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RevokeTokenRequestError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
       tags:
       - Authentication
       requestBody:
         required: true
         content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RevokeTokenRequest'
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/RevokeTokenRequest'
+      summary: Revoke access token
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
+  /oauth2/token:
+    post:
+      operationId: createAccessToken
+      description: Create or refresh an access token.
+      parameters:
+      - $ref: '#/components/parameters/VersionHeader'
       responses:
-        '204':
-          description: Token revoked successfully.
+        '200':
+          description: The request completed successfully.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthToken'
         '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: The server could not understand the request due to invalid syntax.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericError'
+        '422':
+          description: The request was well-formed, but the contents failed validation. Check the request for missing or invalid fields.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthTokenRequestError'
+        '429':
+          description: Request was refused due to rate limiting.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '500':
+          description: The request failed due to an unexpected error.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+        '504':
+          description: The request failed because a downstream service failed to respond.
+          headers:
+            x-request-id:
+              required: true
+              description: A unique identifier used to trace requests.
+              schema:
+                type: string
+      tags:
+      - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthTokenRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AuthTokenRequest'
+      summary: Create access token
+      x-summary-source: derived
+    servers:
+    - url: https://api.moov.io
+      description: Production API host
+      variables: {}
 components:
   schemas:
-    TokenRequest:
+    AccessToken:
+      type: string
+      maxLength: 4096
+      description: A value passed to the authorization server to gain access to the system.
+      example: eyJhbGciOiJFZERTQSIsImN0eSI6IkpXVCIsImtpZCI6IkR...
+    AuthTokenRequest:
       type: object
-      description: Request body for creating an OAuth2 access token.
       required:
       - grant_type
-      - client_id
-      - client_secret
       properties:
         grant_type:
-          type: string
-          description: OAuth2 grant type. Use "client_credentials" for server-side integrations.
-          enum:
-          - client_credentials
+          $ref: '#/components/schemas/GrantType'
         client_id:
           type: string
-          description: The Moov API key public identifier.
+          description: Client ID can be provided here in the body, or as the Username in HTTP Basic Auth.
+          example: 5clTR_MdVrrkgxw2
         client_secret:
           type: string
-          description: The Moov API key secret.
+          description: Client secret can be provided here in the body, or as the Password in HTTP Basic Auth.
+          example: dNC-hg7sVm22jc3g_Eogtyu0_1Mqh_4-
         scope:
           type: string
-          description: Space-separated list of permission scopes to request. Scopes follow the pattern /accounts/{accountID}/transfers.write for resource-specific access, or /accounts.write for platform-level access.
-    Error:
+          description: A space delimited list of scopes. Required when `grant_type` is `client_credentials`.
+          example: /accounts.read /accounts.write
+        refresh_token:
+          type: string
+          description: The refresh_token returned alongside the access token being refreshed. Required when `grant_type` is `refresh_token`.
+          example: eyJhbGc0eSI6TQSIsImN0kpXVCIsImtp6IkpXVsImtpZC0a...
+        client_type:
+          allOf:
+          - $ref: '#/components/schemas/OAuth2ClientType'
+          description: The client type requesting a token. `device` and `service` clients do not require browser origin binding. Defaults to `web` when omitted. This field applies to the `client_credentials` grant; refreshed tokens keep the original client type.
+    AuthToken:
       type: object
-      description: Standard error response returned by the Moov API.
+      required:
+      - token_type
+      - access_token
+      - refresh_token
+      - expires_in
+      - scope
       properties:
-        error:
+        token_type:
+          $ref: '#/components/schemas/TokenType'
+        access_token:
+          $ref: '#/components/schemas/AccessToken'
+        refresh_token:
+          $ref: '#/components/schemas/RefreshToken'
+        expires_in:
+          type: integer
+          format: int32
+          description: Unix timestamp indicating when this token expires.
+          example: 1736964352
+        scope:
           type: string
-          description: Human-readable description of the error.
-        code:
-          type: string
-          description: Machine-readable error code.
+          description: A space-delimited list of [scopes](https://docs.moov.io/api/authentication/scopes/) that are allowed.
+          example: /accounts.read /accounts.write
     RevokeTokenRequest:
       type: object
-      description: Request body for revoking an OAuth2 access token.
       required:
       - token
       properties:
         token:
           type: string
-          description: The access token to revoke.
-    AccessToken:
-      type: object
-      description: OAuth2 access token response from the Moov API.
-      properties:
-        access_token:
+          description: The access or refresh token to revoke.
+        token_type_hint:
           type: string
-          description: The bearer token to include in API request headers.
-        token_type:
-          type: string
-          description: Token type, always "bearer".
           enum:
-          - bearer
-        expires_in:
-          type: integer
-          description: Number of seconds until the token expires.
+          - access_token
+          - refresh_token
+          description: The type of token being revoked.
+        client_id:
+          type: string
+          description: Client ID can be provided here in the body, or as the Username in HTTP Basic Auth.
+          example: 5clTR_MdVrrkgxw2
+        client_secret:
+          type: string
+          description: Client secret can be provided here in the body, or as the Password in HTTP Basic Auth.
+          example: dNC-hg7sVm22jc3g_Eogtyu0_1Mqh_4-
+    OAuth2ClientType:
+      type: string
+      enum:
+      - web
+      - device
+      - service
+      - w
+      - d
+      - s
+      description: The type of client requesting an OAuth2 token. Short codes are accepted as aliases for the corresponding client types.
+    TokenType:
+      type: string
+      enum:
+      - Bearer
+      description: An [RFC 6750](https://www.rfc-editor.org/rfc/rfc6750#section-6.1) token type.
+      example: Bearer
+    GrantType:
+      type: string
+      enum:
+      - client_credentials
+      - refresh_token
+      description: "The type of grant being requested.\n\n  - `client_credentials`: A grant type used by clients to obtain an access token\n  - `refresh_token`: A grant type used by clients to obtain a new access token using a refresh token"
+    AuthTokenRequestError:
+      type: object
+      properties:
         scope:
           type: string
-          description: Space-separated list of granted permission scopes.
-  responses:
-    BadRequest:
-      description: The request was malformed or contained invalid parameters.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Authentication failed. Ensure a valid Bearer token is provided with the required scopes for this operation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+        refresh_token:
+          type: string
+    RevokeTokenRequestError:
+      type: object
+      properties:
+        token:
+          type: string
+        token_type_hint:
+          type: string
+    RefreshToken:
+      type: string
+      maxLength: 4096
+      description: A value passed to the authorization server to obtain a new access token.
+      example: eyJhbGc0eSI6TQSIsImN0kpXVCIsImtp6IkpXVsImtpZC0a...
+    GenericError:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+  parameters:
+    VersionHeader:
+      name: X-Moov-Version
+      in: header
+      required: false
+      description: 'Set this header to v2026.01.00 to use the API described in this specification.
+
+        When omitted, the server defaults to v2024.01.00, the earliest supported version, which may not match the behavior documented here.
+
+        An unrecognized well-formed version uses the latest supported version that is not newer than the requested version, when one exists.
+
+        For example, `v2026.08.00` uses `v2026.07.00`.
+
+        A malformed value, such as `2022`, returns a `404` response.'
+      schema:
+        type: string
+        enum:
+        - v2026.01.00
+        example: v2026.01.00
+        x-speakeasy-ignore: true
+      x-speakeasy-ignore: true
   securitySchemes:
-    bearerAuth:
+    BasicAuth:
       type: http
-      scheme: bearer
-      description: OAuth2 bearer token obtained from the /oauth2/token endpoint. Include in the Authorization header as "Bearer {token}".
+      scheme: Basic
 externalDocs:
-  description: Moov API Documentation
-  url: https://docs.moov.io/api/
+  url: https://docs.moov.io/
+  description: Moov Guides and API Documentation
+x-refined-from:
+- moov-api-v2026.01.00-openapi.yml
+- moov-openapi.yml
