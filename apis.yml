@@ -617,6 +617,8 @@ apis:
   humanURL: https://docs.moov.io/api/
   baseURL: https://api.moov.io
   tags:
+  - Apple Pay
+  tags_raw:
   - Apple pay
   properties:
   - type: OpenAPI
@@ -689,6 +691,8 @@ apis:
   humanURL: https://docs.moov.io/api/
   baseURL: https://api.moov.io
   tags:
+  - End-to-End Encryption
+  tags_raw:
   - End to End Encryption
   properties:
   - type: OpenAPI
@@ -761,6 +765,8 @@ apis:
   humanURL: https://docs.moov.io/api/
   baseURL: https://api.moov.io
   tags:
+  - Fee Plans
+  tags_raw:
   - Fee plans
   properties:
   - type: OpenAPI
@@ -785,6 +791,8 @@ apis:
   humanURL: https://docs.moov.io/api/
   baseURL: https://api.moov.io
   tags:
+  - File
+  tags_raw:
   - Files
   properties:
   - type: OpenAPI
@@ -809,6 +817,8 @@ apis:
   humanURL: https://docs.moov.io/api/
   baseURL: https://api.moov.io
   tags:
+  - Image
+  tags_raw:
   - Images
   properties:
   - type: OpenAPI
@@ -929,6 +939,8 @@ apis:
   humanURL: https://docs.moov.io/api/
   baseURL: https://api.moov.io
   tags:
+  - Product
+  tags_raw:
   - Products
   properties:
   - type: OpenAPI
@@ -1073,6 +1085,8 @@ apis:
   humanURL: https://docs.moov.io/api/
   baseURL: https://api.moov.io
   tags:
+  - Wallet Transactions
+  tags_raw:
   - Wallet transactions
   properties:
   - type: OpenAPI
@@ -1097,6 +1111,8 @@ apis:
   humanURL: https://docs.moov.io/api/
   baseURL: https://api.moov.io
   tags:
+  - Webhook
+  tags_raw:
   - Webhooks
   properties:
   - type: OpenAPI
