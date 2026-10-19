@@ -6,12 +6,19 @@ source:
 - https://composio.dev/toolkits/moov
 - https://monid.ai/tools/moov
 checked:
+- https://api.nuget.org/v3
 - https://composio.dev/toolkits/moov
+- https://crates.io/api/v1
 - https://docs.moov.io/guides/get-started/test-mode/
 - https://monid.ai/tools/moov
 - https://moov.io/integrations/
 - https://moov.io/partners/
 - https://n8n.io/integrations/moov/
+- https://proxy.golang.org
+- https://pypi.org/pypi
+- https://registry.npmjs.org
+- https://repo1.maven.org/maven2
+- https://rubygems.org/api/v1
 - https://spec.speakeasy.com/moov/moov/api-v2026.01.00
 - https://zapier.com/apps/moov/integrations
 summary: 'No marketplace listings (Zapier, n8n, Composio, Monid all checked) and no partner page on moov.io (404);
@@ -65,6 +72,66 @@ edges:
     property: schemas.ProcessorTokenCreateRequest.processor
     detected_by: detect-payment-method-edges.py
     detected: '2026-10-12'
+- partner_name: Go module proxy
+  partner: null
+  partner_match: null
+  type: register
+  direction: provider-built
+  category: official SDK (Go)
+  evidence: https://pkg.go.dev/github.com/moovfinancial/moov-go
+  channel: package-registry
+  relationship: distribution-channel
+  contract_reference:
+    register: Go module proxy (public registry JSON)
+    spec_file: null
+    language: Go
+    packages:
+    - name: github.com/moovfinancial/moov-go
+      version: v0.54.1
+      released: '2026-10-16'
+      released_field: Time
+      lapsed: false
+      page: https://pkg.go.dev/github.com/moovfinancial/moov-go
+      repo_leg: github-org:moovfinancial
+      publisher_leg: org:moovfinancial
+      matched_by: github-org
+    current: true
+    signal_note: 'an official package on the registry: distribution, not an integration; lapsed = no release in
+      24 months'
+    detected_by: sweep-official-sdks.py
+    detected: '2026-10-18'
+  detected_by: sweep-official-sdks.py
+  first_seen: '2026-10-18'
+- partner_name: npm registry
+  partner: npm
+  partner_match: register
+  type: register
+  direction: provider-built
+  category: official SDK (JavaScript/TypeScript)
+  evidence: https://www.npmjs.com/package/@moovio/sdk
+  channel: package-registry
+  relationship: distribution-channel
+  contract_reference:
+    register: npm registry (public registry JSON)
+    spec_file: null
+    language: JavaScript/TypeScript
+    packages:
+    - name: '@moovio/sdk'
+      version: 25.7.0
+      released: '2026-10-03'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@moovio/sdk
+      repo_leg: github-org:moovfinancial
+      publisher_leg: email:moov.io
+      matched_by: domain
+    current: true
+    signal_note: 'an official package on the registry: distribution, not an integration; lapsed = no release in
+      24 months'
+    detected_by: sweep-official-sdks.py
+    detected: '2026-10-18'
+  detected_by: sweep-official-sdks.py
+  first_seen: '2026-10-18'
 templates: []
 skips:
 - label: Apple Pay

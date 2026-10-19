@@ -11,7 +11,8 @@
   evidence: https://spec.speakeasy.com/moov/moov/api-v2026.01.00
   source: edge
   arazzo: moov-plaid-link-bank-account.yml
-  status: arazzo
+  status: arazzo-broken
+  broken_reason: 'source url->missing local spec: https://raw.githubusercontent.com/api-evangelist/moov/refs/heads/main/openapi/moov-openapi.yml'
 - slug: moov-mx
   label: MX
   partner: mx-technologies
@@ -20,7 +21,8 @@
   evidence: https://spec.speakeasy.com/moov/moov/api-v2026.01.00
   source: edge
   arazzo: moov-mx-technologies-link-bank-account.yml
-  status: arazzo
+  status: arazzo-broken
+  broken_reason: 'source url->missing local spec: https://raw.githubusercontent.com/api-evangelist/moov/refs/heads/main/openapi/moov-openapi.yml'
 - slug: moov-apple-pay
   label: Apple Pay
   partner: apple
@@ -47,4 +49,66 @@
     detected_by: detect-payment-method-edges.py
     detected: '2026-10-12'
   arazzo: moov-plaid-link-bank-account.yml
-  status: arazzo
+  status: arazzo-broken
+  broken_reason: 'source url->missing local spec: https://raw.githubusercontent.com/api-evangelist/moov/refs/heads/main/openapi/moov-openapi.yml'
+- slug: moov-go-module-proxy
+  label: Go module proxy
+  partner_name: Go module proxy
+  category: official SDK (Go)
+  type: register
+  channel: package-registry
+  evidence: https://pkg.go.dev/github.com/moovfinancial/moov-go
+  source: edge
+  relationship: distribution-channel
+  contract_reference:
+    register: Go module proxy (public registry JSON)
+    spec_file: null
+    language: Go
+    packages:
+    - name: github.com/moovfinancial/moov-go
+      version: v0.54.1
+      released: '2026-10-16'
+      released_field: Time
+      lapsed: false
+      page: https://pkg.go.dev/github.com/moovfinancial/moov-go
+      repo_leg: github-org:moovfinancial
+      publisher_leg: org:moovfinancial
+      matched_by: github-org
+    current: true
+    signal_note: 'an official package on the registry: distribution, not an integration; lapsed = no release in
+      24 months'
+    detected_by: sweep-official-sdks.py
+    detected: '2026-10-18'
+  status: not-a-workflow
+  arazzo: null
+- slug: moov-npm-registry
+  label: npm registry
+  partner: npm
+  partner_name: npm registry
+  category: official SDK (JavaScript/TypeScript)
+  type: register
+  channel: package-registry
+  evidence: https://www.npmjs.com/package/@moovio/sdk
+  source: edge
+  relationship: distribution-channel
+  contract_reference:
+    register: npm registry (public registry JSON)
+    spec_file: null
+    language: JavaScript/TypeScript
+    packages:
+    - name: '@moovio/sdk'
+      version: 25.7.0
+      released: '2026-10-03'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@moovio/sdk
+      repo_leg: github-org:moovfinancial
+      publisher_leg: email:moov.io
+      matched_by: domain
+    current: true
+    signal_note: 'an official package on the registry: distribution, not an integration; lapsed = no release in
+      24 months'
+    detected_by: sweep-official-sdks.py
+    detected: '2026-10-18'
+  status: not-a-workflow
+  arazzo: null
