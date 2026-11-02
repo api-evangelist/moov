@@ -1,0 +1,437 @@
+# Pricing transcribed from the provider's own page — see provenance. Numbers are quoted, not derived.
+generated: '2026-09-20'
+method: searched
+source: https://moov.io/pricing/
+name: Moov API Plans
+sources:
+- https://moov.io/pricing/
+provenance:
+  tool: planning/api-economics/harvest_pricing.py
+  run: 20260920T124425
+  grounding: every price_text was found verbatim in the fetched page text
+audience: developer-api
+pricing_basis: ad-valorem
+delivery:
+  delivery: managed
+  method: page
+  read: '2026-09-20'
+  managed_tier: Standard pricing
+published: true
+note: Detailed per-product fee schedule for Moov payments platform; standard pricing has a $500 monthly
+  minimum, custom pricing via contact sales.
+plan_count: 29
+currency: USD
+plans:
+- name: Standard pricing
+  price_text: $500 monthly minimum
+  price: 500
+  currency: USD
+  period: month
+  unit: minimum
+  included_quota: No setup fees or hidden fees. Pay as you go and get everything you need to start moving
+    money.
+- name: Custom pricing
+  price_text: Contact sales
+  period: none
+  included_quota: Available for businesses with large payment volume or unique business models.
+- name: Card acceptance
+  price_text: Interchange+ + 0.60% + 15¢
+  currency: USD
+  period: per-use
+  unit: per successful charge
+  included_quota: U.S. domestic cards
+  overage: +1.5% for international cards
+- name: Tap to Pay
+  price_text: Interchange+ + 0.50% + 15¢
+  currency: USD
+  period: per-use
+  unit: per successful charge
+  included_quota: U.S. domestic cards
+  overage: +1.5% for international cards
+- name: Card account updater
+  price_text: 25¢
+  price: 25
+  currency: USD
+  period: per-use
+  unit: per update
+- name: Disputes (card)
+  price_text: $15.00
+  price: 15
+  currency: USD
+  period: per-use
+  unit: per dispute
+- name: Instant RTP credit
+  price_text: 0.95%
+  price: 0.95
+  currency: USD
+  period: per-use
+  unit: per transaction
+  included_quota: 'Minimum fee: 50¢ $5.00 cap'
+- name: Instant push to card
+  price_text: 0.95%
+  price: 0.95
+  currency: USD
+  period: per-use
+  unit: per transaction
+  included_quota: 'Minimum fee: 50¢ $5.00 cap'
+- name: Deferred delivery push to card
+  price_text: 25¢
+  price: 25
+  currency: USD
+  period: per-use
+  unit: per transaction
+- name: Instant pull from card
+  price_text: 0.50% + 75¢
+  currency: USD
+  period: per-use
+  unit: per transaction
+- name: ACH same-day
+  price_text: 40¢
+  price: 40
+  currency: USD
+  period: per-use
+  unit: per transaction
+- name: ACH next-day credit
+  price_text: 25¢
+  price: 25
+  currency: USD
+  period: per-use
+  unit: per transaction
+- name: Notice of change
+  price_text: 75¢
+  price: 75
+  currency: USD
+  period: per-use
+  unit: per update
+- name: ACH returns
+  price_text: $5.00
+  price: 5
+  currency: USD
+  period: per-use
+  unit: per return
+- name: Unauthorized returns
+  price_text: $15.00
+  price: 15
+  currency: USD
+  period: per-use
+  unit: per return
+- name: Moov wallet
+  price_text: 50¢ monthly
+  price: 50
+  currency: USD
+  period: month
+  unit: per active wallet
+- name: Payment links
+  price_text: Included
+  period: none
+  included_quota: Waived for accounts with standard pricing.
+- name: Branded receipts
+  price_text: Included
+  period: none
+  included_quota: Waived for accounts with standard pricing.
+- name: Invoices
+  price_text: 25¢
+  price: 25
+  currency: USD
+  period: per-use
+  unit: per paid invoice
+- name: Virtual card creation
+  price_text: 15¢
+  price: 15
+  currency: USD
+  period: per-use
+  unit: per virtual card
+- name: Instant bank account validation
+  price_text: 75¢
+  price: 75
+  currency: USD
+  period: per-use
+  unit: per instant validation attempt
+  included_quota: ACH micro-deposits are free.
+- name: Third-party bank account validation
+  price_text: $1.50
+  price: 1.5
+  currency: USD
+  period: per-use
+  unit: per validation attempt
+  included_quota: $500 monthly minimum.
+- name: Verified business (KYB)
+  price_text: $4.50
+  price: 4.5
+  currency: USD
+  period: per-use
+  unit: per business
+- name: Verified individual (KYC)
+  price_text: $2.50
+  price: 2.5
+  currency: USD
+  period: per-use
+  unit: per individual
+  included_quota: $0.50 per individual per month.
+- name: IRS Form 1099-K issuance
+  price_text: $5.00 annually
+  price: 5
+  currency: USD
+  period: year
+  unit: per business
+- name: Merchant processing account fee
+  price_text: $5.00 monthly
+  price: 5
+  currency: USD
+  period: month
+  unit: per business
+- name: Transaction monitoring
+  price_text: Included
+  period: none
+  included_quota: Waived for accounts with standard pricing.
+- name: PCI compliance
+  price_text: $2.00 monthly
+  price: 2
+  currency: USD
+  period: month
+  unit: per business
+- name: Data Sync
+  price_text: 2¢
+  price: 2
+  currency: USD
+  period: per-use
+  unit: per transaction
+  included_quota: $500 monthly minimum.
+x-canonical:
+  generated: '2026-11-01'
+  vocabulary: engine/economics/plans-canonical.yml
+  models:
+  - hybrid
+  - metered
+  - subscription
+  units:
+  - transaction
+  plans:
+  - name: Standard pricing
+    access: other
+    model: subscription
+    model_how: derived
+    units:
+    - other
+    periods:
+    - month
+  - name: Custom pricing
+    access: other
+    model: unstated
+    model_how: derived
+    units: []
+    periods:
+    - none
+  - name: Card acceptance
+    access: other
+    model: metered
+    model_how: derived
+    units:
+    - other
+    periods:
+    - other
+  - name: Tap to Pay
+    access: other
+    model: metered
+    model_how: derived
+    units:
+    - other
+    periods:
+    - other
+  - name: Card account updater
+    access: other
+    model: subscription
+    model_how: derived
+    units:
+    - other
+    periods:
+    - other
+  - name: Disputes (card)
+    access: other
+    model: subscription
+    model_how: derived
+    units:
+    - other
+    periods:
+    - other
+  - name: Instant RTP credit
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - transaction
+    periods:
+    - other
+  - name: Instant push to card
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - transaction
+    periods:
+    - other
+  - name: Deferred delivery push to card
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - transaction
+    periods:
+    - other
+  - name: Instant pull from card
+    access: other
+    model: metered
+    model_how: derived
+    units:
+    - transaction
+    periods:
+    - other
+  - name: ACH same-day
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - transaction
+    periods:
+    - other
+  - name: ACH next-day credit
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - transaction
+    periods:
+    - other
+  - name: Notice of change
+    access: other
+    model: subscription
+    model_how: derived
+    units:
+    - other
+    periods:
+    - other
+  - name: ACH returns
+    access: other
+    model: subscription
+    model_how: derived
+    units:
+    - other
+    periods:
+    - other
+  - name: Unauthorized returns
+    access: other
+    model: subscription
+    model_how: derived
+    units:
+    - other
+    periods:
+    - other
+  - name: Moov wallet
+    access: other
+    model: subscription
+    model_how: derived
+    units:
+    - other
+    periods:
+    - month
+  - name: Payment links
+    access: other
+    model: unstated
+    model_how: derived
+    units: []
+    periods:
+    - none
+  - name: Branded receipts
+    access: other
+    model: unstated
+    model_how: derived
+    units: []
+    periods:
+    - none
+  - name: Invoices
+    access: other
+    model: subscription
+    model_how: derived
+    units:
+    - other
+    periods:
+    - other
+  - name: Virtual card creation
+    access: other
+    model: subscription
+    model_how: derived
+    units:
+    - other
+    periods:
+    - other
+  - name: Instant bank account validation
+    access: other
+    model: subscription
+    model_how: derived
+    units:
+    - other
+    periods:
+    - other
+  - name: Third-party bank account validation
+    access: other
+    model: subscription
+    model_how: derived
+    units:
+    - other
+    periods:
+    - other
+  - name: Verified business (KYB)
+    access: other
+    model: subscription
+    model_how: derived
+    units:
+    - other
+    periods:
+    - other
+  - name: Verified individual (KYC)
+    access: other
+    model: subscription
+    model_how: derived
+    units:
+    - other
+    periods:
+    - other
+  - name: IRS Form 1099-K issuance
+    access: other
+    model: subscription
+    model_how: derived
+    units:
+    - other
+    periods:
+    - year
+  - name: Merchant processing account fee
+    access: other
+    model: subscription
+    model_how: derived
+    units:
+    - other
+    periods:
+    - month
+  - name: Transaction monitoring
+    access: other
+    model: unstated
+    model_how: derived
+    units: []
+    periods:
+    - none
+  - name: PCI compliance
+    access: other
+    model: subscription
+    model_how: derived
+    units:
+    - other
+    periods:
+    - month
+  - name: Data Sync
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - transaction
+    periods:
+    - other
