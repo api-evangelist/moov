@@ -5,6 +5,9 @@ artifacts:
   agentic-access/moov-agentic-access.yml:
     method: generated
     evidence: declared in the artifact
+  ai-preferences/moov-ai-preferences.yml:
+    method: harvested
+    evidence: declared in the artifact
   asyncapi/moov-webhooks-asyncapi.yml:
     method: unknown
     evidence: no authorship recorded
@@ -12,6 +15,12 @@ artifacts:
     method: derived
     evidence: declared in the artifact
   capabilities/moov-capability-edges.yml:
+    method: unknown
+    evidence: no authorship recorded
+  certification/observations-2026-11-11.jsonl:
+    method: unknown
+    evidence: no authorship recorded
+  certification/status.yml:
     method: unknown
     evidence: no authorship recorded
   changelog/moov-changelog.yml:
@@ -131,8 +140,14 @@ artifacts:
   conventions/moov-conventions.yml:
     method: searched
     evidence: declared in the artifact
+  data-license/moov-data-license.yml:
+    method: harvested
+    evidence: declared in the artifact
   data-model/moov-data-model.yml:
     method: derived
+    evidence: declared in the artifact
+  eligibility/moov-eligibility.yml:
+    method: harvested
     evidence: declared in the artifact
   errors/moov-decline-codes.yml:
     method: searched
@@ -150,6 +165,9 @@ artifacts:
     method: unknown
     evidence: no authorship recorded
   heartbeat/2026-11-06.yml:
+    method: unknown
+    evidence: no authorship recorded
+  heartbeat/2026-11-13.yml:
     method: unknown
     evidence: no authorship recorded
   hosts/moov-hosts.yml:
@@ -272,6 +290,12 @@ artifacts:
   json-schema/moov-error-schema.json:
     method: unknown
     evidence: no authorship recorded
+  json-schema/moov-financial-institutions-schema.json:
+    method: unknown
+    evidence: no authorship recorded
+  json-schema/moov-full-issued-card-schema.json:
+    method: unknown
+    evidence: no authorship recorded
   json-schema/moov-governmentid-schema.json:
     method: unknown
     evidence: no authorship recorded
@@ -279,6 +303,12 @@ artifacts:
     method: unknown
     evidence: no authorship recorded
   json-schema/moov-industrycodes-schema.json:
+    method: unknown
+    evidence: no authorship recorded
+  json-schema/moov-institutions-search-response-schema.json:
+    method: unknown
+    evidence: no authorship recorded
+  json-schema/moov-issued-card-schema.json:
     method: unknown
     evidence: no authorship recorded
   json-schema/moov-linkbankaccountrequest-schema.json:
@@ -318,6 +348,9 @@ artifacts:
     method: unknown
     evidence: no authorship recorded
   json-schema/moov-representativeresponsibilities-schema.json:
+    method: unknown
+    evidence: no authorship recorded
+  json-schema/moov-request-card-schema.json:
     method: unknown
     evidence: no authorship recorded
   json-schema/moov-requestcapabilitiesrequest-schema.json:
@@ -362,6 +395,15 @@ artifacts:
   json-schema/moov-transferparticipant-schema.json:
     method: unknown
     evidence: no authorship recorded
+  json-schema/moov-underwriting-schema.json:
+    method: unknown
+    evidence: no authorship recorded
+  json-schema/moov-update-issued-card-schema.json:
+    method: unknown
+    evidence: no authorship recorded
+  json-schema/moov-update-underwriting-schema.json:
+    method: unknown
+    evidence: no authorship recorded
   json-schema/moov-updateaccountrequest-schema.json:
     method: unknown
     evidence: no authorship recorded
@@ -383,6 +425,9 @@ artifacts:
   json-schema/moov-updatewalletrequest-schema.json:
     method: unknown
     evidence: no authorship recorded
+  json-schema/moov-upsert-underwriting-schema.json:
+    method: unknown
+    evidence: no authorship recorded
   json-schema/moov-wallet-schema.json:
     method: unknown
     evidence: no authorship recorded
@@ -398,7 +443,7 @@ artifacts:
   kin/checks-2026-10-23T222754.yml:
     method: generated
     evidence: Kin Score snapshot written by score.rb
-  kin/checks-2026-11-02T082323.yml:
+  kin/checks-2026-11-06T143934.yml:
     method: generated
     evidence: Kin Score snapshot written by score.rb
   kin/score-2026-09-23T000603.yml:
@@ -462,6 +507,9 @@ artifacts:
     method: generated
     evidence: Kin Score snapshot written by score.rb
   kin/score-2026-11-02T082323.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-11-06T143934.yml:
     method: generated
     evidence: Kin Score snapshot written by score.rb
   lifecycle/moov-lifecycle.yml:
@@ -621,6 +669,9 @@ artifacts:
   plans/moov-price-estimates.yml:
     method: unknown
     evidence: no authorship recorded
+  privacy/moov-privacy-policy.yml:
+    method: harvested
+    evidence: declared in the artifact
   rate-limits/moov-rate-limits.yml:
     method: searched
     evidence: declared in the artifact
@@ -656,6 +707,9 @@ artifacts:
     evidence: declared in the artifact
   sla/moov-sla.yml:
     method: searched
+    evidence: declared in the artifact
+  terms/moov-terms-of-service.yml:
+    method: harvested
     evidence: declared in the artifact
   vendors/moov-vendors.yml:
     method: unknown
